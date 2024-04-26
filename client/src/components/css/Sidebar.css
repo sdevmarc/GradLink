@@ -1,0 +1,13 @@
+a.active {
+    background: #dcdcde;
+    padding: .5rem 1rem;
+}
+
+.sidebar {
+    width: 4%;
+    transition: .3s ease;
+}
+
+.sidebar.notactive {
+    width: 17.5%;
+}
