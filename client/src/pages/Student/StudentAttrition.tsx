@@ -40,7 +40,7 @@ export default function GraduateStudies() {
                             </Link>
 
                             <Link
-                                to='/'
+                                to='/studentattrition/managestudents'
                                 className="w-[20rem] h-[9rem] border border-solid rounded-lg flex flex-col justify-end items-end p-[1rem]">
                                 <h1
                                     className='font-[600]'
