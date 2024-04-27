@@ -7,6 +7,7 @@ import AttritionRate from './pages/Student/AttritionRate'
 import ManageAlumni from './pages/Alumni/AlumniTracer'
 import EnrollRate from './pages/Student/EnrollRate'
 import SurvivalRate from './pages/Student/SurvivalRate'
+import ManageStudent from './pages/Student/ManageStudent'
 
 const App = createBrowserRouter([
     { path: '/', element: <Home /> },
@@ -15,7 +16,10 @@ const App = createBrowserRouter([
     { path: '/alumni', element: <Alumni /> },
     { path: '/alumni/alumnitracer', element: <ManageAlumni /> },
 
+
     { path: '/studentattrition', element: <GraduateStudies /> },
+    { path: '/studentattrition/managestudents', element: <ManageStudent /> },
+
     { path: '/studentattrition/attritionrate', element: <AttritionRate /> },
     { path: '/studentattrition/attritionrate/enrollrate', element: <EnrollRate /> },
     { path: '/studentattrition/attritionrate/survivalrate', element: <SurvivalRate /> },
