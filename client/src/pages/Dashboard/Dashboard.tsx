@@ -23,6 +23,7 @@ export default function Dashboard() {
                         <h1
                             className='font-[600]'
                         >
+                            
                             DASHBOARD
                         </h1>
                     </div>
