@@ -7,7 +7,7 @@ import { ThemeProvider } from './hooks/useTheme.tsx'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
             <RouterProvider router={Routes} />
         </ThemeProvider>
     </React.StrictMode>,
