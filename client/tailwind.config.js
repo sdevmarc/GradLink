@@ -21,6 +21,10 @@ module.exports = {
                 poppins: ['Poppins', 'sans-serif'],
             },
             colors: {
+                label: {
+                    DEFAULT: 'var(--label)',
+                    foreground: 'var(--label-foreground)'
+                },
                 text: {
                     DEFAULT: 'var(--text)',
                     foreground: 'var(--text-foreground)'
@@ -56,6 +60,10 @@ module.exports = {
                 },
                 card: {
                     DEFAULT: "var(--card)",
+                    foreground: "hsl(var(--card-foreground))",
+                },
+                input: {
+                    DEFAULT: "var(--input)",
                     foreground: "hsl(var(--card-foreground))",
                 },
             },
