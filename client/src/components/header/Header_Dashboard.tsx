@@ -5,7 +5,7 @@ import './index.css'
 export default function Header_Dashboard() {
     return (
         <>
-            <header className="hdashboard sticky top-0 left-0 w-full h-[8dvh] bg-background border-[0.7px] border-black/20 flex justify-center items-center">
+            <header className="hdashboard sticky top-0 left-0 w-full h-[8dvh] bg-background border-b-[0.7px] border-black/20 flex justify-center items-center">
                 <div className="w-full max-w-[90rem] h-full flex justify-between items-center px-8">
                     <nav className="flex items-center gap-2">
                         <NavLink to={`/`} className='text-sm text-text font-medium'>
