@@ -24,18 +24,47 @@ export default function Tracer() {
 }
 
 const SearchDocker = () => {
+    const [isSearchClick, setSearchClick] = useState(false)
+    const inputRef = useRef<HTMLInputElement | null>(null);
+
+    const handleClick = () => {
+        if (!isSearchClick) {
+            inputRef.current?.focus();
+        }
+    };
+
     return (
         <>
-            <div className="z-[1] w-1/4 h-[8dvh] p-2 border-[2px] border-black/10 bg-background absolute top-[9dvh] left-[50%] translate-x-[-50%] flex justify-start items-center gap-2 rounded-full">
-                <Button variant={`default`} size={`icon`} className="h-full w-10">
-                    <IoSearch className="scale-[1.3]" />
-                </Button>
-                <div className="flex flex-col">
-                    <label htmlFor="search" className="text-[.7rem] font-medium">
-                        Search
-                    </label>
-                    <input type="text" id="search" className="text-text placeholder:text-black/30 placeholder:text-sm placeholder:font-semibold bg-transparent text-sm outline-none" placeholder="Search by keywords..." />
+            <div className="z-[1] w-1/4 h-[8dvh] shadow-[_0_13px_15px_-3px_rgba(0,0,0,0.1)] border-[2px] border-black/10 bg-background absolute top-[9dvh] left-[50%] translate-x-[-50%] flex justify-between items-center gap-2 rounded-full">
+                <div className="relative group w-full h-full flex items-center gap-2 py-2 pl-2">
+                    <div
+                        onClick={handleClick}
+                        className={`absolute w-full h-full top-0 left-0 rounded-full cursor-pointer ${isSearchClick ? '' : 'group-hover:bg-black/10'}`}
+                    />
+                    <Button variant={`default`} size={`icon`} className="h-full w-10">
+                        <IoSearch className="scale-[1.3]" />
+                    </Button>
+                    <div className="flex flex-col flex-grow">
+                        <label htmlFor="search" className="text-[.7rem] font-medium">
+                            Search
+                        </label>
+                        <input
+                            type="text"
+                            id="search"
+                            ref={inputRef}
+                            className="z-[1] text-text placeholder:text-black/30 placeholder:text-sm placeholder:font-semibold bg-transparent text-sm outline-none"
+                            placeholder="Search by keywords..."
+                            onFocus={() => setSearchClick(true)} // Set the active state on focus
+                            onBlur={() => setSearchClick(false)}  // Remove the active state on blur
+                        />
+                    </div>
                 </div>
+                <div className="h-full flex items-center text-[.7rem] mr-2 my-2">
+                    <Button variant={`default`} className="bg-muted text-text rounded-full ">
+                        Filter
+                    </Button>
+                </div>
+
             </div>
         </>
     )
