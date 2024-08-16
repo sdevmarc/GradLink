@@ -1,7 +1,7 @@
+import MainTable from "@/components/MainTable";
 import Header_Dashboard from "@/components/header/Header_Dashboard";
 import HeadSection from "@/components/HeadSection";
 import { Sidebar, SidebarNavs } from "@/components/Sidebar";
-import Table from "@/components/Table";
 
 export default function Student() {
     return (
@@ -15,12 +15,12 @@ export default function Student() {
                             description="Here's a list of enrolled students."
                         />
                     </aside>
-                    <main className="w-full h-[calc(100dvh-21.1dvh)] flex">
+                    <main className="w-full h-[calc(100dvh-25dvh)] flex">
                         <Sidebar>
                             <SidebarNavs title="Table" link="/student" />
                             <SidebarNavs title="Trash" link="/" />
                         </Sidebar>
-                        <Table />
+                        <MainTable />
                     </main>
                 </div>
             </div>
