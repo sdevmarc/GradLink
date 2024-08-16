@@ -1,10 +1,11 @@
 .hdashboard a {
-    padding: .1rem 1rem;
+    padding: .2rem 1rem;
     border: .7px solid rgba(0, 0, 0, 0.152);
     border-radius: .5rem;
     transition: .3s ease-in-out;
 }
 
 .hdashboard a.active {
-    background: var(--muted);
+    background: var(--primary);
+    border: none;
 }
