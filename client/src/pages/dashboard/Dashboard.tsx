@@ -10,7 +10,7 @@ export default function Dashboard() {
         <div className="flex flex-col min-h-screen items-center">
             <Header_Dashboard />
             <div className="w-full max-w-[90rem] flex-1 flex">
-                <main className="w-3/4 p-4">
+                <main className="w-3/4 px-4 pb-4 pt-20">
                     <HeadSection />
                     <div className="py-4 h-[54rem]">
                         {/* Main content */}
