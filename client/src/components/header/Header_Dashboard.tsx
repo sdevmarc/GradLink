@@ -8,9 +8,9 @@ export default function Header_Dashboard() {
             <header className="hdashboard z-[1] backdrop-blur-[1rem] backdrop-saturate-50 fixed top-0 left-0 w-full h-[8dvh] border-b-[0.7px] border-black/20 flex justify-center items-center">
                 <div className="w-full max-w-[90rem] h-full flex justify-between items-center px-8">
                     <nav className="flex items-center gap-2">
-                        <NavLink to={`/`} className='text-sm text-text font-medium'>
+                        <h1 className='text-sm text-text font-medium px-4'>
                             LOGO
-                        </NavLink>
+                        </h1>
                         <NavLink to={`/mail`} className='text-sm text-text font-medium'>
                             Mail
                         </NavLink>
@@ -19,9 +19,6 @@ export default function Header_Dashboard() {
                         </NavLink>
                         <NavLink to={`/tracer`} className='text-sm text-text font-medium'>
                             Tracer
-                        </NavLink>
-                        <NavLink to={`/alumni`} className='text-sm text-text font-medium'>
-                            Alumni
                         </NavLink>
                         <NavLink to={`/student`} className='text-sm text-text font-medium'>
                             Student
