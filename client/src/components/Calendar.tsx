@@ -8,7 +8,7 @@ export const DCalendar = () => {
             mode="single"
             selected={date}
             onSelect={setDate}
-            className="rounded-md border w-full h-[40%] flex justify-center items-center"
+            className="rounded-md border w-full flex justify-center items-center"
         />
     )
 }
