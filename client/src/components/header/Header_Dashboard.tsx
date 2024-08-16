@@ -1,36 +1,37 @@
-import { Link } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import { UserAvatar } from '@/components/UserAvatar'
+import './index.css'
 
 export default function Header_Dashboard() {
     return (
         <>
-            <header className="sticky top-0 left-0 w-full h-[8dvh] bg-background border-[0.7px] border-black/20 flex justify-center items-center">
+            <header className="hdashboard sticky top-0 left-0 w-full h-[8dvh] bg-background border-[0.7px] border-black/20 flex justify-center items-center">
                 <div className="w-full max-w-[90rem] h-full flex justify-between items-center px-8">
-                    <nav className="flex items-center gap-4">
-                        <Link to={`/dashboard`} className='text-sm text-text font-medium'>
+                    <nav className="flex items-center gap-2">
+                        <NavLink to={`/`} className='text-sm text-text font-medium'>
                             LOGO
-                        </Link>
-                        <Link to={`/dashboard`} className='text-sm text-text font-medium'>
+                        </NavLink>
+                        <NavLink to={`/mail`} className='text-sm text-text font-medium'>
                             Mail
-                        </Link>
-                        <Link to={`/dashboard`} className='text-sm text-text font-medium'>
+                        </NavLink>
+                        <NavLink to={`/dashboard`} className='text-sm text-text font-medium'>
                             Dashboard
-                        </Link>
-                        <Link to={`/dashboard`} className='text-sm text-text font-medium'>
+                        </NavLink>
+                        <NavLink to={`/tracer`} className='text-sm text-text font-medium'>
                             Tracer
-                        </Link>
-                        <Link to={`/dashboard`} className='text-sm text-text font-medium'>
+                        </NavLink>
+                        <NavLink to={`/alumni`} className='text-sm text-text font-medium'>
                             Alumni
-                        </Link>
-                        <Link to={`/dashboard`} className='text-sm text-text font-medium'>
+                        </NavLink>
+                        <NavLink to={`/student`} className='text-sm text-text font-medium'>
                             Student
-                        </Link>
-                        <Link to={`/dashboard`} className='text-sm text-text font-medium'>
+                        </NavLink>
+                        <NavLink to={`/program`} className='text-sm text-text font-medium'>
                             Program
-                        </Link>
-                        <Link to={`/dashboard`} className='text-sm text-text font-medium'>
+                        </NavLink>
+                        <NavLink to={`/form`} className='text-sm text-text font-medium'>
                             Form
-                        </Link>
+                        </NavLink>
                     </nav>
                     <nav className="flex items-center gap-4">
                         <h1 className='text-text font-medium text-sm'>
