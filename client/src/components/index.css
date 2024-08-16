@@ -1,0 +1,7 @@
+.sidebarnavs  {
+    background: none;
+}
+
+.sidebarnavs.active {
+    background: var(--muted);
+}
