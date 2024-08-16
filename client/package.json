@@ -17,6 +17,7 @@
     "@radix-ui/react-popover": "^1.1.1",
     "@radix-ui/react-slot": "^1.1.0",
     "@tanstack/react-query": "^5.51.23",
+    "@tanstack/react-table": "^8.20.1",
     "@types/mapbox-gl": "^3.4.0",
     "axios": "^1.7.4",
     "class-variance-authority": "^0.7.0",
