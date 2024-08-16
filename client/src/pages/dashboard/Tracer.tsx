@@ -1,3 +1,4 @@
+import Header_Dashboard from "@/components/header/Header_Dashboard";
 import { Button } from "@/components/ui/button";
 import { IoSearch } from "react-icons/io5";
 
@@ -6,6 +7,7 @@ export default function Tracer() {
     return (
         <>
             <div className="flex flex-col min-h-screen items-center bg-yellow-200">
+                <Header_Dashboard />
                 <SearchDocker />
             </div>
         </>
@@ -16,7 +18,7 @@ export default function Tracer() {
 const SearchDocker = () => {
     return (
         <>
-            <div className="w-1/4 h-[8dvh] p-2 border-[2px] border-black/10 bg-background absolute top-4 left-[50%] translate-x-[-50%] flex justify-start items-center gap-2 rounded-full">
+            <div className="w-1/4 h-[8dvh] p-2 border-[2px] border-black/10 bg-background absolute top-[9dvh] left-[50%] translate-x-[-50%] flex justify-start items-center gap-2 rounded-full">
                 <Button variant={`default`} size={`icon`} className="h-full w-10">
                     <IoSearch className="scale-[1.3]" />
                 </Button>
