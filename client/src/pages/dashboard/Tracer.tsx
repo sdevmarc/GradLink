@@ -35,7 +35,7 @@ const SearchDocker = () => {
 
     return (
         <>
-            <div className="z-[1] w-1/4 h-[8dvh] shadow-[_0_13px_15px_-3px_rgba(0,0,0,0.1)] border-[2px] border-black/10 bg-background absolute top-[9dvh] left-[50%] translate-x-[-50%] flex justify-between items-center gap-2 rounded-full">
+            <div className="z-[1] w-1/4 h-[3.5rem] shadow-[_0_13px_15px_-3px_rgba(0,0,0,0.1)] border-[2px] border-black/10 bg-background absolute top-[9dvh] left-[50%] translate-x-[-50%] flex justify-between items-center gap-2 rounded-full">
                 <div className="relative group w-full h-full flex items-center gap-2 py-2 pl-2">
                     <div
                         onClick={handleClick}
