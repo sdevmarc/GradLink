@@ -14,10 +14,10 @@ export default function MainTable() {
     return (
         <>
             <div className="w-[80%] h-full p-2 flex flex-col justify-between">
-                <div className="w-full h-[calc(12%-4%)] py-2">
+                <div className="py-2">
                     <Search />
                 </div>
-                <div className="w-full h-[calc(92%-2%)] rounded-xl border-[0.7px] border-black/10 p-3">
+                <div className="w-full h-[calc(100%-12%)] rounded-xl border-[0.7px] border-black/10 p-3">
                     <TableDemo />
                 </div>
             </div>
