@@ -1,8 +1,8 @@
-import { ISidebar, ISidebarNavs } from '@/interface/FunctionComponents.type'
+import { IFCChildren } from '@/interface/index'
 import { NavLink } from 'react-router-dom'
 import './index.css'
 
-export const Sidebar = ({ children }: ISidebar) => {
+export const Sidebar = ({ children }: IFCChildren) => {
     return (
         <>
             <div className="w-[20%] h-full flex flex-col p-4 gap-2">
@@ -12,9 +12,9 @@ export const Sidebar = ({ children }: ISidebar) => {
     )
 }
 
-export const SidebarNavs = ({ title, link }: ISidebarNavs) => {
+export const SidebarNavs = ({ title, link }: IFCChildren) => {
     return (
-        <NavLink to={link} className="sidebarnavs w-full text-text font-medium text-sm px-4 py-[.7rem] hover:bg-muted-foreground rounded-lg">
+        <NavLink to={link || ''} className="sidebarnavs w-full text-text font-medium text-sm px-4 py-[.7rem] hover:bg-muted-foreground rounded-lg">
             {title}
         </NavLink>
     )
