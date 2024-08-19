@@ -1,28 +1,35 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover"
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
-import { IAvatar } from "@/interface/Avatar.type"
-
+import { IAvatar } from "@/interface/index"
 
 export const UserAvatar = ({ image, initials }: IAvatar) => {
     return (
-        <Popover>
-            <PopoverTrigger>
+        <DropdownMenu>
+            <DropdownMenuTrigger>
                 <Avatar>
                     <AvatarImage src={image} />
                     <AvatarFallback>
                         {initials}
                     </AvatarFallback>
                 </Avatar>
-            </PopoverTrigger>
-            <PopoverContent>
-                Content here.
-            </PopoverContent>
-        </Popover>
-
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>Profile</DropdownMenuItem>
+                <DropdownMenuItem>Billing</DropdownMenuItem>
+                <DropdownMenuItem>Team</DropdownMenuItem>
+                <DropdownMenuItem>Subscription</DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
     )
 }
