@@ -17,6 +17,10 @@ module.exports = {
             },
         },
         extend: {
+            fontSize: {
+                'sm': '.8rem',
+                'md': '1rem',
+            },
             fontFamily: {
                 poppins: ['Poppins', 'sans-serif'],
             },
