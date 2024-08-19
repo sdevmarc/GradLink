@@ -1,28 +1,12 @@
-import { columns } from "@/components/table/Columns"
-import { DataTable } from "@/components/table/DataTable"
-import { Payment } from "@/interface/Table.type"
-import { useEffect, useState } from "react"
-
-async function getData(): Promise<Payment[]> {
-    return Array.from({ length: 50 }, (_, i) => ({
-        id: `728ed52f-${i}`,
-        amount: 100,
-        status: "pending",
-        email: `m${i}@example.com`,
-    }));
-}
+import { columns } from "@/components/data-table-components/Columns"
+import { DataTable } from "@/components/data-table-components/data-table"
+import { useState } from "react"
+import expense from '@/components/data-table-components/data.json'
+import { Expense } from "./data-table-components/schema"
 
 export default function MainTable() {
-    const [data, setData] = useState<Payment[]>([])
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const mydata = await getData()
-            setData(mydata)
-        }
-
-        fetchData()
-    }, [])
+    const modifiedExpense = expense.map(item => ({ id: generateId(), ...item, type: item.type as "income" | "expense" }));
+    const [data, setData] = useState<Expense[]>(modifiedExpense)
 
     return (
         <>
@@ -31,4 +15,8 @@ export default function MainTable() {
             </div>
         </>
     )
+}
+
+function generateId() {
+    return '1';
 }
