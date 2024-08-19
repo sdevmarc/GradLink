@@ -151,10 +151,7 @@ export function DataTable<TData, TValue>({
                 </Table>
             </div>
             <div className="flex items-center justify-between space-x-2 py-4">
-                <div className="text-sm text-text">
-                    {table.getFilteredSelectedRowModel().rows.length} of{" "}
-                    {table.getFilteredRowModel().rows.length} row(s) selected.
-                </div>
+
                 <DataTablePagination table={table} />
 
                 {/* <Button
