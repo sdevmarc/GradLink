@@ -1,6 +1,6 @@
-import { DCalendar } from "@/components/Calendar";
-import HeadSection from "@/components/HeadSection";
-import Header_Dashboard from "@/components/header/Header_Dashboard";
+import { DCalendar } from "@/components/calendar";
+import HeadSection, { SubHeadSectionDetails } from "@/components/head-section";
+import Header_Dashboard from "@/components/header-dashboard";
 import { Button } from "@/components/ui/button";
 import './index.css'
 import { Link } from "react-router-dom";
@@ -10,11 +10,13 @@ export default function Dashboard() {
         <div className="flex flex-col min-h-screen items-center">
             <Header_Dashboard />
             <div className="w-full max-w-[90rem] flex-1 flex">
-                <main className="w-3/4 px-4 pb-4 pt-20">
-                    <HeadSection
-                        title=" Overview"
-                        description="A dashboard providing analytics and insights into alumni data, student, system health and trends."
-                    />
+                <main className="w-3/4 px-4 pb-4 pt-[5rem]">
+                    <HeadSection>
+                        <SubHeadSectionDetails
+                            title=" Overview"
+                            description="A dashboard providing analytics and insights into alumni data, student, system health and trends."
+                        />
+                    </HeadSection>
                     <div className="py-4 h-[54rem]">
                         {/* Main content */}
                     </div>
