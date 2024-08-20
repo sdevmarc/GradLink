@@ -1,8 +1,12 @@
 .hdashboard a {
     padding: .2rem 1rem;
-    border: .7px solid rgba(0, 0, 0, 0.152);
+    /* border: .7px solid rgba(0, 0, 0, 0.152); */
     border-radius: .5rem;
     transition: .3s ease-in-out;
+}
+
+.hdashboard a:hover {
+    background: var(--muted);
 }
 
 .hdashboard a.active {
