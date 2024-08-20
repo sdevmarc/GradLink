@@ -1,22 +1,11 @@
-import { columns } from "@/components/data-table-components/Columns"
-import { DataTable } from "@/components/data-table-components/data-table"
-import { useState } from "react"
-import expense from '@/components/data-table-components/data.json'
-import { Expense } from "./data-table-components/schema"
+import { IFCChildren } from "@/interface"
 
-export default function MainTable() {
-    const modifiedExpense = expense.map(item => ({ id: generateId(), ...item, type: item.type as "income" | "expense" }));
-    const [data, setData] = useState<Expense[]>(modifiedExpense)
-
+export default function MainTable({ children }: IFCChildren) {
     return (
         <>
             <div className="w-[80%] h-full flex flex-col justify-between">
-                <DataTable columns={columns} data={data} />
+                {children}
             </div>
         </>
     )
-}
-
-function generateId() {
-    return '1';
 }
