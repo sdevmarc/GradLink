@@ -2,8 +2,16 @@ import MainTable from "@/components/MainTable"
 import Header_Dashboard from "@/components/header/Header_Dashboard"
 import HeadSection from "@/components/HeadSection"
 import { Sidebar, SidebarNavs } from "@/components/Sidebar"
+import { DataTable } from "@/components/data-table-components/data-table"
+import { columns } from "@/components/data-table-components/columns"
+import { useState } from "react"
+import expense from '@/components/data-table-components/data.json'
+import { Expense } from "@/components/data-table-components/schema"
 
 export default function Student() {
+    const modifiedExpense = expense.map(item => ({ id: generateId(), ...item, type: item.type as "income" | "expense" }));
+    const [data, setData] = useState<Expense[]>(modifiedExpense)
+
     return (
         <>
             <div className="flex flex-col min-h-screen items-center">
@@ -20,10 +28,16 @@ export default function Student() {
                             <SidebarNavs title="Table" link="/student" />
                             <SidebarNavs title="Trash" link="/" />
                         </Sidebar>
-                        <MainTable />
+                        <MainTable>
+                            <DataTable columns={columns} data={data} />
+                        </MainTable>
                     </main>
                 </div>
             </div>
         </>
     )
+}
+
+function generateId() {
+    return '1';
 }
