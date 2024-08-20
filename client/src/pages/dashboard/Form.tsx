@@ -1,4 +1,4 @@
-import FormTable from '@/components/FormTable'
+import FormTable from '@/components/form-table/form-table'
 import Header_Dashboard from '@/components/header/Header_Dashboard'
 import HeadSection from '@/components/HeadSection'
 import MainTable from '@/components/MainTable'
