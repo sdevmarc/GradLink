@@ -1,8 +1,14 @@
 import { Input } from "@/components/ui/input";
 import { ComboBox } from '../combo-box';
 import { Button } from "../ui/button";
+import { useNavigate } from "react-router-dom";
 
 export default function FormTableToolbar() {
+    const navigate = useNavigate()
+
+    const handleAddNew = () => {
+        navigate('/form/create-form')
+    }
     return (
         <>
             <div className="flex flex-wrap items-center justify-between">
@@ -11,13 +17,13 @@ export default function FormTableToolbar() {
                         placeholder="Filter labels..."
                         className="h-8 w-[150px] lg:w-[250px] placeholder:text-muted"
                     />
-                     <ComboBox
-                    title="Filter"
-                />
+                    <ComboBox
+                        title="Filter"
+                    />
                 </div>
                 <Button
+                    onClick={handleAddNew}
                     variant="outline"
-                    role="combobox"
                     className="h-8 px-2 lg:px-3 justify-between"
                 >
                     Add New
