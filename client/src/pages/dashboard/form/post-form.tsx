@@ -5,6 +5,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
 import { ComboBox } from '@/components/combo-box'
 import { Button } from '@/components/ui/button'
+import { useState } from 'react'
 
 export default function PostForm() {
     return (
@@ -41,6 +42,12 @@ const Lists = [
 ]
 
 const CreateForm = () => {
+    const [rows, setRows] = useState<any[]>([1])
+
+    const handleAddRow = () => {
+        setRows([...rows, {}]);
+    };
+
     return (
         <>
             <form className="w-[80%] flex flex-col justify-between rounded-lg border">
@@ -56,20 +63,29 @@ const CreateForm = () => {
                         <h1 className='text-[.9rem]'>Brief Description</h1>
                         <Textarea placeholder="Type your message here." required />
                     </div>
-                    <div className="flex flex-col px-4 gap-1">
-                        <h1 className='text-[.9rem]'>Data Entries</h1>
-                        <div className="flex justify-between items-center">
-                            <div className="w-full flex gap-2 items-center">
-                                <Input type='text' placeholder='eg. What is the biggest country?' className='w-[70%]' />
-                                <ComboBox
-                                    title='Type'
-                                    lists={Lists}
-                                />
-                            </div>
-                            <Button variant={`outline`} type='button'>
+                    <div className="flex flex-col px-4 gap-4">
+                        <div className="w-full flex justify-between items-center">
+                            <h1 className='text-[.9rem]'>Data Entries</h1>
+                            <Button onClick={handleAddRow} variant={`outline`} type='button'>
                                 Add Row
                             </Button>
                         </div>
+                        {
+                            rows.map((_, i) => (
+                                <div key={i} className="flex justify-between items-center">
+                                    <div className="w-full flex gap-2 items-center">
+                                        <Input type='text' placeholder='eg. What is the biggest country?' className='w-[70%]' />
+                                        <ComboBox
+                                            title='Type'
+                                            lists={Lists}
+                                        />
+                                    </div>
+                                    <Button variant={`outline`} type='button'>
+                                        Delete Row
+                                    </Button>
+                                </div>
+                            ))
+                        }
                     </div>
                 </div>
                 <div className="w-full flex justify-end p-5">
