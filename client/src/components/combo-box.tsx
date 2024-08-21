@@ -20,30 +20,30 @@ import {
 } from "@/components/ui/popover"
 import { IFCChildren } from "@/interface"
 
-const frameworks = [
-    {
-        value: "next.js",
-        label: "Next.js",
-    },
-    {
-        value: "sveltekit",
-        label: "SvelteKit",
-    },
-    {
-        value: "nuxt.js",
-        label: "Nuxt.js",
-    },
-    {
-        value: "remix",
-        label: "Remix",
-    },
-    {
-        value: "astro",
-        label: "Astro",
-    },
-]
+// const frameworks = [
+//     {
+//         value: "next.js",
+//         label: "Next.js",
+//     },
+//     {
+//         value: "sveltekit",
+//         label: "SvelteKit",
+//     },
+//     {
+//         value: "nuxt.js",
+//         label: "Nuxt.js",
+//     },
+//     {
+//         value: "remix",
+//         label: "Remix",
+//     },
+//     {
+//         value: "astro",
+//         label: "Astro",
+//     },
+// ]
 
-export function ComboBox({ title }: IFCChildren) {
+export function ComboBox({ title, lists = [] }: IFCChildren) {
     const [open, setOpen] = React.useState(false)
     const [value, setValue] = React.useState("")
 
@@ -57,7 +57,7 @@ export function ComboBox({ title }: IFCChildren) {
                     className="h-8 px-2 lg:px-3 justify-between"
                 >
                     {value
-                        ? frameworks.find((framework) => framework.value === value)?.label
+                        ? lists.find((item) => item.value === value)?.label
                         : title}
                     <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
@@ -68,20 +68,20 @@ export function ComboBox({ title }: IFCChildren) {
                     <CommandList>
                         <CommandEmpty>No ${title} found.</CommandEmpty>
                         <CommandGroup>
-                            {frameworks.map((framework) => (
+                            {lists.map((item) => (
                                 <CommandItem
-                                    key={framework.value}
-                                    value={framework.value}
+                                    key={item.value}
+                                    value={item.value}
                                     onSelect={(currentValue) => {
                                         setValue(currentValue === value ? "" : currentValue)
                                         setOpen(false)
                                     }}
                                 >
-                                    {framework.label}
+                                    {item.label}
                                     <CheckIcon
                                         className={cn(
                                             "ml-auto h-4 w-4",
-                                            value === framework.value ? "opacity-100" : "opacity-0"
+                                            value === item.value ? "opacity-100" : "opacity-0"
                                         )}
                                     />
                                 </CommandItem>
