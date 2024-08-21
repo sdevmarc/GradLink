@@ -22,10 +22,27 @@ export default function PostForm() {
                             <SidebarNavs title="List" link="/form" />
                             <SidebarNavs title="Trash" link="/" />
                         </Sidebar>
-                        {/* <MainTable>
-                            <FormTable />
-                        </MainTable> */}
+                        <CreateForm />
                     </main>
+                </div>
+            </div>
+        </>
+    )
+}
+
+
+const CreateForm = () => {
+    return (
+        <>
+            <div className="w-[80%] flex flex-col justify-between rounded-lg border">
+                <div className="w-full px-4 py-3 border-b">
+                    <h1 className='text-text font-semibold text-lg'>Configure Form</h1>
+                </div>
+                <div className="w-full py-2 flex flex-col gap-2">
+                    <div className="flex flex-col px-4">
+                        <h1 className='text[1rem]'>Form Name</h1>
+                        <input type="text" placeholder='eg. Alumni Graduates Survey' className='border placeholder:text-sm px-4 py-2 rounded-md' />
+                    </div>
                 </div>
             </div>
         </>
