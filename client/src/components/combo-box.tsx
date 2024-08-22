@@ -18,32 +18,9 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
-import { IFCChildren } from "@/interface"
+import {  IFCChildren } from "@/interface"
 
-// const frameworks = [
-//     {
-//         value: "next.js",
-//         label: "Next.js",
-//     },
-//     {
-//         value: "sveltekit",
-//         label: "SvelteKit",
-//     },
-//     {
-//         value: "nuxt.js",
-//         label: "Nuxt.js",
-//     },
-//     {
-//         value: "remix",
-//         label: "Remix",
-//     },
-//     {
-//         value: "astro",
-//         label: "Astro",
-//     },
-// ]
-
-export function ComboBox({ title, lists = [] }: IFCChildren) {
+export function ComboBox({ title, lists = [], type }: IFCChildren) {
     const [open, setOpen] = React.useState(false)
     const [value, setValue] = React.useState("")
 
@@ -75,6 +52,7 @@ export function ComboBox({ title, lists = [] }: IFCChildren) {
                                     onSelect={(currentValue) => {
                                         setValue(currentValue === value ? "" : currentValue)
                                         setOpen(false)
+                                        type?.(currentValue)
                                     }}
                                 >
                                     {item.label}
