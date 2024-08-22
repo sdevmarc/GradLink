@@ -14,4 +14,10 @@ export interface IFCChildren {
     description?: string
     children?: React.ReactNode
     lists?: IComboBox[]
+    type?: (e: string | undefined) => void
+}
+
+export interface IEventTarget {
+    value?: string
+    name?: string
 }
