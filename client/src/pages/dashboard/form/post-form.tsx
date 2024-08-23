@@ -41,10 +41,16 @@ const Lists = [
     { value: 'date', label: 'Date' },
     { value: 'checkbox', label: 'Checkbox' },
     { value: 'paragraph', label: 'Paragraph' },
+    { value: 'multiplechoice', label: 'Multiple Choice' },
 ]
 
 interface FormValues {
-    items: { title: string; type: string; }[];
+    question: string;
+    answer: string
+}
+
+interface IForm {
+    items: FormValues[]
 }
 
 interface IShortAnswer {
@@ -52,33 +58,72 @@ interface IShortAnswer {
     answer: string
 }
 
+interface RadioOptions {
+    title: string
+}
+
+interface IMultipleChoice extends IShortAnswer {
+    options: RadioOptions[]
+}
+
 const CreateForm = () => {
     const [isComboBox, setComboBox] = useState<string>('')
-    const [items, setItem] = useState<IShortAnswer>({
+    const [hasshortanswer, setShortAnswer] = useState<IShortAnswer>({
         question: '',
         answer: ''
     })
-    const [values, setValues] = useState<FormValues>({
+    const [hasMultipleChoice, setMultipleChoice] = useState<IMultipleChoice>({
+        question: '',
+        options: [],
+        answer: ''
+    })
+    const [values, setValues] = useState<IForm>({
         items: []
     })
 
+    // Data Entries
     const handleAddRow = () => {
+        try {
+            if (isComboBox === '') return alert('Please include a type.')
+
+            if (isComboBox === 'shortanswer') {
+                setValues(prevValues => ({
+                    ...prevValues,
+                    items: [...prevValues.items, { question: hasshortanswer?.question, answer: hasshortanswer?.answer }]
+                }))
+                return
+            }
+            return
+        } catch (error) {
+            console.error(error)
+        } finally {
+            setComboBox('')
+            setShortAnswer({ question: '', answer: '' })
+        }
+    }
+
+    const handleDeleteRow = (index: number) => {
         setValues(prevValues => ({
             ...prevValues,
-            questions: [...prevValues.items, { title: items?.question, type: items?.answer }]
+            items: prevValues.items.filter((_, i) => i !== index)
         }))
-
-        console.log(values)
     }
 
-    const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Short Answer
+    const handleOnChangeShortAnswer = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
 
-        setItem((prev) => ({ ...prev, [name]: value }))
+        setShortAnswer((prev) => ({ ...prev, [name]: value }))
     }
 
+    // Multiple Choice
+    // const handleAddOption = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     const { name, value } = e.target
+
+    //     setShortAnswer((prev) => ({ ...prev, [name]: value }))
+    // }
+
     const handleComboBox = (e: string) => {
-        console.log(e)
         setComboBox(e)
     }
 
@@ -110,9 +155,9 @@ const CreateForm = () => {
                                 <div key={i} className="flex justify-between items-center">
                                     <div className="w-full flex gap-2 items-center">
                                         <Input
-                                            name='title'
-                                            value={item?.title}
-                                            onChange={handleOnChange}
+                                            name='question'
+                                            value={item?.question}
+                                            onChange={handleOnChangeShortAnswer}
                                             type='text'
                                             placeholder='eg. What is the biggest country?'
                                             className='w-[70%]'
@@ -122,17 +167,19 @@ const CreateForm = () => {
                                             lists={Lists}
                                         /> */}
                                     </div>
-                                    <Button variant={`outline`} type='button'>
+                                    <Button onClick={() => handleDeleteRow(i)} variant={`outline`} type='button'>
                                         Delete Row
                                     </Button>
                                 </div>
                             ))
                         }
-                        <div className="w-full flex flex-col gap-2 justify-center">
+                        <div className="w-full flex flex-col gap-2 justify-center items-start">
                             <div className="w-full flex justify-between items-center">
                                 <div className="w-full flex gap-2 items-center">
                                     <Input
+                                        value={hasshortanswer?.question}
                                         name='question'
+                                        onChange={handleOnChangeShortAnswer}
                                         type='text'
                                         placeholder='eg. What is the biggest country?'
                                         className='w-[70%]'
@@ -141,6 +188,7 @@ const CreateForm = () => {
                                         type={(item) => handleComboBox(item || '')}
                                         title='Type'
                                         lists={Lists}
+                                        value={isComboBox}
                                     />
                                 </div>
                                 <Button onClick={handleAddRow} variant={`outline`} type='button'>
@@ -148,22 +196,65 @@ const CreateForm = () => {
                                 </Button>
                             </div>
                             {
-                                isComboBox === 'shortanswer' ? (
+                                isComboBox === 'shortanswer' && (
                                     <textarea
                                         placeholder='Write your short answer here...'
                                         className='w-[60%] px-2 py-2 bg-transparent outline-none border-b-[2px] border-black/50 placeholder:text-sm'
                                         readOnly
                                     />
-                                ) : null
+                                )
                             }
                             {
-                                isComboBox === 'paragraph' ? (
+                                isComboBox === 'paragraph' && (
                                     <textarea
                                         placeholder='Write your long answer here...'
                                         className='w-[60%] px-2 py-2 bg-transparent outline-none border-b-[2px] border-black/50 placeholder:text-sm'
                                         readOnly
                                     />
-                                ) : null
+                                )
+                            }
+                            {
+                                isComboBox === 'multiplechoice' && (
+                                    <>
+                                        {
+                                            hasMultipleChoice.options.map((item, i) => (
+                                                <>
+                                                    <input key={i} type="radio" id="radio1" name="radio-group" className="hidden peer" />
+                                                    <label htmlFor="radio1" className="flex items-center cursor-pointer">
+                                                        <span className="w-5 h-5 inline-block mr-2 border-gray-300 border-[3px] rounded-full peer-checked:bg-blue-500 peer-checked:border-transparent peer-checked:ring-2 peer-checked:ring-blue-300 transition-all"></span>
+                                                        <input value={item?.title} type="text" className='w-[40%] px-2 py-2 bg-transparent outline-none border-b-[2px] border-black/50 placeholder:text-sm' />
+                                                    </label>
+                                                </>
+                                            ))
+                                        }
+
+
+                                        <input type="radio" id="radio1" name="radio-group" className="hidden peer" />
+                                        <label htmlFor="radio1" className="flex items-center cursor-pointer">
+                                            <span className="w-5 h-5 inline-block mr-2 border-gray-300 border-[3px] rounded-full peer-checked:bg-blue-500 peer-checked:border-transparent peer-checked:ring-2 peer-checked:ring-blue-300 transition-all"></span>
+                                            <input
+                                                placeholder='eg. Option 1'
+                                                type="text"
+                                                className='w-[40%] px-2 py-2 bg-transparent outline-none border-b-[2px] border-black/50 placeholder:text-sm'
+                                            />
+                                        </label>
+
+                                        <input type="radio" id="radio1" name="radio-group" className="hidden peer" />
+                                        <label htmlFor="radio1" className="flex items-center cursor-pointer">
+                                            <span className="w-5 h-5 inline-block mr-2 border-gray-300 border-[3px] rounded-full peer-checked:bg-blue-500 peer-checked:border-transparent peer-checked:ring-2 peer-checked:ring-blue-300 transition-all"></span>
+                                            <div className="flex gap-2 items-center">
+                                                <Button variant={`outline`} type='button'>
+                                                    Add option
+                                                </Button>
+                                                or
+                                                <Button variant={`outline`} type='button'>
+                                                    add "Other"
+                                                </Button>
+                                            </div>
+
+                                        </label>
+                                    </>
+                                )
                             }
                         </div>
                     </div>
