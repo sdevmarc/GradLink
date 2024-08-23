@@ -6,7 +6,6 @@ import { Input } from '@/components/ui/input'
 import { ComboBox } from '@/components/combo-box'
 import { Button } from '@/components/ui/button'
 import { useState } from 'react'
-import { IEventTarget } from '@/interface'
 
 export default function PostForm() {
     return (
@@ -37,49 +36,50 @@ export default function PostForm() {
 }
 
 const Lists = [
-    { value: 'text', label: 'Text' },
-    { value: 'combobox', label: 'Combo Box' },
-    { value: 'number', label: 'Number' },
+    { value: 'shortanswer', label: 'Short Answer' },
+    { value: 'dropdown', label: 'Dropdown' },
+    { value: 'date', label: 'Date' },
+    { value: 'checkbox', label: 'Checkbox' },
+    { value: 'paragraph', label: 'Paragraph' },
 ]
 
 interface FormValues {
-    questions: { title: string; type: string; }[];
+    items: { title: string; type: string; }[];
 }
 
 interface IShortAnswer {
-    title: string
-    type: string
+    question: string
+    answer: string
 }
 
 const CreateForm = () => {
-    const [shortanswer, setShortAnswer] = useState<IShortAnswer>({
-        title: '',
-        type: ''
+    const [isComboBox, setComboBox] = useState<string>('')
+    const [items, setItem] = useState<IShortAnswer>({
+        question: '',
+        answer: ''
     })
     const [values, setValues] = useState<FormValues>({
-        questions: []
+        items: []
     })
 
     const handleAddRow = () => {
         setValues(prevValues => ({
             ...prevValues,
-            questions: [...prevValues.questions, { title: shortanswer?.title, type: shortanswer?.type }]
-        }));
-        setShortAnswer((prev) => ({
-            ...prev,
-            title: '',
-            type: ''
+            questions: [...prevValues.items, { title: items?.question, type: items?.answer }]
         }))
+
         console.log(values)
     }
 
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value }: IEventTarget = e.target
+        const { name, value } = e.target
 
-        setShortAnswer((prev) => ({
-            ...prev,
-            [name]: value
-        }))
+        setItem((prev) => ({ ...prev, [name]: value }))
+    }
+
+    const handleComboBox = (e: string) => {
+        console.log(e)
+        setComboBox(e)
     }
 
     return (
@@ -106,7 +106,7 @@ const CreateForm = () => {
                             <h1 className='text-[.9rem]'>Data Entries</h1>
                         </div>
                         {
-                            values.questions.map((item, i) => (
+                            values.items.map((item, i) => (
                                 <div key={i} className="flex justify-between items-center">
                                     <div className="w-full flex gap-2 items-center">
                                         <Input
@@ -117,10 +117,10 @@ const CreateForm = () => {
                                             placeholder='eg. What is the biggest country?'
                                             className='w-[70%]'
                                         />
-                                        <ComboBox
+                                        {/* <ComboBox
                                             title='Type'
                                             lists={Lists}
-                                        />
+                                        /> */}
                                     </div>
                                     <Button variant={`outline`} type='button'>
                                         Delete Row
@@ -128,24 +128,43 @@ const CreateForm = () => {
                                 </div>
                             ))
                         }
-                        <div className="flex justify-between items-center">
-                            <div className="w-full flex gap-2 items-center">
-                                <Input
-                                    value={shortanswer?.title}
-                                    onChange={handleOnChange}
-                                    name='title'
-                                    type='text'
-                                    placeholder='eg. What is the biggest country?'
-                                    className='w-[70%]' />
-                                <ComboBox
-                                    type={(item) => console.log(item)}
-                                    title='Type'
-                                    lists={Lists}
-                                />
+                        <div className="w-full flex flex-col gap-2 justify-center">
+                            <div className="w-full flex justify-between items-center">
+                                <div className="w-full flex gap-2 items-center">
+                                    <Input
+                                        name='question'
+                                        type='text'
+                                        placeholder='eg. What is the biggest country?'
+                                        className='w-[70%]'
+                                    />
+                                    <ComboBox
+                                        type={(item) => handleComboBox(item || '')}
+                                        title='Type'
+                                        lists={Lists}
+                                    />
+                                </div>
+                                <Button onClick={handleAddRow} variant={`outline`} type='button'>
+                                    Add Row
+                                </Button>
                             </div>
-                            <Button onClick={handleAddRow} variant={`outline`} type='button'>
-                                Add Row
-                            </Button>
+                            {
+                                isComboBox === 'shortanswer' ? (
+                                    <textarea
+                                        placeholder='Write your short answer here...'
+                                        className='w-[60%] px-2 py-2 bg-transparent outline-none border-b-[2px] border-black/50 placeholder:text-sm'
+                                        readOnly
+                                    />
+                                ) : null
+                            }
+                            {
+                                isComboBox === 'paragraph' ? (
+                                    <textarea
+                                        placeholder='Write your long answer here...'
+                                        className='w-[60%] px-2 py-2 bg-transparent outline-none border-b-[2px] border-black/50 placeholder:text-sm'
+                                        readOnly
+                                    />
+                                ) : null
+                            }
                         </div>
                     </div>
                 </div>
