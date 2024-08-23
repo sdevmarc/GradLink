@@ -52,7 +52,7 @@ export function ComboBox({ title, lists = [], type }: IFCChildren) {
                                     onSelect={(currentValue) => {
                                         setValue(currentValue === value ? "" : currentValue)
                                         setOpen(false)
-                                        type?.(currentValue)
+                                        type?.(currentValue === value ? '' : currentValue)
                                     }}
                                 >
                                     {item.label}
