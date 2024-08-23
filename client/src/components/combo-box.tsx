@@ -20,9 +20,8 @@ import {
 } from "@/components/ui/popover"
 import {  IFCChildren } from "@/interface"
 
-export function ComboBox({ title, lists = [], type }: IFCChildren) {
+export function ComboBox({ title, lists = [], type, value }: IFCChildren) {
     const [open, setOpen] = React.useState(false)
-    const [value, setValue] = React.useState("")
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -50,7 +49,7 @@ export function ComboBox({ title, lists = [], type }: IFCChildren) {
                                     key={item.value}
                                     value={item.value}
                                     onSelect={(currentValue) => {
-                                        setValue(currentValue === value ? "" : currentValue)
+                                        // setValue(currentValue === value ? "" : currentValue)
                                         setOpen(false)
                                         type?.(currentValue === value ? '' : currentValue)
                                     }}
