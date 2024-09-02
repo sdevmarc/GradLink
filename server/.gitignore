@@ -1,6 +1,8 @@
 # compiled output
 /dist
 /node_modules
+/gradlink.json
+/gradlink-433507-07f3fdf543d6.json
 /build
 
 # Logs
