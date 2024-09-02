@@ -61,6 +61,7 @@ interface IForm {
 
 const CreateForm = () => {
     const [isComboBox, setComboBox] = useState<string>('')
+    const [valuesoptions, setValuesOptions] = useState<{ [key: number]: string }>({})
     const [options, setOptions] = useState<string>('')
     const [questions, setQuestions] = useState<{ questionTitle: string, options: string[] }>({
         questionTitle: '',
@@ -139,6 +140,108 @@ const CreateForm = () => {
         }))
     }
 
+    const handleOnChangeValuesQuestionTitle = (index: number | undefined, e: string) => {
+        setValues((prev) => ({
+            ...prev,
+            item: prev.item.map((item, i) =>
+                i === index ? { ...item, questionTitle: e } : item
+            )
+        }))
+    }
+
+    const handleOnChangeValuesOptions = (itemIndex: number, optionIndex: number, newValue: string) => {
+        setValues((prev) => ({
+            ...prev,
+            item: prev.item.map((item, i) =>
+                i === itemIndex
+                    ? {
+                        ...item, options: item.options?.map((option, j) =>
+                            j === optionIndex ? newValue : option
+                        )
+                    } : item
+            )
+        }));
+    };
+
+    const handleValuesDeleteOption = (itemIndex: number, optionIndex: number) => {
+        setValues(prev => ({
+            ...prev,
+            item: prev.item.map((item, i) =>
+                i === itemIndex
+                    ? {
+                        ...item,
+                        options: item.options?.filter((_, j) => j !== optionIndex)
+                    }
+                    : item
+            )
+        }));
+    };
+
+    // const handleOnChangeValuesQuestionOptions = (itemIndex: number, newOption: string) => {
+    //     setValues(prev => ({
+    //         ...prev,
+    //         item: prev.item.map((item, i) =>
+    //             i === itemIndex
+    //                 ? {
+    //                     ...item,
+    //                     options: [...(item.options || []), newOption]
+    //                 }
+    //                 : item
+    //         )
+    //     }));
+    // };
+
+    const handleOnChangeValuesQuestionOptions = (index: number, e: string) => {
+        setValuesOptions(prev => ({
+            ...prev,
+            [index]: e
+        }))
+    }
+
+    const handleValuesAddOptions = (itemIndex: number) => {
+        setValues(prev => ({
+            ...prev,
+            item: prev.item.map((item, i) =>
+                i === itemIndex
+                    ? {
+                        ...item,
+                        options: item.options
+                            ? [
+                                ...item.options.slice(0, item.options.indexOf('Other...') !== -1 ? item.options.indexOf('Other...') : item.options.length),
+                                valuesoptions[i],
+                                ...(item.options.indexOf('Other...') !== -1 ? item.options.slice(item.options.indexOf('Other...')) : [])
+                            ]
+                            : [valuesoptions[i]]
+                    }
+                    : item
+            )
+        }));
+        setValuesOptions(prev => ({
+            ...prev,
+            [itemIndex]: ''
+        }));
+    };
+
+    const handleValuesAddOtherOption = (itemIndex: number) => {
+        setValues(prev => ({
+            ...prev,
+            item: prev.item.map((item, i) =>
+                i === itemIndex
+                    ? {
+                        ...item,
+                        options: item.options && !item.options.includes('Other...')
+                            ? [...item.options, 'Other...']
+                            : item.options || ['Other...']
+                    }
+                    : item
+            )
+        }));
+        setValuesOptions(prev => ({
+            ...prev,
+            [itemIndex]: ''
+        }));
+    };
+
     const handleAddOptions = () => {
         // if(options === '') return alert('Please fill-up the required fields first')
         setQuestions((prev) => {
@@ -164,14 +267,6 @@ const CreateForm = () => {
         });
         setOptions(''); // Clear the input field after adding the option
     };
-
-    // const handleAddOptions = () => {
-    //     setQuestions((prev) => ({
-    //         ...prev,
-    //         options: [...prev.options, options]
-    //     }))
-    //     setOptions('')
-    // }
 
     const handleDeleteOption = (index: number | undefined) => {
         setQuestions(prev => ({
@@ -244,7 +339,7 @@ const CreateForm = () => {
                                             <Input
                                                 name='questionTitle'
                                                 value={item?.questionTitle}
-                                                onChange={handleOnChangeQuestionTitle}
+                                                onChange={(e) => handleOnChangeValuesQuestionTitle(i, e.target.value)}
                                                 type='text'
                                                 placeholder='eg. What is the biggest country?'
                                                 className='w-[70%]'
@@ -276,6 +371,49 @@ const CreateForm = () => {
                                                 className='w-[60%] px-2 py-2 bg-transparent outline-none border-b-[2px] border-black/50 placeholder:text-sm'
                                                 readOnly
                                             />
+                                        )
+                                    }
+                                    {
+                                        item.type === 'multiplechoice' && (
+                                            <>
+                                                {
+                                                    item.options?.map((item, optionIndex) => (
+                                                        <div key={i} className="w-full flex items-center gap-4">
+                                                            <div className="w-[30%] px-4 py-1 flex items-center gap-2">
+                                                                <span className="w-6 h-5 inline-block mr-2 border-gray-300 border-[3px] rounded-full peer-checked:bg-blue-500 peer-checked:border-transparent peer-checked:ring-2 peer-checked:ring-blue-300 transition-all"></span>
+                                                                <input
+                                                                    key={optionIndex}
+                                                                    value={item}
+                                                                    onChange={(e) => handleOnChangeValuesOptions(i, optionIndex, e.target.value)}
+                                                                    type="text"
+                                                                    placeholder={item === 'Other...' ? 'Other...' : `eg. Option ${i + 1}`}
+                                                                    className={`w-full py-2 ${item === 'Other...' ? 'bg-transparent focus:border-blue-500 outline-none border-b-[2px] border-black/30 placeholder:text-sm text-sm' : 'hover:bg-blue-400/10 bg-transparent outline-none border-b-[2px] border-black/30 placeholder:text-sm text-sm'}`}
+                                                                    readOnly={item === 'Other...'}
+                                                                />
+                                                            </div>
+                                                            <X onClick={() => handleValuesDeleteOption(i, optionIndex)} size={20} className='hover:bg-black/20 cursor-pointer' />
+                                                        </div>
+                                                    ))
+                                                }
+                                                <div className="w-full flex items-center gap-2">
+                                                    <div className="w-[30%] px-4 py-4 flex items-center gap-2">
+                                                        <span className="w-6 h-5 inline-block mr-2 border-gray-300 border-[3px] rounded-full peer-checked:bg-blue-500 peer-checked:border-transparent peer-checked:ring-2 peer-checked:ring-blue-300 transition-all"></span>
+                                                        <input value={valuesoptions[i]} onChange={(e) => handleOnChangeValuesQuestionOptions(i, e.target.value)} type="text" placeholder='eg. Option 1' className='w-full hover:bg-blue-400/10 px-2 text-md bg-transparent outline-none border-b-[2px] border-black/50 placeholder:text-sm py-2' />
+                                                    </div>
+
+                                                    <div className="flex gap-2 items-center">
+                                                        {/* <input onClick={handleAddOptions} type="text" placeholder='Add option' className='w-[30%] hover:bg-blue-400/10 px-2 py-2 bg-transparent text-sm outline-none placeholder:text-sm border-b-[2px] border-black/50' readOnly /> */}
+                                                        <Button onClick={() => handleValuesAddOptions(i)} variant={`outline`} type='button'>
+                                                            Add option
+                                                        </Button>
+                                                        or
+                                                        <Button onClick={() => handleValuesAddOtherOption(i)} variant={`outline`} type='button'>
+                                                            add "Other"
+                                                        </Button>
+                                                    </div>
+                                                </div>
+
+                                            </>
                                         )
                                     }
                                 </div>
