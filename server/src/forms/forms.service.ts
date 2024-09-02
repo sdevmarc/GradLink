@@ -13,9 +13,9 @@ export class FormsService {
                 'https://www.googleapis.com/auth/forms.body',
                 'https://www.googleapis.com/auth/forms.responses.readonly'
             ],
-        });
+        })
 
-        this.forms = google.forms({ version: 'v1', auth });
+        this.forms = google.forms({ version: 'v1', auth })
     }
 
     async createForm(title: string, description: string): Promise<string> {
@@ -31,7 +31,7 @@ export class FormsService {
 
             return res.data.formId;
         } catch (error) {
-            console.error('Error creating form:', error);
+            console.error('Error creating form:', error)
             throw error;
         }
     }
