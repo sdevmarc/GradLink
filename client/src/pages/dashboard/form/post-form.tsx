@@ -342,18 +342,22 @@ const CreateForm = () => {
                                                 onChange={(e) => handleOnChangeValuesQuestionTitle(i, e.target.value)}
                                                 type='text'
                                                 placeholder='eg. What is the biggest country?'
-                                                className='w-[70%]'
+                                                className='w-[60%]'
                                             />
-                                            <ComboBox
-                                                type={(item) => handleOnChangeValuesComboBox(i, item || '')}
-                                                title='Type'
-                                                lists={Lists}
-                                                value={item.type}
-                                            />
+                                            <div className="flex items-center gap-2">
+                                                <ComboBox
+                                                    type={(item) => handleOnChangeValuesComboBox(i, item || '')}
+                                                    title='Type'
+                                                    lists={Lists}
+                                                    value={item.type}
+                                                />
+                                                <Button onClick={() => handleDeleteRow(i)} variant={`outline`} size={`sm`} type='button'>
+                                                    Delete Row
+                                                </Button>
+                                            </div>
+
                                         </div>
-                                        <Button onClick={() => handleDeleteRow(i)} variant={`outline`} type='button'>
-                                            Delete Row
-                                        </Button>
+
                                     </div>
                                     {
                                         item.type === 'shortanswer' && (
