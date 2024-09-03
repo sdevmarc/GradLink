@@ -1,7 +1,11 @@
 import mongoose from "mongoose";
 
 export const FormsSchema = new mongoose.Schema({
-    name: {
+    formId: {
+        type: String,
+        required: true
+    },
+    title: {
         type: String,
         required: true
     },

@@ -1,5 +1,6 @@
 import { Body, Controller, Get, InternalServerErrorException, NotFoundException, Param, Post } from '@nestjs/common';
 import { FormsService } from './forms.service';
+import { IForms } from './forms.interface';
 
 @Controller('forms')
 export class FormsController {
@@ -21,12 +22,11 @@ export class FormsController {
 
     @Post('create-form')
     async createForm(
-        @Body('title') title: string,
-        @Body('description') description: string
+        @Body() { title, description, items }: IForms
     ): Promise<string> {
-        return this.formsService.createForm(title, description);
+        return this.formsService.createFormWithQuestions({ title, description, items });
     }
-    
+
 
     @Post(':formId/add-short-answer-question')
     async addShortAnswerQuestion(
