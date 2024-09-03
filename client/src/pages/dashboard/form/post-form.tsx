@@ -378,7 +378,7 @@ const CreateForm = () => {
                                             <>
                                                 {
                                                     item.options?.map((item, optionIndex) => (
-                                                        <div key={i} className="w-full flex items-center gap-4">
+                                                        <div key={optionIndex} className="w-full flex items-center gap-4">
                                                             <div className="w-[30%] px-4 py-1 flex items-center gap-2">
                                                                 <span className="w-6 h-5 inline-block mr-2 border-gray-300 border-[3px] rounded-full peer-checked:bg-blue-500 peer-checked:border-transparent peer-checked:ring-2 peer-checked:ring-blue-300 transition-all"></span>
                                                                 <input
