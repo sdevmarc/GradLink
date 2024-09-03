@@ -1,1 +1,4 @@
-export interface Users {}
+export interface IUsers {
+    email: string
+    password: string
+}
