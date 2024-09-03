@@ -5,7 +5,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
 import { ComboBox } from '@/components/combo-box'
 import { Button } from '@/components/ui/button'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { X } from 'lucide-react';
 
 export default function PostForm() {
@@ -48,7 +48,7 @@ const Lists = [
 interface FormValues {
     type?: string
     questionTitle: string;
-    options?: string[]
+    options: string[]
 }
 
 interface IForm {
@@ -74,13 +74,10 @@ const CreateForm = () => {
         item: []
     })
 
-    const handleCreateForm = (e: React.ChangeEvent<HTMLInputElement>) => {
-
+    const handleCreateForm = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        console.log('From Create form button: ', values)
     }
-
-    useEffect(() => {
-        console.log(values)
-    }, [values])
 
     const handleAddRow = () => {
         if (isComboBox === '') return alert('Please include a type.')
@@ -176,20 +173,6 @@ const CreateForm = () => {
             )
         }));
     };
-
-    // const handleOnChangeValuesQuestionOptions = (itemIndex: number, newOption: string) => {
-    //     setValues(prev => ({
-    //         ...prev,
-    //         item: prev.item.map((item, i) =>
-    //             i === itemIndex
-    //                 ? {
-    //                     ...item,
-    //                     options: [...(item.options || []), newOption]
-    //                 }
-    //                 : item
-    //         )
-    //     }));
-    // };
 
     const handleOnChangeValuesQuestionOptions = (index: number, e: string) => {
         setValuesOptions(prev => ({
@@ -304,11 +287,15 @@ const CreateForm = () => {
 
     const handleOnChangeComboBox = (e: string) => {
         setComboBox(e)
+        setQuestions(prev => ({
+            ...prev,
+            options: []
+        }))
     }
 
     return (
         <>
-            <form className="w-[80%] flex flex-col justify-between rounded-lg border">
+            <form onSubmit={handleCreateForm} className="w-[80%] flex flex-col justify-between rounded-lg border">
                 <div className="w-full px-4 py-3 border-b">
                     <h1 className='text-text font-semibold text-lg'>Configure Form</h1>
                 </div>
@@ -378,6 +365,15 @@ const CreateForm = () => {
                                         )
                                     }
                                     {
+                                        item.type === 'date' && (
+                                            <div className="w-full flex items-center gap-2">
+                                                <h1 className='text-md font-normal'>Date: </h1>
+                                                <input type="date" readOnly className='text-center w-[25%] px-2 py-2 rounded-md border border-black/20 text-muted outline-none' />
+                                            </div>
+
+                                        )
+                                    }
+                                    {
                                         item.type === 'multiplechoice' && (
                                             <>
                                                 {
@@ -402,6 +398,92 @@ const CreateForm = () => {
                                                 <div className="w-full flex items-center gap-2">
                                                     <div className="w-[30%] px-4 py-4 flex items-center gap-2">
                                                         <span className="w-6 h-5 inline-block mr-2 border-gray-300 border-[3px] rounded-full peer-checked:bg-blue-500 peer-checked:border-transparent peer-checked:ring-2 peer-checked:ring-blue-300 transition-all"></span>
+                                                        <input value={valuesoptions[i]} onChange={(e) => handleOnChangeValuesQuestionOptions(i, e.target.value)} type="text" placeholder='eg. Option 1' className='w-full hover:bg-blue-400/10 px-2 text-md bg-transparent outline-none border-b-[2px] border-black/50 placeholder:text-sm py-2' />
+                                                    </div>
+
+                                                    <div className="flex gap-2 items-center">
+                                                        {/* <input onClick={handleAddOptions} type="text" placeholder='Add option' className='w-[30%] hover:bg-blue-400/10 px-2 py-2 bg-transparent text-sm outline-none placeholder:text-sm border-b-[2px] border-black/50' readOnly /> */}
+                                                        <Button onClick={() => handleValuesAddOptions(i)} variant={`outline`} type='button'>
+                                                            Add option
+                                                        </Button>
+                                                        or
+                                                        <Button onClick={() => handleValuesAddOtherOption(i)} variant={`outline`} type='button'>
+                                                            add "Other"
+                                                        </Button>
+                                                    </div>
+                                                </div>
+
+                                            </>
+                                        )
+                                    }
+                                    {
+                                        item.type === 'dropdown' && (
+                                            <>
+                                                {
+                                                    item.options?.map((item, optionIndex) => (
+                                                        <div key={optionIndex} className="w-full flex items-center gap-4">
+                                                            <div className="w-[30%] px-4 py-1 flex items-center gap-2">
+                                                                <span className='text-sm'>{optionIndex + 1}.</span>
+                                                                <input
+                                                                    key={optionIndex}
+                                                                    value={item}
+                                                                    onChange={(e) => handleOnChangeValuesOptions(i, optionIndex, e.target.value)}
+                                                                    type="text"
+                                                                    placeholder={item === 'Other...' ? 'Other...' : `eg. Option ${optionIndex + 1}`}
+                                                                    className={`w-full py-2 ${item === 'Other...' ? 'bg-transparent focus:border-blue-500 outline-none border-b-[2px] border-black/30 placeholder:text-sm text-sm' : 'hover:bg-blue-400/10 bg-transparent outline-none border-b-[2px] border-black/30 placeholder:text-sm text-sm'}`}
+                                                                    readOnly={item === 'Other...'}
+                                                                />
+                                                            </div>
+                                                            <X onClick={() => handleValuesDeleteOption(i, optionIndex)} size={20} className='hover:bg-black/20 cursor-pointer' />
+                                                        </div>
+                                                    ))
+                                                }
+                                                <div className="w-full flex items-center gap-2">
+                                                    <div className="w-[30%] px-4 py-4 flex items-center gap-2">
+                                                        <span className='text-sm'>{item.options?.length + 1}.</span>
+                                                        <input value={valuesoptions[i]} onChange={(e) => handleOnChangeValuesQuestionOptions(i, e.target.value)} type="text" placeholder={`eg. Option ${item.options.length + 1}`} className='w-full hover:bg-blue-400/10 px-2 text-md bg-transparent outline-none border-b-[2px] border-black/50 placeholder:text-sm py-2' />
+                                                    </div>
+
+                                                    <div className="flex gap-2 items-center">
+                                                        {/* <input onClick={handleAddOptions} type="text" placeholder='Add option' className='w-[30%] hover:bg-blue-400/10 px-2 py-2 bg-transparent text-sm outline-none placeholder:text-sm border-b-[2px] border-black/50' readOnly /> */}
+                                                        <Button onClick={() => handleValuesAddOptions(i)} variant={`outline`} type='button'>
+                                                            Add option
+                                                        </Button>
+                                                        {/* or
+                                                        <Button onClick={() => handleValuesAddOtherOption(i)} variant={`outline`} type='button'>
+                                                            add "Other"
+                                                        </Button> */}
+                                                    </div>
+                                                </div>
+
+                                            </>
+                                        )
+                                    }
+                                    {
+                                        item.type === 'checkbox' && (
+                                            <>
+                                                {
+                                                    item.options?.map((item, optionIndex) => (
+                                                        <div key={optionIndex} className="w-full flex items-center gap-4">
+                                                            <div className="w-[30%] px-4 py-1 flex items-center gap-2">
+                                                                <span className="w-6 h-5 inline-block mr-2 border-gray-300 border-[3px] peer-checked:bg-blue-500 peer-checked:border-transparent peer-checked:ring-2 peer-checked:ring-blue-300 transition-all"></span>
+                                                                <input
+                                                                    key={optionIndex}
+                                                                    value={item}
+                                                                    onChange={(e) => handleOnChangeValuesOptions(i, optionIndex, e.target.value)}
+                                                                    type="text"
+                                                                    placeholder={item === 'Other...' ? 'Other...' : `eg. Option ${i + 1}`}
+                                                                    className={`w-full py-2 ${item === 'Other...' ? 'bg-transparent focus:border-blue-500 outline-none border-b-[2px] border-black/30 placeholder:text-sm text-sm' : 'hover:bg-blue-400/10 bg-transparent outline-none border-b-[2px] border-black/30 placeholder:text-sm text-sm'}`}
+                                                                    readOnly={item === 'Other...'}
+                                                                />
+                                                            </div>
+                                                            <X onClick={() => handleValuesDeleteOption(i, optionIndex)} size={20} className='hover:bg-black/20 cursor-pointer' />
+                                                        </div>
+                                                    ))
+                                                }
+                                                <div className="w-full flex items-center gap-2">
+                                                    <div className="w-[30%] px-4 py-4 flex items-center gap-2">
+                                                        <span className="w-6 h-5 inline-block mr-2 border-gray-300 border-[3px] peer-checked:bg-blue-500 peer-checked:border-transparent peer-checked:ring-2 peer-checked:ring-blue-300 transition-all"></span>
                                                         <input value={valuesoptions[i]} onChange={(e) => handleOnChangeValuesQuestionOptions(i, e.target.value)} type="text" placeholder='eg. Option 1' className='w-full hover:bg-blue-400/10 px-2 text-md bg-transparent outline-none border-b-[2px] border-black/50 placeholder:text-sm py-2' />
                                                     </div>
 
@@ -464,6 +546,15 @@ const CreateForm = () => {
                                 )
                             }
                             {
+                                isComboBox === 'date' && (
+                                    <div className="w-full flex items-center gap-2">
+                                        <h1 className='text-md font-normal'>Date: </h1>
+                                        <input type="date" readOnly className='text-center w-[25%] px-2 py-2 rounded-md border border-black/20 text-muted outline-none' />
+                                    </div>
+
+                                )
+                            }
+                            {
                                 isComboBox === 'multiplechoice' && (
                                     <>
                                         {
@@ -487,7 +578,7 @@ const CreateForm = () => {
                                         <div className="w-full flex items-center gap-2">
                                             <div className="w-[30%] px-4 py-4 flex items-center gap-2">
                                                 <span className="w-6 h-5 inline-block mr-2 border-gray-300 border-[3px] rounded-full peer-checked:bg-blue-500 peer-checked:border-transparent peer-checked:ring-2 peer-checked:ring-blue-300 transition-all"></span>
-                                                <input value={options} onChange={handleOnChangeQuestionOptions} type="text" placeholder='eg. Option 1' className='w-full hover:bg-blue-400/10 px-2 text-md bg-transparent outline-none border-b-[2px] border-black/50 placeholder:text-sm py-2' />
+                                                <input value={options} onChange={handleOnChangeQuestionOptions} type="text" placeholder={`eg. Option ${questions.options.length + 1}`} className='w-full hover:bg-blue-400/10 px-2 text-md bg-transparent outline-none border-b-[2px] border-black/50 placeholder:text-sm py-2' />
                                             </div>
 
                                             <div className="flex gap-2 items-center">
@@ -499,6 +590,90 @@ const CreateForm = () => {
                                                 <Button onClick={handleAddOtherOption} variant={`outline`} type='button'>
                                                     add "Other"
                                                 </Button>
+                                            </div>
+                                        </div>
+
+                                    </>
+                                )
+                            }
+                            {
+                                isComboBox === 'dropdown' && (
+                                    <>
+                                        {
+                                            questions.options?.map((item, i) => (
+                                                <div key={i} className="w-full flex items-center gap-4">
+                                                    <div className="w-[30%] px-4 py-1 flex items-center gap-2">
+                                                        <span className='text-sm'>{i + 1}.</span>
+                                                        <input
+                                                            value={item}
+                                                            onChange={(e) => handleOnChangeReadyQuestionOptions(i, e.target.value)}
+                                                            type="text"
+                                                            placeholder={item === 'Other...' ? 'Other...' : `eg. Option ${i + 1}`}
+                                                            className={`w-full py-2 ${item === 'Other...' ? 'bg-transparent focus:border-blue-500 outline-none border-b-[2px] border-black/30 placeholder:text-sm text-sm' : 'hover:bg-blue-400/10 bg-transparent outline-none border-b-[2px] border-black/30 placeholder:text-sm text-sm'}`}
+                                                            readOnly={item === 'Other...'} // Make the "Other..." option read-only
+                                                        />
+                                                    </div>
+                                                    <X onClick={() => handleDeleteOption(i)} size={20} className='hover:bg-black/20 cursor-pointer' />
+                                                </div>
+                                            ))
+                                        }
+                                        <div className="w-full flex items-center gap-2">
+                                            <div className="w-[30%] px-4 py-4 flex items-center gap-2">
+                                                <span className='text-sm'>{questions.options.length + 1}.</span>
+                                                <input value={options} onChange={handleOnChangeQuestionOptions} type="text" placeholder={`eg. Option ${questions.options.length + 1}`} className='w-full hover:bg-blue-400/10 px-2 text-md bg-transparent outline-none border-b-[2px] border-black/50 placeholder:text-sm py-2' />
+                                            </div>
+
+                                            <div className="flex gap-2 items-center">
+                                                {/* <input onClick={handleAddOptions} type="text" placeholder='Add option' className='w-[30%] hover:bg-blue-400/10 px-2 py-2 bg-transparent text-sm outline-none placeholder:text-sm border-b-[2px] border-black/50' readOnly /> */}
+                                                <Button onClick={handleAddOptions} variant={`outline`} type='button'>
+                                                    Add option
+                                                </Button>
+                                                {/* or
+                                                <Button onClick={handleAddOtherOption} variant={`outline`} type='button'>
+                                                    add "Other"
+                                                </Button> */}
+                                            </div>
+                                        </div>
+
+                                    </>
+                                )
+                            }
+                            {
+                                isComboBox === 'checkbox' && (
+                                    <>
+                                        {
+                                            questions.options?.map((item, i) => (
+                                                <div key={i} className="w-full flex items-center gap-4">
+                                                    <div className="w-[30%] px-4 py-1 flex items-center gap-2">
+                                                        <span className="w-6 h-5 inline-block mr-2 border-gray-300 border-[3px] peer-checked:bg-blue-500 peer-checked:border-transparent peer-checked:ring-2 peer-checked:ring-blue-300 transition-all"></span>
+                                                        <input
+                                                            value={item}
+                                                            onChange={(e) => handleOnChangeReadyQuestionOptions(i, e.target.value)}
+                                                            type="text"
+                                                            placeholder={item === 'Other...' ? 'Other...' : `eg. Option ${i + 1}`}
+                                                            className={`w-full py-2 ${item === 'Other...' ? 'bg-transparent focus:border-blue-500 outline-none border-b-[2px] border-black/30 placeholder:text-sm text-sm' : 'hover:bg-blue-400/10 bg-transparent outline-none border-b-[2px] border-black/30 placeholder:text-sm text-sm'}`}
+                                                            readOnly={item === 'Other...'} // Make the "Other..." option read-only
+                                                        />
+                                                    </div>
+                                                    <X onClick={() => handleDeleteOption(i)} size={20} className='hover:bg-black/20 cursor-pointer' />
+                                                </div>
+                                            ))
+                                        }
+                                        <div className="w-full flex items-center gap-2">
+                                            <div className="w-[30%] px-4 py-4 flex items-center gap-2">
+                                                <span className="w-6 h-5 inline-block mr-2 border-gray-300 border-[3px] peer-checked:bg-blue-500 peer-checked:border-transparent peer-checked:ring-2 peer-checked:ring-blue-300 transition-all"></span>
+                                                <input value={options} onChange={handleOnChangeQuestionOptions} type="text" placeholder={`eg. Option ${questions.options.length + 1}`} className='w-full hover:bg-blue-400/10 px-2 text-md bg-transparent outline-none border-b-[2px] border-black/50 placeholder:text-sm py-2' />
+                                            </div>
+
+                                            <div className="flex gap-2 items-center">
+                                                {/* <input onClick={handleAddOptions} type="text" placeholder='Add option' className='w-[30%] hover:bg-blue-400/10 px-2 py-2 bg-transparent text-sm outline-none placeholder:text-sm border-b-[2px] border-black/50' readOnly /> */}
+                                                <Button onClick={handleAddOptions} variant={`outline`} type='button'>
+                                                    Add option
+                                                </Button>
+                                                {/* or
+                                                <Button onClick={handleAddOtherOption} variant={`outline`} type='button'>
+                                                    add "Other"
+                                                </Button> */}
                                             </div>
                                         </div>
 
