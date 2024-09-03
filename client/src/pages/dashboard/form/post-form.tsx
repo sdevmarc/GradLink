@@ -367,7 +367,7 @@ const CreateForm = () => {
                                     {
                                         item.type === 'date' && (
                                             <div className="w-full flex items-center gap-2">
-                                                <h1 className='text-md font-normal'>Date: </h1>
+                                                <h1 className='text-sm font-normal'>Date: </h1>
                                                 <input type="date" readOnly className='text-center w-[25%] px-2 py-2 rounded-md border border-black/20 text-muted outline-none' />
                                             </div>
 
@@ -548,7 +548,7 @@ const CreateForm = () => {
                             {
                                 isComboBox === 'date' && (
                                     <div className="w-full flex items-center gap-2">
-                                        <h1 className='text-md font-normal'>Date: </h1>
+                                        <h1 className='text-sm font-normal'>Date: </h1>
                                         <input type="date" readOnly className='text-center w-[25%] px-2 py-2 rounded-md border border-black/20 text-muted outline-none' />
                                     </div>
 
