@@ -41,15 +41,31 @@ export class UsersService {
         }
     }
 
-    async InsertUser({ email, password }: IUsers)
+    async InsertFirstUser({ email, password }: IUsers)
+    : Promise<IPromiseUser> {
+    try {
+        const isemail = await this.UserModel.findOne({ email })
+        if (isemail) return { success: false, message: 'User email already exists.' }
+
+        let role: string
+        const hasusers = await this.UserModel.find()
+        hasusers.length <= 0 ? role = 'admin' : role = 'user'
+
+        const salt = await bcrypt.genSalt();
+        const hashedpassword = await bcrypt.hash(password, salt);
+
+        await this.UserModel.create({ email, password: hashedpassword, role })
+        return { success: true, message: 'User successfully created.' }
+    } catch (error) {
+        throw new HttpException({ success: false, message: 'User failed to create.' }, HttpStatus.BAD_REQUEST)
+    }
+}
+
+    async InsertUser({ email, password, role }: IUsers)
         : Promise<IPromiseUser> {
         try {
             const isemail = await this.UserModel.findOne({ email })
             if (isemail) return { success: false, message: 'User email already exists.' }
-
-            let role: string
-            const hasusers = await this.UserModel.find()
-            hasusers.length <= 0 ? role = 'admin' : role = 'user'
 
             const salt = await bcrypt.genSalt();
             const hashedpassword = await bcrypt.hash(password, salt);
