@@ -11,4 +11,5 @@ export interface IPromiseUser {
     message: string
     role?: string
     data?: IUsers[] | {} | ''
+    access_token?: {}
 }
