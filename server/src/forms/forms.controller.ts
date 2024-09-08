@@ -23,7 +23,7 @@ export class FormsController {
     @Post('create-form')
     async createForm(
         @Body() { title, description, items }: IForms
-    ): Promise<string> {
+    ) {
         return this.formsService.createFormWithQuestions({ title, description, items });
     }
 
