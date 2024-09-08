@@ -3,11 +3,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { IUsers, IPromiseUser } from './users.interface';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UsersService {
     constructor(
-        @InjectModel('User') private readonly UserModel: Model<IUsers>
+        @InjectModel('User') private readonly UserModel: Model<IUsers>,
+        private jwtService: JwtService
     ) { }
 
     async GetRole({ id }: IUsers)
@@ -86,7 +88,10 @@ export class UsersService {
             const ispassword = await bcrypt.compare(password, isemail.password);
 
             if (!ispassword) return { success: false, message: 'Password is incorrect.' }
-            return { success: true, message: 'Logged in successful.', }
+            const payload = { sub: isemail._id }
+            const access_token = await this.jwtService.signAsync(payload)
+            
+            return { success: true, message: 'Logged in successful.', access_token }
         } catch (error) {
             throw new HttpException({ success: false, message: 'User failed to login.' }, HttpStatus.BAD_REQUEST)
         }
