@@ -10,5 +10,5 @@ export interface IPromiseUser {
     success: boolean
     message: string
     role?: string
-    data?: IUsers[] | {}
+    data?: IUsers[] | {} | ''
 }
