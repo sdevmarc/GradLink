@@ -67,7 +67,7 @@ export class FormsService {
                 },
             });
 
-            return {success: true, message: 'Form created successfully', data: res.data};
+            return { success: true, message: 'Form created successfully', data: res.data };
         } catch (error) {
             console.error('Error creating form:', error);
             throw error;
