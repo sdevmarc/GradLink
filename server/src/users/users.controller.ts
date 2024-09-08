@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { IUsers } from './users.interface';
 
@@ -7,6 +7,18 @@ export class UsersController {
     constructor(
         private readonly usersService: UsersService
     ) { }
+
+    @Get()
+    async FindAllUsers() {
+        return this.usersService.findAll()
+    }
+
+    @Get(':email')
+    async FindOneUser(
+        @Param() { email }: IUsers
+    ) {
+        return this.usersService.findOne({ email })
+    }
 
     @Post('create-first-user')
     async CreateFirstUser(
