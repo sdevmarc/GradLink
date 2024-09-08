@@ -32,7 +32,8 @@ export class FormsService {
         }
     }
 
-    async createFormWithQuestions({ title, description, items }: IForms): Promise<string> {
+    async createFormWithQuestions({ title, description, items }: IForms)
+        : Promise<{ success: boolean, message: string, data: {} }> {
         try {
             // Step 1: Create the form with only the title
             const res = await this.forms.forms.create({
@@ -43,8 +44,6 @@ export class FormsService {
                 },
             });
             const formId = res.data.formId;
-            const asd = res.data;
-            console.log(asd)
 
             // Step 2: Update the form to add description and questions
             const requests: forms_v1.Schema$Request[] = [
@@ -68,7 +67,7 @@ export class FormsService {
                 },
             });
 
-            return formId;
+            return {success: true, message: 'Form created successfully', data: res.data};
         } catch (error) {
             console.error('Error creating form:', error);
             throw error;
