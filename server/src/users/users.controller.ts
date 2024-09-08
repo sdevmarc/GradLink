@@ -8,11 +8,18 @@ export class UsersController {
         private readonly usersService: UsersService
     ) { }
 
-    @Post('create-user')
-    async CreateUser(
+    @Post('create-first-user')
+    async CreateFirstUser(
         @Body() { email, password }: IUsers
     ) {
-        return await this.usersService.InsertUser({ email, password })
+        return await this.usersService.InsertFirstUser({ email, password })
+    }
+
+    @Post('create-user')
+    async CreateUser(
+        @Body() { email, password, role }: IUsers
+    ) {
+        return await this.usersService.InsertFirstUser({ email, password, role })
     }
 
     @Post('login-user')
