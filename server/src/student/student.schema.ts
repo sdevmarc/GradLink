@@ -1,14 +1,31 @@
 import mongoose from "mongoose";
 
 export const StudentSchema = new mongoose.Schema({
-    generalInformation: [],
-    educationalBackground: [],
-    trainingAdvanceStudies: [],
+    generalInformation: {},
+    educationalBackground: {},
+    trainingAdvanceStudies: {},
+    programs: [{
+        code: {
+            type: String,
+            required: true
+        },
+        course: [{
+            courseno: {
+                type: String,
+                required: true
+            },
+            units: {
+                type: Number,
+                required: true,
+                default: 0
+            }
+        }]
+    }],
     status: {
         type: String,
         required: true,
-        enum: ['alumni', 'graduate'],
-        default: 'alumni'
+        enum: ['student', 'alumni'],
+        default: 'student'
     },
     progress: {
         type: String,
