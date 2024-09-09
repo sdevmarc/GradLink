@@ -6,6 +6,11 @@ import { IForms } from './forms.interface';
 export class FormsController {
     constructor(private readonly formsService: FormsService) { }
 
+    @Get('form-struc')
+    async GetStruc() {
+        return this.formsService.getFormStructure('1GBRCSSyOXHKGGPViAha96nSVgRgv40YJmn7f9DVF4do')
+    }
+
     @Get(':formId/responses')
     async getResponses(@Param('formId') formId: string) {
         try {
