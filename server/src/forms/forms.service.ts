@@ -19,6 +19,25 @@ export class FormsService {
         this.forms = google.forms({ version: 'v1', auth })
     }
 
+    async getFormStructure(formId: string): Promise<any> {
+        try {
+            const res = await this.forms.forms.get({
+                formId,
+            });
+
+            // Map each form item to the questionId and its title
+            return res.data.items
+                .filter(item => item.questionItem)  // Filter to get only question items
+                .map((item) => ({
+                    questionId: item.questionItem?.question?.questionId,
+                    title: item.title || item.questionItem?.question?.textQuestion || 'Untitled Question',
+                }));
+        } catch (error) {
+            console.error('Error retrieving form structure:', error);
+            throw error;
+        }
+    }
+
     async getAllResponses(formId: string): Promise<any> {
         try {
             const res = await this.forms.forms.responses.list({
@@ -141,8 +160,9 @@ Thank you for your time!`,
                         questionItem: {
                             question: {
                                 required: item.required  // Use the required field from IFormValues
-                            },
+                            }
                         },
+                        questionGroupItem: null
                     },
                     location: {
                         index: startIndex + index,
@@ -169,7 +189,10 @@ Thank you for your time!`,
                     createItemRequest.createItem.item.questionItem.question = {
                         choiceQuestion: {
                             type: 'RADIO',
-                            options: (item.options || []).map(option => ({ value: option })),
+                            options: [
+                                ...(item.options || []).map(option => ({ value: option })),
+                                { isOther: true }
+                            ]
                         },
                         required: item.required
                     };
@@ -178,7 +201,10 @@ Thank you for your time!`,
                     createItemRequest.createItem.item.questionItem.question = {
                         choiceQuestion: {
                             type: 'CHECKBOX',
-                            options: (item.options || []).map(option => ({ value: option })),
+                            options: [
+                                ...(item.options || []).map(option => ({ value: option })),
+                                { isOther: true }
+                            ]
                         },
                         required: item.required
                     };
@@ -201,6 +227,36 @@ Thank you for your time!`,
                         required: item.required
                     };
                     break;
+                case 'grid':
+                    if (!item.grid) {
+                        throw new Error('Grid question must have row and column labels');
+                    }
+                    const gridRequest: forms_v1.Schema$Request = {
+                        createItem: {
+                            item: {
+                                title: item.questionTitle,
+                                questionGroupItem: {
+                                    grid: {
+                                        columns: {
+                                            type: 'RADIO',
+                                            options: (item.grid.columnLabels || []).map(column => ({ value: column })),
+                                        },
+                                        shuffleQuestions: false,
+                                    },
+                                    questions: (item.grid.rowLabels || []).map(row => ({
+                                        rowQuestion: {
+                                            title: row,
+                                        },
+                                    })),
+                                },
+                            },
+                            location: {
+                                index: startIndex + index,
+                            },
+                        },
+                    };
+                    return gridRequest;
+
                 default:
                     throw new Error(`Unsupported question type: ${item.type}`);
             }
