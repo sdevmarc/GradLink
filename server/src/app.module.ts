@@ -11,6 +11,7 @@ import { OtpModule } from './otp/otp.module';
 import { AuditlogModule } from './auditlog/auditlog.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ProgramsModule } from './programs/programs.module';
+import { CoursesModule } from './courses/courses.module';
 
 @Module({
     imports: [
@@ -30,6 +31,7 @@ import { ProgramsModule } from './programs/programs.module';
         OtpModule,
         AuditlogModule,
         ProgramsModule,
+        CoursesModule,
     ],
     controllers: [AppController],
     providers: [AppService, AuditlogService, OtpService],
