@@ -12,6 +12,7 @@ import { AuditlogModule } from './auditlog/auditlog.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ProgramsModule } from './programs/programs.module';
 import { CoursesModule } from './courses/courses.module';
+import { FormsModule } from './forms/forms.module';
 
 @Module({
     imports: [
@@ -32,6 +33,7 @@ import { CoursesModule } from './courses/courses.module';
         AuditlogModule,
         ProgramsModule,
         CoursesModule,
+        FormsModule,
     ],
     controllers: [AppController],
     providers: [AppService, AuditlogService, OtpService],
