@@ -3,6 +3,11 @@ export interface IFormValues {
     questionTitle: string;
     options?: string[];
     required?: boolean;
+    grid?: {
+        columnLabels: string[];
+        rowLabels: string[];
+    };
+    isother?: boolean;
 }
 
 export interface IForms {
