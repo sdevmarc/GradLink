@@ -146,7 +146,7 @@ export class FormsService {
                         } else {
                             mappedAnswer = this.getAnswerValue(answer, question.type);
                         }
-                        console.log(mappedAnswer)
+                        
                         mappedSection.answers.push({
                             index: overallIndex++,
                             question: question.title,
