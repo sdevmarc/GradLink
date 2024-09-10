@@ -26,12 +26,13 @@ export class FormsService {
             });
 
             // Map each form item to the questionId and its title
-            return res.data.items
+            const data = res.data.items
                 .filter(item => item.questionItem)  // Filter to get only question items
                 .map((item) => ({
                     questionId: item.questionItem?.question?.questionId,
                     title: item.title || item.questionItem?.question?.textQuestion || 'Untitled Question',
                 }));
+            return data
         } catch (error) {
             console.error('Error retrieving form structure:', error);
             throw error;
@@ -48,6 +49,34 @@ export class FormsService {
             return res.data; // Contains the list of all responses
         } catch (error) {
             console.error('Error retrieving responses:', error);
+            throw error;
+        }
+    }
+
+    async mapQuestionsToAnswers(formId: string): Promise<any> {
+        try {
+            const formStructure = await this.getFormStructure(formId);
+            const responses = await this.getAllResponses(formId);
+
+            const mappedResponses = responses.responses.map((response) => {
+                const mappedAnswers = formStructure.map((question) => {
+                    const answer = response.answers[question.questionId];
+                    return {
+                        question: question.title,
+                        answer: answer?.textAnswers?.answers[0]?.value || 'No answer provided',
+                    };
+                });
+
+                return {
+                    responseId: response.responseId,
+                    createTime: response.createTime,
+                    answers: mappedAnswers,
+                };
+            });
+
+            return mappedResponses;
+        } catch (error) {
+            console.error('Error mapping questions to answers:', error);
             throw error;
         }
     }
