@@ -33,9 +33,21 @@ export interface FormResponse {
     };
 }
 
+export interface Question {
+    questionId: string;
+    title: string;
+    type: string;
+    options?: string[];
+}
+
+export interface GridQuestion extends Question {
+    rowQuestions: Question[];
+}
+
+
 interface FormSection {
     description?: string;
-    questions: Array<{ questionId: string; title: string }>;
+    questions: (Question | GridQuestion)[];
 }
 
 export interface FormStructure {
@@ -47,7 +59,8 @@ export interface FormStructure {
 interface MappedAnswer {
     index: number;
     question: string;
-    answer: string;
+    answer: string | { [row: string]: string };
+    type: string;
 }
 
 export interface MappedSection {
