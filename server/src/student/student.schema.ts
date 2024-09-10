@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 
 export const StudentSchema = new mongoose.Schema({
+    idNumber: {
+        type: String,
+        required: true
+    },
     generalInformation: {},
     educationalBackground: {},
     trainingAdvanceStudies: {},
