@@ -1,13 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { google, forms_v1 } from 'googleapis';
 import { ConfigService } from '@nestjs/config';
-import { IForms, IFormValues, IPromiseForms } from './forms.interface';
+import { FormStructure, IForms, IFormValues, IPromiseForms, MappedResponse, MappedSection } from './forms.interface';
+
+
 
 @Injectable()
 export class FormsService {
     private forms: forms_v1.Forms
 
-    constructor(private configService: ConfigService) {
+    constructor(
+        private configService: ConfigService
+    ) {
         const auth = new google.auth.GoogleAuth({
             keyFile: this.configService.get<string>('GOOGLE_APPLICATION_CREDENTIALS'),
             scopes: [
@@ -19,26 +23,48 @@ export class FormsService {
         this.forms = google.forms({ version: 'v1', auth })
     }
 
-    async getFormStructure(formId: string): Promise<any> {
+    async getFormStructure(formId: string): Promise<FormStructure> {
         try {
             const res = await this.forms.forms.get({
                 formId,
             });
 
-            // Map each form item to the questionId and its title
-            const data = res.data.items
-                .filter(item => item.questionItem)  // Filter to get only question items
-                .map((item) => ({
-                    questionId: item.questionItem?.question?.questionId,
-                    title: item.title || item.questionItem?.question?.textQuestion || 'Untitled Question',
-                }));
-            return data
+            const formItems = res.data.items || [];
+
+            let currentSection: keyof FormStructure = 'generalInformation';
+
+            const structure: FormStructure = {
+                generalInformation: { questions: [] },
+                educationalBackground: { questions: [] },
+                trainingAdvanceStudies: { questions: [] }
+            };
+
+            formItems.forEach((item) => {
+                if (item.pageBreakItem) {
+                    switch (item.title) {
+                        case 'EDUCATIONAL BACKGROUND':
+                            currentSection = 'educationalBackground';
+                            structure[currentSection].description = item.description || '';
+                            break;
+                        case 'TRAINING(S) ADVANCE STUDIES ATTENDED AFTER COLLEGE':
+                            currentSection = 'trainingAdvanceStudies';
+                            structure[currentSection].description = item.description || '';
+                            break;
+                    }
+                } else if (item.questionItem || item.questionGroupItem) {
+                    const questionId = item.questionItem?.question?.questionId || item.itemId;
+                    const title = item.title || 'Untitled Question';
+                    structure[currentSection].questions.push({ questionId, title });
+                }
+            });
+
+            return structure;
+
         } catch (error) {
             console.error('Error retrieving form structure:', error);
             throw error;
         }
     }
-
 
     async getAllResponses(formId: string): Promise<any> {
         try {
@@ -53,25 +79,36 @@ export class FormsService {
         }
     }
 
-    async mapQuestionsToAnswers(formId: string): Promise<any> {
+    async mapQuestionsToAnswers(formId: string): Promise<MappedResponse[]> {
         try {
             const formStructure = await this.getFormStructure(formId);
             const responses = await this.getAllResponses(formId);
 
-            const mappedResponses = responses.responses.map((response) => {
-                const mappedAnswers = formStructure.map((question) => {
-                    const answer = response.answers[question.questionId];
-                    return {
-                        question: question.title,
-                        answer: answer?.textAnswers?.answers[0]?.value || 'No answer provided',
-                    };
-                });
-
-                return {
+            const mappedResponses: MappedResponse[] = responses.responses.map((response) => {
+                let overallIndex = 1;
+                const mappedResponse: MappedResponse = {
                     responseId: response.responseId,
                     createTime: response.createTime,
-                    answers: mappedAnswers,
+                    generalInformation: { title: 'GENERAL INFORMATION', answers: [] },
+                    educationalBackground: { title: 'EDUCATIONAL BACKGROUND', answers: [] },
+                    trainingAdvanceStudies: { title: 'TRAINING(S) ADVANCE STUDIES ATTENDED AFTER COLLEGE', answers: [] },
                 };
+
+                for (const [sectionKey, section] of Object.entries(formStructure)) {
+                    const mappedSection = mappedResponse[sectionKey as keyof MappedResponse] as MappedSection;
+                    mappedSection.description = section.description;
+
+                    for (const question of section.questions) {
+                        const answer = response.answers[question.questionId];
+                        mappedSection.answers.push({
+                            index: overallIndex++,
+                            question: question.title,
+                            answer: answer?.textAnswers?.answers[0]?.value || 'No answer provided',
+                        });
+                    }
+                }
+
+                return mappedResponse;
             });
 
             return mappedResponses;
