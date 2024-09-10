@@ -9,12 +9,12 @@ export class FormsController {
     @Get('form-struc')
     async GetStruc()
         : Promise<FormStructure> {
-        return this.formsService.getFormStructure('14yw3zUJGQEsnBGb99uDATykbutGCuJJsFLyUV4IgxEs')
+        return this.formsService.getFormStructure('1UCIOGSaRCK4Nja8LZiLzEmloWGovjer9mpgc1g9w-S4')
     }
 
     @Get('form-mapped')
     async GetMappedQuestions() {
-        return this.formsService.mapQuestionsToAnswers('14yw3zUJGQEsnBGb99uDATykbutGCuJJsFLyUV4IgxEs')
+        return this.formsService.mapQuestionsToAnswers('1UCIOGSaRCK4Nja8LZiLzEmloWGovjer9mpgc1g9w-S4')
     }
 
     @Get(':formId/responses')
