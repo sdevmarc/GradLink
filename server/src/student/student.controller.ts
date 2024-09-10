@@ -10,25 +10,14 @@ export class StudentController {
         private readonly formsService: FormsService
     ) { }
 
-    @Post('create-student')
+    @Post('upsert')
     async InsertStudent(
-        @Body() { sid, programs }: IStudent
+        @Body() { sid, generalInformation, educationalBackground, trainingAdvanceStudies, programs }: IStudent
     ) {
         return this.studentService.UpsertStudent(
             {
                 sid,
                 programs,
-            }
-        )
-    }
-
-    @Post('upsert')
-    async UpsertStudent(
-        @Body() { sid, generalInformation, educationalBackground, trainingAdvanceStudies }: IStudent
-    ) {
-        return this.studentService.UpsertStudent(
-            {
-                sid,
                 generalInformation,
                 educationalBackground,
                 trainingAdvanceStudies
