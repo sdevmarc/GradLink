@@ -7,7 +7,6 @@ export interface IFormValues {
         columnLabels: string[];
         rowLabels: string[];
     };
-    isother?: boolean;
 }
 
 export interface IForms {
@@ -32,4 +31,35 @@ export interface FormResponse {
             // Add other answer types as needed
         };
     };
+}
+
+interface FormSection {
+    description?: string;
+    questions: Array<{ questionId: string; title: string }>;
+}
+
+export interface FormStructure {
+    generalInformation: FormSection;
+    educationalBackground: FormSection;
+    trainingAdvanceStudies: FormSection;
+}
+
+interface MappedAnswer {
+    index: number;
+    question: string;
+    answer: string;
+}
+
+export interface MappedSection {
+    title: string;
+    description?: string;
+    answers: MappedAnswer[];
+}
+
+export interface MappedResponse {
+    responseId: string;
+    createTime: string;
+    generalInformation: MappedSection;
+    educationalBackground: MappedSection;
+    trainingAdvanceStudies: MappedSection;
 }
