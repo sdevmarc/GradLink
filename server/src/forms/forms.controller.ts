@@ -8,17 +8,18 @@ export class FormsController {
 
     @Get('form-struc')
     async GetStruc() {
-        return this.formsService.getFormStructure('1GBRCSSyOXHKGGPViAha96nSVgRgv40YJmn7f9DVF4do')
+        return this.formsService.getFormStructure('14yw3zUJGQEsnBGb99uDATykbutGCuJJsFLyUV4IgxEs')
+    }
+
+    @Get('form-mapped')
+    async GetMappQuestions() {
+        return this.formsService.mapQuestionsToAnswers('14yw3zUJGQEsnBGb99uDATykbutGCuJJsFLyUV4IgxEs')
     }
 
     @Get(':formId/responses')
     async getResponses(@Param('formId') formId: string) {
         try {
-            const responses = await this.formsService.getAllResponses(formId);
-            if (!responses) {
-                throw new NotFoundException(`No responses found for form ID ${formId}`);
-            }
-            return responses;
+            return await this.formsService.getAllResponses(formId);
         } catch (error) {
             console.error('Error retrieving responses:', error);
             throw new InternalServerErrorException('Failed to retrieve form responses');
