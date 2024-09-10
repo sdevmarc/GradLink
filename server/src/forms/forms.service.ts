@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { google, forms_v1 } from 'googleapis';
 import { ConfigService } from '@nestjs/config';
-import { FormStructure, IForms, IFormValues, IPromiseForms, MappedResponse, MappedSection } from './forms.interface';
+import { FormStructure, GridQuestion, IForms, IFormValues, IPromiseForms, MappedResponse, MappedSection, Question } from './forms.interface';
 
 
 
@@ -51,10 +51,29 @@ export class FormsService {
                             structure[currentSection].description = item.description || '';
                             break;
                     }
-                } else if (item.questionItem || item.questionGroupItem) {
-                    const questionId = item.questionItem?.question?.questionId || item.itemId;
-                    const title = item.title || 'Untitled Question';
-                    structure[currentSection].questions.push({ questionId, title });
+                } else if (item.questionItem) {
+                    const questionData = item.questionItem.question;
+                    const question: Question = {
+                        questionId: questionData?.questionId || item.itemId,
+                        title: item.title || 'Untitled Question',
+                        type: this.getQuestionType(questionData),
+                        options: this.getQuestionOptions(questionData)
+                    };
+                    structure[currentSection].questions.push(question);
+                } else if (item.questionGroupItem) {
+                    const gridQuestion: GridQuestion = {
+                        questionId: item.itemId,
+                        title: item.title || 'Untitled Grid Question',
+                        type: 'GRID',
+                        options: item.questionGroupItem.grid?.columns?.options?.map(o => o.value) || [],
+                        rowQuestions: item.questionGroupItem.questions.map(q => ({
+                            questionId: q.questionId,
+                            title: q.rowQuestion?.title || 'Untitled Row',
+                            type: item.questionGroupItem.grid?.columns?.type || 'RADIO',
+                            options: item.questionGroupItem.grid?.columns?.options?.map(o => o.value) || []
+                        }))
+                    };
+                    structure[currentSection].questions.push(gridQuestion);
                 }
             });
 
@@ -64,6 +83,22 @@ export class FormsService {
             console.error('Error retrieving form structure:', error);
             throw error;
         }
+    }
+
+    private getQuestionType(question: forms_v1.Schema$Question | undefined): string {
+        if (!question) return 'UNKNOWN';
+        if (question.textQuestion) return 'TEXT';
+        if (question.choiceQuestion) return 'CHOICE';
+        if (question.dateQuestion) return 'DATE';
+        if (question.timeQuestion) return 'TIME';
+        if (question.scaleQuestion) return 'SCALE';
+        if (question.fileUploadQuestion) return 'FILE_UPLOAD';
+        return 'UNKNOWN';
+    }
+
+    private getQuestionOptions(question: forms_v1.Schema$Question | undefined): string[] | undefined {
+        if (!question || !question.choiceQuestion) return undefined;
+        return question.choiceQuestion.options?.map(o => o.value || '') || [];
     }
 
     async getAllResponses(formId: string): Promise<any> {
@@ -100,10 +135,23 @@ export class FormsService {
 
                     for (const question of section.questions) {
                         const answer = response.answers[question.questionId];
+                        let mappedAnswer: string | { [row: string]: string };
+
+                        if (question.type === 'GRID') {
+                            mappedAnswer = {};
+                            (question as GridQuestion).rowQuestions.forEach((rowQuestion) => {
+                                const rowAnswer = response.answers[rowQuestion.questionId];
+                                mappedAnswer[rowQuestion.title] = rowAnswer?.textAnswers?.answers[0]?.value || 'No answer provided';
+                            });
+                        } else {
+                            mappedAnswer = this.getAnswerValue(answer, question.type);
+                        }
+                        console.log(mappedAnswer)
                         mappedSection.answers.push({
                             index: overallIndex++,
                             question: question.title,
-                            answer: answer?.textAnswers?.answers[0]?.value || 'No answer provided',
+                            answer: mappedAnswer,
+                            type: question.type,
                         });
                     }
                 }
@@ -115,6 +163,29 @@ export class FormsService {
         } catch (error) {
             console.error('Error mapping questions to answers:', error);
             throw error;
+        }
+    }
+
+    private getAnswerValue(answer: forms_v1.Schema$Answer | undefined, questionType: string): string {
+        if (!answer) return 'No answer provided';
+
+        switch (questionType) {
+            case 'TEXT':
+            case 'PARAGRAPH':
+                return answer.textAnswers?.answers[0]?.value || 'No answer provided';
+            case 'CHOICE':
+                return answer.textAnswers?.answers.map(a => a.value).join(', ') || 'No answer provided';
+            case 'DATE':
+                const dateAnswer = answer.textAnswers?.answers[0]?.value;
+                return dateAnswer ? new Date(dateAnswer).toLocaleDateString() : 'No answer provided';
+            case 'TIME':
+                return answer.textAnswers?.answers[0]?.value || 'No answer provided';
+            case 'SCALE':
+                return answer.textAnswers?.answers[0]?.value || 'No answer provided';
+            case 'FILE_UPLOAD':
+                return answer.fileUploadAnswers?.answers.map(a => a.fileId).join(', ') || 'No files uploaded';
+            default:
+                return 'Unsupported question type';
         }
     }
 
