@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { google, forms_v1 } from 'googleapis';
 import { ConfigService } from '@nestjs/config';
 import { FormStructure, GridQuestion, IForms, IFormValues, IPromiseForms, MappedResponse, MappedSection, Question } from './forms.interface';
+import { StudentService } from 'src/student/student.service';
 
 
 
@@ -10,6 +11,7 @@ export class FormsService {
     private forms: forms_v1.Forms
 
     constructor(
+        private readonly studentService: StudentService,
         private configService: ConfigService
     ) {
         const auth = new google.auth.GoogleAuth({
@@ -146,7 +148,7 @@ export class FormsService {
                         } else {
                             mappedAnswer = this.getAnswerValue(answer, question.type);
                         }
-                        
+
                         mappedSection.answers.push({
                             index: overallIndex++,
                             question: question.title,
@@ -159,6 +161,17 @@ export class FormsService {
                 return mappedResponse;
             });
 
+            // mappedResponses.forEach(async (item) => {
+            //     const { generalInformation, educationalBackground, trainingAdvanceStudies } = item
+            //     const { answers } = generalInformation
+            //     const sid = answers[0].answer
+            //     await this.studentService.UpsertStudent({
+            //         sid,
+            //         generalInformation,
+            //         educationalBackground,
+            //         trainingAdvanceStudies,
+            //     })
+            // })
             return mappedResponses;
         } catch (error) {
             console.error('Error mapping questions to answers:', error);
