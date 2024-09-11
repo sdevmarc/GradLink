@@ -10,9 +10,11 @@ import { DialogContainer } from "@/components/dialog";
 import { Label } from "@/components/ui/label";
 import { AlertDialogConfirmation } from "@/components/alert-dialog";
 import { useNavigate } from "react-router-dom";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { API_COURSE_UPSERT } from "@/api/courses";
+import { ComboBox } from "@/components/combo-box";
+import { API_PROGRAM_FINDALL } from "@/api/program";
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>;
@@ -22,6 +24,8 @@ export function DataTableToolbarCourse<TData>({
     table
 }: DataTableToolbarProps<TData>) {
     const isFiltered = table.getState().columnFilters.length > 0;
+    const [lists, setList] = useState([])
+    const [isDegree, setDegree] = useState<string>('')
     const queryClient = useQueryClient()
     const navigate = useNavigate()
     const [values, setValues] = useState({
@@ -31,12 +35,37 @@ export function DataTableToolbarCourse<TData>({
         units: 0
     })
 
+    const { data: programs, isLoading: programLoading, isFetched: programFetched } = useQuery({
+        queryFn: () => API_PROGRAM_FINDALL(),
+        queryKey: ['program']
+    })
+
+    useEffect(() => {
+        if (programFetched && !programLoading) {
+            const newList = programs.data.map((item: { code: string, descriptiveTitle: string }) => {
+                const value = item.code;
+                const label = item.descriptiveTitle;
+                return { value, label };
+            });
+            setList(newList);
+        }
+    }, [programFetched, programLoading, programs]);
+
+
+
     const { mutateAsync: upsertCourse, isPending: courseLoading } = useMutation({
         mutationFn: API_COURSE_UPSERT,
         onSuccess: (data) => {
             console.log(data)
             if (!data.success) return alert(data.message)
             queryClient.invalidateQueries({ queryKey: ['course'] })
+            setDegree('')
+            setValues({
+                courseno: '',
+                descriptiveTitle: '',
+                degree: '',
+                units: 0
+            })
             return console.log(data.message)
         }
     })
@@ -110,19 +139,42 @@ export function DataTableToolbarCourse<TData>({
                     }
                     children={
                         <>
-                            <Label htmlFor="courseno" className="text-right">
+                            <Label htmlFor="courseno">
                                 Course Number
                             </Label>
                             <Input required id="courseno" name="courseno" onChange={handleOnChange} placeholder="eg. LIS100" className="col-span-3 placeholder:text-muted" />
-                            <Label htmlFor="descriptiveTitle" className="text-right">
+                            <Label htmlFor="descriptiveTitle">
                                 Descriptive Title
                             </Label>
                             <Input required id="descriptiveTitle" name="descriptiveTitle" onChange={handleOnChange} placeholder="eg. Library in Information System Subject" className="col-span-3 placeholder:text-muted" />
-                            <Label htmlFor="degree" className="text-right">
+                            <div className="w-full flex justify-between items-center gap-4">
+                                <h1 className="text-sm font-medium">Degree</h1>
+                                {programLoading && <div>Loading...</div>}
+                                {
+                                    programFetched &&
+                                    <ComboBox
+                                        type={
+                                            (e) => {
+                                                setDegree(e || '')
+                                                setValues((prev) => ({
+                                                    ...prev,
+                                                    degree: e || ''
+                                                }))
+                                            }
+                                        }
+                                        title='None'
+                                        lists={lists || []}
+                                        value={isDegree}
+                                    />}
+
+                            </div>
+
+                            {/* <Label htmlFor="degree">
                                 Degree
                             </Label>
-                            <Input required id="degree" name="degree" onChange={handleOnChange} placeholder="eg. MIT" className="col-span-3 placeholder:text-muted" />
-                            <Label htmlFor="units" className="text-right">
+                            <Input required id="degree" name="degree" onChange={handleOnChange} placeholder="eg. MIT" className="col-span-3 placeholder:text-muted" /> */}
+
+                            <Label htmlFor="units">
                                 Units
                             </Label>
                             <Input required id="units" name="units" onChange={handleOnChange} placeholder="eg. 4" className="col-span-3 placeholder:text-muted" />
