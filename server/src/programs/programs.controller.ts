@@ -20,9 +20,9 @@ export class ProgramsController {
 
     @Post('upsert')
     async upsertProgram(
-        @Body() { code, descriptiveTitle, units, enrolled, residency }: IPrograms
+        @Body() { code, descriptiveTitle, residency }: IPrograms
     ) {
-        return await this.programService.upsert({ code, descriptiveTitle, units, enrolled, residency })
+        return await this.programService.upsert({ code, descriptiveTitle, residency })
     }
 
     @Post(':pid')
