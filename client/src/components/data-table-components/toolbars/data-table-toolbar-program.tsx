@@ -10,6 +10,9 @@ import { DialogContainer } from "@/components/dialog";
 import { Label } from "@/components/ui/label";
 import { AlertDialogConfirmation } from "@/components/alert-dialog";
 import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { API_PROGRAM_UPSERT } from "@/api/program";
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>;
@@ -19,20 +22,45 @@ export function DataTableToolbarProgram<TData>({
     table
 }: DataTableToolbarProps<TData>) {
     const isFiltered = table.getState().columnFilters.length > 0;
+    const queryClient = useQueryClient()
     const navigate = useNavigate()
+    const [values, setValues] = useState({
+        code: '',
+        descriptiveTitle: '',
+        residency: ''
+    })
 
-    const handleOnChange = () => {
+    const { mutateAsync: upsertProgram, isPending: programLoading } = useMutation({
+        mutationFn: API_PROGRAM_UPSERT,
+        onSuccess: (data) => {
+            if (!data.success) return alert(data.message)
+            queryClient.invalidateQueries({ queryKey: ['program'] })
+            return console.log(data.message)
+        }
+    })
 
+    const handleSubmit = async () => {
+        if (values.code === '' || values.descriptiveTitle === '' || values.residency === '') return alert('Please fill-up the required fields.')
+        await upsertProgram(values)
     }
+
+    const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target
+        setValues((prev) => ({
+            ...prev,
+            [name]: value
+        }))
+    }
+
 
     return (
         <div className="flex flex-wrap items-center justify-between">
             <div className="flex flex-1 flex-wrap items-center gap-2">
                 <Input
                     placeholder="Search program..."
-                    value={(table.getColumn("note")?.getFilterValue() as string) ?? ""}
+                    value={(table.getColumn("code")?.getFilterValue() as string) ?? ""}
                     onChange={(event) => {
-                        table.getColumn("note")?.setFilterValue(event.target.value);
+                        table.getColumn("code")?.setFilterValue(event.target.value);
                     }}
                     className="h-8 w-[20rem] lg:w-[25rem] placeholder:text-muted"
                 />
@@ -69,7 +97,7 @@ export function DataTableToolbarProgram<TData>({
             </div>
             <div className="flex gap-2 items-center">
                 <DialogContainer
-                    // submit={handleAddQr}
+                    submit={handleSubmit}
                     title="Add Program"
                     description="Please fill-out the required fields."
                     Trigger={
