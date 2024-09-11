@@ -27,15 +27,19 @@ import {
 
 import { DataTablePagination } from "./data-table-pagination";
 import { DataTableToolbar } from "./data-table-toolbar";
+import { DataTableToolbarProgram } from "./toolbars/data-table-toolbar-program";
+import { DataTableToolbarCourse } from "./toolbars/data-table-toolbar-course";
 
 interface DataTableProps<TData, TValue> {
-    columns: ColumnDef<TData, TValue>[];
-    data: TData[];
+    columns: ColumnDef<TData, TValue>[]
+    data: TData[]
+    toolbar: string
 }
 
 export function DataTable<TData, TValue>({
     columns,
-    data
+    data,
+    toolbar
 }: DataTableProps<TData, TValue>) {
     const [rowSelection, setRowSelection] = React.useState({});
     const [columnVisibility, setColumnVisibility] =
@@ -69,7 +73,21 @@ export function DataTable<TData, TValue>({
 
     return (
         <div className="space-y-4 pb-[13rem]">
-            <DataTableToolbar table={table} />
+            {(() => {
+                switch (toolbar) {
+                    case 'alumni':
+                        return null;
+                    case 'course':
+                        return <DataTableToolbarCourse table={table} />
+                    case 'program':
+                        return <DataTableToolbarProgram table={table} />
+                    case 'student':
+                        return null;
+                    default:
+                        return null;
+                }
+            })()}
+            {/* <DataTableToolbar table={table} /> */}
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
