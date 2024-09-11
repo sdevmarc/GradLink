@@ -1,19 +1,18 @@
 export interface IStudentCourse {
     courseno: string
-    units: number
 }
 
-export interface IStudentPrograms {
-    code: {}
-    course: IStudentCourse[]
-}
+// export interface IStudentPrograms {
+//     code: {}
+//     course: IStudentCourse[]
+// }
 
 export interface IStudent {
     sid?: string
     generalInformation?: {}
     educationalBackground?: {}
     trainingAdvanceStudies?: {}
-    programs?: IStudentPrograms[]
+    // programs?: IStudentPrograms[]
     status?: string
     progress?: string
 }
