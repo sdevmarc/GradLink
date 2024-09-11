@@ -3,14 +3,15 @@ import Header_Dashboard from '@/components/header-dashboard'
 import HeadSection, { SubHeadSectionDetails } from '@/components/head-section'
 import MainTable from '@/components/main-table'
 import { SidebarNavs, Sidebar } from '@/components/sidebar'
-import { columns } from "@/components/data-table-components/columns"
-import { useState } from "react"
-import expense from '@/components/data-table-components/data.json'
-import { Expense } from "@/components/data-table-components/schema"
+import { ProgramColumns } from '@/components/data-table-components/columns/program-columns'
+import { useQuery } from '@tanstack/react-query'
+import { API_PROGRAM_FINDALL } from '@/api/program'
 
 export default function Program() {
-    const modifiedExpense = expense.map(item => ({ id: generateId(), ...item, type: item.type as "income" | "expense" }));
-    const [data, setData] = useState<Expense[]>(modifiedExpense)
+    const { data: program, isLoading: programLoading, isFetched: programFetched } = useQuery({
+        queryFn: () => API_PROGRAM_FINDALL(),
+        queryKey: ['program']
+    })
 
     return (
         <>
@@ -32,15 +33,12 @@ export default function Program() {
                             <SidebarNavs title="Trash" link="/" />
                         </Sidebar>
                         <MainTable>
-                            <DataTable columns={columns} data={data} toolbar='program' />
+                            {programLoading && <div>Loading...</div>}
+                            {programFetched && <DataTable columns={ProgramColumns} data={program.data || []} toolbar='program' />}
                         </MainTable>
                     </main>
                 </div>
             </div>
         </>
     )
-}
-
-function generateId() {
-    return '1';
 }
