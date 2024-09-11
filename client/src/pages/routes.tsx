@@ -8,16 +8,13 @@ import Alumni from "./dashboard/alumni/alumni"
 import PostForm from "./dashboard/form/post-form"
 import Form from "./dashboard/form/form"
 import Profile from "./dashboard/settings/profile"
-import Mail from "./dashboard/mail/mail"
+import Courses from "./dashboard/program/courses"
 
 const Routes = createBrowserRouter([
     { path: '/', element: <Home /> },
 
     //DASHBOARD
     { path: '/dashboard', element: <Dashboard /> },
-
-    //Mail
-    { path: '/mail', element: <Mail /> },
 
     //Tracer
     { path: '/tracer', element: <Tracer /> },
@@ -30,6 +27,7 @@ const Routes = createBrowserRouter([
 
     //Program
     { path: '/program', element: <Program /> },
+    { path: '/program/courses', element: <Courses /> },
 
     //Form
     { path: '/form', element: <Form /> },
