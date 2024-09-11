@@ -18,7 +18,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
-import {  IFCChildren } from "@/interface"
+import { IFCChildren } from "@/interface"
 
 export function ComboBox({ title, lists = [], type, value }: IFCChildren) {
     const [open, setOpen] = React.useState(false)
@@ -30,7 +30,7 @@ export function ComboBox({ title, lists = [], type, value }: IFCChildren) {
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    className="h-8 px-2 lg:px-3 justify-between"
+                    className="w-[75%] h-8 px-2 lg:px-3 justify-between"
                 >
                     {value
                         ? lists.find((item) => item.value === value)?.label
