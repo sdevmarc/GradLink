@@ -9,6 +9,11 @@ export default function Form() {
         <>
             <div className="flex flex-col min-h-screen items-center">
                 <Header_Dashboard />
+                <div className="w-full h-screen fixed top-0 bg-black/40 flex justify-center items-center">
+                    <h1 className='text-white font-semibold text-[7rem]'>
+                        IN RENOVATION
+                    </h1>
+                </div>
                 <div className="w-full max-w-[90rem] flex flex-col">
                     <aside className="px-4 pb-4 pt-[5rem]">
                         <HeadSection>
