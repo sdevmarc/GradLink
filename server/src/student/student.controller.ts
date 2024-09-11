@@ -12,12 +12,11 @@ export class StudentController {
 
     @Post('upsert')
     async InsertStudent(
-        @Body() { sid, generalInformation, educationalBackground, trainingAdvanceStudies, programs }: IStudent
+        @Body() { sid, generalInformation, educationalBackground, trainingAdvanceStudies }: IStudent
     ) {
         return this.studentService.UpsertStudent(
             {
                 sid,
-                programs,
                 generalInformation,
                 educationalBackground,
                 trainingAdvanceStudies
