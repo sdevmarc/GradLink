@@ -106,15 +106,15 @@ export function DataTableToolbarProgram<TData>({
                     }
                     children={
                         <>
-                            <Label htmlFor="code" className="text-right">
+                            <Label htmlFor="code">
                                 Code
                             </Label>
                             <Input required id="code" name="code" onChange={handleOnChange} placeholder="eg. MIT" className="col-span-3 placeholder:text-muted" />
-                            <Label htmlFor="descriptiveTitle" className="text-right">
+                            <Label htmlFor="descriptiveTitle">
                                 Descriptive Title
                             </Label>
                             <Input required id="descriptiveTitle" name="descriptiveTitle" onChange={handleOnChange} placeholder="eg. Master in Information Technology" className="col-span-3 placeholder:text-muted" />
-                            <Label htmlFor="residency" className="text-right">
+                            <Label htmlFor="residency">
                                 Residency
                             </Label>
                             <Input required id="residency" name="residency" onChange={handleOnChange} placeholder="eg. 4" className="col-span-3 placeholder:text-muted" />
