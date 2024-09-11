@@ -26,7 +26,6 @@ import {
 } from "@/components/ui/table";
 
 import { DataTablePagination } from "./data-table-pagination";
-import { DataTableToolbar } from "./data-table-toolbar";
 import { DataTableToolbarProgram } from "./toolbars/data-table-toolbar-program";
 import { DataTableToolbarCourse } from "./toolbars/data-table-toolbar-course";
 
@@ -87,7 +86,6 @@ export function DataTable<TData, TValue>({
                         return null;
                 }
             })()}
-            {/* <DataTableToolbar table={table} /> */}
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
