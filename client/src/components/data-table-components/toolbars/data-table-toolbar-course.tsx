@@ -10,6 +10,9 @@ import { DialogContainer } from "@/components/dialog";
 import { Label } from "@/components/ui/label";
 import { AlertDialogConfirmation } from "@/components/alert-dialog";
 import { useNavigate } from "react-router-dom";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { API_COURSE_UPSERT } from "@/api/courses";
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>;
@@ -19,10 +22,38 @@ export function DataTableToolbarCourse<TData>({
     table
 }: DataTableToolbarProps<TData>) {
     const isFiltered = table.getState().columnFilters.length > 0;
+    const queryClient = useQueryClient()
     const navigate = useNavigate()
+    const [values, setValues] = useState({
+        courseno: '',
+        descriptiveTitle: '',
+        degree: '',
+        units: 0
+    })
 
-    const handleOnChange = () => {
+    const { mutateAsync: upsertCourse, isPending: courseLoading } = useMutation({
+        mutationFn: API_COURSE_UPSERT,
+        onSuccess: (data) => {
+            console.log(data)
+            if (!data.success) return alert(data.message)
+            queryClient.invalidateQueries({ queryKey: ['course'] })
+            return console.log(data.message)
+        }
+    })
 
+    const handleSubmit = async () => {
+        const { courseno, descriptiveTitle, degree, units } = values;
+        if (isNaN(units)) return alert('Units should be a number.')
+        if (courseno === '' || descriptiveTitle === '' || degree === '') return alert('Please fill-up the required fields.')
+        await upsertCourse(values)
+    }
+
+    const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target
+        setValues((prev) => ({
+            ...prev,
+            [name]: value
+        }))
     }
 
     return (
@@ -30,9 +61,9 @@ export function DataTableToolbarCourse<TData>({
             <div className="flex flex-1 flex-wrap items-center gap-2">
                 <Input
                     placeholder="Search courses..."
-                    value={(table.getColumn("note")?.getFilterValue() as string) ?? ""}
+                    value={(table.getColumn("courseno")?.getFilterValue() as string) ?? ""}
                     onChange={(event) => {
-                        table.getColumn("note")?.setFilterValue(event.target.value);
+                        table.getColumn("courseno")?.setFilterValue(event.target.value);
                     }}
                     className="h-8 w-[20rem] lg:w-[25rem] placeholder:text-muted"
                 />
@@ -69,7 +100,7 @@ export function DataTableToolbarCourse<TData>({
             </div>
             <div className="flex gap-2 items-center">
                 <DialogContainer
-                    // submit={handleAddQr}
+                    submit={handleSubmit}
                     title="Add Course"
                     description="Please fill-out the required fields."
                     Trigger={
