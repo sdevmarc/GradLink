@@ -27,7 +27,7 @@ export default function Alumni() {
                     </aside>
                     <main className="flex">
                         <Sidebar>
-                            <SidebarNavs title="Table" link="/alumni" />
+                            <SidebarNavs bg='bg-muted' title="Alumni" link="/alumni" />
                             <SidebarNavs title="Trash" link="/" />
                         </Sidebar>
                         <MainTable>
