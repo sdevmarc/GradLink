@@ -40,7 +40,7 @@ export function DialogContainer({ Trigger, title, description, children, submit 
                         <DialogTitle>{title}</DialogTitle>
                         <DialogDescription>{description}</DialogDescription>
                     </DialogHeader>
-                    <div className="w-full py-4">
+                    <div className="w-full flex flex-col gap-2 py-4">
                         {children}
                     </div>
                     <DialogFooter>
