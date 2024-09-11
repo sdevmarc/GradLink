@@ -27,12 +27,12 @@ export class ProgramsService {
         }
     }
 
-    async upsert({ code, descriptiveTitle, units, enrolled, residency }: IPrograms)
+    async upsert({ code, descriptiveTitle, residency }: IPrograms)
         : Promise<IPromisePrograms> {
         try {
             await this.ProgramModel.findOneAndUpdate(
                 { code },
-                { code, descriptiveTitle, units, enrolled, residency },
+                { code, descriptiveTitle, residency },
                 { new: true, upsert: true }
             )
             return { success: true, message: 'Program successfully upserted' }
