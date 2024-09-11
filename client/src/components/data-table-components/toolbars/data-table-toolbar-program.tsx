@@ -52,7 +52,6 @@ export function DataTableToolbarProgram<TData>({
         }))
     }
 
-
     return (
         <div className="flex flex-wrap items-center justify-between">
             <div className="flex flex-1 flex-wrap items-center gap-2">
