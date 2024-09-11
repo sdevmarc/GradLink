@@ -7,40 +7,55 @@ import { DataTableColumnHeader } from "../data-table-column-header";
 
 export const CourseColumns: ColumnDef<Expense>[] = [
     {
-        accessorKey: "label",
+        accessorKey: "courseno",
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Code" className="text-text" />
+            <DataTableColumnHeader column={column} title="Course No." className="text-text" />
         ),
         cell: ({ row }) => (
-            <div className="w-[2rem] capitalize">{row.getValue("label")}</div>
+            <div className="w-[2rem] capitalize">{row.getValue("courseno")}</div>
         ),
         enableSorting: false,
         enableHiding: false
     },
     {
-        accessorKey: "note",
+        accessorKey: "descriptiveTitle",
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="Descriptive Title" className="text-text" />
         ),
         cell: ({ row }) => {
             return (
                 <div className="flex space-x-2">
-                    <span className="max-w-[500px] truncate capitalize font-medium">
-                        {row.getValue("note")}
+                    <span className="max-w-[200px] truncate capitalize font-medium">
+                        {row.getValue("descriptiveTitle")}
                     </span>
                 </div>
             );
         }
     },
     {
-        accessorKey: "category",
+        accessorKey: "degree",
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Residency" className="text-text" />
+            <DataTableColumnHeader column={column} title="Degree" className="text-text" />
         ),
         cell: ({ row }) => {
             return (
-                <div className="flex w-[100px] items-center">
-                    <span className="capitalize"> {row.getValue("category")}</span>
+                <div className="flex space-x-2">
+                    <span className="max-w-[60px] truncate capitalize font-medium">
+                        {row.getValue("degree")}
+                    </span>
+                </div>
+            );
+        }
+    },
+    {
+        accessorKey: "units",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Units" className="text-text" />
+        ),
+        cell: ({ row }) => {
+            return (
+                <div className="flex w-[60px] items-center">
+                    <span className="capitalize"> {row.getValue("units")}</span>
                 </div>
             );
         },
