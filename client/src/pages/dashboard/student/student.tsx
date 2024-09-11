@@ -28,10 +28,11 @@ export default function Student() {
                     <main className="flex">
                         <Sidebar>
                             <SidebarNavs bg='bg-muted' title="Students" link="/student" />
+                            <SidebarNavs title="Alumni" link="/student/alumni" />
                             <SidebarNavs title="Trash" link="/" />
                         </Sidebar>
                         <MainTable>
-                            <DataTable columns={columns} data={data} />
+                            <DataTable toolbar="student" columns={columns} data={data} />
                         </MainTable>
                     </main>
                 </div>
