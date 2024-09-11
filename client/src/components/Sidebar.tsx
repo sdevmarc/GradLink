@@ -1,6 +1,6 @@
 import { IFCChildren } from '@/interface/index'
 import { NavLink } from 'react-router-dom'
-import './index.css'
+// import './index.css'
 
 export const Sidebar = ({ children }: IFCChildren) => {
     return (
@@ -12,9 +12,9 @@ export const Sidebar = ({ children }: IFCChildren) => {
     )
 }
 
-export const SidebarNavs = ({ title, link }: IFCChildren) => {
+export const SidebarNavs = ({ title, link, bg }: IFCChildren) => {
     return (
-        <NavLink to={link || ''} className="sidebarnavs w-full text-text font-medium text-sm px-4 py-[.7rem] hover:bg-muted-foreground rounded-lg">
+        <NavLink to={link || ''} className={`${bg} sidebarnavs w-full text-text font-medium text-sm px-4 py-[.7rem] hover:bg-muted-foreground rounded-lg`}>
             {title}
         </NavLink>
     )
