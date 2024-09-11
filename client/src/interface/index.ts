@@ -9,6 +9,7 @@ interface IComboBox {
 }
 
 export interface IFCChildren {
+    bg?: string
     title?: string
     link?: string
     description?: string
