@@ -13,6 +13,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ProgramsModule } from './programs/programs.module';
 import { CoursesModule } from './courses/courses.module';
 import { FormsModule } from './forms/forms.module';
+import { SemesterModule } from './semester/semester.module';
 
 @Module({
     imports: [
@@ -34,6 +35,7 @@ import { FormsModule } from './forms/forms.module';
         ProgramsModule,
         CoursesModule,
         FormsModule,
+        SemesterModule,
     ],
     controllers: [AppController],
     providers: [AppService, AuditlogService, OtpService],
