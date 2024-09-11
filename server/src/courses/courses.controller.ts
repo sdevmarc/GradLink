@@ -18,7 +18,7 @@ export class CoursesController {
         return this.courseService.findOne({ courseno })
     }
 
-    @Post('upsert-course')
+    @Post('upsert')
     async upsertCourse(@Body() { courseno, descriptiveTitle, degree, units }: ICourses) {
         return this.courseService.upsert({ courseno, descriptiveTitle, degree, units })
     }
