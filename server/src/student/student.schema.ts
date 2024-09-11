@@ -8,23 +8,19 @@ export const StudentSchema = new mongoose.Schema({
     generalInformation: {},
     educationalBackground: {},
     trainingAdvanceStudies: {},
-    programs: [{
-        code: {
-            type: String,
-            required: true
-        },
-        course: [{
-            courseno: {
-                type: String,
-                required: true
-            },
-            units: {
-                type: Number,
-                required: true,
-                default: 0
-            }
-        }]
-    }],
+    // programs: [{
+    //     code: {
+    //         type: String,
+    //         required: true
+    //     },
+    //     course: [{
+    //         courseno: {
+    //             type: String,
+    //             ref: 'Course',
+    //             required: true
+    //         }
+    //     }]
+    // }],
     status: {
         type: String,
         required: true,
