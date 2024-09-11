@@ -11,9 +11,6 @@ export default function Header_Dashboard() {
                         <h1 className='text-[.8rem] text-text font-normal px-4'>
                             LOGO
                         </h1>
-                        <NavLink to={`/mail`} className='text-[.8rem] text-text font-normal rounded-full px-3 py-1'>
-                            Mail
-                        </NavLink>
                         <NavLink to={`/dashboard`} className='text-[.8rem] text-text font-normal rounded-full px-3 py-1'>
                             Dashboard
                         </NavLink>
@@ -29,9 +26,9 @@ export default function Header_Dashboard() {
                         <NavLink to={`/program`} className='text-[.8rem] text-text font-normal rounded-full px-3 py-1'>
                             Program
                         </NavLink>
-                        {/* <NavLink to={`/form`} className='text-[.8rem] text-text font-normal rounded-full px-3 py-1'>
+                        <NavLink to={`/form`} className='text-[.8rem] text-text font-normal rounded-full px-3 py-1'>
                             Form
-                        </NavLink> */}
+                        </NavLink>
                     </nav>
                     <nav className="flex items-center gap-4">
                         <h1 className='text-text font-normal rounded-full px-3 py-1 text-[.8rem]'>
