@@ -27,11 +27,12 @@ export default function Program() {
                     </aside>
                     <main className="flex">
                         <Sidebar>
-                            <SidebarNavs title="Table" link="/program" />
+                            <SidebarNavs bg='bg-muted' title="Programs" link="/program" />
+                            <SidebarNavs title="Courses" link="/program/courses" />
                             <SidebarNavs title="Trash" link="/" />
                         </Sidebar>
                         <MainTable>
-                            <DataTable columns={columns} data={data} />
+                            <DataTable columns={columns} data={data} toolbar='program' />
                         </MainTable>
                     </main>
                 </div>
