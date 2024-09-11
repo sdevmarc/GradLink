@@ -10,7 +10,7 @@ export class StudentService {
     ) { }
 
     async UpsertStudent(
-        { sid, generalInformation, educationalBackground, trainingAdvanceStudies, programs, status, progress }: IStudent
+        { sid, generalInformation, educationalBackground, trainingAdvanceStudies, status, progress }: IStudent
     )
         : Promise<IPromiseStudent> {
         try {
@@ -21,7 +21,6 @@ export class StudentService {
                     generalInformation,
                     educationalBackground,
                     trainingAdvanceStudies,
-                    programs,
                     status,
                     progress
                 },
