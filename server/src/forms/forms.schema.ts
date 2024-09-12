@@ -5,9 +5,6 @@ export const FormSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    generalInformation: {},
-    educationalBackground: {},
-    trainingAdvanceStudies: {},
     status: {
         type: String,
         enum: ['pending', 'accepted', 'declined'],
