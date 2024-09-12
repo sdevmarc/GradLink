@@ -1,12 +1,13 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { IPromiseStudent, IStudent } from './student.interface';
+import { IPromiseStudent, IStudent, IStudentFormPending } from './student.interface';
 
 @Injectable()
 export class StudentService {
     constructor(
-        @InjectModel('Student') private readonly studentModel: Model<IStudent>
+        @InjectModel('Student') private readonly studentModel: Model<IStudent>,
+        @InjectModel('Form') private readonly formModel: Model<IStudentFormPending>
     ) { }
 
     async findAll()
@@ -30,10 +31,12 @@ export class StudentService {
     }
 
     async create(
-        { idNumber, status, progress }: IStudent
+        { idNumber, status, enrollments }: IStudent
     ): Promise<IPromiseStudent> {
         try {
-            await this.studentModel.create({ idNumber, status, progress })
+            const isstudent = await this.studentModel.findOne({ idNumber })
+            if (isstudent) return { success: false, message: 'Student already exists.' }
+            await this.studentModel.create({ idNumber, enrollments, status })
             return { success: true, message: 'Student successfully created.' }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Failed to create student.', error }, HttpStatus.BAD_REQUEST)
@@ -63,13 +66,23 @@ export class StudentService {
         }
     }
 
+    async insertFormPending({ sid })
+        : Promise<IPromiseStudent> {
+        try {
+            await this.formModel.create({ sid })
+            return { success: true, message: 'Form pending student created successfully.' }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Failed to create form pending.' }, HttpStatus.BAD_REQUEST)
+        }
+    }
+
     async formUpdateStudent(
         { idNumber, generalInformation, educationalBackground, trainingAdvanceStudies }: IStudent
     )
         : Promise<IPromiseStudent> {
         try {
             const isstudent = await this.studentModel.findOne({ idNumber })
-            if (!isstudent) return { success: false, message: 'Student do not exist.', data: idNumber }
+            if (!isstudent) return { success: false, message: 'Student do not exist.', idNumber }
 
             await this.studentModel.findOneAndUpdate(
                 { idNumber },
@@ -82,7 +95,7 @@ export class StudentService {
                 },
                 { new: true }
             )
-            return { success: true, message: 'Student successfully updated' }
+            return { success: true, message: 'Student successfully updated', idNumber }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Failed to update student graduate', error }, HttpStatus.BAD_REQUEST)
         }
