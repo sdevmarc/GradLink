@@ -10,16 +10,20 @@ export class StudentController {
         private readonly formService: FormsService
     ) { }
 
+    @Get() 
+    async findAllStudent() {
+        return this.studentService.findAll()
+    }
+
     @Post('create')
     async createStudent(
-        @Body() { idNumber, generalInformation, educationalBackground, trainingAdvanceStudies }: IStudent
+        @Body() { idNumber, status, progress }: IStudent
     ) {
         return await this.studentService.create(
             {
                 idNumber,
-                generalInformation,
-                educationalBackground,
-                trainingAdvanceStudies
+                status,
+                progress
             }
         )
     }
@@ -37,18 +41,22 @@ export class StudentController {
         )
     }
 
-    @Get('update-graduate')
+    @Post('update-graduate')
     async updateStudentGraduate() {
-        console.log(process.env.FORM_ID)
-        const response = await this.formService.mapQuestionsToAnswers(process.env.FORM_ID)
-        return response
-        // return await this.studentService.formUpdateStudent(
-        //     {
-        //         idNumber,
-        //         generalInformation,
-        //         educationalBackground,
-        //         trainingAdvanceStudies,
-        //     }
-        // )
+        const response = await this.formService.mapQuestionsToAnswers(process.env.FORM_ID);
+
+        const updatePromises = response.map(async (item) => {
+            const idNumber = String(item.generalInformation.answers[0].answer);
+            const { generalInformation, educationalBackground, trainingAdvanceStudies } = item;
+            return this.studentService.formUpdateStudent({
+                idNumber,
+                generalInformation,
+                educationalBackground,
+                trainingAdvanceStudies,
+            });
+        });
+
+        const results = await Promise.all(updatePromises);
+        return results;
     }
 }
