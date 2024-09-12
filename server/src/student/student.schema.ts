@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 export const StudentSchema = new mongoose.Schema({
-    sid: {
+    idNumber: {
         type: String,
         required: true
     },
@@ -16,7 +16,7 @@ export const StudentSchema = new mongoose.Schema({
     //     course: [{
     //         courseno: {
     //             type: String,
-    //             ref: 'Course',
+    //            ref: 'Course',
     //             required: true
     //         }
     //     }]
