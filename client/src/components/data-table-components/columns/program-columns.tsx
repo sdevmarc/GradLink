@@ -48,22 +48,22 @@ export const ProgramColumns: ColumnDef<Expense>[] = [
             return value.includes(row.getValue(id));
         }
     },
-    {
-        accessorKey: "residency",
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Units" className="text-text" />
-        ),
-        cell: ({ row }) => {
-            return (
-                <div className="flex w-[100px] items-center">
-                    <span className="capitalize"> {row.getValue("residency")}</span>
-                </div>
-            );
-        },
-        filterFn: (row, id, value) => {
-            return value.includes(row.getValue(id));
-        }
-    },
+    // {
+    //     accessorKey: "residency",
+    //     header: ({ column }) => (
+    //         <DataTableColumnHeader column={column} title="Units" className="text-text" />
+    //     ),
+    //     cell: ({ row }) => {
+    //         return (
+    //             <div className="flex w-[100px] items-center">
+    //                 <span className="capitalize"> {row.getValue("residency")}</span>
+    //             </div>
+    //         );
+    //     },
+    //     filterFn: (row, id, value) => {
+    //         return value.includes(row.getValue(id));
+    //     }
+    // },
     {
         id: "actions",
         cell: ({ row }) => <DataTableRowActions row={row} />
