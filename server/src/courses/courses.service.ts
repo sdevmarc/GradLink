@@ -32,6 +32,8 @@ export class CoursesService {
     async create({ courseno, descriptiveTitle, degree, units }: ICourses)
         : Promise<IPromiseCourse> {
         try {
+            const iscourse = await this.CourseModel.findOne({ courseno })
+            if (iscourse) return { success: false, message: 'Course already exist.' }
             await this.CourseModel.create({ courseno, descriptiveTitle, degree, units })
             return { success: true, message: 'Course successfully created.' }
         } catch (error) {
