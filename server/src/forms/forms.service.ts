@@ -11,7 +11,6 @@ export class FormsService {
     private forms: forms_v1.Forms
 
     constructor(
-        private readonly studentService: StudentService,
         private configService: ConfigService
     ) {
         const auth = new google.auth.GoogleAuth({
