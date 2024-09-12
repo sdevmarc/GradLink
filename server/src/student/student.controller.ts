@@ -10,20 +10,20 @@ export class StudentController {
         private readonly formService: FormsService
     ) { }
 
-    @Get() 
+    @Get()
     async findAllStudent() {
         return this.studentService.findAll()
     }
 
     @Post('create')
     async createStudent(
-        @Body() { idNumber, status, progress }: IStudent
+        @Body() { idNumber, enrollments, status }: IStudent
     ) {
         return await this.studentService.create(
             {
                 idNumber,
-                status,
-                progress
+                enrollments,
+                status
             }
         )
     }
@@ -56,7 +56,15 @@ export class StudentController {
             });
         });
 
-        const results = await Promise.all(updatePromises);
-        return results;
+        const updateResults = await Promise.all(updatePromises)
+
+        const resultsPromises = updateResults.map(async (item) => {
+            const { success, message, idNumber } = item
+            if (!success) return await this.studentService.insertFormPending({ sid: idNumber })
+            return {}
+        })
+
+        const pendingResults = await Promise.all(resultsPromises)
+        return pendingResults;
     }
 }
