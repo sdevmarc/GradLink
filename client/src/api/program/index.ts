@@ -20,10 +20,22 @@ export const API_PROGRAM_FINDONE = async ({ code }: IAPIPrograms) => {
     }
 }
 
-export const API_PROGRAM_UPSERT = async ({ code, descriptiveTitle, residency }: IAPIPrograms) => {
+export const API_PROGRAM_CREATE = async ({ code, descriptiveTitle, residency }: IAPIPrograms) => {
     try {
-        const response = await axios.post(`${HOST}/programs/upsert`, {
+        const response = await axios.post(`${HOST}/programs/create`, {
             code, descriptiveTitle, residency
+        })
+
+        return response.data
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+export const API_PROGRAM_UPDATE = async ({ pid, code, descriptiveTitle, residency }: IAPIPrograms) => {
+    try {
+        const response = await axios.post(`${HOST}/programs/update`, {
+            pid, code, descriptiveTitle, residency
         })
 
         return response.data
