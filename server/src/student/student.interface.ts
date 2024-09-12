@@ -4,11 +4,12 @@ export interface IStudentCourse {
 
 // export interface IStudentPrograms {
 //     code: {}
-//     course: IStudentCourse[]
+//    course: IStudentCourse[]
 // }
 
 export interface IStudent {
     sid?: string
+    idNumber?: string
     generalInformation?: {}
     educationalBackground?: {}
     trainingAdvanceStudies?: {}
@@ -20,4 +21,5 @@ export interface IStudent {
 export interface IPromiseStudent {
     success: boolean
     message: string
+    data?: IStudent[] | {}
 }
