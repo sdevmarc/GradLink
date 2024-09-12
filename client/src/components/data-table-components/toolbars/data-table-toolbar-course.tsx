@@ -12,7 +12,7 @@ import { AlertDialogConfirmation } from "@/components/alert-dialog";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { API_COURSE_UPSERT } from "@/api/courses";
+import { API_COURSE_CREATE } from "@/api/courses";
 import { ComboBox } from "@/components/combo-box";
 import { API_PROGRAM_FINDALL } from "@/api/program";
 
@@ -54,7 +54,7 @@ export function DataTableToolbarCourse<TData>({
 
 
     const { mutateAsync: upsertCourse, isPending: courseLoading } = useMutation({
-        mutationFn: API_COURSE_UPSERT,
+        mutationFn: API_COURSE_CREATE,
         onSuccess: (data) => {
             console.log(data)
             if (!data.success) return alert(data.message)
