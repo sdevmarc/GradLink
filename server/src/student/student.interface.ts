@@ -1,11 +1,13 @@
 export interface IStudentCourse {
-    courseno: string
+    courseno?: string
 }
 
-// export interface IStudentPrograms {
-//     code: {}
-//    course: IStudentCourse[]
-// }
+interface IStudentEnrollments {
+    semester?: string
+    progress?: string
+    acdemic_year?: string
+    courses?: IStudentCourse[]
+}
 
 export interface IStudent {
     sid?: string
@@ -13,13 +15,19 @@ export interface IStudent {
     generalInformation?: {}
     educationalBackground?: {}
     trainingAdvanceStudies?: {}
-    // programs?: IStudentPrograms[]
+    enrollments?: IStudentEnrollments[]
     status?: string
     progress?: string
+}
+
+export interface IStudentFormPending {
+    sid: string
+    status: string
 }
 
 export interface IPromiseStudent {
     success: boolean
     message: string
     data?: IStudent[] | {}
+    idNumber?: string
 }
