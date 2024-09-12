@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { CoursesService } from './courses.service';
 import { ICourses } from './courses.interface';
 
@@ -18,9 +18,14 @@ export class CoursesController {
         return this.courseService.findOne({ courseno })
     }
 
-    @Post('upsert')
-    async upsertCourse(@Body() { courseno, descriptiveTitle, degree, units }: ICourses) {
-        return this.courseService.upsert({ courseno, descriptiveTitle, degree, units })
+    @Post('create')
+    async createCourse(@Body() {  courseno, descriptiveTitle, degree, units }: ICourses) {
+        return this.courseService.create({ courseno, descriptiveTitle, degree, units })
+    }
+
+    @Post('update')
+    async updateCourse(@Body() { cid, courseno, descriptiveTitle, degree, units }: ICourses) {
+        return this.courseService.findByIdAndUpdate({ cid, courseno, descriptiveTitle, degree, units })
     }
 
     @Post(':cid')
