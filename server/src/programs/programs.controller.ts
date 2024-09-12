@@ -18,11 +18,18 @@ export class ProgramsController {
         return await this.programService.findOne({ code })
     }
 
-    @Post('upsert')
-    async upsertProgram(
+    @Post('create')
+    async createProgram(
         @Body() { code, descriptiveTitle, residency }: IPrograms
     ) {
-        return await this.programService.upsert({ code, descriptiveTitle, residency })
+        return await this.programService.create({ code, descriptiveTitle, residency })
+    }
+
+    @Post('update')
+    async updateProgram(
+        @Body() { pid, code, descriptiveTitle, residency }: IPrograms
+    ) {
+        return await this.programService.findByIdAndUpdate({ pid, code, descriptiveTitle, residency })
     }
 
     @Post(':pid')
