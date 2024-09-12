@@ -29,18 +29,28 @@ export class CoursesService {
         }
     }
 
-    async upsert({ courseno, descriptiveTitle, degree, units }: ICourses)
+    async create({ courseno, descriptiveTitle, degree, units }: ICourses)
         : Promise<IPromiseCourse> {
         try {
-            await this.CourseModel.findOneAndUpdate(
-                { courseno },
+            await this.CourseModel.create({ courseno, descriptiveTitle, degree, units })
+            return { success: true, message: 'Course successfully created.' }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Failed to create course.' }, HttpStatus.BAD_REQUEST)
+        }
+    }
+
+    async findByIdAndUpdate({ cid, courseno, descriptiveTitle, degree, units }: ICourses)
+        : Promise<IPromiseCourse> {
+        try {
+            await this.CourseModel.findByIdAndUpdate(
+                cid,
                 { courseno, descriptiveTitle, degree, units },
-                { new: true, upsert: true }
+                { new: true }
             )
 
-            return { success: true, message: 'Course added successfully.' }
+            return { success: true, message: 'Course updated successfully.' }
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Course failed to upsert.', error }, HttpStatus.BAD_REQUEST)
+            throw new HttpException({ success: false, message: 'Course failed to update.', error }, HttpStatus.BAD_REQUEST)
         }
     }
 
