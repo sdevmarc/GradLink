@@ -69,7 +69,7 @@ export class StudentService {
         : Promise<IPromiseStudent> {
         try {
             const isstudent = await this.studentModel.findOne({ idNumber })
-            if (!isstudent) return { success: false, message: 'Student do not exist.' }
+            if (!isstudent) return { success: false, message: 'Student do not exist.', data: idNumber }
 
             await this.studentModel.findOneAndUpdate(
                 { idNumber },
