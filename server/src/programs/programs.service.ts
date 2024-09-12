@@ -27,17 +27,27 @@ export class ProgramsService {
         }
     }
 
-    async upsert({ code, descriptiveTitle, residency }: IPrograms)
+    async create({ code, descriptiveTitle, residency }: IPrograms)
         : Promise<IPromisePrograms> {
         try {
-            await this.ProgramModel.findOneAndUpdate(
-                { code },
-                { code, descriptiveTitle, residency },
-                { new: true, upsert: true }
-            )
-            return { success: true, message: 'Program successfully upserted' }
+            await this.ProgramModel.create({ code, descriptiveTitle, residency })
+            return { success: true, message: 'Program successfully created.' }
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Failed to upsert a program.', error }, HttpStatus.BAD_REQUEST)
+            throw new HttpException({ success: false, message: 'Failed to create program' }, HttpStatus.BAD_REQUEST)
+        }
+    }
+
+    async findByIdAndUpdate({ pid, code, descriptiveTitle, residency }: IPrograms)
+        : Promise<IPromisePrograms> {
+        try {
+            await this.ProgramModel.findByIdAndUpdate(
+                pid,
+                { code, descriptiveTitle, residency },
+                { new: true }
+            )
+            return { success: true, message: 'Program successfully updated' }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Failed to update a program.', error }, HttpStatus.BAD_REQUEST)
         }
     }
 
