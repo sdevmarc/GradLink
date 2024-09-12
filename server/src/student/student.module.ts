@@ -9,7 +9,7 @@ import { FormsService } from 'src/forms/forms.service';
   imports: [
     MongooseModule.forFeature([
       { name: 'Student', schema: StudentSchema },
-    ]),
+    ])
   ],
   providers: [StudentService, FormsService],
   controllers: [StudentController]
