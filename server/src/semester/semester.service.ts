@@ -29,17 +29,27 @@ export class SemesterService {
         }
     }
 
-    async upsert({ semester, programs }: ISemester)
+    async create({ semester, academic_year }: ISemester)
         : Promise<IPromiseSemester> {
         try {
-            await this.SemesterModel.findOneAndUpdate(
-                { semester },
-                { semester, programs },
-                { new: true, upsert: true }
-            )
-            return { success: true, message: 'Semester successfully upserted.' }
+            await this.SemesterModel.create({ semester, academic_year })
+            return { success: true, message: 'Semester successfully created.' }
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Semester failed to upsert.' }, HttpStatus.BAD_REQUEST)
+            throw new HttpException({ success: false, message: 'Semester failed to create.' }, HttpStatus.BAD_REQUEST)
+        }
+    }
+
+    async findByIdAndUpdate({ sid, semester, academic_year }: ISemester)
+        : Promise<IPromiseSemester> {
+        try {
+            await this.SemesterModel.findByIdAndUpdate(
+                sid,
+                { semester, academic_year },
+                { new: true }
+            )
+            return { success: true, message: 'Semester successfully updated.' }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Semester failed to update.' }, HttpStatus.BAD_REQUEST)
         }
     }
 
