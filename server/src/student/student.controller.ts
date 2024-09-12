@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { StudentService } from './student.service';
 import { IStudent } from './student.interface';
 import { FormsService } from 'src/forms/forms.service';
@@ -7,20 +7,48 @@ import { FormsService } from 'src/forms/forms.service';
 export class StudentController {
     constructor(
         private readonly studentService: StudentService,
-        private readonly formsService: FormsService
+        private readonly formService: FormsService
     ) { }
 
-    @Post('upsert')
-    async InsertStudent(
-        @Body() { sid, generalInformation, educationalBackground, trainingAdvanceStudies }: IStudent
+    @Post('create')
+    async createStudent(
+        @Body() { idNumber, generalInformation, educationalBackground, trainingAdvanceStudies }: IStudent
     ) {
-        return this.studentService.UpsertStudent(
+        return await this.studentService.create(
             {
-                sid,
+                idNumber,
                 generalInformation,
                 educationalBackground,
                 trainingAdvanceStudies
             }
         )
+    }
+
+    @Post('update')
+    async updateStudent(
+        @Body() { idNumber, status, progress }: IStudent
+    ) {
+        return await this.studentService.findByIdAndUpdate(
+            {
+                idNumber,
+                status,
+                progress
+            }
+        )
+    }
+
+    @Get('update-graduate')
+    async updateStudentGraduate() {
+        console.log(process.env.FORM_ID)
+        const response = await this.formService.mapQuestionsToAnswers(process.env.FORM_ID)
+        return response
+        // return await this.studentService.formUpdateStudent(
+        //     {
+        //         idNumber,
+        //         generalInformation,
+        //         educationalBackground,
+        //         trainingAdvanceStudies,
+        //     }
+        // )
     }
 }
