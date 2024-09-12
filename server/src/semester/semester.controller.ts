@@ -18,9 +18,14 @@ export class SemesterController {
         return this.semesterService.findOne({ semester })
     }
 
-    @Post('upsert-semester')
-    async upsertSemester(@Body() { semester, programs }: ISemester) {
-        return this.semesterService.upsert({ semester, programs })
+    @Post('create')
+    async createSemester(@Body() { semester, academic_year }: ISemester) {
+        return this.semesterService.create({ semester, academic_year })
+    }
+
+    @Post('update')
+    async updateSemester(@Body() { sid, semester, academic_year }: ISemester) {
+        return this.semesterService.findByIdAndUpdate({ sid, semester, academic_year })
     }
 
     @Post(':sid')
