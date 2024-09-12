@@ -30,6 +30,8 @@ export class ProgramsService {
     async create({ code, descriptiveTitle, residency }: IPrograms)
         : Promise<IPromisePrograms> {
         try {
+            const isprogram = await this.ProgramModel.findOne({ code })
+            if (isprogram) return { success: false, message: 'Program already exist.' }
             await this.ProgramModel.create({ code, descriptiveTitle, residency })
             return { success: true, message: 'Program successfully created.' }
         } catch (error) {
