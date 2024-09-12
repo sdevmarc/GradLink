@@ -1,17 +1,7 @@
-interface ISemesterCourses {
-    courseno: string
-}
-
-interface ISemesterPrograms {
-    sid: string
-    code: string
-    courses: ISemesterCourses[]
-}
-
 export interface ISemester {
     sid?: string
     semester?: number,
-    programs?: ISemesterPrograms[]
+    academic_year?: string
 }
 
 export interface IPromiseSemester {
