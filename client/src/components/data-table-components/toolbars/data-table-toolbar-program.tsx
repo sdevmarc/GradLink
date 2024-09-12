@@ -12,7 +12,7 @@ import { AlertDialogConfirmation } from "@/components/alert-dialog";
 import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { API_PROGRAM_UPSERT } from "@/api/program";
+import { API_PROGRAM_CREATE } from "@/api/program";
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>;
@@ -31,7 +31,7 @@ export function DataTableToolbarProgram<TData>({
     })
 
     const { mutateAsync: upsertProgram, isPending: programLoading } = useMutation({
-        mutationFn: API_PROGRAM_UPSERT,
+        mutationFn: API_PROGRAM_CREATE,
         onSuccess: (data) => {
             if (!data.success) return alert(data.message)
             queryClient.invalidateQueries({ queryKey: ['program'] })
