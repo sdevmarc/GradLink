@@ -27,7 +27,7 @@ export function DataTableToolbar<TData>({
 
     const handleDateSelect = ({ from, to }: { from: Date; to: Date }) => {
         setDateRange({ from, to });
-        // Filter table data based on selected date range
+        // Filter table data based on selected date ranges
         table.getColumn("date")?.setFilterValue([from, to]);
     };
 
