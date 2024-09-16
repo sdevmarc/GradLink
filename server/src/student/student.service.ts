@@ -31,18 +31,19 @@ export class StudentService {
     }
 
     async create(
-        { idNumber, status, enrollments }: IStudent
+        { idNumber, name, email, status, enrollments }: IStudent
     ): Promise<IPromiseStudent> {
         try {
             const isstudent = await this.studentModel.findOne({ idNumber })
             if (isstudent) return { success: false, message: 'Student already exists.' }
-            await this.studentModel.create({ idNumber, enrollments, status })
+            await this.studentModel.create({ idNumber, name, email, enrollments, status })
             return { success: true, message: 'Student successfully created.' }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Failed to create student.', error }, HttpStatus.BAD_REQUEST)
         }
     }
 
+    //UNFIXED
     async findByIdAndUpdate(
         { idNumber, status, progress }: IStudent
     )
