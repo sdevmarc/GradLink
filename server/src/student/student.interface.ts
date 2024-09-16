@@ -1,11 +1,13 @@
 export interface IStudentCourse {
     courseno?: string
+    descriptive_title?: string
+    units?: number
 }
 
 interface IStudentEnrollments {
     semester?: string
     progress?: string
-    acdemic_year?: string
+    year?: string
     courses?: IStudentCourse[]
 }
 
