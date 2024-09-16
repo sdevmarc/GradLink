@@ -28,6 +28,7 @@ import {
 import { DataTablePagination } from "./data-table-pagination";
 import { DataTableToolbarProgram } from "./toolbars/data-table-toolbar-program";
 import { DataTableToolbarCourse } from "./toolbars/data-table-toolbar-course";
+import { DataTableToolbarStudent } from "./toolbars/data-table-toolbar-student";
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -81,7 +82,7 @@ export function DataTable<TData, TValue>({
                     case 'program':
                         return <DataTableToolbarProgram table={table} />
                     case 'student':
-                        return null;
+                        return <DataTableToolbarStudent table={table} />
                     default:
                         return null;
                 }
