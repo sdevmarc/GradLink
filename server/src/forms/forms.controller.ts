@@ -1,20 +1,24 @@
 import { Body, Controller, Get, InternalServerErrorException, NotFoundException, Param, Post } from '@nestjs/common';
 import { FormsService } from './forms.service';
 import { FormStructure, IForms } from './forms.interface';
+import { ConstantsService } from 'src/constants/constants.service';
 
 @Controller('forms')
 export class FormsController {
-    constructor(private readonly formsService: FormsService) { }
+    constructor(
+        private readonly formsService: FormsService,
+        private readonly constantsService: ConstantsService
+    ) { }
 
     @Get('form-struc')
     async GetStruc()
         : Promise<FormStructure> {
-        return this.formsService.getFormStructure(process.env.FORM_ID)
+        return this.formsService.getFormStructure(this.constantsService.getFormId())
     }
 
     @Get('form-mapped')
     async GetMappedQuestions() {
-        return this.formsService.mapQuestionsToAnswers(process.env.FORM_ID)
+        return this.formsService.mapQuestionsToAnswers(this.constantsService.getFormId())
     }
 
     @Get(':formId/responses')
