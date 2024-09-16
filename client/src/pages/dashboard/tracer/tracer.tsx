@@ -16,8 +16,19 @@ export default function Tracer() {
                 <Header_Dashboard />
                 <SearchDocker />
                 <div className="flex-grow w-full">
+                    {/* <AlumniDetails /> */}
                     <Map />
                 </div>
+            </div>
+        </>
+    )
+}
+
+const AlumniDetails = () => {
+    return (
+        <>
+            <div className="z-[1] w-[27%] h-[90dvh] bg-white/70 fixed top-[9dvh] left-[5%] translate-x-[-17%] flex justify-center items-center rounded-lg shadow-[_0_10px_15px_-3px_rgba(0,0,0,0.5)]">
+                <h1 className="text-[2rem] text-text font-semibold">Tite</h1>
             </div>
         </>
     )
