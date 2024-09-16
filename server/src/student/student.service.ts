@@ -1,7 +1,7 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { IPromiseStudent, IStudent, IStudentFormPending } from './student.interface';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/mongoose'
+import { Model } from 'mongoose'
+import { IPromiseStudent, IStudent, IStudentFormPending } from './student.interface'
 
 @Injectable()
 export class StudentService {
@@ -12,19 +12,19 @@ export class StudentService {
 
     async findAll(): Promise<IPromiseStudent> {
         try {
-            const response = await this.studentModel.find();
+            const response = await this.studentModel.find()
             const mappedResponse = response.map((item) => {
-                const { idNumber, name, email, enrollments } = item;
+                const { idNumber, name, email, enrollments } = item
 
                 // Sort enrollments from latest to oldest
                 const sortedEnrollments = enrollments.sort((a, b) => {
                     if (b.year !== a.year) {
-                        return parseInt(b.year) - parseInt(a.year);
+                        return parseInt(b.year) - parseInt(a.year)
                     }
-                    return parseInt(b.semester) - parseInt(a.semester);
-                });
+                    return parseInt(b.semester) - parseInt(a.semester)
+                })
 
-                const mostRecentEnrollment = sortedEnrollments[0];
+                const mostRecentEnrollment = sortedEnrollments[0]
 
                 return {
                     idNumber,
@@ -33,29 +33,29 @@ export class StudentService {
                     progress: mostRecentEnrollment ? mostRecentEnrollment.progress : null,
                     year: mostRecentEnrollment ? mostRecentEnrollment.year : null,
                     mostRecentEnrollment // This will be used for sorting and then removed
-                };
-            });
+                }
+            })
 
             // Sort students based on their most recent enrollment
             const sortedStudents = mappedResponse.sort((a, b) => {
-                const aRecent = a.mostRecentEnrollment;
-                const bRecent = b.mostRecentEnrollment;
+                const aRecent = a.mostRecentEnrollment
+                const bRecent = b.mostRecentEnrollment
 
-                if (!aRecent) return 1;  // a should come after b if a has no enrollments
-                if (!bRecent) return -1; // b should come after a if b has no enrollments
+                if (!aRecent) return 1  // a should come after b if a has no enrollments
+                if (!bRecent) return -1 // b should come after a if b has no enrollments
 
                 if (bRecent.year !== aRecent.year) {
-                    return parseInt(bRecent.year) - parseInt(aRecent.year);
+                    return parseInt(bRecent.year) - parseInt(aRecent.year)
                 }
-                return parseInt(bRecent.semester) - parseInt(aRecent.semester);
-            });
+                return parseInt(bRecent.semester) - parseInt(aRecent.semester)
+            })
 
             // Remove the mostRecentEnrollment field from the final output
-            const finalResponse = sortedStudents.map(({ mostRecentEnrollment, ...rest }) => rest);
+            const finalResponse = sortedStudents.map(({ mostRecentEnrollment, ...rest }) => rest)
 
-            return { success: true, message: 'Students successfully fetched', data: finalResponse };
+            return { success: true, message: 'Students successfully fetched', data: finalResponse }
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Students failed to fetch.', error }, HttpStatus.BAD_REQUEST);
+            throw new HttpException({ success: false, message: 'Students failed to fetch.', error }, HttpStatus.BAD_REQUEST)
         }
     }
 
