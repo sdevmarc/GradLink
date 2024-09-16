@@ -3,14 +3,15 @@ import Header_Dashboard from "@/components/header-dashboard"
 import HeadSection, { SubHeadSectionDetails } from "@/components/head-section"
 import { Sidebar, SidebarNavs } from "@/components/sidebar"
 import { DataTable } from "@/components/data-table-components/data-table"
-import { columns } from "@/components/data-table-components/columns"
-import { useState } from "react"
-import expense from '@/components/data-table-components/data.json'
-import { Expense } from "@/components/data-table-components/schema"
+import { StudentColumns } from "@/components/data-table-components/columns/student-columns"
+import { useQuery } from "@tanstack/react-query"
+import { API_STUDENT_FINDALL } from "@/api/student"
 
 export default function Student() {
-    const modifiedExpense = expense.map(item => ({ id: generateId(), ...item, type: item.type as "income" | "expense" }));
-    const [data, setData] = useState<Expense[]>(modifiedExpense)
+    const { data: students, isLoading: studentLoading, isFetched: studentFetched } = useQuery({
+        queryFn: () => API_STUDENT_FINDALL(),
+        queryKey: ['students']
+    })
 
     return (
         <>
@@ -32,15 +33,11 @@ export default function Student() {
                             <SidebarNavs title="Trash" link="/" />
                         </Sidebar>
                         <MainTable>
-                            <DataTable toolbar="student" columns={columns} data={data} />
+                            {studentFetched && <DataTable toolbar="student" columns={StudentColumns} data={students.data || []} />}
                         </MainTable>
                     </main>
                 </div>
             </div>
         </>
     )
-}
-
-function generateId() {
-    return '1';
 }
