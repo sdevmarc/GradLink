@@ -49,14 +49,14 @@ export const StudentColumns: ColumnDef<Expense>[] = [
         }
     },
     {
-        accessorKey: "status",
+        accessorKey: "year",
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Status" className="text-text" />
+            <DataTableColumnHeader column={column} title="Academic Year" className="text-text" />
         ),
         cell: ({ row }) => {
             return (
                 <div className="flex w-[100px] items-center">
-                    <span className="capitalize"> {row.getValue("status")}</span>
+                    <span className="capitalize">{row.getValue("year")}</span>
                 </div>
             );
         },
@@ -65,14 +65,14 @@ export const StudentColumns: ColumnDef<Expense>[] = [
         }
     },
     {
-        accessorKey: "status",
+        accessorKey: "progress",
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="Progress" className="text-text" />
         ),
         cell: ({ row }) => {
             return (
                 <div className="flex w-[100px] items-center">
-                    <span className="capitalize">No backend yet</span>
+                    <span className="capitalize"> {row.getValue("progress")}</span>
                 </div>
             );
         },
