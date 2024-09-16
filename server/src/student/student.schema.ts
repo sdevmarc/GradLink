@@ -5,6 +5,14 @@ export const StudentSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    name: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true
+    },
     generalInformation: {},
     educationalBackground: {},
     trainingAdvanceStudies: {},
@@ -21,8 +29,14 @@ export const StudentSchema = new mongoose.Schema({
             default: 'ongoing'
         },
         academic_year: {
-            type: String,
-            required: true
+            from: {
+                type: String,
+                required: true
+            },
+            to: {
+                type: String,
+                required: true
+            }
         },
         courses: [{
             courseno: {
