@@ -2,12 +2,14 @@ import { Body, Controller, Get, Post } from '@nestjs/common';
 import { StudentService } from './student.service';
 import { IStudent } from './student.interface';
 import { FormsService } from 'src/forms/forms.service';
+import { ConstantsService } from 'src/constants/constants.service';
 
 @Controller('student')
 export class StudentController {
     constructor(
         private readonly studentService: StudentService,
-        private readonly formService: FormsService
+        private readonly formService: FormsService,
+        private readonly constantsService: ConstantsService
     ) { }
 
     @Get()
@@ -17,11 +19,13 @@ export class StudentController {
 
     @Post('create')
     async createStudent(
-        @Body() { idNumber, enrollments, status }: IStudent
+        @Body() { idNumber, name, email, enrollments, status }: IStudent
     ) {
         return await this.studentService.create(
             {
                 idNumber,
+                name,
+                email,
                 enrollments,
                 status
             }
@@ -43,7 +47,7 @@ export class StudentController {
 
     @Post('update-graduate')
     async updateStudentGraduate() {
-        const response = await this.formService.mapQuestionsToAnswers(process.env.FORM_ID);
+        const response = await this.formService.mapQuestionsToAnswers(this.constantsService.getFormId());
 
         const updatePromises = response.map(async (item) => {
             const idNumber = String(item.generalInformation.answers[0].answer);
