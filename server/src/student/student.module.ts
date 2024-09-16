@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { StudentSchema } from './student.schema';
 import { FormsService } from 'src/forms/forms.service';
 import { FormSchema } from 'src/forms/forms.schema';
+import { ConstantsService } from 'src/constants/constants.service';
 
 @Module({
   imports: [
@@ -13,7 +14,7 @@ import { FormSchema } from 'src/forms/forms.schema';
       { name: 'Form', schema: FormSchema }
     ])
   ],
-  providers: [StudentService, FormsService],
+  providers: [StudentService, FormsService, ConstantsService],
   controllers: [StudentController]
 })
 export class StudentModule { }
