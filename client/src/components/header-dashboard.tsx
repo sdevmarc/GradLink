@@ -17,17 +17,11 @@ export default function Header_Dashboard() {
                         <NavLink to={`/tracer`} className='text-[.8rem] text-text font-normal rounded-full px-3 py-1'>
                             Tracer
                         </NavLink>
-                        <NavLink to={`/alumni`} className='text-[.8rem] text-text font-normal rounded-full px-3 py-1'>
-                            Alumni
-                        </NavLink>
                         <NavLink to={`/student`} className='text-[.8rem] text-text font-normal rounded-full px-3 py-1'>
                             Student
                         </NavLink>
                         <NavLink to={`/program`} className='text-[.8rem] text-text font-normal rounded-full px-3 py-1'>
                             Program
-                        </NavLink>
-                        <NavLink to={`/semester`} className='text-[.8rem] text-text font-normal rounded-full px-3 py-1'>
-                            Semester
                         </NavLink>
                         <NavLink to={`/form`} className='text-[.8rem] text-text font-normal rounded-full px-3 py-1'>
                             Form
