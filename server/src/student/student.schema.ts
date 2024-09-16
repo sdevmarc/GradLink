@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 export const StudentSchema = new mongoose.Schema({
     idNumber: {
         type: String,
+        unique: true,
         required: true
     },
     name: {
@@ -11,6 +12,7 @@ export const StudentSchema = new mongoose.Schema({
     },
     email: {
         type: String,
+        unique: true,
         required: true
     },
     generalInformation: {},
@@ -28,20 +30,21 @@ export const StudentSchema = new mongoose.Schema({
             required: true,
             default: 'ongoing'
         },
-        academic_year: {
-            from: {
-                type: String,
-                required: true
-            },
-            to: {
-                type: String,
-                required: true
-            }
+        year: {
+            type: String,
+            required: true
         },
         courses: [{
             courseno: {
                 type: String,
-                ref: 'Course',
+                required: true
+            },
+            descriptive_title: {
+                type: String,
+                required: true
+            },
+            units: {
+                type: Number,
                 required: true
             }
         }]
@@ -53,6 +56,6 @@ export const StudentSchema = new mongoose.Schema({
         default: 'student'
     },
     graduation_date: {
-        type: String
+        type: Date
     }
 }, { timestamps: true })
