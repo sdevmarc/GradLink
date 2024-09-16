@@ -14,6 +14,7 @@ import { ProgramsModule } from './programs/programs.module';
 import { CoursesModule } from './courses/courses.module';
 import { FormsModule } from './forms/forms.module';
 import { SemesterModule } from './semester/semester.module';
+import { ConstantsService } from './constants/constants.service';
 
 @Module({
     imports: [
@@ -38,6 +39,6 @@ import { SemesterModule } from './semester/semester.module';
         SemesterModule,
     ],
     controllers: [AppController],
-    providers: [AppService, AuditlogService, OtpService],
+    providers: [AppService, AuditlogService, OtpService, ConstantsService],
 })
 export class AppModule { }
