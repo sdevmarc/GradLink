@@ -12,6 +12,8 @@ interface IStudentEnrollments {
 export interface IStudent {
     sid?: string
     idNumber?: string
+    name?: string
+    email?: string
     generalInformation?: {}
     educationalBackground?: {}
     trainingAdvanceStudies?: {}
