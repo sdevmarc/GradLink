@@ -5,7 +5,7 @@ import { IoIosArrowBack } from "react-icons/io";
 export default function HeadSection({ children }: IFCChildren) {
     return (
         <>
-            <section className="w-full py-4 flex flex-col justify-center items-start gap-2 border-b-[0.7px] border-black/20">
+            <section className="w-full py-2 flex flex-col justify-center items-start gap-5">
                 {children}
             </section>
         </>
@@ -14,7 +14,7 @@ export default function HeadSection({ children }: IFCChildren) {
 
 export const SubHeadSectionDetails = ({ title, description }: IFCChildren) => {
     return (
-        <div className="flex flex-col gap-2 px-8 ">
+        <div className="flex flex-col gap-2 px-4">
             <h1 className="text-text font-semibold text-xl">
                 {title}
             </h1>
@@ -32,7 +32,7 @@ export const BackHeadSection = () => {
         navigate(-1)
     }
     return (
-        <button onClick={handleBack} className="flex items-center gap-2 h-9 px-4 rounded-lg hover:bg-black/10">
+        <button onClick={handleBack} className="flex items-center gap-2 h-9 px-4 rounded-lg hover:underline">
             <IoIosArrowBack /> Back
         </button>
     )
