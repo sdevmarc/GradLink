@@ -88,7 +88,7 @@ const CreateForm = () => {
             <div className="w-full py-2 flex flex-col justify-between">
                 <div className="w-full flex flex-col gap-4">
                     <div className="flex flex-col px-4 gap-1">
-                        <h1 className='text-[.9rem]'>ID NUmber</h1>
+                        <h1 className='text-[.83rem]'>ID Number</h1>
                         <Input
                             name='title'
                             type='text'
@@ -97,7 +97,7 @@ const CreateForm = () => {
                         />
                     </div>
                     <div className="flex flex-col px-4 gap-1">
-                        <h1 className='text-[.9rem]'>Full Name</h1>
+                        <h1 className='text-[.83rem]'>Full Name</h1>
                         <Input
                             name='title'
                             type='text'
@@ -106,7 +106,7 @@ const CreateForm = () => {
                         />
                     </div>
                     <div className="flex flex-col px-4 gap-1">
-                        <h1 className='text-[.9rem]'>Email Address</h1>
+                        <h1 className='text-[.83rem]'>Email Address</h1>
                         <Input
                             name='title'
                             type='text'
@@ -115,7 +115,7 @@ const CreateForm = () => {
                         />
                     </div>
                     <div className="max-w-lg flex flex-col px-4 gap-1">
-                        <h1 className='text-[.9rem]'>Semester</h1>
+                        <h1 className='text-[.83rem]'>Choose a semester</h1>
                         <ComboBox
                             type={
                                 (e) => { setStudent((prev) => ({ ...prev, semester: e })) }
