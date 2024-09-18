@@ -30,10 +30,14 @@ export const StudentSchema = new mongoose.Schema({
             required: true,
             default: 'ongoing'
         },
-        year: {
-            type: String,
+        enrollment_date: {
+            type: Date,
             required: true
         },
+        // year: {
+        //     type: String,
+        //     required: true
+        // },
         courses: [{
             courseno: {
                 type: String,
