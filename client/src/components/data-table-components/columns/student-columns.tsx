@@ -49,14 +49,14 @@ export const StudentColumns: ColumnDef<Expense>[] = [
         }
     },
     {
-        accessorKey: "year",
+        accessorKey: "enrollment_date",
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Academic Year" className="text-text" />
+            <DataTableColumnHeader column={column} title="Enrollment Date" className="text-text" />
         ),
         cell: ({ row }) => {
             return (
                 <div className="flex w-[100px] items-center">
-                    <span className="capitalize">{row.getValue("year")}</span>
+                    <span className="capitalize">{row.getValue("enrollment_date")}</span>
                 </div>
             );
         },
