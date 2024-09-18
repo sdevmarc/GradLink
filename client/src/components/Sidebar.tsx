@@ -14,7 +14,7 @@ export const Sidebar = ({ children }: IFCChildren) => {
 
 export const SidebarNavs = ({ title, link, bg }: IFCChildren) => {
     return (
-        <NavLink to={link || ''} className={`${bg} sidebarnavs w-full text-text font-medium text-sm px-4 py-[.7rem] hover:bg-muted-foreground rounded-lg`}>
+        <NavLink to={link || ''} className={`${bg} sidebarnavs w-full text-text font-medium text-sm px-4 py-[.7rem] hover:bg-black/20 rounded-lg`}>
             {title}
         </NavLink>
     )
