@@ -25,14 +25,6 @@ module.exports = {
                 poppins: ['Poppins', 'sans-serif'],
             },
             colors: {
-                label: {
-                    DEFAULT: 'var(--label)',
-                    foreground: 'var(--label-foreground)'
-                },
-                text: {
-                    DEFAULT: 'var(--text)',
-                    foreground: 'var(--text-foreground)'
-                },
                 border: "hsl(var(--border))",
                 input: "hsl(var(--input))",
                 ring: "hsl(var(--ring))",
@@ -40,7 +32,7 @@ module.exports = {
                 foreground: "var(--foreground)",
                 primary: {
                     DEFAULT: "var(--primary)",
-                    foreground: "hsl(var(--primary-foreground))",
+                    foreground: "var(--primary-foreground)",
                 },
                 secondary: {
                     DEFAULT: "hsl(var(--secondary))",
@@ -55,8 +47,8 @@ module.exports = {
                     foreground: "var(--muted-foreground)",
                 },
                 accent: {
-                    DEFAULT: "hsl(var(--accent))",
-                    foreground: "hsl(var(--accent-foreground))",
+                    DEFAULT: "var(--accent)",
+                    foreground: "var(--accent-foreground)",
                 },
                 popover: {
                     DEFAULT: "hsl(var(--popover))",
@@ -67,7 +59,7 @@ module.exports = {
                     foreground: "hsl(var(--card-foreground))",
                 },
                 input: {
-                    DEFAULT: "var(--input)",
+                    DEFAULT: "hsl(var(--input))",
                     foreground: "hsl(var(--card-foreground))",
                 },
             },
