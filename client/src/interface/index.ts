@@ -16,7 +16,7 @@ export interface IFCChildren {
     children?: React.ReactNode
     lists?: IComboBox[]
     type?: (e: string | undefined) => void
-    value?: string
+    value?: string | number
 }
 
 export interface IEventTarget {
