@@ -35,7 +35,6 @@ export default function Courses() {
                         <MainTable>
                             {programLoading && <div>Loading...</div>}
                             {programFetched && <DataTable columns={CourseColumns} data={course.data || []} toolbar='course' />}
-
                         </MainTable>
                     </main>
                 </div>
