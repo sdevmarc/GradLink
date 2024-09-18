@@ -1,17 +1,7 @@
-interface IStudentCourses {
-    courseno: string
-}
-
-interface IStudentAcademicYear {
-    from: string
-    to: string
-}
-
 interface IEnrollments {
-    semester?: number
-    progress?: string
-    academic_year?: IStudentAcademicYear
-    courses?: IStudentCourses[]
+    courseno?: string
+    descriptive_title?: string
+    units?: number
 }
 
 export interface IAPIStudents {
@@ -20,5 +10,6 @@ export interface IAPIStudents {
     name?: string
     email?: string
     status?: string
+    semester?: string
     enrollments?: IEnrollments[]
 }
