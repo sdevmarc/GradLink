@@ -1,6 +1,6 @@
 .hdashboard a:hover {
     background: var(--muted);
-    border-radius: .35rem;
+    border-radius: .2rem;
 }
 
 .hdashboard a.active {
