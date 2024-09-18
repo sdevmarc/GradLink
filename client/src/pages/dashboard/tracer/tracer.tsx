@@ -1,4 +1,3 @@
-import Header_Dashboard from "@/components/header-dashboard";
 import { Button } from "@/components/ui/button";
 import { IoSearch } from "react-icons/io5";
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -13,7 +12,6 @@ export default function Tracer() {
     return (
         <>
             <div className="flex flex-col min-h-screen items-center">
-                <Header_Dashboard />
                 <SearchDocker />
                 <div className="flex-grow w-full">
                     {/* <AlumniDetails /> */}
