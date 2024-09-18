@@ -9,6 +9,7 @@ import Form from "./dashboard/form/form"
 import Profile from "./dashboard/settings/profile"
 import Courses from "./dashboard/program/courses"
 import Alumni from "./dashboard/student/alumni"
+import CreateStudent from "./dashboard/student/create-student"
 
 const Routes = createBrowserRouter([
     { path: '/', element: <Home /> },
@@ -21,6 +22,7 @@ const Routes = createBrowserRouter([
 
     //Student
     { path: '/student', element: <Student /> },
+    { path: '/student/create', element: <CreateStudent /> },
     { path: '/student/alumni', element: <Alumni /> },
 
     //Program
