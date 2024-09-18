@@ -10,19 +10,28 @@ export class StudentService {
         @InjectModel('Form') private readonly formModel: Model<IStudentFormPending>
     ) { }
 
+    //UNFIXED
     async findAll(): Promise<IPromiseStudent> {
         try {
             const response = await this.studentModel.find()
             const mappedResponse = response.map((item) => {
                 const { idNumber, name, email, enrollments } = item
 
-                // Sort enrollments from latest to oldest
+                //FIX TO DATE TYPE
                 const sortedEnrollments = enrollments.sort((a, b) => {
-                    if (b.year !== a.year) {
-                        return parseInt(b.year) - parseInt(a.year)
+                    if (b.enrollment_date !== a.enrollment_date) {
+                        return parseInt(b.enrollment_date) - parseInt(a.enrollment_date)
                     }
                     return parseInt(b.semester) - parseInt(a.semester)
                 })
+
+                // Sort enrollments from latest to oldest
+                // const sortedEnrollments = enrollments.sort((a, b) => {
+                //     if (b.year !== a.year) {
+                //         return parseInt(b.year) - parseInt(a.year)
+                //     }
+                //     return parseInt(b.semester) - parseInt(a.semester)
+                // })
 
                 const mostRecentEnrollment = sortedEnrollments[0]
 
@@ -31,7 +40,9 @@ export class StudentService {
                     name,
                     email,
                     progress: mostRecentEnrollment ? mostRecentEnrollment.progress : null,
-                    year: mostRecentEnrollment ? mostRecentEnrollment.year : null,
+                   //FIX TO DATE TYPE
+                    enrollment_date: mostRecentEnrollment ? mostRecentEnrollment.enrollment_date : null,
+                    // year: mostRecentEnrollment ? mostRecentEnrollment.year : null,
                     mostRecentEnrollment // This will be used for sorting and then removed
                 }
             })
@@ -44,9 +55,14 @@ export class StudentService {
                 if (!aRecent) return 1  // a should come after b if a has no enrollments
                 if (!bRecent) return -1 // b should come after a if b has no enrollments
 
-                if (bRecent.year !== aRecent.year) {
-                    return parseInt(bRecent.year) - parseInt(aRecent.year)
+                //FIX TO DATE TYPE
+                if (bRecent.enrollment_date !== aRecent.enrollment_date) {
+                    return parseInt(bRecent.enrollment_date) - parseInt(aRecent.enrollment_date)
                 }
+
+                // if (bRecent.year !== aRecent.year) {
+                //     return parseInt(bRecent.year) - parseInt(aRecent.year)
+                // }
                 return parseInt(bRecent.semester) - parseInt(aRecent.semester)
             })
 
@@ -70,12 +86,12 @@ export class StudentService {
     }
 
     async create(
-        { idNumber, name, email, status, enrollments }: IStudent
+        { idNumber, name, email, enrollments }: IStudent
     ): Promise<IPromiseStudent> {
         try {
             const isstudent = await this.studentModel.findOne({ idNumber })
             if (isstudent) return { success: false, message: 'Student already exists.' }
-            await this.studentModel.create({ idNumber, name, email, enrollments, status })
+            await this.studentModel.create({ idNumber, name, email, enrollments })
             return { success: true, message: 'Student successfully created.' }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Failed to create student.', error }, HttpStatus.BAD_REQUEST)
