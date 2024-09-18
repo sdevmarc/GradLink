@@ -7,7 +7,8 @@ export interface IStudentCourse {
 interface IStudentEnrollments {
     semester?: string
     progress?: string
-    year?: string
+    enrollment_date?: string
+    // year?: string
     courses?: IStudentCourse[]
 }
 
