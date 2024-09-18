@@ -19,15 +19,14 @@ export class StudentController {
 
     @Post('create')
     async createStudent(
-        @Body() { idNumber, name, email, enrollments, status }: IStudent
+        @Body() { idNumber, name, email, enrollments }: IStudent
     ) {
         return await this.studentService.create(
             {
                 idNumber,
                 name,
                 email,
-                enrollments,
-                status
+                enrollments
             }
         )
     }
