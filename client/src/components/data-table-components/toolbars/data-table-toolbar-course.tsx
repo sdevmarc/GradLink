@@ -98,16 +98,16 @@ export function DataTableToolbarCourse<TData>({
                 />
                 {/* {table.getColumn("category") && (
                     <DataTableFacetedFilter
-                        column={table.getColumn("category")}
+                        column={table.getColumn("courseno")}
                         title="Categoryasdasd"
-                        options={categories}
+                        options={[]}
                     />
                 )}
                 {table.getColumn("type") && (
                     <DataTableFacetedFilter
-                        column={table.getColumn("type")}
+                        column={table.getColumn("courseno")}
                         title="Type"
-                        options={incomeType}
+                        options={[]}
                     />
                 )} */}
                 {isFiltered && (
@@ -168,11 +168,6 @@ export function DataTableToolbarCourse<TData>({
                                     />}
 
                             </div>
-
-                            {/* <Label htmlFor="degree">
-                                Degree
-                            </Label>
-                            <Input required id="degree" name="degree" onChange={handleOnChange} placeholder="eg. MIT" className="col-span-3 placeholder:text-muted" /> */}
 
                             <Label htmlFor="units">
                                 Units
