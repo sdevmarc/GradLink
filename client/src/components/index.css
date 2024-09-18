@@ -1,8 +1,10 @@
-.hdashboard a:hover {
+.sidebarnavs.active {
     font-weight: 500;
+}
+
+.hdashboard a:hover {
     background: var(--muted);
     border-radius: .35rem;
-
 }
 
 .hdashboard a.active {
