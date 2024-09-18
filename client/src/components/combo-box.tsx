@@ -42,7 +42,7 @@ export function ComboBox({ title, lists = [], type, value }: IFCChildren) {
                 <Command>
                     <CommandInput placeholder={`Search for keywords...`} className="h-9" />
                     <CommandList>
-                        <CommandEmpty>No ${title} found.</CommandEmpty>
+                        <CommandEmpty>No {title} found.</CommandEmpty>
                         <CommandGroup>
                             {lists.map((item) => (
                                 <CommandItem
