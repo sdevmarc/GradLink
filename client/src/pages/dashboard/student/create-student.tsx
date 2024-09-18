@@ -1,4 +1,3 @@
-import Header_Dashboard from '@/components/header-dashboard'
 import HeadSection, { BackHeadSection, SubHeadSectionDetails } from '@/components/head-section'
 import { Sidebar, SidebarNavs } from '@/components/sidebar'
 import { Input } from '@/components/ui/input'
@@ -10,9 +9,8 @@ export default function CreateStudent() {
     return (
         <>
             <div className="flex flex-col min-h-screen items-center">
-                <Header_Dashboard />
                 <div className="w-full max-w-[90rem] flex flex-col pb-[20rem]">
-                    <aside className="px-4 pb-4 pt-[5rem]">
+                    <aside className="px-4 pb-4 pt-[8rem]">
                         <HeadSection>
                             <BackHeadSection />
                             <SubHeadSectionDetails
@@ -25,7 +23,6 @@ export default function CreateStudent() {
                         <Sidebar>
                             <SidebarNavs bg='bg-muted' title="Registered Students" link="/student" />
                             <SidebarNavs title="Alumni Graduates" link="/student/alumni" />
-                            <SidebarNavs title="Trash" link="/" />
                         </Sidebar>
                         <CreateForm />
                     </main>
