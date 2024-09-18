@@ -5,7 +5,7 @@ import { NavLink } from 'react-router-dom'
 export const Sidebar = ({ children }: IFCChildren) => {
     return (
         <>
-            <div className="w-[20%] h-full flex flex-col p-4 gap-2">
+            <div className="w-[20%] h-full flex flex-col px-4 gap-2">
                 {children}
             </div>
         </>
