@@ -1,5 +1,4 @@
 import MainTable from "@/components/main-table"
-import Header_Dashboard from "@/components/header-dashboard"
 import HeadSection, { SubHeadSectionDetails } from "@/components/head-section"
 import { Sidebar, SidebarNavs } from "@/components/sidebar"
 import { DataTable } from "@/components/data-table-components/data-table"
@@ -16,12 +15,11 @@ export default function Student() {
     return (
         <>
             <div className="flex flex-col min-h-screen items-center">
-                <Header_Dashboard />
                 <div className="w-full max-w-[90rem] flex flex-col">
-                    <aside className="px-4 pb-4 pt-[5rem]">
+                    <aside className="px-4 pb-4 pt-[8rem]">
                         <HeadSection>
                             <SubHeadSectionDetails
-                                title="RECORD OF ENROLLED STUDENTS"
+                                title="RECORD OF REGISTERED STUDENTS"
                                 description="Here's a list of enrolled students."
                             />
                         </HeadSection>
@@ -30,7 +28,6 @@ export default function Student() {
                         <Sidebar>
                             <SidebarNavs bg='bg-muted' title="Registered Students" link="/student" />
                             <SidebarNavs title="Alumni Graduates" link="/student/alumni" />
-                            <SidebarNavs title="Trash" link="/" />
                         </Sidebar>
                         <MainTable>
                             {studentFetched && <DataTable toolbar="student" columns={StudentColumns} data={students.data || []} />}
