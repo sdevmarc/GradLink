@@ -1,5 +1,4 @@
 import { Expense } from '@/components/data-table-components/schema';
-import Header_Dashboard from '@/components/header-dashboard';
 import HeadSection, { SubHeadSectionDetails } from '@/components/head-section';
 import { SidebarNavs, Sidebar } from '@/components/sidebar'
 import { columns } from "@/components/data-table-components/columns"
@@ -15,9 +14,8 @@ export default function Alumni() {
     return (
         <>
             <div className="flex flex-col min-h-screen items-center">
-                <Header_Dashboard />
                 <div className="w-full max-w-[90rem] flex flex-col">
-                    <aside className="px-4 pb-4 pt-[5rem]">
+                    <aside className="px-4 pb-4 pt-[8rem]">
                         <HeadSection>
                             <SubHeadSectionDetails
                                 title="RECORD OF REGISTERED ALUMNI'S"
@@ -27,9 +25,8 @@ export default function Alumni() {
                     </aside>
                     <main className="flex">
                         <Sidebar>
-                            <SidebarNavs title="Students" link="/student" />
-                            <SidebarNavs bg='bg-muted' title="Alumni" link="/student/alumni" />
-                            <SidebarNavs title="Trash" link="/" />
+                            <SidebarNavs title="Registered Students" link="/student" />
+                            <SidebarNavs bg='bg-muted' title="Alumni Graduates" link="/student/alumni" />
                         </Sidebar>
                         <MainTable>
                             <DataTable toolbar='alumni' columns={columns} data={data} />
