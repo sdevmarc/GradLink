@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { API_COURSE_CREATE } from "@/api/courses";
 import { ComboBox } from "@/components/combo-box";
 import { API_PROGRAM_FINDALL } from "@/api/program";
+import { Plus } from "lucide-react"'
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>;
@@ -142,11 +143,11 @@ export function DataTableToolbarCourse<TData>({
                             <Label htmlFor="courseno">
                                 Course Number
                             </Label>
-                            <Input required id="courseno" name="courseno" onChange={handleOnChange} placeholder="eg. LIS100" className="col-span-3 placeholder:text-muted" />
+                            <Input required id="courseno" name="courseno" onChange={handleOnChange} placeholder="eg. LIS100" className="col-span-3 placeholder:text-muted-foreground" />
                             <Label htmlFor="descriptiveTitle">
                                 Descriptive Title
                             </Label>
-                            <Input required id="descriptiveTitle" name="descriptiveTitle" onChange={handleOnChange} placeholder="eg. Library in Information System Subject" className="col-span-3 placeholder:text-muted" />
+                            <Input required id="descriptiveTitle" name="descriptiveTitle" onChange={handleOnChange} placeholder="eg. Library in Information System Subject" className="col-span-3 placeholder:text-muted-foreground" />
                             <div className="w-full flex justify-between items-center gap-4">
                                 <h1 className="text-sm font-medium">Degree</h1>
                                 {programLoading && <div>Loading...</div>}
@@ -172,7 +173,10 @@ export function DataTableToolbarCourse<TData>({
                             <Label htmlFor="units">
                                 Units
                             </Label>
-                            <Input required id="units" name="units" onChange={handleOnChange} placeholder="eg. 4" className="col-span-3 placeholder:text-muted" />
+                            <Input required id="units" name="units" onChange={handleOnChange} placeholder="eg. 4" className="col-span-3 placeholder:text-muted-foreground" />
+                            <Button variant={`outline`} size={`sm`} className="flex items-center gap-4" type="button">
+                                <Plus color="#000000" size={18} /> Add Prerequisite
+                            </Button>
                         </>
                     }
                 />
