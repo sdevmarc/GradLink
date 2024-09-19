@@ -3,6 +3,7 @@ import MainTable from '@/components/main-table'
 import { Sidebar, SidebarNavs } from '@/components/sidebar'
 import { DataTable } from '@/components/data-table-components/data-table'
 import { ProgramColumns } from '@/components/data-table-components/columns/program-columns'
+import { ROUTES } from '@/constants'
 
 export default function Form() {
     return (
@@ -19,8 +20,8 @@ export default function Form() {
                     </aside>
                     <main className="flex">
                         <Sidebar>
-                            <SidebarNavs title="Mail" link="/form" />
-                            <SidebarNavs title="Pending Forms" link="/form" />
+                            <SidebarNavs title="Mail" link={ROUTES.GOOGLE_FORM} />
+                            <SidebarNavs title="Pending Forms" link={ROUTES.GOOGLE_FORM} />
                             <SidebarNavs title="Trash" link="/" />
                         </Sidebar>
                         <MainTable>
