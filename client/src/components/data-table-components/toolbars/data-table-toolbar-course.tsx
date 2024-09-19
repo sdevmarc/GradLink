@@ -41,7 +41,7 @@ export function DataTableToolbarCourse<TData>({
     })
 
     useEffect(() => {
-        if (programFetched && !programLoading) {
+        if (programFetched && !programLoading && programs && programs.data) {
             const newList = programs.data.map((item: { code: string, descriptiveTitle: string }) => {
                 const value = item.code;
                 const label = item.descriptiveTitle;
