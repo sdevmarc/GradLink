@@ -32,12 +32,9 @@ export const StudentSchema = new mongoose.Schema({
         },
         enrollment_date: {
             type: Date,
-            required: true
+            required: true,
+            default: Date.now()
         },
-        // year: {
-        //     type: String,
-        //     required: true
-        // },
         courses: [{
             courseno: {
                 type: String,
@@ -53,6 +50,11 @@ export const StudentSchema = new mongoose.Schema({
             }
         }]
     }],
+    isenrolled: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
     status: {
         type: String,
         required: true,
