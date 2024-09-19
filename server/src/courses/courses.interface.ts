@@ -4,6 +4,7 @@ export interface ICourses {
     descriptiveTitle?: string
     degree?: string
     units?: number
+    pre_req?: string
 }
 
 export interface IPromiseCourse {
