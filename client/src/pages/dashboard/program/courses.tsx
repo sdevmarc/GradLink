@@ -7,7 +7,7 @@ import { CourseColumns } from '@/components/data-table-components/columns/course
 import { API_COURSE_FINDALL } from '@/api/courses'
 
 export default function Courses() {
-    const { data: course, isLoading: programLoading, isFetched: programFetched } = useQuery({
+    const { data: course, isLoading: courseLoading, isFetched: courseFetched } = useQuery({
         queryFn: () => API_COURSE_FINDALL(),
         queryKey: ['course']
     })
@@ -30,8 +30,8 @@ export default function Courses() {
                             <SidebarNavs bg='bg-muted' title="Available Courses" link="/program/courses" />
                         </Sidebar>
                         <MainTable>
-                            {programLoading && <div>Loading...</div>}
-                            {programFetched && <DataTable columns={CourseColumns} data={course.data || []} toolbar='course' />}
+                            {courseLoading && <div>Loading...</div>}
+                            {courseFetched && <DataTable columns={CourseColumns} data={course.data || []} toolbar='course' />}
                         </MainTable>
                     </main>
                 </div>
