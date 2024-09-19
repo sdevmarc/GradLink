@@ -40,7 +40,7 @@ export class StudentService {
                     name,
                     email,
                     progress: mostRecentEnrollment ? mostRecentEnrollment.progress : null,
-                   //FIX TO DATE TYPE
+                    //FIX TO DATE TYPE
                     enrollment_date: mostRecentEnrollment ? mostRecentEnrollment.enrollment_date : null,
                     // year: mostRecentEnrollment ? mostRecentEnrollment.year : null,
                     mostRecentEnrollment // This will be used for sorting and then removed
@@ -71,7 +71,7 @@ export class StudentService {
 
             return { success: true, message: 'Students successfully fetched', data: finalResponse }
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Students failed to fetch.', error }, HttpStatus.BAD_REQUEST)
+            throw new HttpException({ success: false, message: 'Students failed to fetch.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
@@ -81,44 +81,74 @@ export class StudentService {
             const response = await this.studentModel.findOne()
             return { success: true, message: 'Student successfully ', data: response }
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Student failed to fetch.', error }, HttpStatus.BAD_REQUEST)
+            throw new HttpException({ success: false, message: 'Student failed to fetch.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
     async create(
-        { idNumber, name, email, enrollments }: IStudent
+        { idNumber, name, email, enrollments, isenrolled }: IStudent
     ): Promise<IPromiseStudent> {
         try {
             const isstudent = await this.studentModel.findOne({ idNumber })
             if (isstudent) return { success: false, message: 'Student already exists.' }
-            await this.studentModel.create({ idNumber, name, email, enrollments })
+
+            await this.studentModel.create({ idNumber, name, email, enrollments, isenrolled })
             return { success: true, message: 'Student successfully created.' }
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Failed to create student.', error }, HttpStatus.BAD_REQUEST)
+            throw new HttpException({ success: false, message: 'Failed to create student.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
-    //UNFIXED
-    async findByIdAndUpdate(
-        { idNumber, status, progress }: IStudent
-    )
-        : Promise<IPromiseStudent> {
+    async unrollAll(): Promise<IPromiseStudent> {
         try {
-            const isstudent = await this.studentModel.findOne({ idNumber })
-            if (!isstudent) return { success: false, message: 'Student do not exist.' }
-
-            await this.studentModel.findOneAndUpdate(
-                { idNumber },
+            const result = await this.studentModel.updateMany(
+                { isenrolled: true },
                 {
-                    idNumber,
-                    status,
-                    progress
-                },
-                { new: true }
-            )
-            return { success: true, message: 'Student successfully updated' }
+                    $set: { isenrolled: false },
+                    $unset: { 'enrollments.$[].progress': '' }
+                }
+            );
+
+            if (result.modifiedCount > 0) return { success: true, message: `Successfully unenrolled ${result.modifiedCount} students.` }
+            return { success: true, message: 'No students were enrolled, so none were unenrolled.' }
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Failed to update student information', error }, HttpStatus.BAD_REQUEST)
+            throw new HttpException({ success: false, message: 'Failed to unenroll students.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async unrollSelection({ sid }: IStudent)
+        : Promise<IPromiseStudent> {
+
+        if (!sid || sid.length === 0) return { success: false, message: 'No students selected for unenrollment.' }
+        try {
+            const result = await this.studentModel.updateMany(
+                {
+                    _id: { $in: sid },
+                    isenrolled: true
+                },
+                {
+                    $set: { isenrolled: false }
+                }
+            )
+
+            // const result = await this.studentModel.updateMany(
+            //     {
+            //         _id: { $in: studentIds },
+            //         isenrolled: true
+            //     },
+            //     {
+            //         $set: { isenrolled: false },
+            //         $set: { 'enrollments.$[elem].progress': 'dropout' }
+            //     },
+            //     {
+            //         arrayFilters: [{ 'elem.progress': 'ongoing' }]
+            //     }
+            // );
+
+            if (result.modifiedCount > 0) return { success: true, message: `Successfully unenrolled ${result.modifiedCount} out of ${sid.length} selected students.` }
+            return { success: true, message: 'No changes were made. Selected students may already be unenrolled.' }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Failed to unenroll selected students.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
@@ -128,7 +158,7 @@ export class StudentService {
             await this.formModel.create({ sid })
             return { success: true, message: 'Form pending student created successfully.' }
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Failed to create form pending.' }, HttpStatus.BAD_REQUEST)
+            throw new HttpException({ success: false, message: 'Failed to create form pending.' }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
@@ -153,7 +183,7 @@ export class StudentService {
             )
             return { success: true, message: 'Student successfully updated', idNumber }
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Failed to update student graduate', error }, HttpStatus.BAD_REQUEST)
+            throw new HttpException({ success: false, message: 'Failed to update student graduate', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 }
