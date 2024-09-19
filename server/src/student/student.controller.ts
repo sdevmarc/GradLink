@@ -19,29 +19,27 @@ export class StudentController {
 
     @Post('create')
     async createStudent(
-        @Body() { idNumber, name, email, enrollments }: IStudent
+        @Body() { idNumber, name, email, enrollments, isenrolled }: IStudent
     ) {
         return await this.studentService.create(
             {
                 idNumber,
                 name,
                 email,
-                enrollments
+                enrollments,
+                isenrolled
             }
         )
     }
 
-    @Post('update')
-    async updateStudent(
-        @Body() { idNumber, status, progress }: IStudent
-    ) {
-        return await this.studentService.findByIdAndUpdate(
-            {
-                idNumber,
-                status,
-                progress
-            }
-        )
+    @Post('unenroll-all')
+    async unrollAllStudents() {
+        return await this.studentService.unrollAll()
+    }
+
+    @Post('unenroll-selection')
+    async unrollSelection(@Body() { sid }: IStudent) {
+        return await this.studentService.unrollSelection({ sid })
     }
 
     @Post('update-graduate')
