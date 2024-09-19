@@ -1,5 +1,4 @@
 import { createBrowserRouter } from "react-router-dom"
-import Dashboard from "./dashboard/dashboard/dashboard"
 import Tracer from "./dashboard/tracer/tracer"
 import Student from "./dashboard/student/list-of-students"
 import Program from "./dashboard/program/available-programs"
@@ -11,6 +10,7 @@ import LoginPage from "./home/login"
 import { HeaderLayout, HomeHeaderLayout, TracerHeaderLayout } from "@/components/header"
 import Home from "./home/home"
 import CurrentEnrolledStudent from "./dashboard/student/current-enrolled"
+import Overview from "./dashboard/overview/overview"
 
 const Routes = createBrowserRouter([
     {
@@ -18,7 +18,7 @@ const Routes = createBrowserRouter([
         children: [
 
             //Overview
-            { path: '/overview', element: <Dashboard /> },
+            { path: '/overview', element: <Overview /> },
 
             //Student
             { path: '/student', element: <CurrentEnrolledStudent /> },
