@@ -8,12 +8,11 @@ interface IStudentEnrollments {
     semester?: string
     progress?: string
     enrollment_date?: string
-    // year?: string
     courses?: IStudentCourse[]
 }
 
 export interface IStudent {
-    sid?: string
+    sid?: string | string[]
     idNumber?: string
     name?: string
     email?: string
@@ -22,7 +21,7 @@ export interface IStudent {
     trainingAdvanceStudies?: {}
     enrollments?: IStudentEnrollments[]
     status?: string
-    progress?: string
+    isenrolled?: boolean
 }
 
 export interface IStudentFormPending {
