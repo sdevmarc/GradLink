@@ -19,8 +19,8 @@ export class CoursesController {
     }
 
     @Post('create')
-    async createCourse(@Body() {  courseno, descriptiveTitle, degree, units }: ICourses) {
-        return this.courseService.create({ courseno, descriptiveTitle, degree, units })
+    async createCourse(@Body() { courseno, descriptiveTitle, degree, units, pre_req }: ICourses) {
+        return this.courseService.create({ courseno, descriptiveTitle, degree, units, pre_req })
     }
 
     @Post('update')
