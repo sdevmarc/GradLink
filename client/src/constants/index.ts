@@ -7,10 +7,11 @@ export const ROUTES = {
     LOGIN: '/login',
     OVERVIEW: '/overview',
     TRACER: '/tracer',
-    REGISTERED_STUDENTS: '/student',
+    CURRENTLY_ENROLLED: '/student',
+    LIST_OF_STUDENTS: '/student/lists',
     ALUMNI_GRADUATES: '/student/alumni',
     CREATE_STUDENT: '/student/create',
-    REGISTERED_PROGRAMS: '/program',
-    REGISTERED_COURSES: '/program/courses',
+    AVAILABLE_PROGRAMS: '/program',
+    AVAILABLE_COURSES: '/program/courses',
     GOOGLE_FORM: '/form'
 }
