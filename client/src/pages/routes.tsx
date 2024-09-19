@@ -1,26 +1,28 @@
 import { createBrowserRouter } from "react-router-dom"
 import Dashboard from "./dashboard/dashboard/dashboard"
 import Tracer from "./dashboard/tracer/tracer"
-import Student from "./dashboard/student/student"
-import Program from "./dashboard/program/program"
+import Student from "./dashboard/student/list-of-students"
+import Program from "./dashboard/program/available-programs"
 import Profile from "./dashboard/settings/profile"
-import Courses from "./dashboard/program/courses"
-import Alumni from "./dashboard/student/alumni"
+import Courses from "./dashboard/program/available-courses"
+import Alumni from "./dashboard/student/alumni-graduates"
 import CreateStudent from "./dashboard/student/create-student"
 import LoginPage from "./home/login"
 import { HeaderLayout, HomeHeaderLayout, TracerHeaderLayout } from "@/components/header"
 import Home from "./home/home"
+import CurrentEnrolledStudent from "./dashboard/student/current-enrolled"
 
 const Routes = createBrowserRouter([
     {
         element: <HeaderLayout />,
         children: [
 
-            //DASHBOARD
+            //Overview
             { path: '/overview', element: <Dashboard /> },
 
             //Student
-            { path: '/student', element: <Student /> },
+            { path: '/student', element: <CurrentEnrolledStudent /> },
+            { path: '/student/lists', element: <Student /> },
             { path: '/student/create', element: <CreateStudent /> },
             { path: '/student/alumni', element: <Alumni /> },
 
