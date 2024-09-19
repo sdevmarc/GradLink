@@ -19,7 +19,7 @@ export class UsersService {
             if (!isuser) return { success: false, message: 'User does not exist.' }
             return { success: true, message: 'User role retrieved successfully.', role: isuser.role }
         } catch (error) {
-            throw new HttpException({ success: false, message: 'User role failed to retrieved.' }, HttpStatus.BAD_REQUEST)
+            throw new HttpException({ success: false, message: 'User role failed to retrieved.' }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
@@ -29,7 +29,7 @@ export class UsersService {
             const response = await this.UserModel.find()
             return { success: true, message: 'Users retrieved successfully.', data: response }
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Users failed to retrieved.' }, HttpStatus.BAD_REQUEST)
+            throw new HttpException({ success: false, message: 'Users failed to retrieved.' }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
@@ -39,7 +39,7 @@ export class UsersService {
             const response = await this.UserModel.findOne({ email })
             return { success: true, message: 'User retrieved successfully.', data: response }
         } catch (error) {
-            throw new HttpException({ success: false, message: 'User email failed to retrieved.' }, HttpStatus.BAD_REQUEST)
+            throw new HttpException({ success: false, message: 'User email failed to retrieved.' }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
@@ -59,7 +59,7 @@ export class UsersService {
             await this.UserModel.create({ email, password: hashedpassword, role })
             return { success: true, message: 'User successfully created.' }
         } catch (error) {
-            throw new HttpException({ success: false, message: 'User failed to create.' }, HttpStatus.BAD_REQUEST)
+            throw new HttpException({ success: false, message: 'User failed to create.' }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
@@ -75,7 +75,7 @@ export class UsersService {
             await this.UserModel.create({ email, password: hashedpassword, role })
             return { success: true, message: 'User successfully created.' }
         } catch (error) {
-            throw new HttpException({ success: false, message: 'User failed to create.' }, HttpStatus.BAD_REQUEST)
+            throw new HttpException({ success: false, message: 'User failed to create.' }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
@@ -90,10 +90,10 @@ export class UsersService {
             if (!ispassword) return { success: false, message: 'Password is incorrect.' }
             const payload = { sub: isemail._id }
             const access_token = await this.jwtService.signAsync(payload)
-            
+
             return { success: true, message: 'Logged in successful.', access_token }
         } catch (error) {
-            throw new HttpException({ success: false, message: 'User failed to login.' }, HttpStatus.BAD_REQUEST)
+            throw new HttpException({ success: false, message: 'User failed to login.' }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 }
