@@ -15,7 +15,7 @@ export class CoursesService {
             const response = await this.CourseModel.find()
             return { success: true, message: 'Courses successfully fetched.', data: response }
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Failed to fetch courses.', error }, HttpStatus.BAD_REQUEST)
+            throw new HttpException({ success: false, message: 'Failed to fetch courses.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
@@ -25,19 +25,19 @@ export class CoursesService {
             const response = await this.CourseModel.findOne({ courseno })
             return { success: true, message: 'Course fetched successfully', data: response }
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Course failed to fetch.', error }, HttpStatus.BAD_REQUEST)
+            throw new HttpException({ success: false, message: 'Course failed to fetch.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
-    async create({ courseno, descriptiveTitle, degree, units }: ICourses)
+    async create({ courseno, descriptiveTitle, degree, units, pre_req }: ICourses)
         : Promise<IPromiseCourse> {
         try {
             const iscourse = await this.CourseModel.findOne({ courseno })
             if (iscourse) return { success: false, message: 'Course already exist.' }
-            await this.CourseModel.create({ courseno, descriptiveTitle, degree, units })
+            await this.CourseModel.create({ courseno, descriptiveTitle, degree, units, pre_req })
             return { success: true, message: 'Course successfully created.' }
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Failed to create course.' }, HttpStatus.BAD_REQUEST)
+            throw new HttpException({ success: false, message: 'Failed to create course.' }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
@@ -52,7 +52,7 @@ export class CoursesService {
 
             return { success: true, message: 'Course updated successfully.' }
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Course failed to update.', error }, HttpStatus.BAD_REQUEST)
+            throw new HttpException({ success: false, message: 'Course failed to update.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
@@ -62,7 +62,7 @@ export class CoursesService {
             await this.CourseModel.findByIdAndDelete(cid)
             return { success: true, message: 'Course deleted successfully.' }
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Course failed to delete.' }, HttpStatus.BAD_REQUEST)
+            throw new HttpException({ success: false, message: 'Course failed to delete.' }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 }
