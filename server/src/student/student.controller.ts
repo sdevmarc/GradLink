@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { StudentService } from './student.service';
 import { IStudent } from './student.interface';
 import { FormsService } from 'src/forms/forms.service';
@@ -15,6 +15,11 @@ export class StudentController {
     @Get()
     async findAllStudent() {
         return this.studentService.findAll()
+    }
+
+    @Get('enrolled')
+    async findAllEnrolledStudent() {
+        return this.studentService.findAllStudentsEnrolled()
     }
 
     @Post('create')
@@ -40,6 +45,11 @@ export class StudentController {
     @Post('unenroll-selection')
     async unrollSelection(@Body() { sid }: IStudent) {
         return await this.studentService.unrollSelection({ sid })
+    }
+
+    @Post('unenroll-one/:sid')
+    async unrollOne(@Param('sid') { sid }: IStudent) {
+        return await this.studentService.unrollOne({ sid })
     }
 
     @Post('update-graduate')
