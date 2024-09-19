@@ -17,7 +17,7 @@ export class StudentService {
             const mappedResponse = response.map((item) => {
                 const { idNumber, name, email, enrollments } = item
 
-                //FIX TO DATE TYPE
+                //FIXED TO DATE TYPE
                 const sortedEnrollments = enrollments.sort((a, b) => {
                     if (b.enrollment_date !== a.enrollment_date) {
                         return parseInt(b.enrollment_date) - parseInt(a.enrollment_date)
@@ -75,13 +75,45 @@ export class StudentService {
         }
     }
 
-    async findOne()
+    async findAllStudentsEnrolled()
         : Promise<IPromiseStudent> {
         try {
-            const response = await this.studentModel.findOne()
-            return { success: true, message: 'Student successfully ', data: response }
+            const response = await this.studentModel.aggregate([
+                // Match only enrolled students
+                { $match: { isenrolled: true } },
+
+                // Unwind the enrollments array
+                { $unwind: '$enrollments' },
+
+                // Sort by the most recent enrollment date
+                { $sort: { 'enrollments.enrollment_date': -1 } },
+
+                // Group back to get the most recent enrollment for each student
+                {
+                    $group: {
+                        _id: '$_id',
+                        idNumber: { $first: '$idNumber' },
+                        name: { $first: '$name' },
+                        email: { $first: '$email' },
+                        // generalInformation: { $first: '$generalInformation' },
+                        // educationalBackground: { $first: '$educationalBackground' },
+                        // trainingAdvanceStudies: { $first: '$trainingAdvanceStudies' },
+                        enrollments: { $first: '$enrollments' },
+                        // isenrolled: { $first: '$isenrolled' },
+                        // status: { $first: '$status' },
+                        // graduation_date: { $first: '$graduation_date' },
+                        // createdAt: { $first: '$createdAt' },
+                        // updatedAt: { $first: '$updatedAt' }
+                    }
+                },
+
+                // Sort the final result by the most recent enrollment date
+                { $sort: { 'mostRecentEnrollment.enrollment_date': -1 } }
+            ])
+
+            return { success: true, message: 'Enrolled students fetched successfully.', data: response }
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Student failed to fetch.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+            throw new HttpException({ success: false, message: 'Error finding enrolled students.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
@@ -147,6 +179,21 @@ export class StudentService {
 
             if (result.modifiedCount > 0) return { success: true, message: `Successfully unenrolled ${result.modifiedCount} out of ${sid.length} selected students.` }
             return { success: true, message: 'No changes were made. Selected students may already be unenrolled.' }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Failed to unenroll selected students.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async unrollOne({ sid }: IStudent)
+        : Promise<IPromiseStudent> {
+        try {
+            await this.studentModel.findByIdAndUpdate(
+                sid,
+                { isenrolled: false },
+                { new: true }
+            )
+
+            return { success: true, message: 'Student successfully un-enrolled.' }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Failed to unenroll selected students.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
