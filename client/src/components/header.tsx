@@ -99,7 +99,21 @@ export const HeaderDashboard = () => {
                                                 </BreadcrumbItem>
                                             </BreadCrumbs>
                                         )
-                                    case ROUTES.REGISTERED_STUDENTS:
+                                    case ROUTES.CURRENTLY_ENROLLED:
+                                        return (
+                                            <BreadCrumbs>
+                                                <BreadcrumbItem>
+                                                    <BreadcrumbPage className='text-md'>LOGO</BreadcrumbPage>
+                                                </BreadcrumbItem>
+                                                <BreadcrumbSeparator>
+                                                    <Slash />
+                                                </BreadcrumbSeparator>
+                                                <BreadcrumbItem>
+                                                    <BreadcrumbPage className='text-md font-medium'>Gradlink</BreadcrumbPage>
+                                                </BreadcrumbItem>
+                                            </BreadCrumbs>
+                                        )
+                                    case ROUTES.LIST_OF_STUDENTS:
                                         return (
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
@@ -141,7 +155,7 @@ export const HeaderDashboard = () => {
                                                 </BreadcrumbItem>
                                             </BreadCrumbs>
                                         )
-                                    case ROUTES.REGISTERED_PROGRAMS:
+                                    case ROUTES.AVAILABLE_PROGRAMS:
                                         return (
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
@@ -155,7 +169,7 @@ export const HeaderDashboard = () => {
                                                 </BreadcrumbItem>
                                             </BreadCrumbs>
                                         )
-                                    case ROUTES.REGISTERED_COURSES:
+                                    case ROUTES.AVAILABLE_COURSES:
                                         return (
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
