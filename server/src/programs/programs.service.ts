@@ -14,7 +14,7 @@ export class ProgramsService {
             const response = await this.ProgramModel.find()
             return { success: true, message: 'Programs fetched successfully.', data: response }
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Failed to fetch all program.', error }, HttpStatus.BAD_REQUEST)
+            throw new HttpException({ success: false, message: 'Failed to fetch all program.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
@@ -23,7 +23,7 @@ export class ProgramsService {
             const response = await this.ProgramModel.findOne({ code })
             return { success: true, message: 'Program fetched successfully', data: response }
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Failed to fetch all program.', error }, HttpStatus.BAD_REQUEST)
+            throw new HttpException({ success: false, message: 'Failed to fetch all program.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
@@ -35,7 +35,7 @@ export class ProgramsService {
             await this.ProgramModel.create({ code, descriptiveTitle, residency })
             return { success: true, message: 'Program successfully created.' }
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Failed to create program' }, HttpStatus.BAD_REQUEST)
+            throw new HttpException({ success: false, message: 'Failed to create program' }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
@@ -49,7 +49,7 @@ export class ProgramsService {
             )
             return { success: true, message: 'Program successfully updated' }
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Failed to update a program.', error }, HttpStatus.BAD_REQUEST)
+            throw new HttpException({ success: false, message: 'Failed to update a program.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
@@ -59,7 +59,7 @@ export class ProgramsService {
             await this.ProgramModel.findByIdAndDelete(pid)
             return { success: true, message: 'Program deleted successfully.' }
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Failed to delete a program.', error }, HttpStatus.BAD_REQUEST)
+            throw new HttpException({ success: false, message: 'Failed to delete a program.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 }
