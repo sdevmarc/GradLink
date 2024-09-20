@@ -11,6 +11,6 @@ export interface IAPICourse {
     courseno?: string
     descriptiveTitle?: string
     degree?: IDegree[]
-    units?: number
+    units?: string
     pre_req?: IPre_req[]
 }
