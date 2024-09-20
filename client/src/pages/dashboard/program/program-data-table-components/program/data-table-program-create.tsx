@@ -38,12 +38,16 @@ interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[],
     fetchCheck: (e: IAPIPrograms[]) => void
+    resetSelection: boolean
+    onResetComplete: () => void
 }
 
 export function DataTableCreateProgram<TData, TValue>({
     columns,
     data,
-    fetchCheck
+    fetchCheck,
+    resetSelection,
+    onResetComplete
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -78,6 +82,13 @@ export function DataTableCreateProgram<TData, TValue>({
         });
         fetchCheck(programs);
     }, [rowSelection, table]);
+
+    React.useEffect(() => {
+        if (resetSelection) {
+            table.resetRowSelection();
+            onResetComplete();
+        }
+    }, [resetSelection, table, onResetComplete]);
 
     return (
         <div className="w-full">
