@@ -11,7 +11,14 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 
-export function AlertDialogConfirmation({ btnTitle, title, description, btnContinue }: { btnTitle: string, btnContinue: React.MouseEventHandler<HTMLButtonElement>, title: string, description: string }) {
+interface IComponents {
+    btnTitle: string
+    btnContinue: React.MouseEventHandler<HTMLButtonElement>
+    title: string
+    description: string
+}
+
+export function AlertDialogConfirmation({ btnTitle, title, description, btnContinue }: IComponents) {
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>
