@@ -14,15 +14,16 @@ export default function CreateStudent() {
                         <HeadSection>
                             <BackHeadSection />
                             <SubHeadSectionDetails
-                                title="CREATE A GOOGLE FORM"
-                                description="A feature for building and customizing Google Forms to gather and organize information efficiently."
+                                title="CREATE A STUDENT"
+                                description="A feature for adding and registering new student records into the system with detailed information."
                             />
                         </HeadSection>
                     </aside>
                     <main className="flex">
                         <Sidebar>
-                            <SidebarNavs bg='bg-muted' title="Registered Students" link="/student" />
-                            <SidebarNavs title="Alumni Graduates" link="/student/alumni" />
+                            <SidebarNavs bg='bg-muted' title="Currently Enrolled" link={ROUTES.CURRENTLY_ENROLLED} />
+                            <SidebarNavs title="List of Students" link={ROUTES.LIST_OF_STUDENTS} />
+                            <SidebarNavs title="Alumni Graduates" link={ROUTES.ALUMNI_GRADUATES} />
                         </Sidebar>
                         <CreateForm />
                     </main>
@@ -186,6 +187,7 @@ import { API_STUDENT_CREATE } from '@/api/student'
 import { IAPIStudents } from '@/interface/student.interface'
 import { IAPICourse } from '@/interface/course.interface'
 import { ComboBox } from '@/components/combo-box'
+import { ROUTES } from '@/constants'
 
 const CourseColumns: ColumnDef<IAPICourse>[] = [
     {
