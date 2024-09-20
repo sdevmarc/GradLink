@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from "./ui/dialog";
-import { CircleCheck } from "lucide-react";
 
 interface IComponents {
     trigger: boolean
