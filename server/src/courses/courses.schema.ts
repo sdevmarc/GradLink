@@ -9,16 +9,19 @@ export const CoursesSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    degree: {
-        type: String,
-        ref: 'Program',
-        required: true
-    },
-    pre_req: {
-        type: String,
-        required: true,
-        default: 'None'
-    },
+    degree: [{
+        code: {
+            type: String,
+            required: true,
+            ref: 'Program'
+        }
+    }],
+    pre_req: [{
+        courseno: {
+            type: String,
+            default: 'None'
+        }
+    }],
     units: {
         type: Number,
         required: true,
