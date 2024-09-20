@@ -33,21 +33,6 @@ export const CourseColumns: ColumnDef<Expense>[] = [
         }
     },
     {
-        accessorKey: "degree",
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Degree" className="text-text" />
-        ),
-        cell: ({ row }) => {
-            return (
-                <div className="flex space-x-2">
-                    <span className="max-w-[60px] truncate capitalize font-medium">
-                        {row.getValue("degree")}
-                    </span>
-                </div>
-            );
-        }
-    },
-    {
         accessorKey: "units",
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="Units" className="text-text" />
