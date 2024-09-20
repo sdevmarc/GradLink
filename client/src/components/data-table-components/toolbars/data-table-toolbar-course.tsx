@@ -15,7 +15,8 @@ import { useEffect, useState } from "react";
 import { API_COURSE_CREATE } from "@/api/courses";
 import { ComboBox } from "@/components/combo-box";
 import { API_PROGRAM_FINDALL } from "@/api/program";
-import { Plus } from "lucide-react"'
+import { Plus } from "lucide-react"
+import { ROUTES } from "@/constants";
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>;
@@ -129,7 +130,7 @@ export function DataTableToolbarCourse<TData>({
                 /> */}
             </div>
             <div className="flex gap-2 items-center">
-                <DialogContainer
+                {/* <DialogContainer
                     submit={handleSubmit}
                     title="Add Course"
                     description="Please fill-out the required fields."
@@ -179,6 +180,12 @@ export function DataTableToolbarCourse<TData>({
                             </Button>
                         </>
                     }
+                /> */}
+                <AlertDialogConfirmation
+                    btnTitle="Create a course"
+                    title="Are you sure?"
+                    description={`You will be redirect to a page for creating a course.`}
+                    btnContinue={() => navigate(ROUTES.CREATE_COURSE)}
                 />
                 <AlertDialogConfirmation
                     btnTitle="Export"
