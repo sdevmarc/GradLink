@@ -37,7 +37,7 @@ export class CoursesService {
             await this.CourseModel.create({ courseno, descriptiveTitle, degree, units, pre_req })
             return { success: true, message: 'Course successfully created.' }
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Failed to create course.' }, HttpStatus.INTERNAL_SERVER_ERROR)
+            throw new HttpException({ success: false, message: 'Failed to create course.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
