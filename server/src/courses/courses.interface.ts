@@ -1,10 +1,18 @@
+interface IPre_req {
+    courseno: string
+}
+
+interface IDegree {
+    code: string
+}
+
 export interface ICourses {
     cid?: string
     courseno?: string
     descriptiveTitle?: string
-    degree?: string
+    degree?: IDegree[]
     units?: number
-    pre_req?: string
+    pre_req?: IPre_req[]
 }
 
 export interface IPromiseCourse {
