@@ -39,13 +39,17 @@ interface DataTableProps<TData, TValue> {
     data: TData[],
     fetchCheck: (e: IAPICourse[]) => void
     onCancel: (e: boolean) => void
+    resetSelection: boolean
+    onResetComplete: () => void
 }
 
 export function DataTableCreateCourse<TData, TValue>({
     columns,
     data,
     fetchCheck,
-    onCancel
+    onCancel,
+    resetSelection,
+    onResetComplete
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -80,6 +84,13 @@ export function DataTableCreateCourse<TData, TValue>({
         });
         fetchCheck(courses || []);
     }, [rowSelection, table]);
+
+    React.useEffect(() => {
+        if (resetSelection) {
+            table.resetRowSelection();
+            onResetComplete();
+        }
+    }, [resetSelection, table, onResetComplete]);
 
     return (
         <div className="w-full">
