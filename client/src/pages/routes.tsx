@@ -11,6 +11,7 @@ import { HeaderLayout, HomeHeaderLayout, TracerHeaderLayout } from "@/components
 import Home from "./home/home"
 import CurrentEnrolledStudent from "./dashboard/student/current-enrolled"
 import Overview from "./dashboard/overview/overview"
+import CreateCourse from "./dashboard/program/create-course"
 
 const Routes = createBrowserRouter([
     {
@@ -29,6 +30,7 @@ const Routes = createBrowserRouter([
             //Program
             { path: '/program', element: <Program /> },
             { path: '/program/courses', element: <Courses /> },
+            { path: '/program/courses/create', element: <CreateCourse /> },
 
             //Form
             // { path: '/form', element: <Form /> },
