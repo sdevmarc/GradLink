@@ -101,7 +101,7 @@ export function DataTableToolbarProgram<TData>({
                     description="Please fill-out the required fields."
                     Trigger={
                         <Button variant={`outline`} size={`sm`}>
-                            Add Program
+                            Create a program
                         </Button>
                     }
                     children={
