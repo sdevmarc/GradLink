@@ -11,23 +11,23 @@ import {
 import { Button } from "./ui/button"
 
 interface DialogContainerProps {
-    Trigger?: React.ReactNode;
-    title?: string;
-    description?: string;
-    children?: React.ReactNode;
-    submit?: (e: React.FormEvent<HTMLFormElement>) => Promise<void> | void;
+    Trigger?: React.ReactNode
+    title?: string
+    description?: string
+    children?: React.ReactNode
+    submit?: (e: React.FormEvent<HTMLFormElement>) => Promise<void> | void
 }
 
 export function DialogContainer({ Trigger, title, description, children, submit }: DialogContainerProps) {
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(false)
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+        e.preventDefault()
         if (submit) {
-            await submit(e);
-            setOpen(false);
+            await submit(e)
+            setOpen(false)
         }
-    };
+    }
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
