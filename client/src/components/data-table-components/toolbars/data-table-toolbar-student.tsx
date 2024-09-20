@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { DataTableViewOptions } from "@/components/data-table-components/data-table-view-options";
 import { AlertDialogConfirmation } from "@/components/alert-dialog";
 import { useNavigate } from "react-router-dom";
+import { ROUTES } from "@/constants";
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>;
@@ -72,8 +73,8 @@ export function DataTableToolbarStudent<TData>({
                 /> */}
             </div>
             <div className="flex gap-2 items-center">
-                <Button onClick={() => navigate('/student/create')} variant={`outline`} size={`sm`}>
-                    Create Student
+                <Button onClick={() => navigate(ROUTES.CREATE_STUDENT)} variant={`outline`} size={`sm`}>
+                    Create a student
                 </Button>
                 <AlertDialogConfirmation
                     btnTitle="Export"
