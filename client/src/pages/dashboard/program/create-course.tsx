@@ -2,18 +2,19 @@ import HeadSection, { BackHeadSection, SubHeadSectionDetails } from '@/component
 import { Sidebar, SidebarNavs } from '@/components/sidebar'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { useQuery } from '@tanstack/react-query'
-import { API_COURSE_FINDALL } from '@/api/courses'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { API_COURSE_CREATE, API_COURSE_FINDALL } from '@/api/courses'
 import { DataTableCreateCourse } from './program-data-table-components/courses/data-table-courses-create'
 import { IAPICourse } from '@/interface/course.interface'
 import React from 'react'
 import { ROUTES } from '@/constants'
-import { Plus } from 'lucide-react'
+import { CircleCheck, CircleX, Plus } from 'lucide-react'
 import { DataTableCreateProgram } from './program-data-table-components/program/data-table-program-create'
 import { CreateCourseColumns } from './program-data-table-components/courses/columns'
 import { API_PROGRAM_FINDALL } from '@/api/program'
 import { CreateProgramColumns } from './program-data-table-components/program/columns'
 import { IAPIPrograms } from '@/interface/program.interface'
+import ContinueDialog from '@/components/continue-dialog'
 
 export default function CreateCourse() {
     return (
@@ -43,13 +44,20 @@ export default function CreateCourse() {
 }
 
 const CreateForm = () => {
+    const [resetSelection, setResetSelection] = React.useState(false);
+    const [dialogState, setDialogState] = React.useState({
+        show: false,
+        title: '',
+        description: '',
+        success: false
+    });
     const [isPre, setPre] = React.useState<boolean>(false)
     const [course, setCourse] = React.useState<IAPICourse>({
         courseno: '',
         descriptiveTitle: '',
         degree: [],
         pre_req: [],
-        units: 0
+        units: ''
     });
     const { data: dataCourse, isLoading: courseLoading, isFetched: courseFetched } = useQuery({
         queryFn: () => API_COURSE_FINDALL(),
@@ -65,18 +73,41 @@ const CreateForm = () => {
 
     // if (programFetched) { console.log(dataProgram.data) }
 
+    const { mutateAsync: insertCourse, isPending: insertcoursePending } = useMutation({
+        mutationFn: API_COURSE_CREATE,
+        onSuccess: (data) => {
+            if (!data.success) {
+                setDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: data.message })
+            } else {
+                setDialogState({ success: true, show: true, title: data.message, description: 'Do you want to continue creating course?' })
+                setResetSelection(true)
+                setPre(false)
+                setCourse(prev => ({ ...prev, courseno: '', descriptiveTitle: '', degree: [], pre_req: [], units: '' }))
+            }
+
+        }
+    })
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        console.log(course)
-        // await insertStudent()
+        const { courseno, descriptiveTitle, degree, units, pre_req } = course
+        if (!courseno?.trim() || !descriptiveTitle || (degree?.length ?? 0) <= 0 || !units) return alert('Please fill-up the required fields.')
+        await insertCourse({ courseno, descriptiveTitle, degree, units, pre_req })
+    }
+
+    const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target
+        setCourse((prev) => ({
+            ...prev,
+            [name]: value
+        }))
     }
 
     const handleCourseChange = (selectedCourses: IAPICourse[]) => {
-        console.log(selectedCourses)
-        // setCourse((prev) => ({
-        //     ...prev,
-        //     pre_req: selectedCourses.map(({ code }) => ({ code }))
-        // }));
+        setCourse((prev) => ({
+            ...prev,
+            pre_req: selectedCourses.map(({ courseno }) => ({ courseno: courseno || '' }))
+        }));
     }
 
     const handleProgramChange = (selectedPrograms: IAPIPrograms[]) => {
@@ -88,6 +119,13 @@ const CreateForm = () => {
 
     return (
         <form onSubmit={handleSubmit} className="w-[80%] flex flex-col justify-start gap-4 rounded-lg border">
+            <ContinueDialog
+                icon={dialogState.success ? <CircleCheck color="#42a626" size={70} /> : <CircleX color="#880808" size={70} />}
+                trigger={dialogState.show}
+                title={dialogState.title}
+                description={dialogState.description}
+                onClose={() => { setDialogState(prev => ({ ...prev, show: false })) }}
+            />
             <div className="w-full px-4 py-3 border-b">
                 <h1 className='text-text font-semibold text-lg'>Configuration</h1>
             </div>
@@ -96,27 +134,33 @@ const CreateForm = () => {
                     <div className="flex flex-col px-4 gap-1">
                         <h1 className='text-[.83rem]'>Course Number</h1>
                         <Input
-                            name='title'
+                            value={course.courseno}
+                            name='courseno'
                             type='text'
-                            placeholder='eg. 000xxxxxx'
+                            placeholder='eg. LIS100'
+                            onChange={handleOnChange}
                             required
                         />
                     </div>
                     <div className="flex flex-col px-4 gap-1">
                         <h1 className='text-[.83rem]'>Descriptive Title</h1>
                         <Input
-                            name='title'
+                            value={course.descriptiveTitle}
+                            name='descriptiveTitle'
                             type='text'
-                            placeholder='eg. John Doe'
+                            placeholder='eg. Library Information System'
+                            onChange={handleOnChange}
                             required
                         />
                     </div>
                     <div className="flex flex-col px-4 gap-1">
                         <h1 className='text-[.83rem]'>Units</h1>
                         <Input
-                            name='title'
+                            value={course.units}
+                            name='units'
                             type='text'
-                            placeholder='eg. m@example.com'
+                            placeholder='eg. 123'
+                            onChange={handleOnChange}
                             required
                         />
                     </div>
@@ -142,7 +186,16 @@ const CreateForm = () => {
                             </div>
                             <div className="w-full flex flex-col gap-2 justify-center items-start">
                                 {courseLoading && <div>Loading...</div>}
-                                {courseFetched && <DataTableCreateCourse data={dataCourse.data || []} columns={CreateCourseColumns} fetchCheck={handleCourseChange} onCancel={(e) => setPre(e)} />}
+                                {
+                                    courseFetched &&
+                                    <DataTableCreateCourse
+                                        data={dataCourse.data || []} columns={CreateCourseColumns}
+                                        fetchCheck={handleCourseChange}
+                                        onCancel={(e) => setPre(e)}
+                                        resetSelection={resetSelection}
+                                        onResetComplete={() => setResetSelection(false)}
+                                    />
+                                }
                             </div>
                         </div>
                     }
@@ -158,7 +211,16 @@ const CreateForm = () => {
                         </div>
                         <div className="w-full flex flex-col gap-2 justify-center items-start">
                             {programLoading && <div>Loading...</div>}
-                            {programFetched && <DataTableCreateProgram data={dataProgram.data || []} columns={CreateProgramColumns} fetchCheck={handleProgramChange} />}
+                            {
+                                programFetched &&
+                                <DataTableCreateProgram
+                                    data={dataProgram.data || []}
+                                    columns={CreateProgramColumns}
+                                    fetchCheck={handleProgramChange}
+                                    resetSelection={resetSelection}
+                                    onResetComplete={() => setResetSelection(false)}
+                                />
+                            }
                         </div>
                     </div>
                     <div className="w-full flex items-center justify-end px-4">
