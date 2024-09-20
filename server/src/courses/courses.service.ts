@@ -34,6 +34,7 @@ export class CoursesService {
         try {
             const iscourse = await this.CourseModel.findOne({ courseno })
             if (iscourse) return { success: false, message: 'Course already exist.' }
+
             await this.CourseModel.create({ courseno, descriptiveTitle, degree, units, pre_req })
             return { success: true, message: 'Course successfully created.' }
         } catch (error) {
