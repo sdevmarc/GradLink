@@ -141,6 +141,16 @@ export class StudentService {
         }
     }
 
+    async findOne(idNumber: IStudent)
+        : Promise<IPromiseStudent> {
+        try {
+            const response = await this.studentModel.findOne({ idNumber })
+            return { success: true, message: 'Student fetched successfully', data: response }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Error finding enrolled students.', error }, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     async create(
         { idNumber, name, email, enrollments, isenrolled }: IStudent
     ): Promise<IPromiseStudent> {
