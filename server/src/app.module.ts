@@ -14,6 +14,8 @@ import { ProgramsModule } from './programs/programs.module';
 import { CoursesModule } from './courses/courses.module';
 import { FormsModule } from './forms/forms.module';
 import { ConstantsService } from './constants/constants.service';
+import { MailModule } from './mail/mail.module';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
     imports: [
@@ -27,6 +29,20 @@ import { ConstantsService } from './constants/constants.service';
                 signOptions: { expiresIn: '10s' },
             }),
         }),
+        MailerModule.forRoot({
+            transport: {
+                host: process.env.EMAIL_HOST,
+                port: process.env.EMAIL_PORT,
+                secure: true,
+                auth: {
+                    user: process.env.EMAIL_USERNAME,
+                    pass: process.env.EMAIL_PASSWORD,
+                },
+                defaults: {
+                    from: '"SMU Graduate Alumni Tracer" <yourparengedison@gmail.com>',
+                }
+            },
+        }),
         MongooseModule.forRoot(process.env.MONGODB_URI),
         UsersModule,
         StudentModule,
@@ -35,6 +51,7 @@ import { ConstantsService } from './constants/constants.service';
         ProgramsModule,
         CoursesModule,
         FormsModule,
+        MailModule,
     ],
     controllers: [AppController],
     providers: [AppService, AuditlogService, OtpService, ConstantsService],
