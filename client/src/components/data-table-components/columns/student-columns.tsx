@@ -33,6 +33,21 @@ export const StudentColumns: ColumnDef<Expense>[] = [
         }
     },
     {
+        accessorKey: "email",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Email" className="text-text" />
+        ),
+        cell: ({ row }) => {
+            return (
+                <div className="flex space-x-2">
+                    <span className="max-w-[100px] truncate capitalize font-medium">
+                        {row.getValue("email")}
+                    </span>
+                </div>
+            );
+        }
+    },
+    {
         accessorKey: "progress",
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="Progress" className="text-text" />
