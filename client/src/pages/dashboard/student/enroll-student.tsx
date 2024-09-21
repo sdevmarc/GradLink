@@ -9,11 +9,12 @@ import { IAPICourse } from '@/interface/course.interface'
 import { ROUTES } from '@/constants'
 import { IAPIStudents, ICourses } from '@/interface/student.interface'
 import { ComboBox } from '@/components/combo-box'
-import { DataTableEnrollStudent } from './student-data-table-components/student/data-table'
-import { StudentCourseColumns } from './student-data-table-components/student/columns'
+import { DataTableEnrollStudent } from './student-data-table-components/enroll-student/data-table-enroll-student'
 import { API_STUDENT_CREATE } from '@/api/student'
 import ContinueDialog from '@/components/continue-dialog'
 import { CircleCheck, CircleX } from 'lucide-react'
+import { CourseColumns } from '@/components/data-table-components/columns/course-columns'
+import { StudentCourseColumns } from './student-data-table-components/enroll-student/columns-student-enroll'
 
 export default function CreateStudent() {
     return (
