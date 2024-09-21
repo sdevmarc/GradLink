@@ -12,7 +12,7 @@ export const CourseColumns: ColumnDef<Expense>[] = [
             <DataTableColumnHeader column={column} title="Course No." className="text-text" />
         ),
         cell: ({ row }) => (
-            <div className="w-[2rem] capitalize">{row.getValue("courseno")}</div>
+            <div className="w-[100px] capitalize">{row.getValue("courseno")}</div>
         ),
         enableSorting: false,
         enableHiding: false
