@@ -33,7 +33,7 @@ export const StudentSchema = new mongoose.Schema({
         enrollment_date: {
             type: Date,
             required: true,
-            default: Date.now()
+            default: Date.now
         },
         courses: [{
             courseno: {
