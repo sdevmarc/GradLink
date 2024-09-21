@@ -12,6 +12,7 @@ import Home from "./home/home"
 import CurrentEnrolledStudent from "./dashboard/student/current-enrolled"
 import Overview from "./dashboard/overview/overview"
 import CreateCourse from "./dashboard/program/create-course"
+import Form from "./dashboard/form/form"
 
 const Routes = createBrowserRouter([
     {
@@ -33,7 +34,7 @@ const Routes = createBrowserRouter([
             { path: '/program/courses/create', element: <CreateCourse /> },
 
             //Form
-            // { path: '/form', element: <Form /> },
+            { path: '/form', element: <Form /> },
             // { path: '/form/create-form', element: <PostForm /> },
 
             //Settings
