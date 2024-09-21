@@ -22,6 +22,11 @@ export class StudentController {
         return this.studentService.findAllStudentsEnrolled()
     }
 
+    @Get('alumni')
+    async findAllAlumniStudents() {
+        return this.studentService.findAllAlumni()
+    }
+
     @Post('create')
     async createStudent(
         @Body() { idNumber, name, email, enrollments, isenrolled }: IStudent
