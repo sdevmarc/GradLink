@@ -74,7 +74,7 @@ export function DataTableToolbarStudent<TData>({
             </div>
             <div className="flex gap-2 items-center">
                 <Button onClick={() => navigate(ROUTES.CREATE_STUDENT)} variant={`outline`} size={`sm`}>
-                    Create a student
+                    Enroll a student
                 </Button>
                 <AlertDialogConfirmation
                     btnTitle="Export"
