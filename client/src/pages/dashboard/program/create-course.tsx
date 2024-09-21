@@ -84,7 +84,6 @@ const CreateForm = () => {
                 setPre(false)
                 setCourse(prev => ({ ...prev, courseno: '', descriptiveTitle: '', degree: [], pre_req: [], units: '' }))
             }
-
         }
     })
 
