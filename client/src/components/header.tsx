@@ -109,7 +109,15 @@ export const HeaderDashboard = () => {
                                                     <Slash />
                                                 </BreadcrumbSeparator>
                                                 <BreadcrumbItem>
-                                                    <BreadcrumbPage className='text-md font-medium'>Gradlink</BreadcrumbPage>
+                                                    <BreadcrumbItem className='text-md font-light'>Gradlink</BreadcrumbItem>
+                                                </BreadcrumbItem>
+                                                <BreadcrumbSeparator>
+                                                    <Slash />
+                                                </BreadcrumbSeparator>
+                                                <BreadcrumbItem>
+                                                    <BreadcrumbPage className='text-md font-medium'>
+                                                        Enroll a student
+                                                    </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                             </BreadCrumbs>
                                         )
@@ -200,7 +208,8 @@ export const HeaderDashboard = () => {
                                                 </BreadcrumbSeparator>
                                                 <BreadcrumbItem>
                                                     <BreadcrumbPage className='text-md font-medium'>
-                                                        Create a course</BreadcrumbPage>
+                                                        Create a course
+                                                    </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                             </BreadCrumbs>
                                         )
