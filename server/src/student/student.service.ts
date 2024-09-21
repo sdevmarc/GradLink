@@ -180,6 +180,67 @@ export class StudentService {
         }
     }
 
+    async findAllAlumni(): Promise<IPromiseStudent> {
+        try {
+            const response = await this.studentModel.aggregate([
+                // Match only enrolled students
+                { 
+                    $match: { 
+                        isenrolled: false,
+                        status: 'alumni'
+                     }
+                 },
+
+                // Unwind the enrollments array
+                { $unwind: '$enrollments' },
+
+                // Sort by the most recent enrollment date
+                // { $sort: { 'enrollments.enrollment_date': -1 } },
+
+                // Group back to get the most recent enrollment for each student
+                {
+                    $group: {
+                        _id: '$_id',
+                        idNumber: { $first: '$idNumber' },
+                        name: { $first: '$name' },
+                        email: { $first: '$email' },
+                        graduation_date: { $first: '$graduation_date' },
+                    }
+                },
+
+                // Convert enrollment_date to MM/DD/YYYY format
+                {
+                    $addFields: {
+                        formatted_graduation_date: {
+                            $dateToString: {
+                                format: "%m/%d/%Y",
+                                date: "$graduation_date"
+                            }
+                        }
+                    }
+                },
+
+                // Sort the final result by the most recent enrollment date
+                { $sort: { enrollment_date: -1 } },
+
+                // Project to include the formatted date and exclude the original date field
+                {
+                    $project: {
+                        _id: 1,
+                        idNumber: 1,
+                        name: 1,
+                        email: 1,
+                        graduation_date: "$formatted_graduation_date"
+                    }
+                }
+            ]);
+
+            return { success: true, message: 'Alumni students fetched successfully.', data: response };
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Error finding enrolled students.', error }, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     async create(
         { idNumber, name, email, enrollments, isenrolled }: IStudent
     ): Promise<IPromiseStudent> {
@@ -287,11 +348,12 @@ export class StudentService {
                     educationalBackground,
                     trainingAdvanceStudies,
                     status: 'alumni',
-                    progress: 'done'
+                    isenrolled: false,
+                    graduation_date: Date.now()
                 },
                 { new: true }
             )
-            return { success: true, message: 'Student successfully updated', idNumber }
+            return { success: true, message: 'Student successfully updated, turned to alumni', idNumber }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Failed to update student graduate', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
