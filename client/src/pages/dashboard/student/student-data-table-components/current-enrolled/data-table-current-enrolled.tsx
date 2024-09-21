@@ -123,7 +123,7 @@ export function DataTableStudentCurrentEnrolled<TData, TValue>({
                     />
                     {
                         isrows && <Button variant={`outline`} size={`sm`} className="flex items-center gap-4 bg-red-500 text-primary-foreground" type="button">
-                            Un-enroll
+                            Un-Enroll
                         </Button>
                     }
 
