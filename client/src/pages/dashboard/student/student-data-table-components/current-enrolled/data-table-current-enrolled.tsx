@@ -51,6 +51,7 @@ export function DataTableStudentCurrentEnrolled<TData, TValue>({
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState({})
+    const [isrows, setRows] = React.useState<boolean>(false)
 
     const table = useReactTable({
         data,
@@ -91,6 +92,13 @@ export function DataTableStudentCurrentEnrolled<TData, TValue>({
             const { idNumber, name, email, status } = original;
             return { idNumber, name, email, status };
         });
+
+        if (selectedRows.length > 0) {
+            setRows(true)
+        } else {
+            setRows(false)
+        }
+
         fetchCheck(current_enrolled);
     }, [rowSelection, table]);
 
@@ -113,6 +121,12 @@ export function DataTableStudentCurrentEnrolled<TData, TValue>({
                         }}
                         className="h-8 w-[20rem] lg:w-[25rem] placeholder:text-muted"
                     />
+                    {
+                        isrows && <Button variant={`outline`} size={`sm`} className="flex items-center gap-4 bg-red-500 text-primary-foreground" type="button">
+                            Un-enroll
+                        </Button>
+                    }
+
                     {/* {table.getColumn("category") && (
                     <DataTableFacetedFilter
                         column={table.getColumn("category")}
