@@ -14,7 +14,7 @@ export class StudentController {
 
     @Get()
     async findAllStudent() {
-        return this.studentService.findAll()
+        return this.studentService.findAllStudents()
     }
 
     @Get('enrolled')
