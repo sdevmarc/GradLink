@@ -107,7 +107,6 @@ export class StudentService {
                 // Sort by the most recent enrollment date
                 { $sort: { 'graduation_date': -1 } },
 
-
                 // Convert enrollment_date to MM/DD/YYYY format
                 {
                     $addFields: {
@@ -144,8 +143,29 @@ export class StudentService {
     async findOne(idNumber: IStudent)
         : Promise<IPromiseStudent> {
         try {
-            const response = await this.studentModel.findOne({ idNumber })
-            return { success: true, message: 'Student fetched successfully', data: response }
+            const personal_details = await this.studentModel.aggregate([
+                { $match: { idNumber } },
+                {
+                    $unwind: '$enrollments'
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        idNumber: 1,
+                        name: 1,
+                        email: 1,
+                        generalInformation: 1,
+                        educationalBackground: 1,
+                        trainingAdvanceStudies: 1,
+                        courses: '$enrollments.courses',
+                        isenrolled: 1,
+                        status: 1,
+                        graduation_date: 1
+                    }
+                }
+            ])
+
+            return { success: true, message: 'Student fetched successfully', data: personal_details }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Error finding enrolled students.', error }, HttpStatus.INTERNAL_SERVER_ERROR);
         }
