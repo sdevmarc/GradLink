@@ -27,6 +27,12 @@ export class StudentController {
         return this.studentService.findAllAlumni()
     }
 
+    @Get('findone/:idNumber')
+    async findOneStudent(@Param('idNumber') idNumber: IStudent) {
+       
+        return await this.studentService.findOne(idNumber)
+    }
+
     @Post('create')
     async createStudent(
         @Body() { idNumber, name, email, enrollments, isenrolled }: IStudent
