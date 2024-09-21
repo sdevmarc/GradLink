@@ -48,5 +48,14 @@ export const StudentCourseColumns: ColumnDef<IAPICourse>[] = [
         cell: ({ row }) => (
             <div>{row.getValue("units")}</div>
         ),
+    },
+    {
+        accessorKey: "units",
+        header: 'Status',
+        cell: ({ row }) => (
+            <div>
+                <h1>Ongoing</h1>
+            </div>
+        ),
     }
 ]
