@@ -29,7 +29,6 @@ import { AlertDialogConfirmation } from '@/components/alert-dialog'
 import { DataTableViewOptions } from '@/components/data-table-components/data-table-view-options'
 import { Cross2Icon } from '@radix-ui/react-icons'
 import { useNavigate } from 'react-router-dom'
-import { ROUTES } from '@/constants'
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -122,9 +121,6 @@ export function DataTableStudentAlumni<TData, TValue>({
                 /> */}
                 </div>
                 <div className="flex gap-2 items-center">
-                    <Button onClick={() => navigate(ROUTES.CREATE_STUDENT)} variant={`outline`} size={`sm`}>
-                        Enroll a student
-                    </Button>
                     <AlertDialogConfirmation
                         btnTitle="Export"
                         title="Are you sure?"
