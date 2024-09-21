@@ -111,14 +111,6 @@ export const HeaderDashboard = () => {
                                                 <BreadcrumbItem>
                                                     <BreadcrumbItem className='text-md font-light'>Gradlink</BreadcrumbItem>
                                                 </BreadcrumbItem>
-                                                <BreadcrumbSeparator>
-                                                    <Slash />
-                                                </BreadcrumbSeparator>
-                                                <BreadcrumbItem>
-                                                    <BreadcrumbPage className='text-md font-medium'>
-                                                        Enroll a student
-                                                    </BreadcrumbPage>
-                                                </BreadcrumbItem>
                                             </BreadCrumbs>
                                         )
                                     case ROUTES.LIST_OF_STUDENTS:
@@ -159,7 +151,15 @@ export const HeaderDashboard = () => {
                                                     <Slash />
                                                 </BreadcrumbSeparator>
                                                 <BreadcrumbItem>
-                                                    <BreadcrumbPage className='text-md font-medium'>Gradlink</BreadcrumbPage>
+                                                    <BreadcrumbItem className='text-md font-light'>Gradlink</BreadcrumbItem>
+                                                </BreadcrumbItem>
+                                                <BreadcrumbSeparator>
+                                                    <Slash />
+                                                </BreadcrumbSeparator>
+                                                <BreadcrumbItem>
+                                                    <BreadcrumbPage className='text-md font-medium'>
+                                                        Enroll a student
+                                                    </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                             </BreadCrumbs>
                                         )
