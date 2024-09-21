@@ -75,8 +75,52 @@ export class StudentService {
         }
     }
 
-    async findAllStudentsEnrolled()
-        : Promise<IPromiseStudent> {
+    // async findAllStudentsEnrolled()
+    //     : Promise<IPromiseStudent> {
+    //     try {
+    //         const response = await this.studentModel.aggregate([
+    //             // Match only enrolled students
+    //             { $match: { isenrolled: true } },
+
+    //             // Unwind the enrollments array
+    //             { $unwind: '$enrollments' },
+
+    //             // Sort by the most recent enrollment date
+    //             { $sort: { 'enrollments.enrollment_date': -1 } },
+
+    //             // Group back to get the most recent enrollment for each student
+    //             {
+    //                 $group: {
+    //                     _id: '$_id',
+    //                     idNumber: { $first: '$idNumber' },
+    //                     name: { $first: '$name' },
+    //                     email: { $first: '$email' },
+    //                     // generalInformation: { $first: '$generalInformation' },
+    //                     // educationalBackground: { $first: '$educationalBackground' },
+    //                     // trainingAdvanceStudies: { $first: '$trainingAdvanceStudies' },
+    //                     // enrollments: { $first: '$enrollments' },
+    //                     semester: { $first: '$enrollments.semester' },
+    //                     enrollment_date: { $first: '$enrollments.enrollment_date' },
+    //                     progress: { $first: '$enrollments.progress' },
+    //                     // isenrolled: { $first: '$isenrolled' },
+    //                     // status: { $first: '$status' },
+    //                     // graduation_date: { $first: '$graduation_date' },
+    //                     // createdAt: { $first: '$createdAt' },
+    //                     // updatedAt: { $first: '$updatedAt' }
+    //                 }
+    //             },
+
+    //             // Sort the final result by the most recent enrollment date
+    //             { $sort: { 'mostRecentEnrollment.enrollment_date': -1 } }
+    //         ])
+
+    //         return { success: true, message: 'Enrolled students fetched successfully.', data: response }
+    //     } catch (error) {
+    //         throw new HttpException({ success: false, message: 'Error finding enrolled students.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+    //     }
+    // }
+
+    async findAllStudentsEnrolled(): Promise<IPromiseStudent> {
         try {
             const response = await this.studentModel.aggregate([
                 // Match only enrolled students
@@ -95,25 +139,44 @@ export class StudentService {
                         idNumber: { $first: '$idNumber' },
                         name: { $first: '$name' },
                         email: { $first: '$email' },
-                        // generalInformation: { $first: '$generalInformation' },
-                        // educationalBackground: { $first: '$educationalBackground' },
-                        // trainingAdvanceStudies: { $first: '$trainingAdvanceStudies' },
-                        enrollments: { $first: '$enrollments' },
-                        // isenrolled: { $first: '$isenrolled' },
-                        // status: { $first: '$status' },
-                        // graduation_date: { $first: '$graduation_date' },
-                        // createdAt: { $first: '$createdAt' },
-                        // updatedAt: { $first: '$updatedAt' }
+                        semester: { $first: '$enrollments.semester' },
+                        enrollment_date: { $first: '$enrollments.enrollment_date' },
+                        progress: { $first: '$enrollments.progress' },
+                    }
+                },
+
+                // Convert enrollment_date to MM/DD/YYYY format
+                {
+                    $addFields: {
+                        formatted_enrollment_date: {
+                            $dateToString: {
+                                format: "%m/%d/%Y",
+                                date: "$enrollment_date"
+                            }
+                        }
                     }
                 },
 
                 // Sort the final result by the most recent enrollment date
-                { $sort: { 'mostRecentEnrollment.enrollment_date': -1 } }
-            ])
+                // { $sort: { enrollment_date: -1 } },
 
-            return { success: true, message: 'Enrolled students fetched successfully.', data: response }
+                // Project to include the formatted date and exclude the original date field
+                {
+                    $project: {
+                        _id: 1,
+                        idNumber: 1,
+                        name: 1,
+                        email: 1,
+                        semester: 1,
+                        progress: 1,
+                        enrollment_date: "$formatted_enrollment_date"
+                    }
+                }
+            ]);
+
+            return { success: true, message: 'Enrolled students fetched successfully.', data: response };
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Error finding enrolled students.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+            throw new HttpException({ success: false, message: 'Error finding enrolled students.', error }, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
