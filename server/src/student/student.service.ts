@@ -10,138 +10,51 @@ export class StudentService {
         @InjectModel('Form') private readonly formModel: Model<IStudentFormPending>
     ) { }
 
-    //UNFIXED
-    async findAll(): Promise<IPromiseStudent> {
+    async findAllStudents(): Promise<IPromiseStudent> {
         try {
-            const response = await this.studentModel.find()
-            const mappedResponse = response.map((item) => {
-                const { idNumber, name, email, enrollments } = item
+            const response = await this.studentModel.aggregate([
+                {
+                    $match: { status: 'student' }
+                },
 
-                //FIXED TO DATE TYPE
-                const sortedEnrollments = enrollments.sort((a, b) => {
-                    if (b.enrollment_date !== a.enrollment_date) {
-                        return parseInt(b.enrollment_date) - parseInt(a.enrollment_date)
+                {
+                    $unwind: '$enrollments'
+                },
+
+                {
+                    $sort: { 'enrollments.enrollment_date': -1 }
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        idNumber: 1,
+                        name: 1,
+                        email: 1,
+                        progress: '$enrollments.progress',
+                        enrollment_date: '$enrollments.progress'
                     }
-                    return parseInt(b.semester) - parseInt(a.semester)
-                })
-
-                // Sort enrollments from latest to oldest
-                // const sortedEnrollments = enrollments.sort((a, b) => {
-                //     if (b.year !== a.year) {
-                //         return parseInt(b.year) - parseInt(a.year)
-                //     }
-                //     return parseInt(b.semester) - parseInt(a.semester)
-                // })
-
-                const mostRecentEnrollment = sortedEnrollments[0]
-
-                return {
-                    idNumber,
-                    name,
-                    email,
-                    progress: mostRecentEnrollment ? mostRecentEnrollment.progress : null,
-                    //FIX TO DATE TYPE
-                    enrollment_date: mostRecentEnrollment ? mostRecentEnrollment.enrollment_date : null,
-                    // year: mostRecentEnrollment ? mostRecentEnrollment.year : null,
-                    mostRecentEnrollment // This will be used for sorting and then removed
                 }
-            })
+            ])
 
-            // Sort students based on their most recent enrollment
-            const sortedStudents = mappedResponse.sort((a, b) => {
-                const aRecent = a.mostRecentEnrollment
-                const bRecent = b.mostRecentEnrollment
 
-                if (!aRecent) return 1  // a should come after b if a has no enrollments
-                if (!bRecent) return -1 // b should come after a if b has no enrollments
-
-                //FIX TO DATE TYPE
-                if (bRecent.enrollment_date !== aRecent.enrollment_date) {
-                    return parseInt(bRecent.enrollment_date) - parseInt(aRecent.enrollment_date)
-                }
-
-                // if (bRecent.year !== aRecent.year) {
-                //     return parseInt(bRecent.year) - parseInt(aRecent.year)
-                // }
-                return parseInt(bRecent.semester) - parseInt(aRecent.semester)
-            })
-
-            // Remove the mostRecentEnrollment field from the final output
-            const finalResponse = sortedStudents.map(({ mostRecentEnrollment, ...rest }) => rest)
-
-            return { success: true, message: 'Students successfully fetched', data: finalResponse }
+            return { success: true, message: 'Students successfully fetched', data: response }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Students failed to fetch.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
-    // async findAllStudentsEnrolled()
-    //     : Promise<IPromiseStudent> {
-    //     try {
-    //         const response = await this.studentModel.aggregate([
-    //             // Match only enrolled students
-    //             { $match: { isenrolled: true } },
-
-    //             // Unwind the enrollments array
-    //             { $unwind: '$enrollments' },
-
-    //             // Sort by the most recent enrollment date
-    //             { $sort: { 'enrollments.enrollment_date': -1 } },
-
-    //             // Group back to get the most recent enrollment for each student
-    //             {
-    //                 $group: {
-    //                     _id: '$_id',
-    //                     idNumber: { $first: '$idNumber' },
-    //                     name: { $first: '$name' },
-    //                     email: { $first: '$email' },
-    //                     // generalInformation: { $first: '$generalInformation' },
-    //                     // educationalBackground: { $first: '$educationalBackground' },
-    //                     // trainingAdvanceStudies: { $first: '$trainingAdvanceStudies' },
-    //                     // enrollments: { $first: '$enrollments' },
-    //                     semester: { $first: '$enrollments.semester' },
-    //                     enrollment_date: { $first: '$enrollments.enrollment_date' },
-    //                     progress: { $first: '$enrollments.progress' },
-    //                     // isenrolled: { $first: '$isenrolled' },
-    //                     // status: { $first: '$status' },
-    //                     // graduation_date: { $first: '$graduation_date' },
-    //                     // createdAt: { $first: '$createdAt' },
-    //                     // updatedAt: { $first: '$updatedAt' }
-    //                 }
-    //             },
-
-    //             // Sort the final result by the most recent enrollment date
-    //             { $sort: { 'mostRecentEnrollment.enrollment_date': -1 } }
-    //         ])
-
-    //         return { success: true, message: 'Enrolled students fetched successfully.', data: response }
-    //     } catch (error) {
-    //         throw new HttpException({ success: false, message: 'Error finding enrolled students.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
-    //     }
-    // }
-
     async findAllStudentsEnrolled(): Promise<IPromiseStudent> {
         try {
             const response = await this.studentModel.aggregate([
-                // Match only enrolled students
                 { $match: { isenrolled: true } },
 
                 // Unwind the enrollments array
                 { $unwind: '$enrollments' },
 
-                // Sort by the most recent enrollment date
-                // { $sort: { 'enrollments.enrollment_date': -1 } },
-
-                // Group back to get the most recent enrollment for each student
                 {
-                    $group: {
-                        _id: '$_id',
-                        idNumber: { $first: '$idNumber' },
-                        name: { $first: '$name' },
-                        email: { $first: '$email' },
-                        semester: { $first: '$enrollments.semester' },
-                        enrollment_date: { $first: '$enrollments.enrollment_date' },
-                        progress: { $first: '$enrollments.progress' },
+                    $sort: {
+                        'enrollments.semester': -1,
+                        'enrollments.enrollment_date': -1
                     }
                 },
 
@@ -151,14 +64,11 @@ export class StudentService {
                         formatted_enrollment_date: {
                             $dateToString: {
                                 format: "%m/%d/%Y",
-                                date: "$enrollment_date"
+                                date: "$enrollments.enrollment_date"
                             }
                         }
                     }
                 },
-
-                // Sort the final result by the most recent enrollment date
-                { $sort: { enrollment_date: -1 } },
 
                 // Project to include the formatted date and exclude the original date field
                 {
@@ -167,8 +77,8 @@ export class StudentService {
                         idNumber: 1,
                         name: 1,
                         email: 1,
-                        semester: 1,
-                        progress: 1,
+                        semester: '$enrollments.semester',
+                        progress: '$enrollments.progress',
                         enrollment_date: "$formatted_enrollment_date"
                     }
                 }
@@ -184,29 +94,19 @@ export class StudentService {
         try {
             const response = await this.studentModel.aggregate([
                 // Match only enrolled students
-                { 
-                    $match: { 
+                {
+                    $match: {
                         isenrolled: false,
                         status: 'alumni'
-                     }
-                 },
+                    }
+                },
 
                 // Unwind the enrollments array
                 { $unwind: '$enrollments' },
 
                 // Sort by the most recent enrollment date
-                // { $sort: { 'enrollments.enrollment_date': -1 } },
+                { $sort: { 'graduation_date': -1 } },
 
-                // Group back to get the most recent enrollment for each student
-                {
-                    $group: {
-                        _id: '$_id',
-                        idNumber: { $first: '$idNumber' },
-                        name: { $first: '$name' },
-                        email: { $first: '$email' },
-                        graduation_date: { $first: '$graduation_date' },
-                    }
-                },
 
                 // Convert enrollment_date to MM/DD/YYYY format
                 {
