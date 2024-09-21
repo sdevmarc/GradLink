@@ -12,7 +12,7 @@ export const StudentColumns: ColumnDef<Expense>[] = [
             <DataTableColumnHeader column={column} title="ID" className="text-text" />
         ),
         cell: ({ row }) => (
-            <div className="w-[2rem] capitalize">{row.getValue("idNumber")}</div>
+            <div className="w-[100px] capitalize">{row.getValue("idNumber")}</div>
         ),
         enableSorting: false,
         enableHiding: false
@@ -30,38 +30,6 @@ export const StudentColumns: ColumnDef<Expense>[] = [
                     </span>
                 </div>
             );
-        }
-    },
-    {
-        accessorKey: "email",
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Email Address" className="text-text" />
-        ),
-        cell: ({ row }) => {
-            return (
-                <div className="flex w-[100px] items-center">
-                    <span> {row.getValue("email")}</span>
-                </div>
-            );
-        },
-        filterFn: (row, id, value) => {
-            return value.includes(row.getValue(id));
-        }
-    },
-    {
-        accessorKey: "enrollment_date",
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Enrollment Date" className="text-text" />
-        ),
-        cell: ({ row }) => {
-            return (
-                <div className="flex w-[100px] items-center">
-                    <span className="capitalize">{row.getValue("enrollment_date")}</span>
-                </div>
-            );
-        },
-        filterFn: (row, id, value) => {
-            return value.includes(row.getValue(id));
         }
     },
     {
