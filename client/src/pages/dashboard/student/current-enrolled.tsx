@@ -4,19 +4,13 @@ import { Sidebar, SidebarNavs } from "@/components/sidebar"
 import { useQuery } from "@tanstack/react-query"
 import { API_STUDENT_FINDALL_ENROLLED } from "@/api/student"
 import { ROUTES } from "@/constants"
-import React from "react"
+import { useState } from "react"
 import { DataTableStudentCurrentEnrolled } from "./student-data-table-components/current-enrolled/data-table-current-enrolled"
 import { StudentCurrentEnrolledColumns } from "./student-data-table-components/current-enrolled/columns-student-current-enrolled"
 import { IAPIStudents } from "@/interface/student.interface"
 
 export default function CurrentEnrolledStudent() {
-    const [resetSelection, setResetSelection] = React.useState(false);
-    const [dialogState, setDialogState] = React.useState({
-        show: false,
-        title: '',
-        description: '',
-        success: false
-    })
+    const [resetSelection, setResetSelection] = useState(false)
 
     const { data: students, isLoading: studentLoading, isFetched: studentFetched } = useQuery({
         queryFn: () => API_STUDENT_FINDALL_ENROLLED(),
@@ -26,6 +20,7 @@ export default function CurrentEnrolledStudent() {
     const handleStudentChange = (selectedStudent: IAPIStudents[]) => {
         console.log(selectedStudent)
     }
+
 
     return (
         <>
