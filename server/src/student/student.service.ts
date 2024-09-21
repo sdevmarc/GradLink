@@ -130,7 +130,7 @@ export class StudentService {
                 { $unwind: '$enrollments' },
 
                 // Sort by the most recent enrollment date
-                { $sort: { 'enrollments.enrollment_date': -1 } },
+                // { $sort: { 'enrollments.enrollment_date': -1 } },
 
                 // Group back to get the most recent enrollment for each student
                 {
@@ -158,7 +158,7 @@ export class StudentService {
                 },
 
                 // Sort the final result by the most recent enrollment date
-                // { $sort: { enrollment_date: -1 } },
+                { $sort: { enrollment_date: -1 } },
 
                 // Project to include the formatted date and exclude the original date field
                 {
