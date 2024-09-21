@@ -1,16 +1,17 @@
-import { Expense } from '@/components/data-table-components/schema';
 import HeadSection, { SubHeadSectionDetails } from '@/components/head-section';
 import { SidebarNavs, Sidebar } from '@/components/sidebar'
-import { columns } from "@/components/data-table-components/columns"
-import { useState } from "react"
-import expense from '@/components/data-table-components/data.json'
 import MainTable from '@/components/main-table';
-import { DataTable } from '@/components/data-table-components/data-table';
 import { ROUTES } from '@/constants';
+import { useQuery } from '@tanstack/react-query';
+import { API_STUDENT_FINDALL_ALUMNI } from '@/api/alumni';
+import { DataTableStudentAlumni } from './student-data-table-components/alumni/data-table-alumni';
+import { StudentAlumniColumns } from './student-data-table-components/alumni/columns-student-alumni';
 
 export default function Alumni() {
-    const modifiedExpense = expense.map(item => ({ id: generateId(), ...item, type: item.type as "income" | "expense" }));
-    const [data, setData] = useState<Expense[]>(modifiedExpense)
+    const { data: dataAlumni, isLoading: alumniLoading, isFetched: alumniFetched } = useQuery({
+        queryFn: () => API_STUDENT_FINDALL_ALUMNI(),
+        queryKey: ['students']
+    })
 
     return (
         <>
@@ -31,15 +32,12 @@ export default function Alumni() {
                             <SidebarNavs bg='bg-muted' title="Alumni Graduates" link={ROUTES.ALUMNI_GRADUATES} />
                         </Sidebar>
                         <MainTable>
-                            <DataTable toolbar='alumni' columns={columns} data={data} />
+                            {alumniLoading && <div>Loading...</div>}
+                            {alumniFetched && <DataTableStudentAlumni columns={StudentAlumniColumns} data={dataAlumni.data || []} />}
                         </MainTable>
                     </main>
                 </div>
             </div>
         </>
     )
-}
-
-function generateId() {
-    return '1';
 }
