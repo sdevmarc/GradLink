@@ -14,13 +14,12 @@ export default function CurrentEnrolledStudent() {
 
     const { data: students, isLoading: studentLoading, isFetched: studentFetched } = useQuery({
         queryFn: () => API_STUDENT_FINDALL_ENROLLED(),
-        queryKey: ['enrolled_students']
+        queryKey: ['students']
     })
 
     const handleStudentChange = (selectedStudent: IAPIStudents[]) => {
         console.log(selectedStudent)
     }
-
 
     return (
         <>
