@@ -20,7 +20,7 @@ export default function Student() {
                     <aside className="px-4 pb-4 pt-[8rem]">
                         <HeadSection>
                             <SubHeadSectionDetails
-                                title="RECORD OF REGISTERED STUDENTS"
+                                title="RECORD OF STUDENTS"
                                 description="Here's a list of registered students."
                             />
                         </HeadSection>
@@ -32,7 +32,7 @@ export default function Student() {
                             <SidebarNavs title="Alumni Graduates" link={ROUTES.ALUMNI_GRADUATES} />
                         </Sidebar>
                         <MainTable>
-                            {studentFetched && <DataTable toolbar="student" columns={StudentColumns} data={students.data || []} />}
+                            {studentFetched && <DataTable toolbar="list_student" columns={StudentColumns} data={students.data || []} />}
                         </MainTable>
                     </main>
                 </div>
