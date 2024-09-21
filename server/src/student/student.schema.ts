@@ -47,7 +47,12 @@ export const StudentSchema = new mongoose.Schema({
             units: {
                 type: Number,
                 required: true
-            }
+            },
+            // ispass: {
+            //     type: Boolean,
+            //     required: true,
+            //     default: true
+            // }
         }]
     }],
     isenrolled: {
