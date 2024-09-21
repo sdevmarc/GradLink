@@ -4,10 +4,10 @@ import {
     ColumnDef,
 } from "@tanstack/react-table"
 
-import { DataTableRowActions } from "@/components/data-table-components/data-table-row-actions";
 import { IAPICourse } from '@/interface/course.interface'
 import { DataTableColumnHeader } from "@/components/data-table-components/data-table-column-header";
 import { Checkbox } from "@/components/ui/checkbox";
+import { DataTableRowActionsCurrentEnrolled } from "./data-table-row-actions";
 
 export const StudentCurrentEnrolledColumns: ColumnDef<IAPICourse>[] = [
     {
@@ -108,6 +108,6 @@ export const StudentCurrentEnrolledColumns: ColumnDef<IAPICourse>[] = [
     },
     {
         id: "actions",
-        cell: ({ row }) => <DataTableRowActions row={row} />
+        cell: ({ row }) => <DataTableRowActionsCurrentEnrolled row={row} />
     }
 ]
