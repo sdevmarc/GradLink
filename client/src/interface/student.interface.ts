@@ -1,7 +1,12 @@
-interface IEnrollments {
+export interface ICourses {
     courseno?: string
     descriptive_title?: string
     units?: number
+}
+
+interface IEnrollments {
+    courses?: ICourses[]
+    semester?: string
 }
 
 export interface IAPIStudents {
@@ -10,6 +15,6 @@ export interface IAPIStudents {
     name?: string
     email?: string
     status?: string
-    semester?: string
-    enrollments?: IEnrollments[]
+    enrollments?: IEnrollments
+    isenrolled?: boolean
 }
