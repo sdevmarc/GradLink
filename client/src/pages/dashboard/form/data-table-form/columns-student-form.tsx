@@ -91,9 +91,9 @@ export const FormColumns: ColumnDef<IAPICourse>[] = [
         }
     },
     {
-        accessorKey: "status",
+        accessorKey: "notes",
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Status" className="w-[70px] text-text" />
+            <DataTableColumnHeader column={column} title="Notes" className="w-[70px] text-text" />
         ),
         cell: ({ row }) => {
             return (
@@ -101,10 +101,7 @@ export const FormColumns: ColumnDef<IAPICourse>[] = [
                     <span className="capitalize">{row.getValue("graduation_date")}</span>
                 </div>
             );
-        },
-        filterFn: (row, id, value) => {
-            return value.includes(row.getValue(id));
-        },
+        }
     },
     {
         id: "actions",
