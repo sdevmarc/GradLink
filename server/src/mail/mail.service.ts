@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
-import { IPromiseMail } from './mail.interface';
+import { IMail, IPromiseMail } from './mail.interface';
 import { ConstantsService } from 'src/constants/constants.service';
 
 @Injectable()
@@ -11,8 +11,7 @@ export class MailService {
 
     ) { }
 
-    async sendMail()
-        : Promise<IPromiseMail> {
+    async sendMail({ send_to }: IMail): Promise<IPromiseMail> {
         try {
             const google_form = `https://docs.google.com/forms/d/${this.constantsService.getFormId()}`
             const message = `
@@ -82,7 +81,7 @@ export class MailService {
             `;
 
             const response = await this.mailService.sendMail({
-                to: 'edisonsuarez360@gmail.com',
+                to: send_to,
                 subject: `Can I take a minute of your time? 😞`,
                 html: message
             })
