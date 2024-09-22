@@ -44,37 +44,6 @@ export const FormColumns: ColumnDef<IAPICourse>[] = [
         enableHiding: false
     },
     {
-        accessorKey: "name",
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Full Name" className="max-w-[100px] text-text" />
-        ),
-        cell: ({ row }) => {
-            return (
-                <div className="flex space-x-2">
-                    <span className=" truncate capitalize font-medium">
-                        {row.getValue("name")}
-                    </span>
-                </div>
-            );
-        }
-    },
-    {
-        accessorKey: "email",
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Email" className="w-[70px] text-text" />
-        ),
-        cell: ({ row }) => {
-            return (
-                <div className="flex w-[70px] items-center">
-                    <span className="text-center">{row.getValue("email")}</span>
-                </div>
-            );
-        },
-        filterFn: (row, id, value) => {
-            return value.includes(row.getValue(id));
-        }
-    },
-    {
         accessorKey: "date_sent",
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="Date Sent" className="w-[70px] text-text" />
@@ -98,7 +67,7 @@ export const FormColumns: ColumnDef<IAPICourse>[] = [
         cell: ({ row }) => {
             return (
                 <div className="flex items-center">
-                    <span className="capitalize">{row.getValue("graduation_date")}</span>
+                    <span className="capitalize">{row.getValue("notes")}</span>
                 </div>
             );
         }
