@@ -35,7 +35,7 @@ interface DataTableProps<TData, TValue> {
     data: TData[]
 }
 
-export function DataTableStudentAlumni<TData, TValue>({
+export function DataTableForm<TData, TValue>({
     columns,
     data,
 }: DataTableProps<TData, TValue>) {
