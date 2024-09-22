@@ -70,7 +70,7 @@ export class StudentController {
         const updatePromises = response.map(async (item) => {
             const idNumber = String(item.generalInformation.answers[0].answer);
             const { generalInformation, educationalBackground, trainingAdvanceStudies } = item;
-            return this.studentService.formUpdateStudent({
+            return await this.studentService.formUpdateStudent({
                 idNumber,
                 generalInformation,
                 educationalBackground,
