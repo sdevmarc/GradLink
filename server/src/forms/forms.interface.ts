@@ -1,3 +1,10 @@
+export interface IModelForm {
+    idNumber?: string
+    notes?: string
+    status?: string
+}
+
+
 export interface IFormValues {
     type?: string;
     questionTitle: string;
