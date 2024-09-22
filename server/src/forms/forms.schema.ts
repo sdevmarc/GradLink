@@ -11,13 +11,12 @@ export const FormSchema = new mongoose.Schema({
         required: true
     },
     date_sent: {
-        type: String,
+        type: Date,
         required: true
     },
     status: {
-        type: String,
-        enum: ['active', 'trash'],
+        type: Boolean,
         required: true,
-        default: 'active'
+        default: true
     }
 }, { timestamps: true })
