@@ -27,8 +27,8 @@ export default function Courses() {
                     </aside>
                     <main className="flex">
                         <Sidebar>
-                            <SidebarNavs title="Available Programs" link={ROUTES.AVAILABLE_PROGRAMS}/>
-                            <SidebarNavs bg='bg-muted' title="Available Courses" link={ROUTES.AVAILABLE_COURSES} />
+                            <SidebarNavs title="Programs" link={ROUTES.AVAILABLE_PROGRAMS}/>
+                            <SidebarNavs bg='bg-muted' title="Courses" link={ROUTES.AVAILABLE_COURSES} />
                         </Sidebar>
                         <MainTable>
                             {courseLoading && <div>Loading...</div>}
