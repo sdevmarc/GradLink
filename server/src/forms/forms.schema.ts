@@ -1,14 +1,19 @@
 import mongoose from "mongoose";
 
 export const FormSchema = new mongoose.Schema({
-    sid: {
+    idNumber: {
+        type: String,
+        ref: 'Student',
+        required: true
+    },
+    notes: {
         type: String,
         required: true
     },
     status: {
         type: String,
-        enum: ['pending', 'accepted', 'declined'],
+        enum: ['active', 'trash'],
         required: true,
-        default: 'pending'
+        default: 'active'
     }
 }, { timestamps: true })
