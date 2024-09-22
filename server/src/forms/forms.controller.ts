@@ -5,11 +5,13 @@ import { ConstantsService } from 'src/constants/constants.service';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { IStudent } from 'src/student/student.interface';
+import { StudentService } from 'src/student/student.service';
 
 @Controller('forms')
 export class FormsController {
     constructor(
         private readonly formsService: FormsService,
+        private readonly studentService: StudentService,
         @InjectModel('Student') private readonly studentModel: Model<IStudent>,
         @InjectModel('Form') private readonly formModel: Model<IModelForm>,
         private readonly constantsService: ConstantsService
@@ -28,15 +30,16 @@ export class FormsController {
 
             const updatePromises = response.map(async (item) => {
                 const idNumber = String(item.generalInformation.answers[0].answer);
+                const { generalInformation, educationalBackground, trainingAdvanceStudies } = item;
 
-                const is_idnumber = await this.studentModel.findOne({ idNumber })
-                const notes = 'Unknown respondent.'
-
-                if (is_idnumber) return { idNumber, status: 'Existing' }
+                const is_idnumber_in_student = await this.studentModel.findOne({ idNumber })
+                if (is_idnumber_in_student) return await this.studentService.formUpdateStudent({ idNumber, generalInformation, educationalBackground, trainingAdvanceStudies, })
 
                 const is_idnumber_in_form = await this.formModel.findOne({ idNumber })
-                if (is_idnumber_in_form) return { idNumber, status: 'Existing' }
-                
+
+
+                if (is_idnumber_in_form) return { idNumber, message: 'ID Number exists in form model.' }
+                const notes = 'Unknown respondent.'
                 await this.formModel.create({ idNumber, notes })
                 return { idNumber, status: 'Created' }
 
