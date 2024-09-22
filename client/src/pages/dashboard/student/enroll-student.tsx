@@ -13,7 +13,6 @@ import { DataTableEnrollStudent } from './student-data-table-components/enroll-s
 import { API_STUDENT_CREATE } from '@/api/student'
 import ContinueDialog from '@/components/continue-dialog'
 import { CircleCheck, CircleX } from 'lucide-react'
-import { CourseColumns } from '@/components/data-table-components/columns/course-columns'
 import { StudentCourseColumns } from './student-data-table-components/enroll-student/columns-student-enroll'
 
 export default function CreateStudent() {
@@ -85,7 +84,7 @@ const CreateForm = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         const { idNumber, name, email, enrollments } = student
-        if (!idNumber?.trim() || !name || !email?.trim() || !enrollments?.semester || (!enrollments.courses?.length ?? 0)) return alert('Please fill-up the required fields.')
+        if (!idNumber?.trim() || !name || !email?.trim() || !enrollments?.semester || !(enrollments.courses?.length || 0)) return alert('Please fill-up the required fields.')
         await insertStudent({ idNumber, name, email, enrollments })
     }
 
