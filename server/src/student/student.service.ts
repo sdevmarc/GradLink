@@ -146,7 +146,7 @@ export class StudentService {
         try {
             const is_idnumber = await this.studentModel.findOne({ idNumber })
             if (!is_idnumber) return { success: false, message: 'Student do not exists.' }
-           
+
             const personal_details = await this.studentModel.aggregate([
                 { $match: { idNumber } },
                 {
@@ -287,7 +287,7 @@ export class StudentService {
                 },
                 { new: true }
             )
-            return { success: true, message: 'Student successfully updated, turned to alumni', idNumber }
+            return { success: true, message: 'Alumni Graduate updated successfully.', idNumber }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Failed to update student graduate', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
