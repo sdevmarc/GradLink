@@ -1,13 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
-import { IPromiseStudent, IStudent, IStudentFormPending } from './student.interface'
+import { IPromiseStudent, IStudent } from './student.interface'
+import { IModelForm } from 'src/forms/forms.interface'
 
 @Injectable()
 export class StudentService {
     constructor(
         @InjectModel('Student') private readonly studentModel: Model<IStudent>,
-        @InjectModel('Form') private readonly formModel: Model<IStudentFormPending>
+        @InjectModel('Form') private readonly formModel: Model<IModelForm>
     ) { }
 
     async findAllStudents(): Promise<IPromiseStudent> {
@@ -143,6 +144,9 @@ export class StudentService {
     async findOne(idNumber: IStudent)
         : Promise<IPromiseStudent> {
         try {
+            const is_idnumber = await this.studentModel.findOne({ idNumber })
+            if (!is_idnumber) return { success: false, message: 'Student do not exists.' }
+           
             const personal_details = await this.studentModel.aggregate([
                 { $match: { idNumber } },
                 {
@@ -253,10 +257,10 @@ export class StudentService {
         }
     }
 
-    async insertFormPending({ sid })
+    async insertFormPending({ idNumber }: IModelForm)
         : Promise<IPromiseStudent> {
         try {
-            await this.formModel.create({ sid })
+            await this.formModel.create({ idNumber })
             return { success: true, message: 'Form pending student created successfully.' }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Failed to create form pending.' }, HttpStatus.INTERNAL_SERVER_ERROR)
