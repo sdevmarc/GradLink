@@ -13,8 +13,7 @@ export class FormsService {
     private forms: forms_v1.Forms
 
     constructor(
-        private configService: ConfigService,
-        @InjectModel('Form') private readonly FormModel: Model<IModelForm>
+        private configService: ConfigService
     ) {
         const auth = new google.auth.GoogleAuth({
             keyFile: this.configService.get<string>('GOOGLE_APPLICATION_CREDENTIALS'),
