@@ -1,24 +1,59 @@
-import { Body, Controller, Get, InternalServerErrorException, NotFoundException, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, InternalServerErrorException, NotFoundException, Param, Post } from '@nestjs/common';
 import { FormsService } from './forms.service';
-import { FormStructure, IForms } from './forms.interface';
+import { FormStructure, IForms, IModelForm } from './forms.interface';
 import { ConstantsService } from 'src/constants/constants.service';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { IStudent } from 'src/student/student.interface';
 
 @Controller('forms')
 export class FormsController {
     constructor(
         private readonly formsService: FormsService,
+        @InjectModel('Student') private readonly studentModel: Model<IStudent>,
+        @InjectModel('Form') private readonly formModel: Model<IModelForm>,
         private readonly constantsService: ConstantsService
     ) { }
 
     @Get('form-struc')
     async GetStruc()
         : Promise<FormStructure> {
-        return this.formsService.getFormStructure(this.constantsService.getFormId())
+        return await this.formsService.getFormStructure(this.constantsService.getFormId())
     }
 
     @Get('form-mapped')
     async GetMappedQuestions() {
-        return this.formsService.mapQuestionsToAnswers(this.constantsService.getFormId())
+        try {
+            const response = await this.formsService.mapQuestionsToAnswers(this.constantsService.getFormId())
+
+            const updatePromises = response.map(async (item) => {
+                const idNumber = String(item.generalInformation.answers[0].answer);
+
+                const is_idnumber = await this.studentModel.findOne({ idNumber })
+                const notes = 'Unknown respondent.'
+
+                if (is_idnumber) return { idNumber, status: 'Existing' }
+
+                const is_idnumber_in_form = await this.formModel.findOne({ idNumber })
+                if (is_idnumber_in_form) return { idNumber, status: 'Existing' }
+                
+                await this.formModel.create({ idNumber, notes })
+                return { idNumber, status: 'Created' }
+
+            })
+
+            const updateResults = await Promise.all(updatePromises)
+            return {
+                success: true,
+                message: 'Questions mapped successfully!',
+                data: {
+                    mappingResults: updateResults,
+                    responseData: response
+                }
+            }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Questions failed to map.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
     }
 
     @Get(':formId/responses')
@@ -35,7 +70,7 @@ export class FormsController {
     async createForm(
         @Body() { title, generalInformation, educationalBackground, trainingAdvanceStudies }: IForms
     ) {
-        return this.formsService.createFormWithQuestions({ title, generalInformation, educationalBackground, trainingAdvanceStudies });
+        return await this.formsService.createFormWithQuestions({ title, generalInformation, educationalBackground, trainingAdvanceStudies });
     }
 
     @Post(':formId/add-short-answer-question')
@@ -43,7 +78,7 @@ export class FormsController {
         @Param('formId') formId: string,
         @Body('questionTitle') questionTitle: string
     ): Promise<void> {
-        return this.formsService.addShortAnswerQuestion(formId, questionTitle);
+        return await this.formsService.addShortAnswerQuestion(formId, questionTitle);
     }
 
     @Post(':formId/add-paragraph-question')
@@ -51,7 +86,7 @@ export class FormsController {
         @Param('formId') formId: string,
         @Body('questionTitle') questionTitle: string
     ): Promise<void> {
-        return this.formsService.addParagraphQuestion(formId, questionTitle);
+        return await this.formsService.addParagraphQuestion(formId, questionTitle);
     }
 
     @Post(':formId/add-multiple-choice-question')
@@ -60,7 +95,7 @@ export class FormsController {
         @Body('questionTitle') questionTitle: string,
         @Body('options') options: string[]
     ): Promise<void> {
-        return this.formsService.addMultipleChoiceQuestion(formId, questionTitle, options);
+        return await this.formsService.addMultipleChoiceQuestion(formId, questionTitle, options);
     }
 
     @Post(':formId/add-checkbox-question')
@@ -69,7 +104,7 @@ export class FormsController {
         @Body('questionTitle') questionTitle: string,
         @Body('options') options: string[]
     ): Promise<void> {
-        return this.formsService.addCheckboxQuestion(formId, questionTitle, options);
+        return await this.formsService.addCheckboxQuestion(formId, questionTitle, options);
     }
 
     @Post(':formId/add-dropdown-question')
@@ -78,6 +113,6 @@ export class FormsController {
         @Body('questionTitle') questionTitle: string,
         @Body('options') options: string[]
     ): Promise<void> {
-        return this.formsService.addDropdownQuestion(formId, questionTitle, options);
+        return await this.formsService.addDropdownQuestion(formId, questionTitle, options);
     }
 }
