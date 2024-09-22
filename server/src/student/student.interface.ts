@@ -24,11 +24,6 @@ export interface IStudent {
     isenrolled?: boolean
 }
 
-export interface IStudentFormPending {
-    sid: string
-    status: string
-}
-
 export interface IPromiseStudent {
     success: boolean
     message: string
