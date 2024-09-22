@@ -29,7 +29,7 @@ export class StudentController {
 
     @Get('findone/:idNumber')
     async findOneStudent(@Param('idNumber') idNumber: IStudent) {
-       
+
         return await this.studentService.findOne(idNumber)
     }
 
@@ -82,8 +82,10 @@ export class StudentController {
 
         const resultsPromises = updateResults.map(async (item) => {
             const { success, message, idNumber } = item
-            if (!success) return await this.studentService.insertFormPending({ sid: idNumber })
-            return {}
+            if (!success) return await this.studentService.insertFormPending({ idNumber })
+
+            //Testing
+            return { success, message }
         })
 
         const pendingResults = await Promise.all(resultsPromises)
