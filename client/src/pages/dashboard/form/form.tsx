@@ -2,10 +2,19 @@ import HeadSection, { SubHeadSectionDetails } from '@/components/head-section'
 import MainTable from '@/components/main-table'
 import { Sidebar, SidebarNavs } from '@/components/sidebar'
 import { ROUTES } from '@/constants'
-import { DataTableStudentAlumni } from './data-table-form/data-table-form'
+import { DataTableForm } from './data-table-form/data-table-form'
 import { FormColumns } from './data-table-form/columns-student-form'
+import { useQuery } from '@tanstack/react-query'
+import { API_FORM_FINDALL_UNKNOWN } from '@/api/form'
 
 export default function Form() {
+    const { data: dataForm, isLoading: isformLoading, isFetched: formFetched } = useQuery({
+        queryFn: () => API_FORM_FINDALL_UNKNOWN(),
+        queryKey: ['forms']
+    })
+
+    if (formFetched) { console.log(dataForm.data) }
+
     return (
         <>
             <div className="flex flex-col min-h-screen items-center">
@@ -24,7 +33,8 @@ export default function Form() {
                             <SidebarNavs title="Trash" link="/" />
                         </Sidebar>
                         <MainTable>
-                            <DataTableStudentAlumni columns={FormColumns} data={[]} />
+                            {isformLoading && <div>Loading...</div>}
+                            {formFetched && <DataTableForm columns={FormColumns} data={dataForm.data} />}
                         </MainTable>
                     </main>
                 </div>
