@@ -2,16 +2,19 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import { IMail, IPromiseMail } from './mail.interface';
 import { ConstantsService } from 'src/constants/constants.service';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class MailService {
     constructor(
+        @InjectModel('Mail') private readonly mailModel: Model<IMail>,
         private readonly mailService: MailerService,
         private readonly constantsService: ConstantsService
 
     ) { }
 
-    async sendMail({ send_to }: IMail): Promise<IPromiseMail> {
+    async sendMail(send_to: string[]): Promise<IPromiseMail> {
         try {
             const google_form = `https://docs.google.com/forms/d/${this.constantsService.getFormId()}`
             const message = `
@@ -80,14 +83,17 @@ export class MailService {
 </html>
             `;
 
-            const response = await this.mailService.sendMail({
-                to: send_to,
-                subject: `Can I take a minute of your time? 😞`,
-                html: message
-            })
-            return { success: true, message: 'Email sent successfully!', data: response }
+            const responses = await Promise.all(send_to.map(recipient =>
+                this.mailService.sendMail({
+                    to: recipient,
+                    subject: `Can I take a minute of your time? 😞`,
+                    html: message
+                })
+            ));
+
+            return { success: true, message: 'Email sent successfully!', data: responses }
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Failed to update student graduate', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+            throw new HttpException({ success: false, message: 'Email failed to send.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
 
     }
