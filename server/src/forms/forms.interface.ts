@@ -2,6 +2,7 @@ export interface IModelForm {
     idNumber?: string
     notes?: string
     status?: string
+    date_sent?: string
 }
 
 
