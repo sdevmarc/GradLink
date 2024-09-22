@@ -17,6 +17,11 @@ export class FormsController {
         private readonly constantsService: ConstantsService
     ) { }
 
+    @Get('unknown-respondents')
+    async getUnknownRespondents() {
+        return await this.formsService.getUnknownRespondents()
+    }
+
     @Get('form-struc')
     async GetStruc()
         : Promise<FormStructure> {
@@ -28,26 +33,9 @@ export class FormsController {
         try {
             const response = await this.formsService.mapQuestionsToAnswers(this.constantsService.getFormId())
 
-            const formatDate = (date: string | Date) => {
-                const d = new Date(date);
-                const month = (d.getMonth() + 1).toString().padStart(2, '0');
-                const day = d.getDate().toString().padStart(2, '0');
-                const year = d.getFullYear();
-                let hours = d.getHours();
-                const minutes = d.getMinutes().toString().padStart(2, '0');
-                const ampm = hours >= 12 ? 'PM' : 'AM';
-                hours = hours % 12;
-                hours = hours ? hours : 12; // the hour '0' should be '12'
-                const formattedHours = hours.toString().padStart(2, '0');
-
-                return `${month}/${day}/${year} - ${formattedHours}:${minutes} ${ampm}`;
-            };
-
             const updatePromises = response.map(async (item) => {
                 const idNumber = String(item.generalInformation.answers[0].answer);
                 const { createTime, generalInformation, educationalBackground, trainingAdvanceStudies } = item;
-
-                const formattedCreateTime = formatDate(createTime);
 
                 const is_idnumber_in_student = await this.studentModel.findOne({ idNumber })
                 if (is_idnumber_in_student) return await this.studentService.formUpdateStudent({ idNumber, generalInformation, educationalBackground, trainingAdvanceStudies, })
@@ -55,8 +43,8 @@ export class FormsController {
                 const is_idnumber_in_form = await this.formModel.findOne({ idNumber })
 
                 if (is_idnumber_in_form) return { idNumber, message: 'ID Number exists in form model.' }
-                const notes = 'Unknown respondent.'
-                await this.formModel.create({ idNumber, date_sent: formattedCreateTime, notes })
+                const notes = 'Unknown respondent'
+                await this.formModel.create({ idNumber, date_sent: createTime, notes })
                 return { idNumber, status: 'Created' }
 
             })
