@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { google, forms_v1 } from 'googleapis';
 import { ConfigService } from '@nestjs/config';
-import { FormStructure, GridQuestion, IForms, IFormValues, IPromiseForms, MappedResponse, MappedSection, Question } from './forms.interface';
+import { FormStructure, GridQuestion, IForms, IFormValues, IModelForm, IPromiseForms, MappedResponse, MappedSection, Question } from './forms.interface';
 import { StudentService } from 'src/student/student.service';
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
 
 
 
@@ -11,7 +13,8 @@ export class FormsService {
     private forms: forms_v1.Forms
 
     constructor(
-        private configService: ConfigService
+        private configService: ConfigService,
+        @InjectModel('Form') private readonly FormModel: Model<IModelForm>
     ) {
         const auth = new google.auth.GoogleAuth({
             keyFile: this.configService.get<string>('GOOGLE_APPLICATION_CREDENTIALS'),
@@ -119,8 +122,11 @@ export class FormsService {
         try {
             const formStructure = await this.getFormStructure(formId);
             const responses = await this.getAllResponses(formId);
-
-            const mappedResponses: MappedResponse[] = responses.responses.map((response) => {
+    
+            // Create a map to store the latest response for each idNumber
+            const latestResponseMap = new Map<string, MappedResponse>();
+    
+            responses.responses.forEach((response) => {
                 let overallIndex = 1;
                 const mappedResponse: MappedResponse = {
                     responseId: response.responseId,
@@ -129,15 +135,15 @@ export class FormsService {
                     educationalBackground: { title: 'EDUCATIONAL BACKGROUND', answers: [] },
                     trainingAdvanceStudies: { title: 'TRAINING(S) ADVANCE STUDIES ATTENDED AFTER COLLEGE', answers: [] },
                 };
-
+    
                 for (const [sectionKey, section] of Object.entries(formStructure)) {
                     const mappedSection = mappedResponse[sectionKey as keyof MappedResponse] as MappedSection;
                     mappedSection.description = section.description;
-
+    
                     for (const question of section.questions) {
                         const answer = response.answers[question.questionId];
                         let mappedAnswer: string | { [row: string]: string };
-
+    
                         if (question.type === 'GRID') {
                             mappedAnswer = {};
                             (question as GridQuestion).rowQuestions.forEach((rowQuestion) => {
@@ -147,7 +153,7 @@ export class FormsService {
                         } else {
                             mappedAnswer = this.getAnswerValue(answer, question.type);
                         }
-
+    
                         mappedSection.answers.push({
                             index: overallIndex++,
                             question: question.title,
@@ -156,21 +162,20 @@ export class FormsService {
                         });
                     }
                 }
-
-                return mappedResponse;
+    
+                // Get the idNumber from the mapped response
+                const idNumber = mappedResponse.generalInformation.answers[0].answer as string;
+    
+                // Check if we already have a response for this idNumber
+                if (!latestResponseMap.has(idNumber) || 
+                    new Date(mappedResponse.createTime) > new Date(latestResponseMap.get(idNumber)!.createTime)) {
+                    latestResponseMap.set(idNumber, mappedResponse);
+                }
             });
-
-            // mappedResponses.forEach(async (item) => {
-            //     const { generalInformation, educationalBackground, trainingAdvanceStudies } = item
-            //     const { answers } = generalInformation
-            //     const sid = answers[0].answer
-            //     await this.studentService.UpsertStudent({
-            //         sid,
-            //         generalInformation,
-            //         educationalBackground,
-            //         trainingAdvanceStudies,
-            //     })
-            // })
+    
+            // Convert the map values back to an array
+            const mappedResponses = Array.from(latestResponseMap.values());
+    
             return mappedResponses;
         } catch (error) {
             console.error('Error mapping questions to answers:', error);
