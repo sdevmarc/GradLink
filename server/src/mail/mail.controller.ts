@@ -1,12 +1,13 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { MailService } from './mail.service';
+import { IMail } from './mail.interface';
 
 @Controller('mail')
 export class MailController {
     constructor(private readonly mailService: MailService) { }
 
-    @Get()
-    async sendMailer() {
-        return await this.mailService.sendMail();
+    @Get(':email')
+    async sendMailer(@Param('email') send_to: IMail) {
+        return await this.mailService.sendMail(send_to);
     }
 }
