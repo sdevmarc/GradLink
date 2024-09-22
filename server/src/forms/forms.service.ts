@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { google, forms_v1 } from 'googleapis';
 import { ConfigService } from '@nestjs/config';
 import { FormStructure, GridQuestion, IForms, IFormValues, IModelForm, IPromiseForms, MappedResponse, MappedSection, Question } from './forms.interface';
@@ -13,7 +13,8 @@ export class FormsService {
     private forms: forms_v1.Forms
 
     constructor(
-        private configService: ConfigService
+        private configService: ConfigService,
+        @InjectModel('Form') private readonly formModel: Model<IModelForm>
     ) {
         const auth = new google.auth.GoogleAuth({
             keyFile: this.configService.get<string>('GOOGLE_APPLICATION_CREDENTIALS'),
@@ -24,6 +25,59 @@ export class FormsService {
         })
 
         this.forms = google.forms({ version: 'v1', auth })
+    }
+
+    async getUnknownRespondents(): Promise<IPromiseForms> {
+        try {
+            // const formatDate = (date: string | Date) => {
+            //     const d = new Date(date);
+            //     const month = (d.getMonth() + 1).toString().padStart(2, '0');
+            //     const day = d.getDate().toString().padStart(2, '0');
+            //     const year = d.getFullYear();
+            //     let hours = d.getHours();
+            //     const minutes = d.getMinutes().toString().padStart(2, '0');
+            //     const ampm = hours >= 12 ? 'PM' : 'AM';
+            //     hours = hours % 12;
+            //     hours = hours ? hours : 12; // the hour '0' should be '12'
+            //     const formattedHours = hours.toString().padStart(2, '0');
+
+            //     return `${month}/${day}/${year} - ${formattedHours}:${minutes} ${ampm}`;
+            // };
+
+            const response = await this.formModel.aggregate([
+                {
+                    $match: { status: true }
+                },
+
+                {
+                    $addFields: {
+                        date_sent_date: {
+                            $dateToString: {
+                                date: '$date_sent',
+                                format: '%m/%d/%Y'
+                            }
+                        }
+                    }
+                },
+                {
+                    $sort: { 'date_sent_date': -1 }
+                },
+
+                {
+                    $project: {
+                        _id: 1,
+                        idNumber: 1,
+                        notes: 1,
+                        status: 1,
+                        date_sent: '$date_sent_date'
+                    }
+                }
+            ])
+
+            return { success: true, message: 'Unknown respondents fetched successfully!', data: response }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Failed to fetch unknown respondents.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
     }
 
     async getFormStructure(formId: string): Promise<FormStructure> {
@@ -121,10 +175,10 @@ export class FormsService {
         try {
             const formStructure = await this.getFormStructure(formId);
             const responses = await this.getAllResponses(formId);
-    
+
             // Create a map to store the latest response for each idNumber
             const latestResponseMap = new Map<string, MappedResponse>();
-    
+
             responses.responses.forEach((response) => {
                 let overallIndex = 1;
                 const mappedResponse: MappedResponse = {
@@ -134,15 +188,15 @@ export class FormsService {
                     educationalBackground: { title: 'EDUCATIONAL BACKGROUND', answers: [] },
                     trainingAdvanceStudies: { title: 'TRAINING(S) ADVANCE STUDIES ATTENDED AFTER COLLEGE', answers: [] },
                 };
-    
+
                 for (const [sectionKey, section] of Object.entries(formStructure)) {
                     const mappedSection = mappedResponse[sectionKey as keyof MappedResponse] as MappedSection;
                     mappedSection.description = section.description;
-    
+
                     for (const question of section.questions) {
                         const answer = response.answers[question.questionId];
                         let mappedAnswer: string | { [row: string]: string };
-    
+
                         if (question.type === 'GRID') {
                             mappedAnswer = {};
                             (question as GridQuestion).rowQuestions.forEach((rowQuestion) => {
@@ -152,7 +206,7 @@ export class FormsService {
                         } else {
                             mappedAnswer = this.getAnswerValue(answer, question.type);
                         }
-    
+
                         mappedSection.answers.push({
                             index: overallIndex++,
                             question: question.title,
@@ -161,20 +215,20 @@ export class FormsService {
                         });
                     }
                 }
-    
+
                 // Get the idNumber from the mapped response
                 const idNumber = mappedResponse.generalInformation.answers[0].answer as string;
-    
+
                 // Check if we already have a response for this idNumber
-                if (!latestResponseMap.has(idNumber) || 
+                if (!latestResponseMap.has(idNumber) ||
                     new Date(mappedResponse.createTime) > new Date(latestResponseMap.get(idNumber)!.createTime)) {
                     latestResponseMap.set(idNumber, mappedResponse);
                 }
             });
-    
+
             // Convert the map values back to an array
             const mappedResponses = Array.from(latestResponseMap.values());
-    
+
             return mappedResponses;
         } catch (error) {
             console.error('Error mapping questions to answers:', error);
