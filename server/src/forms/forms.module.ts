@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { FormSchema } from './forms.schema';
 import { ConstantsService } from 'src/constants/constants.service';
 import { StudentSchema } from 'src/student/student.schema';
+import { StudentService } from 'src/student/student.service';
 
 @Module({
     imports: [MongooseModule.forFeature([
@@ -13,7 +14,8 @@ import { StudentSchema } from 'src/student/student.schema';
     ])],
     providers: [
         FormsService,
-        ConstantsService
+        ConstantsService,
+        StudentService
     ],
     controllers: [FormsController]
 })
