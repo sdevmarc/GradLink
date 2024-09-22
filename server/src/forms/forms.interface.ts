@@ -1,10 +1,9 @@
 export interface IModelForm {
     idNumber?: string
     notes?: string
-    status?: string
+    status?: boolean
     date_sent?: string
 }
-
 
 export interface IFormValues {
     type?: string;
@@ -25,8 +24,9 @@ export interface IForms {
 }
 
 export interface IPromiseForms {
-    success: boolean;
-    message: string;
+    success: boolean
+    message: string
+    data?: IModelForm[] | {}
 }
 
 export interface FormResponse {
