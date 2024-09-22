@@ -10,6 +10,10 @@ export const FormSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    date_sent: {
+        type: String,
+        required: true
+    },
     status: {
         type: String,
         enum: ['active', 'trash'],
