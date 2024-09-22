@@ -61,7 +61,7 @@ const SearchDocker = () => {
                             type="text"
                             id="search"
                             ref={inputRef}
-                            className="z-[1] text-text placeholder:text-black/30 placeholder:text-sm placeholder:font-semibold bg-transparent text-sm outline-none"
+                            className="z-[1] text-text placeholder:text-black/60 placeholder:text-sm placeholder:font-normal bg-transparent text-sm outline-none"
                             placeholder="Search by keywords..."
                             onFocus={() => setSearchClick(true)} // Set the active state on focus
                             onBlur={() => setSearchClick(false)}  // Remove the active state on blur
@@ -86,6 +86,13 @@ const Map = () => {
     const [lat, setLat] = useState(16.48675023322725);
     const [zoom, setZoom] = useState(2);
 
+    const markers = [
+        { lng: 121.3598812, lat: 17.6676490, title: "Marker 1" },
+        { lng: 118.0583411, lat: 17.7292005, title: "Marker 2" },
+        { lng: 121.16, lat: 16.49, title: "Marker 3" },
+        // Add more markers as needed
+    ];
+
     useEffect(() => {
         if (map.current) return;
         if (mapContainer.current) {
@@ -95,6 +102,20 @@ const Map = () => {
                     style: 'mapbox://styles/mapbox/streets-v12',
                     center: [lng, lat],
                     zoom: zoom
+                });
+
+                markers.forEach(marker => {
+                    const el = document.createElement('div');
+                    el.className = 'marker';
+                    el.style.backgroundColor = 'black';
+                    el.style.width = '20px';
+                    el.style.height = '20px';
+                    el.style.borderRadius = '50%';
+
+                    new mapboxgl.Marker(el)
+                        .setLngLat([marker.lng, marker.lat])
+                        .setPopup(new mapboxgl.Popup().setHTML(`<h3>${marker.title}</h3>`))
+                        .addTo(map.current!);
                 });
             } catch (error) {
                 console.error("Error initializing map:", error);
