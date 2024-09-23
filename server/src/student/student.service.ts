@@ -148,10 +148,11 @@ export class StudentService {
             if (!is_idnumber) return { success: false, message: 'Student do not exists.' }
 
             const personal_details = await this.studentModel.aggregate([
-                { $match: { idNumber } },
+                { $match: { idNumber, status: 'alumni' } },
                 {
                     $unwind: '$enrollments'
                 },
+                { $limit: 1 },
                 {
                     $project: {
                         _id: 1,
@@ -169,7 +170,7 @@ export class StudentService {
                 }
             ])
 
-            return { success: true, message: 'Student fetched successfully', data: personal_details }
+            return { success: true, message: 'Student fetched successfully', data: personal_details[0] }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Error finding enrolled students.', error }, HttpStatus.INTERNAL_SERVER_ERROR);
         }
