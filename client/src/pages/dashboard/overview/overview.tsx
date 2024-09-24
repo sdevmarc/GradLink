@@ -1,5 +1,8 @@
 import HeadSection, { SubHeadSectionDetails } from "@/components/head-section";
 import './index.css'
+import { PieChartComponent } from "@/components/charts/pie-chart";
+import { BarChartCustomeLabelComponent } from "@/components/charts/bar-chart-custom-label";
+import { BarChartMixedComponent } from "@/components/charts/bar-chart-mixed";
 
 export default function Overview() {
     return (
@@ -13,8 +16,15 @@ export default function Overview() {
                         />
                     </HeadSection>
                 </aside>
-                <div className="py-4 h-[54rem]">
-                    {/* Main content */}
+                <div className="py-4 flex justify-evenly items-center flex-wrap gap-6">
+                    <PieChartComponent />
+                    <BarChartCustomeLabelComponent />
+                    <BarChartMixedComponent />
+                    <PieChartComponent />
+                    <BarChartCustomeLabelComponent />
+                    <BarChartMixedComponent />
+                    <PieChartComponent />
+                    <BarChartCustomeLabelComponent />
                 </div>
             </main>
         </div>
