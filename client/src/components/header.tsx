@@ -1,7 +1,7 @@
-import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { UserAvatar } from '@/components/user-avatar'
 import './index.css'
-import { Slash } from "lucide-react"
+import { House, Slash } from "lucide-react"
 
 import {
     Breadcrumb,
@@ -12,6 +12,8 @@ import {
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { ROUTES } from '@/constants'
+import { Input } from './ui/input'
+import { Button } from './ui/button'
 
 export function BreadcrumbWithCustomSeparator() {
     return (
@@ -49,7 +51,7 @@ export const HeaderLayout = () => {
 export const TracerHeaderLayout = () => {
     return (
         <>
-            {/* <HeaderDashboard /> */}
+            <HeaderTracer />
             <Outlet />
         </>
     )
@@ -73,11 +75,11 @@ const BreadCrumbs = ({ children }: { children: React.ReactNode }) => {
     )
 }
 
-export const HeaderDashboard = () => {
+const HeaderDashboard = () => {
     const location = useLocation()
     return (
         <>
-            <header className="hdashboard z-[1]  backdrop-blur-[1rem] backdrop-saturate-50 fixed top-0 left-0 w-full h-[6rem] border-b-[0.7px] border-black/20 flex justify-center items-center">
+            <header className="hdashboard z-[1] backdrop-blur-[1rem] backdrop-saturate-50 fixed top-0 left-0 w-full h-[6rem] border-b-[0.7px] border-black/20 flex justify-center items-center">
                 <div className="w-full h-full max-w-[90rem] px-4 flex flex-col justify-center items-center">
                     <div className="w-full h-[50%] flex justify-between items-center pl-4">
                         {
@@ -109,7 +111,7 @@ export const HeaderDashboard = () => {
                                                     <Slash />
                                                 </BreadcrumbSeparator>
                                                 <BreadcrumbItem>
-                                                    <BreadcrumbItem className='text-md font-light'>Gradlink</BreadcrumbItem>
+                                                    <BreadcrumbPage className='text-md font-medium'>Gradlink</BreadcrumbPage>
                                                 </BreadcrumbItem>
                                             </BreadCrumbs>
                                         )
@@ -292,7 +294,29 @@ export const HeaderDashboard = () => {
 
 
 export const HeaderTracer = () => {
+    const navigate = useNavigate()
     return (
-        <div></div>
+        <>
+            <div className="z-[1] fixed top-0 left-0 w-full h-[4rem] backdrop-blur-[.5rem] flex justify-center items-center">
+                <header className="w-full max-w-[90rem] h-full flex justify-between items-center px-4">
+                    <form className="flex items-center gap-2">
+                        <div onClick={() => navigate(ROUTES.OVERVIEW)} className="px-2 py-2 bg-background rounded-lg cursor-pointer hover:bg-muted duration-200">
+                            <House color='#000000' size={20} />
+                        </div>
+
+                        <Input placeholder='Search keywords...' className='w-[20rem] bg-background' required />
+                        <Button variant={`outline`} size={`sm`} type='submit'>
+                            Filter
+                        </Button>
+                    </form>
+                    <div className="flex items-center gap-4">
+                        <h1 className='text-text font-normal rounded-full px-3 py-1 text-[.8rem]'>
+                            Welcome, John Doe
+                        </h1>
+                        <UserAvatar image='https://github.com/shadcn.png' initials='CN' />
+                    </div>
+                </header>
+            </div>
+        </>
     )
 }
