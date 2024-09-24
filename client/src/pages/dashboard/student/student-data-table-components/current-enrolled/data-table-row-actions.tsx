@@ -36,6 +36,10 @@ export function DataTableRowActionsCurrentEnrolled<TData>({ row }: DataTableRowA
                 <DropdownMenuItem onClick={handleViewDetails}>View details</DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
+                    Send Tracer
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="bg-red-500">
                     Un-Enroll
                     <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
                 </DropdownMenuItem>
