@@ -9,6 +9,7 @@ export const ROUTES = {
     TRACER: '/tracer',
     CURRENTLY_ENROLLED: '/student',
     LIST_OF_STUDENTS: '/student/lists',
+    GRADUATING_STUDENTS: '/student/graduating',
     ALUMNI_GRADUATES: '/student/alumni',
     CREATE_STUDENT: '/student/create',
     AVAILABLE_PROGRAMS: '/program',
