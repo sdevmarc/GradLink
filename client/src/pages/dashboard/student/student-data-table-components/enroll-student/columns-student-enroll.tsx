@@ -50,7 +50,7 @@ export const StudentCourseColumns: ColumnDef<IAPICourse>[] = [
         ),
     },
     {
-        accessorKey: "units",
+        accessorKey: "actions",
         header: 'Status',
         cell: ({ row }) => (
             <div>
