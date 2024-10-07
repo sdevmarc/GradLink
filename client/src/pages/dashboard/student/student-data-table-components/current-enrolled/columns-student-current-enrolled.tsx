@@ -7,7 +7,7 @@ import {
 import { IAPICourse } from '@/interface/course.interface'
 import { DataTableColumnHeader } from "@/components/data-table-components/data-table-column-header";
 import { Checkbox } from "@/components/ui/checkbox";
-import { DataTableRowActionsCurrentEnrolled } from "./data-table-row-actions";
+import { DataTableRowActionsCurrentEnrolled } from "./data-table-row-actions-currently-enrolled";
 
 export const StudentCurrentEnrolledColumns: ColumnDef<IAPICourse>[] = [
     {
