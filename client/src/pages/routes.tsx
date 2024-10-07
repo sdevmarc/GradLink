@@ -8,11 +8,13 @@ import Alumni from "./dashboard/student/alumni-graduates"
 import CreateStudent from "./dashboard/student/enroll-student"
 import LoginPage from "./home/login"
 import { HeaderLayout, HomeHeaderLayout, TracerHeaderLayout } from "@/components/header"
-import Home from "./home/home"
 import CurrentEnrolledStudent from "./dashboard/student/current-enrolled"
 import Overview from "./dashboard/overview/overview"
 import CreateCourse from "./dashboard/program/create-course"
 import Form from "./dashboard/form/form"
+import ViewDetails from "./dashboard/student/view-details"
+import GraduatingStudent from "./dashboard/student/graduating-student"
+import Home from "./home/Home"
 
 const Routes = createBrowserRouter([
     {
@@ -26,7 +28,9 @@ const Routes = createBrowserRouter([
             { path: '/student', element: <CurrentEnrolledStudent /> },
             { path: '/student/lists', element: <Student /> },
             { path: '/student/create', element: <CreateStudent /> },
+            { path: '/student/graduating', element: <GraduatingStudent /> },
             { path: '/student/alumni', element: <Alumni /> },
+            { path: '/student/:sid', element: <ViewDetails /> },
 
             //Program
             { path: '/program', element: <Program /> },
