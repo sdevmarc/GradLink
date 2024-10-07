@@ -1,6 +1,5 @@
 "use client"
 
-import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
 import * as React from "react"
@@ -16,14 +15,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
-import { ChevronDown } from "lucide-react"
 
-import {
-    DropdownMenu,
-    DropdownMenuCheckboxItem,
-    DropdownMenuContent,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import {
     Table,
     TableBody,
@@ -33,6 +25,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { IAPICourse } from '@/interface/course.interface'
+import { DataTableToolbarEnrollStudent } from './data-table-toolbar-enroll-student'
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -53,16 +46,6 @@ export function DataTableEnrollStudent<TData, TValue>({
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState({})
-
-    // const handleFetchSelected = async () => {
-    //     const selectedRows = table.getFilteredSelectedRowModel().rows
-    //     const courses = selectedRows.map(row => {
-    //         const original = row.original as ICourse;
-    //         const { courseno, descriptiveTitle, units } = original
-    //         return { courseno, descriptiveTitle, units }
-    //     })
-    //     onSubmit(courses)
-    // }
 
     const table = useReactTable({
         data,
@@ -87,8 +70,8 @@ export function DataTableEnrollStudent<TData, TValue>({
         const selectedRows = table.getFilteredSelectedRowModel().rows;
         const courses = selectedRows.map(row => {
             const original = row.original as IAPICourse;
-            const { courseno, descriptiveTitle, units } = original;
-            return { courseno, descriptiveTitle, units };
+            const { courseno, descriptiveTitle } = original;
+            return { courseno, descriptiveTitle };
         });
         onSubmit(courses);
     }, [rowSelection, table]);
@@ -102,44 +85,7 @@ export function DataTableEnrollStudent<TData, TValue>({
 
     return (
         <div className="w-full">
-            <div className="w-full flex justify-between items-center pb-2">
-                <div className="w-[50%] flex items-center gap-2">
-                    <Input
-                        placeholder="Filter emails..."
-                        value={(table.getColumn("courseno")?.getFilterValue() as string) ?? ""}
-                        onChange={(event) =>
-                            table.getColumn("courseno")?.setFilterValue(event.target.value)
-                        }
-                        className=""
-                    />
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="outline">
-                                Type <ChevronDown className="ml-2 h-4 w-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            {table
-                                .getAllColumns()
-                                .filter((column) => column.getCanHide())
-                                .map((column) => {
-                                    return (
-                                        <DropdownMenuCheckboxItem
-                                            key={column.id}
-                                            className="capitalize"
-                                            checked={column.getIsVisible()}
-                                            onCheckedChange={(value) =>
-                                                column.toggleVisibility(!!value)
-                                            }
-                                        >
-                                            {column.id}
-                                        </DropdownMenuCheckboxItem>
-                                    )
-                                })}
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
-            </div>
+            {/* <DataTableToolbarEnrollStudent table={table} /> */}
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
