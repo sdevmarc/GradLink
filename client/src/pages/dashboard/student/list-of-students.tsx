@@ -1,11 +1,11 @@
 import MainTable from "@/components/main-table"
 import HeadSection, { SubHeadSectionDetails } from "@/components/head-section"
 import { Sidebar, SidebarNavs } from "@/components/sidebar"
-import { DataTable } from "@/components/data-table-components/data-table"
-import { StudentColumns } from "@/components/data-table-components/columns/student-columns"
 import { useQuery } from "@tanstack/react-query"
 import { API_STUDENT_FINDALL } from "@/api/student"
 import { ROUTES } from "@/constants"
+import { StudentListOfStudentsColumns } from "./student-data-table-components/list-of-students/columns-student-current-enrolled"
+import { DataTableStudentListOfStudent } from "./student-data-table-components/list-of-students/data-table-list-of-students"
 
 export default function Student() {
     const { data: students, isLoading: studentLoading, isFetched: studentFetched } = useQuery({
@@ -20,7 +20,7 @@ export default function Student() {
                     <aside className="px-4 pb-4 pt-[8rem]">
                         <HeadSection>
                             <SubHeadSectionDetails
-                                title="RECORD OF STUDENTS"
+                                title="LIST OF STUDENTS"
                                 description="Here's a list of registered students."
                             />
                         </HeadSection>
@@ -29,10 +29,12 @@ export default function Student() {
                         <Sidebar>
                             <SidebarNavs title="Currently Enrolled" link={ROUTES.CURRENTLY_ENROLLED} />
                             <SidebarNavs bg='bg-muted' title="List of Students" link={ROUTES.LIST_OF_STUDENTS} />
+                            <SidebarNavs title="Graduating Students" link={ROUTES.GRADUATING_STUDENTS} />
                             <SidebarNavs title="Alumni Graduates" link={ROUTES.ALUMNI_GRADUATES} />
                         </Sidebar>
                         <MainTable>
-                            {studentFetched && <DataTable toolbar="list_student" columns={StudentColumns} data={students.data || []} />}
+                            {studentLoading && <div>Loading...</div>}
+                            {studentFetched && <DataTableStudentListOfStudent columns={StudentListOfStudentsColumns} data={students.data || []} />}
                         </MainTable>
                     </main>
                 </div>
