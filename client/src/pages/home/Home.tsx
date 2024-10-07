@@ -10,7 +10,7 @@ export default function Home() {
                     <h1 className="text-[2rem] font-semibold">
                         Gradlink
                     </h1>
-                    <p className="text-center">Alumni Tracer and Record Management System for the School of Graduate Studies of Saint Mary’s Universitys</p>
+                    <p className="text-center">Alumni Tracer and Record Management System for the School of Graduate Studies of Saint Mary’s University</p>
                 </div>
                 <Link to={ROUTES.LOGIN} className="bg-foreground px-8 py-2 text-primary-foreground hover:bg-black/80">
                     Log In
