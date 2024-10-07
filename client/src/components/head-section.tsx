@@ -32,7 +32,7 @@ export const BackHeadSection = () => {
         navigate(-1)
     }
     return (
-        <button onClick={handleBack} className="flex items-center gap-2 h-9 px-4 rounded-lg hover:underline">
+        <button onClick={handleBack} className="flex items-center gap-2 h-9 px-4 rounded-lg hover:bg-muted">
             <IoIosArrowBack /> Back
         </button>
     )
