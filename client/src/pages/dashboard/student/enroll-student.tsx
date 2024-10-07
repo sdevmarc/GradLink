@@ -33,6 +33,7 @@ export default function CreateStudent() {
                         <Sidebar>
                             <SidebarNavs bg='bg-muted' title="Currently Enrolled" link={ROUTES.CURRENTLY_ENROLLED} />
                             <SidebarNavs title="List of Students" link={ROUTES.LIST_OF_STUDENTS} />
+                            <SidebarNavs title="Graduating Students" link={ROUTES.GRADUATING_STUDENTS} />
                             <SidebarNavs title="Alumni Graduates" link={ROUTES.ALUMNI_GRADUATES} />
                         </Sidebar>
                         <CreateForm />
@@ -83,6 +84,7 @@ const CreateForm = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
+        console.log(student)
         const { idNumber, name, email, enrollments } = student
         if (!idNumber?.trim() || !name || !email?.trim() || !enrollments?.semester || !(enrollments.courses?.length || 0)) return alert('Please fill-up the required fields.')
         await insertStudent({ idNumber, name, email, enrollments })
@@ -94,10 +96,9 @@ const CreateForm = () => {
     };
 
     const handleCoursesChange = (selectedCourses: IAPICourse[]) => {
-        const courses: ICourses[] = selectedCourses.map(({ courseno, descriptiveTitle, units }) => ({
+        const courses: ICourses[] = selectedCourses.map(({ courseno, descriptiveTitle }) => ({
             courseno: courseno || '',
-            descriptive_title: descriptiveTitle || '',
-            units: Number(units) || 0
+            descriptive_title: descriptiveTitle || ''
         }))
 
         setStudent(prev => ({
