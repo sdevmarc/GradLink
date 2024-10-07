@@ -133,6 +133,7 @@ const CreateForm = () => {
                     <div className="flex flex-col px-4 gap-1">
                         <h1 className='text-[.83rem]'>Course Number</h1>
                         <Input
+                            disabled={insertcoursePending}
                             value={course.courseno}
                             name='courseno'
                             type='text'
@@ -144,6 +145,7 @@ const CreateForm = () => {
                     <div className="flex flex-col px-4 gap-1">
                         <h1 className='text-[.83rem]'>Descriptive Title</h1>
                         <Input
+                            disabled={insertcoursePending}
                             value={course.descriptiveTitle}
                             name='descriptiveTitle'
                             type='text'
@@ -155,6 +157,7 @@ const CreateForm = () => {
                     <div className="flex flex-col px-4 gap-1">
                         <h1 className='text-[.83rem]'>Units</h1>
                         <Input
+                            disabled={insertcoursePending}
                             value={course.units}
                             name='units'
                             type='text'
@@ -166,7 +169,7 @@ const CreateForm = () => {
                     {
                         !isPre &&
                         <div className="flex px-4">
-                            <Button variant={`outline`} size={`sm`} className="flex items-center gap-4" type="button" onClick={() => setPre(true)}>
+                            <Button disabled={insertcoursePending} variant={`outline`} size={`sm`} className="flex items-center gap-4" type="button" onClick={() => setPre(true)}>
                                 <Plus color="#000000" size={18} /> Add Prerequisite
                             </Button>
                         </div>
@@ -223,8 +226,8 @@ const CreateForm = () => {
                         </div>
                     </div>
                     <div className="w-full flex items-center justify-end px-4">
-                        <Button type='submit' variant={`default`} size={`default`}>
-                            SUBMIT ENROLLMENT
+                        <Button disabled={insertcoursePending} type='submit' variant={`default`} size={`default`}>
+                            {insertcoursePending ? 'Submitting...' : 'Submit'}
                         </Button>
                     </div>
                 </div>
