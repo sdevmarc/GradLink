@@ -1,4 +1,4 @@
-import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { NavLink, Outlet, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { UserAvatar } from '@/components/user-avatar'
 import './index.css'
 import { House, Slash } from "lucide-react"
@@ -6,7 +6,6 @@ import { House, Slash } from "lucide-react"
 import {
     Breadcrumb,
     BreadcrumbItem,
-    BreadcrumbLink,
     BreadcrumbList,
     BreadcrumbPage,
     BreadcrumbSeparator,
@@ -14,30 +13,31 @@ import {
 import { ROUTES } from '@/constants'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
+// import { Button } from './ui/button'
 
-export function BreadcrumbWithCustomSeparator() {
-    return (
-        <Breadcrumb>
-            <BreadcrumbList>
-                <BreadcrumbItem>
-                    <BreadcrumbLink href="/">Home</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator>
-                    <Slash />
-                </BreadcrumbSeparator>
-                <BreadcrumbItem>
-                    <BreadcrumbLink href="/components">Components</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator>
-                    <Slash />
-                </BreadcrumbSeparator>
-                <BreadcrumbItem>
-                    <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
-                </BreadcrumbItem>
-            </BreadcrumbList>
-        </Breadcrumb>
-    )
-}
+// export function BreadcrumbWithCustomSeparator() {
+//     return (
+//         <Breadcrumb>
+//             <BreadcrumbList>
+//                 <BreadcrumbItem>
+//                     <BreadcrumbLink href="/">Home</BreadcrumbLink>
+//                 </BreadcrumbItem>
+//                 <BreadcrumbSeparator>
+//                     <Slash />
+//                 </BreadcrumbSeparator>
+//                 <BreadcrumbItem>
+//                     <BreadcrumbLink href="/components">Components</BreadcrumbLink>
+//                 </BreadcrumbItem>
+//                 <BreadcrumbSeparator>
+//                     <Slash />
+//                 </BreadcrumbSeparator>
+//                 <BreadcrumbItem>
+//                     <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
+//                 </BreadcrumbItem>
+//             </BreadcrumbList>
+//         </Breadcrumb>
+//     )
+// }
 
 export const HeaderLayout = () => {
     return (
@@ -59,9 +59,7 @@ export const TracerHeaderLayout = () => {
 
 export const HomeHeaderLayout = () => {
     return (
-        <>
-            <Outlet />
-        </>
+        <Outlet />
     )
 }
 
@@ -77,6 +75,7 @@ const BreadCrumbs = ({ children }: { children: React.ReactNode }) => {
 
 const HeaderDashboard = () => {
     const location = useLocation()
+    const { sid } = useParams()
     return (
         <>
             <header className="hdashboard z-[1] backdrop-blur-[1rem] backdrop-saturate-50 fixed top-0 left-0 w-full h-[6rem] border-b-[0.7px] border-black/20 flex justify-center items-center">
@@ -88,47 +87,9 @@ const HeaderDashboard = () => {
 
                                 switch (key) {
                                     case ROUTES.OVERVIEW:
-                                        return (
-                                            <BreadCrumbs>
-                                                <BreadcrumbItem>
-                                                    <BreadcrumbPage className='text-md'>LOGO</BreadcrumbPage>
-                                                </BreadcrumbItem>
-                                                <BreadcrumbSeparator>
-                                                    <Slash />
-                                                </BreadcrumbSeparator>
-                                                <BreadcrumbItem>
-                                                    <BreadcrumbPage className='text-md font-medium'>Gradlink</BreadcrumbPage>
-                                                </BreadcrumbItem>
-                                            </BreadCrumbs>
-                                        )
                                     case ROUTES.CURRENTLY_ENROLLED:
-                                        return (
-                                            <BreadCrumbs>
-                                                <BreadcrumbItem>
-                                                    <BreadcrumbPage className='text-md'>LOGO</BreadcrumbPage>
-                                                </BreadcrumbItem>
-                                                <BreadcrumbSeparator>
-                                                    <Slash />
-                                                </BreadcrumbSeparator>
-                                                <BreadcrumbItem>
-                                                    <BreadcrumbPage className='text-md font-medium'>Gradlink</BreadcrumbPage>
-                                                </BreadcrumbItem>
-                                            </BreadCrumbs>
-                                        )
                                     case ROUTES.LIST_OF_STUDENTS:
-                                        return (
-                                            <BreadCrumbs>
-                                                <BreadcrumbItem>
-                                                    <BreadcrumbPage className='text-md'>LOGO</BreadcrumbPage>
-                                                </BreadcrumbItem>
-                                                <BreadcrumbSeparator>
-                                                    <Slash />
-                                                </BreadcrumbSeparator>
-                                                <BreadcrumbItem>
-                                                    <BreadcrumbPage className='text-md font-medium'>Gradlink</BreadcrumbPage>
-                                                </BreadcrumbItem>
-                                            </BreadCrumbs>
-                                        )
+                                    case ROUTES.GRADUATING_STUDENTS:
                                     case ROUTES.ALUMNI_GRADUATES:
                                         return (
                                             <BreadCrumbs>
@@ -142,7 +103,7 @@ const HeaderDashboard = () => {
                                                     <BreadcrumbPage className='text-md font-medium'>Gradlink</BreadcrumbPage>
                                                 </BreadcrumbItem>
                                             </BreadCrumbs>
-                                        )
+                                        );
                                     case ROUTES.CREATE_STUDENT:
                                         return (
                                             <BreadCrumbs>
@@ -162,6 +123,20 @@ const HeaderDashboard = () => {
                                                     <BreadcrumbPage className='text-md font-medium'>
                                                         Enroll a student
                                                     </BreadcrumbPage>
+                                                </BreadcrumbItem>
+                                            </BreadCrumbs>
+                                        )
+                                    case `/student/${sid}`:
+                                        return (
+                                            <BreadCrumbs>
+                                                <BreadcrumbItem>
+                                                    <BreadcrumbPage className='text-md'>LOGO</BreadcrumbPage>
+                                                </BreadcrumbItem>
+                                                <BreadcrumbSeparator>
+                                                    <Slash />
+                                                </BreadcrumbSeparator>
+                                                <BreadcrumbItem>
+                                                    <BreadcrumbPage className='text-md font-medium'>Gradlink</BreadcrumbPage>
                                                 </BreadcrumbItem>
                                             </BreadCrumbs>
                                         )
