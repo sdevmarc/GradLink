@@ -102,7 +102,6 @@ export function DataTableCreateCourse<TData, TValue>({
                         onChange={(event) =>
                             table.getColumn("courseno")?.setFilterValue(event.target.value)
                         }
-                        className=""
                     />
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
