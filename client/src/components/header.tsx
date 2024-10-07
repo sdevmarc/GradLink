@@ -297,7 +297,7 @@ export const HeaderTracer = () => {
     const navigate = useNavigate()
     return (
         <>
-            <div className="z-[1] fixed top-0 left-0 w-full h-[4rem] backdrop-blur-[.5rem] flex justify-center items-center">
+            <div className="z-[1] fixed top-0 left-0 w-full h-[4rem] flex justify-center items-center">
                 <header className="w-full max-w-[90rem] h-full flex justify-between items-center px-4">
                     <form className="flex items-center gap-2">
                         <div onClick={() => navigate(ROUTES.OVERVIEW)} className="px-2 py-2 bg-background rounded-lg cursor-pointer hover:bg-muted duration-200">
