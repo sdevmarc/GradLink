@@ -20,7 +20,7 @@ export default function Alumni() {
                     <aside className="px-4 pb-4 pt-[8rem]">
                         <HeadSection>
                             <SubHeadSectionDetails
-                                title="RECORD OF ALUMNI GRADUATES"
+                                title="ALUMNI GRADUATES"
                                 description="Here's a list of registered alumni's."
                             />
                         </HeadSection>
@@ -29,6 +29,7 @@ export default function Alumni() {
                         <Sidebar>
                             <SidebarNavs title="Currently Enrolled" link={ROUTES.CURRENTLY_ENROLLED} />
                             <SidebarNavs title="List of Students" link={ROUTES.LIST_OF_STUDENTS} />
+                            <SidebarNavs title="Graduating Students" link={ROUTES.GRADUATING_STUDENTS} />
                             <SidebarNavs bg='bg-muted' title="Alumni Graduates" link={ROUTES.ALUMNI_GRADUATES} />
                         </Sidebar>
                         <MainTable>
