@@ -17,23 +17,23 @@ export default function ViewDetails() {
                         </HeadSection>
                     </aside>
                     <main className="flex justify-center items-center py-4">
-                        <Card className="w-full max-w-3xl">
+                        <Card className="w-full max-w-4xl">
                             <CardHeader>
-                                <CardTitle className="text-2xl font-bold">Jane Doe</CardTitle>
+                                <CardTitle className="text-2xl font-bold">Marc Edison D. Suarez</CardTitle>
                                 <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                                     <GraduationCap className="h-4 w-4" />
-                                    <span>Class of 2018</span>
+                                    <span>Class of 2025</span>
                                 </div>
                             </CardHeader>
                             <CardContent className="grid gap-4">
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <h3 className="font-semibold">Degree</h3>
-                                        <p>Bachelor of Science in Computer Science</p>
+                                        <p>Bachelor of Science in Information Technology</p>
                                     </div>
                                     <div>
                                         <h3 className="font-semibold">Major</h3>
-                                        <p>Artificial Intelligence</p>
+                                        <p>Software Engineering</p>
                                     </div>
                                 </div>
                                 <Separator />
@@ -41,7 +41,7 @@ export default function ViewDetails() {
                                     <h3 className="font-semibold mb-2">Current Position</h3>
                                     <div className="flex items-center space-x-2">
                                         <Briefcase className="h-4 w-4 text-muted-foreground" />
-                                        <span>Senior Software Engineer at Tech Innovations Inc.</span>
+                                        <span>Senior Software Engineer at Accenture.</span>
                                     </div>
                                 </div>
                                 <Separator />
@@ -49,7 +49,7 @@ export default function ViewDetails() {
                                     <h3 className="font-semibold mb-2">Location</h3>
                                     <div className="flex items-center space-x-2">
                                         <MapPin className="h-4 w-4 text-muted-foreground" />
-                                        <span>San Francisco, CA</span>
+                                        <span>Bonfal West, Bayombong, Nueva Vizcaya</span>
                                     </div>
                                 </div>
                                 <Separator />
