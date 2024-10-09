@@ -22,7 +22,7 @@ export function DataTableRowActionsListOfStudent<TData>({ row }: DataTableRowAct
         // console.log(row.original)
         const { _id: id } = row.original as { _id: string }
         const encoded_id = btoa(id)
-        navigate(`/student/${encoded_id}`)
+        navigate(`/student/details/${encoded_id}`)
     }
 
     return (
