@@ -22,14 +22,14 @@ export default function Form() {
                     <aside className="px-4 pb-4 pt-[8rem]">
                         <HeadSection>
                             <SubHeadSectionDetails
-                                title="GOOGLE FORM"
-                                description="Here's a list of responses from the alumni graduates."
+                                title="UNKNOWN RESPONDENTS"
+                                description="Here's a list of unnknown respondents from the alumni graduates."
                             />
                         </HeadSection>
                     </aside>
                     <main className="flex">
                         <Sidebar>
-                            <SidebarNavs bg='bg-muted' title="Responses" link={ROUTES.GOOGLE_FORM} />
+                            <SidebarNavs bg='bg-muted' title="Unknown Respondents" link={ROUTES.GOOGLE_FORM} />
                             <SidebarNavs title="Trash" link="/" />
                         </Sidebar>
                         <MainTable>
