@@ -102,10 +102,11 @@ export function DataTableCreateCourse<TData, TValue>({
                         onChange={(event) =>
                             table.getColumn("courseno")?.setFilterValue(event.target.value)
                         }
+                        className="h-8 w-[20rem] lg:w-[25rem] placeholder:text-muted"
                     />
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline">
+                            <Button variant="outline" size={`sm`}>
                                 Type <ChevronDown className="ml-2 h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
