@@ -2,7 +2,7 @@ import HeadSection, { BackHeadSection, SubHeadSectionDetails } from '@/component
 import { Sidebar, SidebarNavs } from '@/components/sidebar'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { API_COURSE_CREATE, API_COURSE_FINDALL } from '@/api/courses'
 import { DataTableCreateCourse } from './program-data-table-components/courses/data-table-courses-create'
 import { IAPICourse } from '@/interface/course.interface'
@@ -44,6 +44,7 @@ export default function CreateCourse() {
 }
 
 const CreateForm = () => {
+    const queryClient = useQueryClient()
     const [resetSelection, setResetSelection] = React.useState(false);
     const [dialogState, setDialogState] = React.useState({
         show: false,
@@ -75,15 +76,24 @@ const CreateForm = () => {
 
     const { mutateAsync: insertCourse, isPending: insertcoursePending } = useMutation({
         mutationFn: API_COURSE_CREATE,
-        onSuccess: (data) => {
+        onSuccess: async (data) => {
             if (!data.success) {
                 setDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: data.message })
             } else {
+                await queryClient.invalidateQueries({ queryKey: ['courses'] })
+                await queryClient.refetchQueries({ queryKey: ['courses'] })
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                })
                 setDialogState({ success: true, show: true, title: data.message, description: 'Do you want to continue creating course?' })
                 setResetSelection(true)
                 setPre(false)
                 setCourse(prev => ({ ...prev, courseno: '', descriptiveTitle: '', degree: [], pre_req: [], units: '' }))
             }
+        },
+        onError: (data) => {
+            setDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: data.message })
         }
     })
 
@@ -226,8 +236,8 @@ const CreateForm = () => {
                         </div>
                     </div>
                     <div className="w-full flex items-center justify-end px-4">
-                        <Button disabled={insertcoursePending} type='submit' variant={`default`} size={`default`}>
-                            {insertcoursePending ? 'Submitting...' : 'Submit'}
+                        <Button disabled={insertcoursePending} type='submit' variant={`default`} size={`sm`}>
+                            {insertcoursePending ? 'Creating course...' : 'Create course'}
                         </Button>
                     </div>
                 </div>
