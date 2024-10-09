@@ -33,6 +33,8 @@ interface DataTableProps<TData, TValue> {
     onSubmit: (e: IAPICourse[]) => void
     resetSelection: boolean
     onResetComplete: () => void
+    selectedPrograms?: string[]
+    isAdditional: (e: boolean) => void
 }
 
 export function DataTableEnrollStudent<TData, TValue>({
@@ -40,7 +42,9 @@ export function DataTableEnrollStudent<TData, TValue>({
     data,
     onSubmit,
     resetSelection,
-    onResetComplete
+    onResetComplete,
+    selectedPrograms = [],
+    isAdditional
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -67,25 +71,46 @@ export function DataTableEnrollStudent<TData, TValue>({
     })
 
     React.useEffect(() => {
-        const selectedRows = table.getFilteredSelectedRowModel().rows;
+        if (selectedPrograms.length > 0) {
+            const newSelection: Record<string, boolean> = {}
+            table.getFilteredRowModel().rows.forEach((row) => {
+                const course = row.original as IAPICourse
+                const shouldSelectRow = course.degree?.some(degree =>
+                    selectedPrograms.includes(degree.code)
+                )
+
+                // Set the selection state based on the check
+                if (shouldSelectRow) {
+                    newSelection[row.id] = true
+                }
+            })
+            setRowSelection(newSelection)
+        } else {
+            setRowSelection({})
+        }
+    }, [selectedPrograms, table])
+
+    React.useEffect(() => {
+        const selectedRows = table.getFilteredSelectedRowModel().rows
         const courses = selectedRows.map(row => {
-            const original = row.original as IAPICourse;
-            const { courseno, descriptiveTitle } = original;
-            return { courseno, descriptiveTitle };
-        });
-        onSubmit(courses);
-    }, [rowSelection, table]);
+            const original = row.original as IAPICourse
+            const { courseno, descriptiveTitle, units } = original
+
+            return { courseno, descriptiveTitle, units }
+        })
+        onSubmit(courses)
+    }, [rowSelection, table])
 
     React.useEffect(() => {
         if (resetSelection) {
-            table.resetRowSelection();
-            onResetComplete();
+            table.resetRowSelection()
+            onResetComplete()
         }
-    }, [resetSelection, table, onResetComplete]);
+    }, [resetSelection, table, onResetComplete])
 
     return (
         <div className="w-full">
-            {/* <DataTableToolbarEnrollStudent table={table} /> */}
+            <DataTableToolbarEnrollStudent table={table} isAdditional={(e) => isAdditional(e)} />
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
@@ -148,7 +173,7 @@ export function DataTableEnrollStudent<TData, TValue>({
                         onClick={() => table.previousPage()}
                         disabled={!table.getCanPreviousPage()}
                     >
-                        Previous
+                        Previousss
                     </Button>
                     <Button
                         variant="outline"
