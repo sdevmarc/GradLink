@@ -9,7 +9,7 @@ import { API_PROGRAM_FINDALL } from '@/api/program'
 export default function Program() {
     const { data: program, isLoading: programLoading, isFetched: programFetched } = useQuery({
         queryFn: () => API_PROGRAM_FINDALL(),
-        queryKey: ['program']
+        queryKey: ['programs']
     })
 
     return (
