@@ -33,7 +33,7 @@ export function DataTableToolbarListOfStudent<TData>({
         <div className="flex flex-wrap items-center justify-between">
             <div className="flex flex-1 flex-wrap items-center gap-2">
                 <Input
-                    placeholder="Filter labels..."
+                    placeholder="Search for ID Numbers..."
                     value={(table.getColumn("idNumber")?.getFilterValue() as string) ?? ""}
                     onChange={(event) => {
                         table.getColumn("idNumber")?.setFilterValue(event.target.value);
