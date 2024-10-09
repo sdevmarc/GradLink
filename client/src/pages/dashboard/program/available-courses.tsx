@@ -10,7 +10,7 @@ import { ROUTES } from '@/constants'
 export default function Courses() {
     const { data: course, isLoading: courseLoading, isFetched: courseFetched } = useQuery({
         queryFn: () => API_COURSE_FINDALL(),
-        queryKey: ['course']
+        queryKey: ['courses']
     })
 
     return (
