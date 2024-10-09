@@ -29,7 +29,6 @@ export default function Student() {
                         <Sidebar>
                             <SidebarNavs title="Currently Enrolled" link={ROUTES.CURRENTLY_ENROLLED} />
                             <SidebarNavs bg='bg-muted' title="List of Students" link={ROUTES.LIST_OF_STUDENTS} />
-                            <SidebarNavs title="Graduating Students" link={ROUTES.GRADUATING_STUDENTS} />
                             <SidebarNavs title="Alumni Graduates" link={ROUTES.ALUMNI_GRADUATES} />
                         </Sidebar>
                         <MainTable>

@@ -89,7 +89,6 @@ const HeaderDashboard = () => {
                                     case ROUTES.OVERVIEW:
                                     case ROUTES.CURRENTLY_ENROLLED:
                                     case ROUTES.LIST_OF_STUDENTS:
-                                    case ROUTES.GRADUATING_STUDENTS:
                                     case ROUTES.ALUMNI_GRADUATES:
                                         return (
                                             <BreadCrumbs>

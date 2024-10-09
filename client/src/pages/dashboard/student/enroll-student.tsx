@@ -38,7 +38,6 @@ export default function CreateStudent() {
                         <Sidebar>
                             <SidebarNavs bg='bg-muted' title="Currently Enrolled" link={ROUTES.CURRENTLY_ENROLLED} />
                             <SidebarNavs title="List of Students" link={ROUTES.LIST_OF_STUDENTS} />
-                            <SidebarNavs title="Graduating Students" link={ROUTES.GRADUATING_STUDENTS} />
                             <SidebarNavs title="Alumni Graduates" link={ROUTES.ALUMNI_GRADUATES} />
                         </Sidebar>
                         <CreateForm />
