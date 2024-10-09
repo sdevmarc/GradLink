@@ -45,15 +45,11 @@ export const UserAvatar = ({ image, initials }: IAvatar) => {
                         </Link>
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                     <a href="https://www.linkedin.com/in/sdevmarc/" target="_blank">
                         Contact Support
                     </a>
                 </DropdownMenuItem>
-                {/* <DropdownMenuItem>Support</DropdownMenuItem> */}
-                <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout}>
                     Log out
                     {/* <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut> */}
