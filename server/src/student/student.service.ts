@@ -183,6 +183,9 @@ export class StudentService {
             const isstudent = await this.studentModel.findOne({ idNumber })
             if (isstudent) return { success: false, message: 'Student already exists.' }
 
+            const isemail = await this.studentModel.findOne({ email })
+            if (isemail) return { success: false, message: 'Email already exists.' }
+
             await this.studentModel.create({ idNumber, name, email, enrollments, isenrolled })
             return { success: true, message: 'Student successfully created.' }
         } catch (error) {
