@@ -18,11 +18,19 @@ interface DataTableRowActionsProps<TData> {
 
 export function DataTableRowActionsCurrentEnrolled<TData>({ row }: DataTableRowActionsProps<TData>) {
     const navigate = useNavigate()
+
     const handleViewDetails = () => {
         // console.log(row.original)
         const { _id: id } = row.original as { _id: string }
         const encoded_id = btoa(id)
-        navigate(`/student/${encoded_id}`)
+        navigate(`/student/details/${encoded_id}`)
+    }
+
+    const handleEvaluate = () => {
+        // console.log(row.original)
+        const { _id: id } = row.original as { _id: string }
+        const encoded_id = btoa(id)
+        navigate(`/student/evaluation/${encoded_id}`)
     }
 
     return (
@@ -38,6 +46,8 @@ export function DataTableRowActionsCurrentEnrolled<TData>({ row }: DataTableRowA
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[160px]">
                 <DropdownMenuItem onClick={handleViewDetails}>View details</DropdownMenuItem>
+                <DropdownMenuItem>Update Enrollment</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleEvaluate}>Evaluate</DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
     );
