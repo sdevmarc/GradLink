@@ -34,7 +34,7 @@ export function DataTableToolbarProgram<TData>({
         mutationFn: API_PROGRAM_CREATE,
         onSuccess: (data) => {
             if (!data.success) return alert(data.message)
-            queryClient.invalidateQueries({ queryKey: ['program'] })
+            queryClient.invalidateQueries({ queryKey: ['programs'] })
             return console.log(data.message)
         }
     })
@@ -56,6 +56,7 @@ export function DataTableToolbarProgram<TData>({
         <div className="flex flex-wrap items-center justify-between">
             <div className="flex flex-1 flex-wrap items-center gap-2">
                 <Input
+                    disabled={programLoading}
                     placeholder="Search program..."
                     value={(table.getColumn("code")?.getFilterValue() as string) ?? ""}
                     onChange={(event) => {
@@ -109,15 +110,15 @@ export function DataTableToolbarProgram<TData>({
                             <Label htmlFor="code">
                                 Code
                             </Label>
-                            <Input required id="code" name="code" onChange={handleOnChange} placeholder="eg. MIT" className="col-span-3 placeholder:text-muted" />
+                            <Input disabled={programLoading} required id="code" name="code" onChange={handleOnChange} placeholder="eg. MIT" className="col-span-3 placeholder:text-muted" />
                             <Label htmlFor="descriptiveTitle">
                                 Descriptive Title
                             </Label>
-                            <Input required id="descriptiveTitle" name="descriptiveTitle" onChange={handleOnChange} placeholder="eg. Master in Information Technology" className="col-span-3 placeholder:text-muted" />
+                            <Input disabled={programLoading} required id="descriptiveTitle" name="descriptiveTitle" onChange={handleOnChange} placeholder="eg. Master in Information Technology" className="col-span-3 placeholder:text-muted" />
                             <Label htmlFor="residency">
                                 Residency
                             </Label>
-                            <Input required id="residency" name="residency" onChange={handleOnChange} placeholder="eg. 4" className="col-span-3 placeholder:text-muted" />
+                            <Input disabled={programLoading} required id="residency" name="residency" onChange={handleOnChange} placeholder="eg. 4" className="col-span-3 placeholder:text-muted" />
                         </>
                     }
                 />
