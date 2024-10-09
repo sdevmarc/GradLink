@@ -23,7 +23,7 @@ export default function LoginPage() {
             <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex flex-col items-center justify-center p-4">
                 <Card className="w-full max-w-4xl mx-auto">
                     <CardHeader className="text-center">
-                        <CardTitle className="text-3xl font-bold">Alumni Graduate Tracer</CardTitle>
+                        <CardTitle className="text-3xl font-bold">Gradlink</CardTitle>
                         <CardDescription>Admin Access Portal</CardDescription>
                     </CardHeader>
                     <CardContent className="grid md:grid-cols-2 gap-6">
