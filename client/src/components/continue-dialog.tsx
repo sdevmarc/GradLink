@@ -39,15 +39,19 @@ export default function ContinueDialog({ trigger, title, description, onClose, i
                             </div>
                         </div>
 
-                        <div className="w-full flex items-center justify-evenly">
-                            <button onClick={handleGoBack} className="px-6 text-sm py-3 hover:bg-red-600/60 font-medium text-primary duration-200 ease-in-out rounded-xl">
-                                Cancel
-                            </button>
-                            <DialogClose asChild>
-                                <button onClick={handleContinue} className="px-6 py-3 text-sm bg-primary text-primary-foreground hover:bg-black/60 duration-200 ease-in-out rounded-xl">
-                                    Continue
+                        <div className="w-full flex items-center flex-col gap-4">
+                            <h1 className=" text-center text-sm">Select continue to resume your activity.</h1>
+                            <div className="w-full flex items-center justify-evenly">
+                                <button onClick={handleGoBack} className="px-6 text-sm py-3 hover:bg-red-600/60 font-medium text-primary duration-200 ease-in-out rounded-xl">
+                                    Cancel
                                 </button>
-                            </DialogClose>
+                                <DialogClose asChild>
+                                    <button onClick={handleContinue} className="px-6 py-3 text-sm bg-primary text-primary-foreground hover:bg-black/60 duration-200 ease-in-out rounded-xl">
+                                        Continue
+                                    </button>
+                                </DialogClose>
+                            </div>
+
                         </div>
                     </div>
                 </DialogContent>
