@@ -74,37 +74,38 @@ export function DataTableCreateProgram<TData, TValue>({
     })
 
     React.useEffect(() => {
-        const selectedRows = table.getFilteredSelectedRowModel().rows;
+        const selectedRows = table.getFilteredSelectedRowModel().rows
         const programs = selectedRows.map(row => {
-            const original = row.original as IAPIPrograms;
-            const { code, descriptiveTitle, residency } = original;
-            return { code, descriptiveTitle, residency };
-        });
-        fetchCheck(programs);
-    }, [rowSelection, table]);
+            const original = row.original as IAPIPrograms
+            const { code, descriptiveTitle, residency } = original
+            return { code, descriptiveTitle, residency }
+        })
+
+        fetchCheck(programs)
+    }, [rowSelection, table])
 
     React.useEffect(() => {
         if (resetSelection) {
-            table.resetRowSelection();
-            onResetComplete();
+            table.resetRowSelection()
+            onResetComplete()
         }
-    }, [resetSelection, table, onResetComplete]);
+    }, [resetSelection, table, onResetComplete])
 
     return (
         <div className="w-full">
             <div className="w-full flex justify-between items-center pb-2">
                 <div className="w-[50%] flex items-center gap-2">
                     <Input
-                        placeholder="Filter emails..."
+                        placeholder="Search for degree code..."
                         value={(table.getColumn("code")?.getFilterValue() as string) ?? ""}
                         onChange={(event) =>
                             table.getColumn("code")?.setFilterValue(event.target.value)
                         }
-                        className=""
+                        className="h-8 w-[20rem] lg:w-[25rem] placeholder:text-muted"
                     />
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline">
+                            <Button variant="outline" size={`sm`}>
                                 Type <ChevronDown className="ml-2 h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
