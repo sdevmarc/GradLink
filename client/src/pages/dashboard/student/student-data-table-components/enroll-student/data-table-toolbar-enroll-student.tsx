@@ -4,7 +4,7 @@ import { Table } from "@tanstack/react-table"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ChevronDown } from "lucide-react"
+import { ChevronDown, X } from "lucide-react"
 
 import {
     DropdownMenu,
@@ -16,10 +16,12 @@ import { Cross2Icon } from "@radix-ui/react-icons"
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>
+    isAdditional: (e: boolean) => void
 }
 
 export function DataTableToolbarEnrollStudent<TData>({
     table,
+    isAdditional
 }: DataTableToolbarProps<TData>) {
     const isFiltered = table.getState().columnFilters.length > 0
     // const [dateRange, setDateRange] = useState<{ from: Date to: Date }>({
@@ -42,7 +44,7 @@ export function DataTableToolbarEnrollStudent<TData>({
                     onChange={(event) =>
                         table.getColumn("courseno")?.setFilterValue(event.target.value)
                     }
-                    className=""
+                    className="h-8 w-[20rem] lg:w-[25rem] placeholder:text-muted"
                 />
                 {isFiltered && (
                     <Button
@@ -56,7 +58,7 @@ export function DataTableToolbarEnrollStudent<TData>({
                 )}
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="outline">
+                        <Button variant="outline" size={`sm`}>
                             Type <ChevronDown className="ml-2 h-4 w-4" />
                         </Button>
                     </DropdownMenuTrigger>
@@ -81,6 +83,9 @@ export function DataTableToolbarEnrollStudent<TData>({
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
+            <Button onClick={() => isAdditional(false)} type="button" variant={`ghost`} size={`sm`} className="flex items-center gap-3">
+                <X size={15} />  Close
+            </Button>
         </div>
     )
 }
