@@ -20,7 +20,7 @@ export default function Courses() {
                     <aside className="px-4 pb-4 pt-[8rem]">
                         <HeadSection>
                             <SubHeadSectionDetails
-                                title="RECORD OF REGISTERED COURSES"
+                                title="REGISTERED COURSES"
                                 description="Here's a list of registered courses."
                             />
                         </HeadSection>
