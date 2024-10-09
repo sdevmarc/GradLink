@@ -169,6 +169,7 @@ const CreateForm = () => {
                                 <div className="flex flex-col px-4 gap-1">
                                     <h1 className='text-[.83rem]'>ID Number</h1>
                                     <Input
+                                        disabled={studentLoading}
                                         value={student.idNumber}
                                         onChange={handleInputChange}
                                         name='idNumber'
@@ -180,6 +181,7 @@ const CreateForm = () => {
                                 <div className="flex flex-col px-4 gap-1">
                                     <h1 className='text-[.83rem]'>Full Name</h1>
                                     <Input
+                                        disabled={studentLoading}
                                         value={student.name}
                                         onChange={handleInputChange}
                                         name='name'
@@ -191,6 +193,7 @@ const CreateForm = () => {
                                 <div className="flex flex-col px-4 gap-1">
                                     <h1 className='text-[.83rem]'>Email Address</h1>
                                     <Input
+                                        disabled={studentLoading}
                                         value={student.email}
                                         onChange={handleInputChange}
                                         name='email'
@@ -264,7 +267,7 @@ const CreateForm = () => {
                                 {
                                     !isAddAdditional &&
                                     <div className="flex px-4">
-                                        <Button variant={`outline`} size={`sm`} className="flex items-center gap-4" type="button" onClick={handleOnClickAddAdditionalCourse}>
+                                        <Button disabled={studentLoading} variant={`outline`} size={`sm`} className="flex items-center gap-4" type="button" onClick={handleOnClickAddAdditionalCourse}>
                                             <Plus color="#000000" size={18} /> Add Additional Course
                                         </Button>
                                     </div>
