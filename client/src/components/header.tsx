@@ -90,6 +90,8 @@ const HeaderDashboard = () => {
                                     case ROUTES.CURRENTLY_ENROLLED:
                                     case ROUTES.LIST_OF_STUDENTS:
                                     case ROUTES.ALUMNI_GRADUATES:
+                                    case `/student/details/${sid}`:
+                                    case `/student/evaluation/${sid}`:
                                         return (
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
@@ -122,20 +124,6 @@ const HeaderDashboard = () => {
                                                     <BreadcrumbPage className='text-md font-medium'>
                                                         Enroll a student
                                                     </BreadcrumbPage>
-                                                </BreadcrumbItem>
-                                            </BreadCrumbs>
-                                        )
-                                    case `/student/${sid}`:
-                                        return (
-                                            <BreadCrumbs>
-                                                <BreadcrumbItem>
-                                                    <BreadcrumbPage className='text-md'>LOGO</BreadcrumbPage>
-                                                </BreadcrumbItem>
-                                                <BreadcrumbSeparator>
-                                                    <Slash />
-                                                </BreadcrumbSeparator>
-                                                <BreadcrumbItem>
-                                                    <BreadcrumbPage className='text-md font-medium'>Gradlink</BreadcrumbPage>
                                                 </BreadcrumbItem>
                                             </BreadCrumbs>
                                         )
