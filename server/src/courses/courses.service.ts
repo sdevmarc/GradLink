@@ -29,25 +29,25 @@ export class CoursesService {
         }
     }
 
-    async create({ courseno, descriptiveTitle, degree, units, pre_req }: ICourses)
+    async create({ courseno, descriptiveTitle, programs, units, prerequisites }: ICourses)
         : Promise<IPromiseCourse> {
         try {
             const iscourse = await this.CourseModel.findOne({ courseno })
             if (iscourse) return { success: false, message: 'Course already exist.' }
 
-            await this.CourseModel.create({ courseno, descriptiveTitle, degree, units, pre_req })
+            await this.CourseModel.create({ courseno, descriptiveTitle, programs, units, prerequisites })
             return { success: true, message: 'Course successfully created.' }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Failed to create course.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
-    async findByIdAndUpdate({ cid, courseno, descriptiveTitle, degree, units }: ICourses)
+    async findByIdAndUpdate({ cid, courseno, descriptiveTitle, programs, units }: ICourses)
         : Promise<IPromiseCourse> {
         try {
             await this.CourseModel.findByIdAndUpdate(
                 cid,
-                { courseno, descriptiveTitle, degree, units },
+                { courseno, descriptiveTitle, programs, units },
                 { new: true }
             )
 
