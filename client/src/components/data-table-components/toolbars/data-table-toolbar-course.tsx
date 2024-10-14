@@ -1,91 +1,24 @@
-"use client";
+"use client"
 
-import { Cross2Icon } from "@radix-ui/react-icons";
-import { Table } from "@tanstack/react-table";
+import { Cross2Icon } from "@radix-ui/react-icons"
+import { Table } from "@tanstack/react-table"
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { DataTableViewOptions } from "@/components/data-table-components/data-table-view-options";
-import { DialogContainer } from "@/components/dialog";
-import { Label } from "@/components/ui/label";
-import { AlertDialogConfirmation } from "@/components/alert-dialog";
-import { useNavigate } from "react-router-dom";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { API_COURSE_CREATE } from "@/api/courses";
-import { ComboBox } from "@/components/combo-box";
-import { API_PROGRAM_FINDALL } from "@/api/program";
-import { Plus } from "lucide-react"
-import { ROUTES } from "@/constants";
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { DataTableViewOptions } from "@/components/data-table-components/data-table-view-options"
+import { AlertDialogConfirmation } from "@/components/alert-dialog"
+import { useNavigate } from "react-router-dom"
+import { ROUTES } from "@/constants"
 
 interface DataTableToolbarProps<TData> {
-    table: Table<TData>;
+    table: Table<TData>
 }
 
 export function DataTableToolbarCourse<TData>({
     table
 }: DataTableToolbarProps<TData>) {
-    const isFiltered = table.getState().columnFilters.length > 0;
-    const [lists, setList] = useState([])
-    const [isDegree, setDegree] = useState<string>('')
-    const queryClient = useQueryClient()
+    const isFiltered = table.getState().columnFilters.length > 0
     const navigate = useNavigate()
-    const [values, setValues] = useState({
-        courseno: '',
-        descriptiveTitle: '',
-        degree: '',
-        units: 0
-    })
-
-    const { data: programs, isLoading: programLoading, isFetched: programFetched } = useQuery({
-        queryFn: () => API_PROGRAM_FINDALL(),
-        queryKey: ['program']
-    })
-
-    useEffect(() => {
-        if (programFetched && !programLoading && programs && programs.data) {
-            const newList = programs.data.map((item: { code: string, descriptiveTitle: string }) => {
-                const value = item.code;
-                const label = item.descriptiveTitle;
-                return { value, label };
-            });
-            setList(newList);
-        }
-    }, [programFetched, programLoading, programs]);
-
-
-
-    const { mutateAsync: upsertCourse, isPending: courseLoading } = useMutation({
-        mutationFn: API_COURSE_CREATE,
-        onSuccess: (data) => {
-            console.log(data)
-            if (!data.success) return alert(data.message)
-            queryClient.invalidateQueries({ queryKey: ['course'] })
-            setDegree('')
-            setValues({
-                courseno: '',
-                descriptiveTitle: '',
-                degree: '',
-                units: 0
-            })
-            return console.log(data.message)
-        }
-    })
-
-    const handleSubmit = async () => {
-        const { courseno, descriptiveTitle, degree, units } = values;
-        if (isNaN(units)) return alert('Units should be a number.')
-        if (courseno === '' || descriptiveTitle === '' || degree === '') return alert('Please fill-up the required fields.')
-        await upsertCourse(values)
-    }
-
-    const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target
-        setValues((prev) => ({
-            ...prev,
-            [name]: value
-        }))
-    }
 
     return (
         <div className="flex flex-wrap items-center justify-between">
@@ -94,7 +27,7 @@ export function DataTableToolbarCourse<TData>({
                     placeholder="Search courses..."
                     value={(table.getColumn("courseno")?.getFilterValue() as string) ?? ""}
                     onChange={(event) => {
-                        table.getColumn("courseno")?.setFilterValue(event.target.value);
+                        table.getColumn("courseno")?.setFilterValue(event.target.value)
                     }}
                     className="h-8 w-[20rem] lg:w-[25rem] placeholder:text-muted"
                 />
@@ -130,57 +63,6 @@ export function DataTableToolbarCourse<TData>({
                 /> */}
             </div>
             <div className="flex gap-2 items-center">
-                {/* <DialogContainer
-                    submit={handleSubmit}
-                    title="Add Course"
-                    description="Please fill-out the required fields."
-                    Trigger={
-                        <Button variant={`outline`} size={`sm`}>
-                            Add Course
-                        </Button>
-                    }
-                    children={
-                        <>
-                            <Label htmlFor="courseno">
-                                Course Number
-                            </Label>
-                            <Input required id="courseno" name="courseno" onChange={handleOnChange} placeholder="eg. LIS100" className="col-span-3 placeholder:text-muted-foreground" />
-                            <Label htmlFor="descriptiveTitle">
-                                Descriptive Title
-                            </Label>
-                            <Input required id="descriptiveTitle" name="descriptiveTitle" onChange={handleOnChange} placeholder="eg. Library in Information System Subject" className="col-span-3 placeholder:text-muted-foreground" />
-                            <div className="w-full flex justify-between items-center gap-4">
-                                <h1 className="text-sm font-medium">Degree</h1>
-                                {programLoading && <div>Loading...</div>}
-                                {
-                                    programFetched &&
-                                    <ComboBox
-                                        type={
-                                            (e) => {
-                                                setDegree(e || '')
-                                                setValues((prev) => ({
-                                                    ...prev,
-                                                    degree: e || ''
-                                                }))
-                                            }
-                                        }
-                                        title='None'
-                                        lists={lists || []}
-                                        value={isDegree}
-                                    />}
-
-                            </div>
-
-                            <Label htmlFor="units">
-                                Units
-                            </Label>
-                            <Input required id="units" name="units" onChange={handleOnChange} placeholder="eg. 4" className="col-span-3 placeholder:text-muted-foreground" />
-                            <Button variant={`outline`} size={`sm`} className="flex items-center gap-4" type="button">
-                                <Plus color="#000000" size={18} /> Add Prerequisite
-                            </Button>
-                        </>
-                    }
-                /> */}
                 <AlertDialogConfirmation
                     btnTitle="Create a course"
                     title="Are you sure?"
@@ -196,5 +78,5 @@ export function DataTableToolbarCourse<TData>({
                 <DataTableViewOptions table={table} />
             </div>
         </div>
-    );
+    )
 }
