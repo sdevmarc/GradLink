@@ -90,6 +90,10 @@ const HeaderDashboard = () => {
                                     case ROUTES.CURRENTLY_ENROLLED:
                                     case ROUTES.LIST_OF_STUDENTS:
                                     case ROUTES.ALUMNI_GRADUATES:
+                                    case ROUTES.CURRICULUM:
+                                    case ROUTES.AVAILABLE_PROGRAMS:
+                                    case ROUTES.AVAILABLE_COURSES:
+                                    case ROUTES.GOOGLE_FORM:
                                     case `/student/details/${sid}`:
                                     case `/student/evaluation/${sid}`:
                                         return (
@@ -127,34 +131,6 @@ const HeaderDashboard = () => {
                                                 </BreadcrumbItem>
                                             </BreadCrumbs>
                                         )
-                                    case ROUTES.AVAILABLE_PROGRAMS:
-                                        return (
-                                            <BreadCrumbs>
-                                                <BreadcrumbItem>
-                                                    <BreadcrumbPage className='text-md'>LOGO</BreadcrumbPage>
-                                                </BreadcrumbItem>
-                                                <BreadcrumbSeparator>
-                                                    <Slash />
-                                                </BreadcrumbSeparator>
-                                                <BreadcrumbItem>
-                                                    <BreadcrumbPage className='text-md font-medium'>Gradlink</BreadcrumbPage>
-                                                </BreadcrumbItem>
-                                            </BreadCrumbs>
-                                        )
-                                    case ROUTES.AVAILABLE_COURSES:
-                                        return (
-                                            <BreadCrumbs>
-                                                <BreadcrumbItem>
-                                                    <BreadcrumbPage className='text-md'>LOGO</BreadcrumbPage>
-                                                </BreadcrumbItem>
-                                                <BreadcrumbSeparator>
-                                                    <Slash />
-                                                </BreadcrumbSeparator>
-                                                <BreadcrumbItem>
-                                                    <BreadcrumbPage className='text-md font-medium'>Gradlink</BreadcrumbPage>
-                                                </BreadcrumbItem>
-                                            </BreadCrumbs>
-                                        )
                                     case ROUTES.CREATE_COURSE:
                                         return (
                                             <BreadCrumbs>
@@ -177,7 +153,7 @@ const HeaderDashboard = () => {
                                                 </BreadcrumbItem>
                                             </BreadCrumbs>
                                         )
-                                    case ROUTES.GOOGLE_FORM:
+                                    case ROUTES.CREATE_PROGRAM:
                                         return (
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
@@ -187,7 +163,15 @@ const HeaderDashboard = () => {
                                                     <Slash />
                                                 </BreadcrumbSeparator>
                                                 <BreadcrumbItem>
-                                                    <BreadcrumbPage className='text-md font-medium'>Gradlink</BreadcrumbPage>
+                                                    <BreadcrumbItem className='text-md font-light'>Gradlink</BreadcrumbItem>
+                                                </BreadcrumbItem>
+                                                <BreadcrumbSeparator>
+                                                    <Slash />
+                                                </BreadcrumbSeparator>
+                                                <BreadcrumbItem>
+                                                    <BreadcrumbPage className='text-md font-medium'>
+                                                        Create a program
+                                                    </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                             </BreadCrumbs>
                                         )
