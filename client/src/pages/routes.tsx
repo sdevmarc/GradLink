@@ -13,8 +13,9 @@ import Overview from "./dashboard/overview/overview"
 import CreateCourse from "./dashboard/program/create-course"
 import Form from "./dashboard/form/form"
 import ViewDetails from "./dashboard/student/view-details"
-import Home from "./home/Home"
 import StudentEvaluation from "./dashboard/student/student-evaluation"
+import Curriculum from "./dashboard/program/curriculum"
+import CreateProgram from "./dashboard/program/create-program"
 
 const Routes = createBrowserRouter([
     {
@@ -34,8 +35,10 @@ const Routes = createBrowserRouter([
 
             //Program
             { path: '/program', element: <Program /> },
+            { path: '/program/program/create', element: <CreateProgram /> },
             { path: '/program/courses', element: <Courses /> },
             { path: '/program/courses/create', element: <CreateCourse /> },
+            { path: '/program/curriculum', element: <Curriculum /> },
 
             //Form
             { path: '/form', element: <Form /> },
@@ -54,8 +57,8 @@ const Routes = createBrowserRouter([
     {
         element: <HomeHeaderLayout />,
         children: [
-            { path: '/', element: <Home /> },
-            { path: '/login', element: <LoginPage /> },
+            // { path: '/', element: <Home /> },
+            { path: '/', element: <LoginPage /> },
         ]
     }
 ])
