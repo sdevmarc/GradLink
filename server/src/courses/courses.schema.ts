@@ -3,24 +3,23 @@ import mongoose from "mongoose";
 export const CoursesSchema = new mongoose.Schema({
     courseno: {
         type: String,
-        required: true
+        required: true,
+        unique: true,  // Ensure course number is unique
+        index: true  // Index for faster lookups
     },
     descriptiveTitle: {
         type: String,
         required: true
     },
-    degree: [{
-        code: {
-            type: String,
-            required: true,
-            ref: 'Program'
-        }
+    programs: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Program',
+        required: true,
     }],
-    pre_req: [{
-        courseno: {
-            type: String,
-            default: 'None'
-        }
+    prerequisites: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Course',
+        default: 'None'
     }],
     units: {
         type: Number,
