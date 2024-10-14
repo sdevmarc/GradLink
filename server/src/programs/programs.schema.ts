@@ -3,7 +3,9 @@ import mongoose from "mongoose";
 export const ProgramSchema = new mongoose.Schema({
     code: {
         type: String,
-        required: true
+        required: true,
+        unique: true,  // Program codes should be unique
+        index: true    // Index for fast lookup
     },
     descriptiveTitle: {
         type: String,
@@ -13,5 +15,10 @@ export const ProgramSchema = new mongoose.Schema({
         type: Number,
         required: true,
         default: 0
+    },
+    curriculumId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'Curriculum'
     }
 }, { timestamps: true })
