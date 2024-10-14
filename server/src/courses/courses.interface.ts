@@ -1,18 +1,16 @@
-interface IPre_req {
-    courseno: string
-}
+import { IPrograms } from "src/programs/programs.interface"
 
-interface IDegree {
-    code: string
+interface IPrerequisite {
+    courseno: string
 }
 
 export interface ICourses {
     cid?: string
     courseno?: string
     descriptiveTitle?: string
-    degree?: IDegree[]
+    programs?: IPrograms[]
     units?: number
-    pre_req?: IPre_req[]
+    prerequisites?: IPrerequisite[]
 }
 
 export interface IPromiseCourse {
