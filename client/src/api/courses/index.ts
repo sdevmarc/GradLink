@@ -20,10 +20,10 @@ export const API_COURSE_FINDONE = async ({ courseno }: IAPICourse) => {
     }
 }
 
-export const API_COURSE_CREATE = async ({ courseno, descriptiveTitle, degree, units, pre_req }: IAPICourse) => {
+export const API_COURSE_CREATE = async ({ courseno, descriptiveTitle, programs, units, prerequisites }: IAPICourse) => {
     try {
         const response = await axios.post(`${HOST}/courses/create`, {
-            courseno, descriptiveTitle, degree, units, pre_req
+            courseno, descriptiveTitle, programs, units, prerequisites
         })
 
         return response.data
@@ -32,10 +32,10 @@ export const API_COURSE_CREATE = async ({ courseno, descriptiveTitle, degree, un
     }
 }
 
-export const API_COURSE_UPDATE = async ({ cid, courseno, descriptiveTitle, degree, units }: IAPICourse) => {
+export const API_COURSE_UPDATE = async ({ _id, courseno, descriptiveTitle, programs, units }: IAPICourse) => {
     try {
         const response = await axios.post(`${HOST}/courses/update`, {
-            cid, courseno, descriptiveTitle, degree, units
+            _id, courseno, descriptiveTitle, programs, units
         })
 
         return response.data
@@ -44,9 +44,9 @@ export const API_COURSE_UPDATE = async ({ cid, courseno, descriptiveTitle, degre
     }
 }
 
-export const API_COURSE_DELETE = async ({ cid }: IAPICourse) => {
+export const API_COURSE_DELETE = async ({ _id }: IAPICourse) => {
     try {
-        const response = await axios.get(`${HOST}/course/${cid}`)
+        const response = await axios.get(`${HOST}/course/${_id}`)
         return response.data
     } catch (error) {
         console.error(error)
