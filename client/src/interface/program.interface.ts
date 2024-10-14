@@ -1,6 +1,7 @@
 export interface IAPIPrograms {
-    pid?: string
+    _id?: string
     code?: string
     descriptiveTitle?: string
     residency?: string
+    curriculumId?: string
 }
