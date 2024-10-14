@@ -12,9 +12,9 @@ import { API_STUDENT_CREATE } from '@/api/student'
 import ContinueDialog from '@/components/continue-dialog'
 import { CircleCheck, CircleX, Plus } from 'lucide-react'
 import { API_PROGRAM_FINDALL } from '@/api/program'
-import { CreateProgramColumns } from '../program/program-data-table-components/program/columns'
+import { CreateProgramInCourseColumns } from '../program/program-data-table-components/program/create-program/sub/columns'
 import { IAPIPrograms } from '@/interface/program.interface'
-import { DataTableCreateProgram } from '../program/program-data-table-components/program/data-table-program-create'
+import { DataTableCreateProgramInCourse } from '../program/program-data-table-components/program/create-program/sub/data-table-program-create'
 import { DataTableEnrollStudent } from './student-data-table-components/enroll-student/data-table-enroll-student'
 import { StudentCourseColumns } from './student-data-table-components/enroll-student/columns-student-enroll'
 import { IAPICourse } from '@/interface/course.interface'
@@ -231,9 +231,9 @@ const CreateForm = () => {
                                         {programLoading && <div>Loading...</div>}
                                         {
                                             programFetched &&
-                                            <DataTableCreateProgram
+                                            <DataTableCreateProgramInCourse
                                                 data={dataProgram.data || []}
-                                                columns={CreateProgramColumns}
+                                                columns={CreateProgramInCourseColumns}
                                                 fetchCheck={handleProgramChange}
                                                 resetSelection={resetSelection}
                                                 onResetComplete={() => setResetSelection(false)}
