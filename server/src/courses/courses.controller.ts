@@ -19,13 +19,13 @@ export class CoursesController {
     }
 
     @Post('create')
-    async createCourse(@Body() { courseno, descriptiveTitle, degree, units, pre_req }: ICourses) {
-        return this.courseService.create({ courseno, descriptiveTitle, degree, units, pre_req })
+    async createCourse(@Body() { courseno, descriptiveTitle, programs, units, prerequisites }: ICourses) {
+        return this.courseService.create({ courseno, descriptiveTitle, programs, units, prerequisites })
     }
 
     @Post('update')
-    async updateCourse(@Body() { cid, courseno, descriptiveTitle, degree, units }: ICourses) {
-        return this.courseService.findByIdAndUpdate({ cid, courseno, descriptiveTitle, degree, units })
+    async updateCourse(@Body() { cid, courseno, descriptiveTitle, programs, units }: ICourses) {
+        return this.courseService.findByIdAndUpdate({ cid, courseno, descriptiveTitle, programs, units })
     }
 
     @Post(':cid')
