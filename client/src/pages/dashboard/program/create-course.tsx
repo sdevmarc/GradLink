@@ -4,15 +4,15 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { API_COURSE_CREATE, API_COURSE_FINDALL } from '@/api/courses'
-import { DataTableCreateCourse } from './program-data-table-components/courses/data-table-courses-create'
+import { DataTableCreateCourse } from './program-data-table-components/courses/create-course/data-table-courses-create'
 import { IAPICourse } from '@/interface/course.interface'
 import React from 'react'
 import { ROUTES } from '@/constants'
 import { CircleCheck, CircleX, Plus } from 'lucide-react'
-import { DataTableCreateProgram } from './program-data-table-components/program/data-table-program-create'
-import { CreateCourseColumns } from './program-data-table-components/courses/columns'
+import { DataTableCreateProgramInCourse } from './program-data-table-components/program/create-program/sub/data-table-program-create'
+import { CreateCourseColumns } from './program-data-table-components/courses/create-course/columns'
 import { API_PROGRAM_FINDALL } from '@/api/program'
-import { CreateProgramColumns } from './program-data-table-components/program/columns'
+import { CreateProgramInCourseColumns } from './program-data-table-components/program/create-program/sub/columns'
 import { IAPIPrograms } from '@/interface/program.interface'
 import ContinueDialog from '@/components/continue-dialog'
 
@@ -32,8 +32,9 @@ export default function CreateCourse() {
                     </aside>
                     <main className="flex">
                         <Sidebar>
-                            <SidebarNavs title="Available Programs" link={ROUTES.AVAILABLE_PROGRAMS} />
-                            <SidebarNavs bg='bg-muted' title="Available Courses" link={ROUTES.AVAILABLE_COURSES} />
+                            <SidebarNavs title="Programs" link={ROUTES.AVAILABLE_PROGRAMS} />
+                            <SidebarNavs bg='bg-muted' title="Courses" link={ROUTES.AVAILABLE_COURSES} />
+                            <SidebarNavs title="Curriculums" link={ROUTES.CURRICULUM} />
                         </Sidebar>
                         <CreateForm />
                     </main>
@@ -45,34 +46,30 @@ export default function CreateCourse() {
 
 const CreateForm = () => {
     const queryClient = useQueryClient()
-    const [resetSelection, setResetSelection] = React.useState(false);
+    const [resetSelection, setResetSelection] = React.useState(false)
     const [dialogState, setDialogState] = React.useState({
         show: false,
         title: '',
         description: '',
         success: false
-    });
+    })
     const [isPre, setPre] = React.useState<boolean>(false)
     const [course, setCourse] = React.useState<IAPICourse>({
         courseno: '',
         descriptiveTitle: '',
-        degree: [],
-        pre_req: [],
-        units: ''
-    });
+        units: '',
+        programs: [],
+        prerequisites: [],
+    })
     const { data: dataCourse, isLoading: courseLoading, isFetched: courseFetched } = useQuery({
         queryFn: () => API_COURSE_FINDALL(),
         queryKey: ['course']
     })
 
-    // if (courseFetched) { console.log(dataCourse.data) }
-
     const { data: dataProgram, isLoading: programLoading, isFetched: programFetched } = useQuery({
         queryFn: () => API_PROGRAM_FINDALL(),
         queryKey: ['program']
     })
-
-    // if (programFetched) { console.log(dataProgram.data) }
 
     const { mutateAsync: insertCourse, isPending: insertcoursePending } = useMutation({
         mutationFn: API_COURSE_CREATE,
@@ -99,9 +96,10 @@ const CreateForm = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        const { courseno, descriptiveTitle, degree, units, pre_req } = course
-        if (!courseno?.trim() || !descriptiveTitle || (degree?.length ?? 0) <= 0 || !units) return alert('Please fill-up the required fields.')
-        await insertCourse({ courseno, descriptiveTitle, degree, units, pre_req })
+        const { courseno, descriptiveTitle, programs, units, prerequisites } = course
+        if (!courseno?.trim() || !descriptiveTitle || (programs?.length ?? 0) <= 0 || !units) return alert('Please fill-up the required fields.')
+
+        await insertCourse({ courseno, descriptiveTitle, programs, units, prerequisites })
     }
 
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -115,14 +113,14 @@ const CreateForm = () => {
     const handleCourseChange = (selectedCourses: IAPICourse[]) => {
         setCourse((prev) => ({
             ...prev,
-            pre_req: selectedCourses.map(({ courseno }) => ({ courseno: courseno || '' }))
-        }));
+            prerequisites: selectedCourses.map(({ _id }) => ({ _id: _id || '' }))
+        }))
     }
 
     const handleProgramChange = (selectedPrograms: IAPIPrograms[]) => {
         setCourse((prev) => ({
             ...prev,
-            degree: selectedPrograms.map(({ code }) => ({ code: code || '' }))
+            programs: selectedPrograms.map(({ _id }) => ({ _id: _id || '' }))
         }))
     }
 
@@ -215,19 +213,19 @@ const CreateForm = () => {
                     <div className="flex flex-col px-4 gap-2">
                         <div className="flex flex-col gap-1">
                             <h1 className='text-[1.1rem] font-medium'>
-                                Degree's Available
+                                Program's Available
                             </h1>
                             <p className="text-sm">
-                                Please check the degree(s) that you will place this course.
+                                Please check the program(s) that you will place this course.
                             </p>
                         </div>
                         <div className="w-full flex flex-col gap-2 justify-center items-start">
                             {programLoading && <div>Loading...</div>}
                             {
                                 programFetched &&
-                                <DataTableCreateProgram
-                                    data={dataProgram.data || []}
-                                    columns={CreateProgramColumns}
+                                <DataTableCreateProgramInCourse
+                                    data={dataProgram.data.programs || []}
+                                    columns={CreateProgramInCourseColumns}
                                     fetchCheck={handleProgramChange}
                                     resetSelection={resetSelection}
                                     onResetComplete={() => setResetSelection(false)}
