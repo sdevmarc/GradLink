@@ -1,16 +1,16 @@
-interface IPre_req {
-    courseno: string
+interface IPrerequisite {
+    _id: string
 }
 
-interface IDegree {
-    code: string
+interface IPrograms {
+    _id: string
 }
 
 export interface IAPICourse {
-    cid?: string
+    _id?: string
     courseno?: string
     descriptiveTitle?: string
-    degree?: IDegree[]
+    programs?: IPrograms[]
     units?: string | ''
-    pre_req?: IPre_req[]
+    prerequisites?: IPrerequisite[]
 }
