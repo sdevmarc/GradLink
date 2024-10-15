@@ -1,5 +1,5 @@
 import { HOST } from '@/constants'
-import { IAPIPrograms } from '@/interface/program.interface'
+import { IRequestPrograms } from '@/interface/program.interface'
 import axios from 'axios'
 
 export const API_PROGRAM_FINDALL = async () => {
@@ -20,12 +20,9 @@ export const API_PROGRAM_FINDALL = async () => {
 //     }
 // }
 
-export const API_PROGRAM_CREATE = async ({ code, descriptiveTitle, residency }: IAPIPrograms) => {
+export const API_PROGRAM_ADD_PROGRAM = async ({ programs }: IRequestPrograms) => {
     try {
-        const response = await axios.post(`${HOST}/programs/create`, {
-            code, descriptiveTitle, residency
-        })
-
+        const response = await axios.post(`${HOST}/programs/add-program-to-active-curriculum`, { programs })
         return response.data
     } catch (error) {
         console.error(error)
