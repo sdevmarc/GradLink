@@ -5,3 +5,7 @@ export interface IAPIPrograms {
     residency?: string
     curriculumId?: string
 }
+
+export interface IRequestPrograms {
+    programs: IAPIPrograms[]
+}
