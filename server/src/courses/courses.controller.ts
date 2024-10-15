@@ -10,7 +10,7 @@ export class CoursesController {
 
     @Get()
     async findAllCourses() {
-        return this.courseService.findAll()
+        return this.courseService.findAllInActive()
     }
 
     @Get(':courseno')
