@@ -31,12 +31,14 @@ interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[],
     fetchAddedPrograms: (e: IAPIPrograms[]) => void
+    isreset: boolean
 }
 
 export function DataTableCreateProgramInCurriculum<TData, TValue>({
     columns,
     data,
     fetchAddedPrograms,
+    isreset
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -83,7 +85,12 @@ export function DataTableCreateProgramInCurriculum<TData, TValue>({
 
     return (
         <div className="w-full flex flex-col gap-4">
-            <DataTableToolbarCreateProgramInCurriculum table={table} fetchAddedPrograms={(e) => fetchAddedPrograms(e)} isrows={isrows} fetchChecks={haschecks} />
+            <DataTableToolbarCreateProgramInCurriculum
+                table={table} fetchAddedPrograms={(e) => fetchAddedPrograms(e)}
+                isrows={isrows}
+                fetchChecks={haschecks}
+                isreset={isreset}
+            />
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
