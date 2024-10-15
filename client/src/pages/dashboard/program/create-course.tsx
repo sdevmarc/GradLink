@@ -15,6 +15,8 @@ import { API_PROGRAM_FINDALL } from '@/api/program'
 import { CreateProgramInCourseColumns } from './program-data-table-components/program/create-program/sub/columns'
 import { IAPIPrograms } from '@/interface/program.interface'
 import ContinueDialog from '@/components/continue-dialog'
+import { AlertDialogConfirmation } from '@/components/alert-dialog'
+import Loading from '@/components/loading'
 
 export default function CreateCourse() {
     return (
@@ -63,12 +65,12 @@ const CreateForm = () => {
     })
     const { data: dataCourse, isLoading: courseLoading, isFetched: courseFetched } = useQuery({
         queryFn: () => API_COURSE_FINDALL(),
-        queryKey: ['course']
+        queryKey: ['courses']
     })
 
     const { data: dataProgram, isLoading: programLoading, isFetched: programFetched } = useQuery({
         queryFn: () => API_PROGRAM_FINDALL(),
-        queryKey: ['program']
+        queryKey: ['programs']
     })
 
     const { mutateAsync: insertCourse, isPending: insertcoursePending } = useMutation({
@@ -94,13 +96,12 @@ const CreateForm = () => {
         }
     })
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
+    const handleSubmit = async () => {
         const { courseno, descriptiveTitle, programs, units, prerequisites } = course
         const upperCourseno = (courseno ?? '').replace(/\s+/g, '').toUpperCase()
-        if (upperCourseno === '' || !descriptiveTitle || (programs?.length ?? 0) <= 0 || !units) return alert('Please fill-up the required fields.')
+        if (upperCourseno === '' || !descriptiveTitle || (programs?.length ?? 0) <= 0 || !units) return setDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Please fill-up the required fields.' })
 
-        await insertCourse({ courseno, descriptiveTitle, programs, units, prerequisites })
+        await insertCourse({ courseno: upperCourseno, descriptiveTitle, programs, units, prerequisites })
     }
 
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -125,8 +126,11 @@ const CreateForm = () => {
         }))
     }
 
+    const isLoading = courseLoading || programLoading || insertcoursePending
+
     return (
-        <form onSubmit={handleSubmit} className="w-[80%] flex flex-col justify-start gap-4 rounded-lg border">
+        <div className="w-[80%] flex flex-col justify-start gap-4 rounded-lg border">
+            {isLoading && <Loading />}
             <ContinueDialog
                 icon={dialogState.success ? <CircleCheck color="#42a626" size={70} /> : <CircleX color="#880808" size={70} />}
                 trigger={dialogState.show}
@@ -234,11 +238,17 @@ const CreateForm = () => {
                             }
                         </div>
                     </div>
-                    <Button disabled={insertcoursePending} type='submit' variant={`default`} size={`sm`} className='my-3 py-5'>
-                        {insertcoursePending ? 'Creating course...' : 'Create a New Course'}
-                    </Button>
+                    <AlertDialogConfirmation
+                        disabled={isLoading}
+                        className='w-full my-3 py-5'
+                        variant={'default'}
+                        btnTitle="Add Course to Current Curriculum"
+                        title="Are you sure?"
+                        description={`This will add new programs to the current curriculum.`}
+                        btnContinue={handleSubmit}
+                    />
                 </div>
             </div>
-        </form>
+        </div>
     )
 }
