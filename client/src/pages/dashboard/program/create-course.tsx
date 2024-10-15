@@ -233,11 +233,9 @@ const CreateForm = () => {
                             }
                         </div>
                     </div>
-                    <div className="w-full flex items-center justify-end px-4">
-                        <Button disabled={insertcoursePending} type='submit' variant={`default`} size={`sm`}>
-                            {insertcoursePending ? 'Creating course...' : 'Create course'}
-                        </Button>
-                    </div>
+                    <Button disabled={insertcoursePending} type='submit' variant={`default`} size={`sm`} className='my-3 py-5'>
+                        {insertcoursePending ? 'Creating course...' : 'Create a New Course'}
+                    </Button>
                 </div>
             </div>
         </form>
