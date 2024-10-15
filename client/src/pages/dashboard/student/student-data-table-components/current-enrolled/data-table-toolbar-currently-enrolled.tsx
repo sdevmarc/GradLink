@@ -86,6 +86,7 @@ export function DataTableToolbarCurrentlyEnrolled<TData>({
                     Enroll a student
                 </Button>
                 <AlertDialogConfirmation
+                    variant={'outline'}
                     btnTitle="Export"
                     title="Are you sure?"
                     description={`This will export the current data you are viewing.`}
