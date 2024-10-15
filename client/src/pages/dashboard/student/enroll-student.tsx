@@ -19,6 +19,7 @@ import { DataTableEnrollStudent } from './student-data-table-components/enroll-s
 import { StudentCourseColumns } from './student-data-table-components/enroll-student/columns-student-enroll'
 import { IAPICourse } from '@/interface/course.interface'
 import Loading from '@/components/loading'
+import { AlertDialogConfirmation } from '@/components/alert-dialog'
 
 export default function CreateStudent() {
     return (
@@ -73,12 +74,12 @@ const CreateForm = () => {
     })
     const { data: course, isLoading: courseLoading, isFetched: courseFetched } = useQuery({
         queryFn: () => API_COURSE_FINDALL(),
-        queryKey: ['course']
+        queryKey: ['courses']
     })
 
     const { data: dataProgram, isLoading: programLoading, isFetched: programFetched } = useQuery({
         queryFn: () => API_PROGRAM_FINDALL(),
-        queryKey: ['program']
+        queryKey: ['programs']
     })
 
 
@@ -104,13 +105,13 @@ const CreateForm = () => {
         }
     })
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
+    const handleSubmit = async () => {
         if (selectedPrograms.length === 0) return setDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'You need to select a degree.' })
         const { idNumber, name, email, enrollments } = student
+        const nospaceIdNumber = (idNumber ?? '').replace(/\s+/g, '')
 
-        if (!idNumber?.trim() || !name || !email?.trim() || !enrollments?.semester || !(enrollments.courses?.length || 0)) return alert('Please fill-up the required fields.')
-        await insertStudent({ idNumber, name, email, enrollments })
+        if (nospaceIdNumber === '' || !name || !email?.trim() || !enrollments?.semester || !(enrollments.courses?.length || 0)) return setDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Please fill-up the required fields.' })
+        await insertStudent({ idNumber: nospaceIdNumber, name, email, enrollments })
     }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -136,11 +137,12 @@ const CreateForm = () => {
 
     const handleProgramChange = (programs: IAPIPrograms[]) => {
         const selectedCodes = programs?.map(item => {
-            const { code } = item
-            if (!code) return
-            return code
+            const { _id } = item
+            if (!_id) return
+            return _id
         })
-        setSelectedPrograms(selectedCodes.filter((code): code is string => code !== undefined))
+        if (selectedCodes.length > 1) return setDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'You can only select one program, please deselect another program.' })
+        setSelectedPrograms(selectedCodes.filter((_id): _id is string => _id !== undefined))
     }
 
     const handleOnClickAddAdditionalCourse = () => {
@@ -148,10 +150,12 @@ const CreateForm = () => {
         setIsAddAdditional(true)
     }
 
+    const isLoading = courseLoading || programLoading || studentLoading
+
     return (
         <>
             {
-                studentLoading ? <Loading />
+                isLoading ? <Loading />
                     :
                     <form onSubmit={handleSubmit} className="w-[80%] flex flex-col justify-start gap-4 rounded-lg border">
                         <ContinueDialog
@@ -164,7 +168,7 @@ const CreateForm = () => {
                         <div className="w-full px-4 py-3 border-b">
                             <h1 className='text-text font-semibold text-lg'>Create a student</h1>
                         </div>
-                        <div className="w-full py-2 flex flex-col justify-between">
+                        <div className="w-full py-2 flex flex-col">
                             <div className="w-full flex flex-col gap-4">
                                 <div className="flex flex-col px-4 gap-1">
                                     <h1 className='text-[.83rem]'>ID Number</h1>
@@ -174,7 +178,7 @@ const CreateForm = () => {
                                         onChange={handleInputChange}
                                         name='idNumber'
                                         type='text'
-                                        placeholder='eg. 000xxxxxx'
+                                        placeholder='eg. 123'
                                         required
                                     />
                                 </div>
@@ -221,7 +225,7 @@ const CreateForm = () => {
                                 <div className="flex flex-col px-4 gap-2">
                                     <div className="flex flex-col gap-1">
                                         <h1 className='text-[1.1rem] font-medium'>
-                                            Degree's Available
+                                            Program's Available
                                         </h1>
                                         <p className="text-sm">
                                             Please check degree(s) that you wish to enroll the student.
@@ -232,7 +236,7 @@ const CreateForm = () => {
                                         {
                                             programFetched &&
                                             <DataTableCreateProgramInCourse
-                                                data={dataProgram.data || []}
+                                                data={dataProgram.data.programs || []}
                                                 columns={CreateProgramInCourseColumns}
                                                 fetchCheck={handleProgramChange}
                                                 resetSelection={resetSelection}
@@ -254,7 +258,7 @@ const CreateForm = () => {
                                     <div className="w-full flex flex-col gap-2 justify-center items-start">
                                         {courseLoading && <div>Loading...</div>}
                                         {courseFetched && <DataTableEnrollStudent
-                                            data={course.data || []}
+                                            data={course.data.courses || []}
                                             columns={StudentCourseColumns}
                                             onSubmit={handleCoursesChange}
                                             resetSelection={resetSelection}
@@ -272,11 +276,20 @@ const CreateForm = () => {
                                         </Button>
                                     </div>
                                 }
-                                <div className="w-full flex items-center justify-end px-4">
+                                <AlertDialogConfirmation
+                                    disabled={isLoading}
+                                    className='w-full my-3 py-5'
+                                    variant={'default'}
+                                    btnTitle="Add Program to Current Curriculum"
+                                    title="Are you sure?"
+                                    description={`This will add new programs to the current curriculum.`}
+                                    btnContinue={handleSubmit}
+                                />
+                                {/* <div className="w-full flex items-center justify-end px-4">
                                     <Button disabled={studentLoading} type='submit' variant={`default`} size={`sm`}>
                                         {studentLoading ? 'Submitting...' : 'Submit Enrollment'}
                                     </Button>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </form>
