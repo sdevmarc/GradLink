@@ -20,16 +20,6 @@ export function DataTableToolbarCurrentlyEnrolled<TData>({
     isrows
 }: DataTableToolbarProps<TData>) {
     const isFiltered = table.getState().columnFilters.length > 0
-    // const [dateRange, setDateRange] = useState<{ from: Date to: Date }>({
-    //     from: new Date(new Date().getFullYear(), 0, 1),
-    //     to: new Date()
-    // })
-
-    // const handleDateSelect = ({ from, to }: { from: Date to: Date }) => {
-    //     setDateRange({ from, to })
-    //     // Filter table data based on selected date range
-    //     table.getColumn("date")?.setFilterValue([from, to])
-    // }
     const navigate = useNavigate()
 
     return (
@@ -48,21 +38,6 @@ export function DataTableToolbarCurrentlyEnrolled<TData>({
                         Withdraw
                     </Button>
                 }
-
-                {/* {table.getColumn("category") && (
-                    <DataTableFacetedFilter
-                        column={table.getColumn("category")}
-                        title="Category"
-                        options={categories}
-                    />
-                )}
-                {table.getColumn("type") && (
-                    <DataTableFacetedFilter
-                        column={table.getColumn("type")}
-                        title="Type"
-                        options={incomeType}
-                    />
-                )} */}
                 {isFiltered && (
                     <Button
                         variant="ghost"
@@ -74,17 +49,15 @@ export function DataTableToolbarCurrentlyEnrolled<TData>({
                         <Cross2Icon className="ml-2 h-4 w-4" />
                     </Button>
                 )}
-                {/* <CalendarDatePicker
-                    date={dateRange}
-                    onDateSelect={handleDateSelect}
-                    className="w-[250px] h-8"
-                    variant="outline"
-                /> */}
             </div>
             <div className="flex gap-2 items-center">
-                <Button onClick={() => navigate(ROUTES.CREATE_STUDENT)} variant={`outline`} size={`sm`}>
-                    Enroll a student
-                </Button>
+                <AlertDialogConfirmation
+                    variant={'outline'}
+                    btnTitle="New Student"
+                    title="Are you sure?"
+                    description={`You will be redirect to a page for creating a new student.`}
+                    btnContinue={() => navigate(ROUTES.CREATE_STUDENT)}
+                />
                 <AlertDialogConfirmation
                     variant={'outline'}
                     btnTitle="Export"
