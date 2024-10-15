@@ -64,12 +64,14 @@ export function DataTableToolbarCourse<TData>({
             </div>
             <div className="flex gap-2 items-center">
                 <AlertDialogConfirmation
+                    variant={'outline'}
                     btnTitle="Create a course"
                     title="Are you sure?"
                     description={`You will be redirect to a page for creating a course.`}
                     btnContinue={() => navigate(ROUTES.CREATE_COURSE)}
                 />
                 <AlertDialogConfirmation
+                  variant={'outline'}
                     btnTitle="Export"
                     title="Are you sure?"
                     description={`This will export the current data you are viewing.`}
