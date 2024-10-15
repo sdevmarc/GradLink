@@ -2,8 +2,8 @@ import HeadSection, { SubHeadSectionDetails } from '@/components/head-section'
 import MainTable from '@/components/main-table'
 import { SidebarNavs, Sidebar } from '@/components/sidebar'
 import { useQuery } from '@tanstack/react-query'
-import { DataTableCurriculum } from './program-data-table-components/curriculum/data-table-curriculum'
-import { CurriculumColumns } from './program-data-table-components/curriculum/columns-curriculum'
+import { DataTableCurriculum } from './program-data-table-components/curriculum/curriculum/data-table-curriculum'
+import { CurriculumColumns } from './program-data-table-components/curriculum/curriculum/columns-curriculum'
 import { ROUTES } from '@/constants'
 import { API_CURRICULUM_FINDALL } from '@/api/curriculum'
 
@@ -20,8 +20,8 @@ export default function Curriculum() {
                     <aside className="px-4 pb-4 pt-[8rem]">
                         <HeadSection>
                             <SubHeadSectionDetails
-                                title="REGISTERED PROGRAMS"
-                                description="Here's a list of registered programs."
+                                title="CURRICULUM"
+                                description="Here's a list of all registered curriculum."
                             />
                         </HeadSection>
                     </aside>
