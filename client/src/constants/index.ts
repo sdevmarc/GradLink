@@ -16,5 +16,6 @@ export const ROUTES = {
     CREATE_PROGRAM: '/program/program/create',
     CREATE_COURSE: '/program/courses/create',
     CURRICULUM: '/program/curriculum',
+    CREATE_CURRICULUM: '/program/curriculum/create',
     GOOGLE_FORM: '/form'
 }
