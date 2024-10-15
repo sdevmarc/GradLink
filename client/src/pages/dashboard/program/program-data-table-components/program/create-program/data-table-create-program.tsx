@@ -31,17 +31,21 @@ interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[],
     fetchAddedPrograms: (e: IAPIPrograms[]) => void
+    isreset: boolean
 }
 
 export function DataTableCreateProgram<TData, TValue>({
     columns,
     data,
-    fetchAddedPrograms
+    fetchAddedPrograms,
+    isreset
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState({})
+    const [isrows, setRows] = React.useState<boolean>(false)
+    const [haschecks, setChecks] = React.useState<IAPIPrograms[]>([])
 
     const table = useReactTable({
         data,
@@ -62,9 +66,31 @@ export function DataTableCreateProgram<TData, TValue>({
         },
     })
 
+    React.useEffect(() => {
+        const selectedRows = table.getFilteredSelectedRowModel().rows
+        const added_programs = selectedRows.map(row => {
+            const original = row.original as IAPIPrograms
+            const { code, descriptiveTitle, residency } = original
+            return { code, descriptiveTitle, residency }
+        })
+
+        if (selectedRows.length > 0) {
+            setRows(true)
+        } else {
+            setRows(false)
+        }
+        setChecks(added_programs)
+
+    }, [rowSelection, table])
+
     return (
         <div className="w-full flex flex-col gap-4">
-            <DataTableToolbarCreateProgram table={table} fetchAddedPrograms={(e) => fetchAddedPrograms(e)} />
+            <DataTableToolbarCreateProgram
+                table={table} fetchAddedPrograms={(e) => fetchAddedPrograms(e)}
+                isrows={isrows}
+                fetchChecks={haschecks}
+                isreset={isreset}
+            />
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
