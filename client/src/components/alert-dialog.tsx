@@ -19,13 +19,14 @@ interface IComponents {
     description: string
     variant: "link" | "default" | "destructive" | "outline" | "secondary" | "ghost" | null | undefined
     className?: string
+    disabled?: boolean
 }
 
-export function AlertDialogConfirmation({ btnTitle, title, description, btnContinue, variant, className }: IComponents) {
+export function AlertDialogConfirmation({ btnTitle, title, description, btnContinue, variant, className, disabled }: IComponents) {
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>
-                <Button variant={variant} size={`sm`} className={cn(className)}>
+                <Button disabled={disabled} variant={variant} size={`sm`} className={cn(className)}>
                     {btnTitle}
                 </Button>
             </AlertDialogTrigger>
