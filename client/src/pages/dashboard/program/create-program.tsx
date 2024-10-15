@@ -51,7 +51,7 @@ export default function CreateProgram() {
     })
 
     const handleSubmit = async () => {
-        if (programs.length === 0) return alert('Please add at least one program to submit.')
+        if (programs.length === 0) return setDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Please add at least one program to submit.' })
         await addprogram({ programs })
     }
 
