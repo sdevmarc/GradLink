@@ -75,11 +75,9 @@ export function DataTableEnrollStudent<TData, TValue>({
             const newSelection: Record<string, boolean> = {}
             table.getFilteredRowModel().rows.forEach((row) => {
                 const course = row.original as IAPICourse
-                const shouldSelectRow = course.degree?.some(degree =>
-                    selectedPrograms.includes(degree.code)
+                const shouldSelectRow = course.programs?.some(program =>
+                    selectedPrograms.includes(program._id || program.toString())
                 )
-
-                // Set the selection state based on the check
                 if (shouldSelectRow) {
                     newSelection[row.id] = true
                 }
@@ -94,9 +92,8 @@ export function DataTableEnrollStudent<TData, TValue>({
         const selectedRows = table.getFilteredSelectedRowModel().rows
         const courses = selectedRows.map(row => {
             const original = row.original as IAPICourse
-            const { courseno, descriptiveTitle, units } = original
-
-            return { courseno, descriptiveTitle, units }
+            const { _id, courseno, descriptiveTitle, units } = original
+            return { _id, courseno, descriptiveTitle, units }
         })
         onSubmit(courses)
     }, [rowSelection, table])
