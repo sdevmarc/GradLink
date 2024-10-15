@@ -93,7 +93,7 @@ export default function CreateProgram() {
                                     <DataTableCreateProgram
                                         columns={CreateProgramColumns}
                                         data={programs || []}
-                                        fetchAddedPrograms={(e) => fetchProgramsAdded(e)}
+                                        fetchAddedPrograms={fetchProgramsAdded}
                                         isreset={isreset}
                                     />
                                     <AlertDialogConfirmation
