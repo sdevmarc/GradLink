@@ -12,7 +12,7 @@ export class ProgramsController {
 
     @Get()
     async findAllPrograms() {
-        return await this.programService.findAllActive()
+        return await this.programService.findAllInActive()
     }
 
     // @Get(':code')
@@ -24,6 +24,7 @@ export class ProgramsController {
     async createProgram(
         @Body() { name, programs }: IRequestPrograms
     ) {
+        console.log({ name, programs })
         const validationResult = await this.programService.validate({ programs })
         if (!validationResult.success) return validationResult
 
