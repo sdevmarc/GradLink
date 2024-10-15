@@ -5,9 +5,6 @@ import { Table } from "@tanstack/react-table"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { DataTableViewOptions } from "@/components/data-table-components/data-table-view-options"
-import { AlertDialogConfirmation } from "@/components/alert-dialog"
-import { useNavigate } from "react-router-dom"
 import { DialogContainer } from "@/components/dialog"
 import { Label } from "@/components/ui/label"
 import { useEffect, useState } from "react"
@@ -16,14 +13,19 @@ import { IAPIPrograms } from "@/interface/program.interface"
 interface DataTableToolbarProps<TData> {
     table: Table<TData>
     fetchAddedPrograms: (e: IAPIPrograms[]) => void
+    isrows: boolean
+    fetchChecks: IAPIPrograms[]
+    isreset: boolean
 }
 
 export function DataTableToolbarCreateProgram<TData>({
     table,
-    fetchAddedPrograms
+    fetchAddedPrograms,
+    isrows,
+    fetchChecks,
+    isreset
 }: DataTableToolbarProps<TData>) {
-    const isFiltered = table.getState().columnFilters.length > 0;
-    const navigate = useNavigate()
+    const isFiltered = table.getState().columnFilters.length > 0
     const [values, setValues] = useState<IAPIPrograms[]>([])
     const [programs, setprograms] = useState({
         code: '',
@@ -40,7 +42,14 @@ export function DataTableToolbarCreateProgram<TData>({
 
     }, [values, fetchAddedPrograms])
 
-    const handleSubmit = async () => {
+    useEffect(() => {
+        if (isreset) {
+            setValues([])
+            setprograms({ code: '', descriptiveTitle: '', residency: '' })
+        }
+    }, [isreset])
+
+    const handleAddProgram = async () => {
         const { code, descriptiveTitle, residency } = programs
         const upperCode = code.replace(/\s+/g, '').toUpperCase()
         if (upperCode === '' || descriptiveTitle === '' || residency === '') return alert('Please fill-up the required fields.')
@@ -48,6 +57,7 @@ export function DataTableToolbarCreateProgram<TData>({
 
         if (programExists) return alert('A program with this code or descriptive title already exists.')
         setValues(prev => [...prev, { code: upperCode, descriptiveTitle, residency }])
+        setprograms({ code: '', descriptiveTitle: '', residency: '' })
     }
 
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,6 +68,13 @@ export function DataTableToolbarCreateProgram<TData>({
         }))
     }
 
+    const handleRemoveProgram = () => {
+        fetchChecks.map(item => {
+            const { code } = item
+            setValues(prev => prev.filter(program => program.code !== code))
+            table.resetRowSelection()
+        })
+    }
 
     return (
         <div className="flex flex-wrap items-center justify-between">
@@ -66,24 +83,10 @@ export function DataTableToolbarCreateProgram<TData>({
                     placeholder="Search program..."
                     value={(table.getColumn("code")?.getFilterValue() as string) ?? ""}
                     onChange={(event) => {
-                        table.getColumn("code")?.setFilterValue(event.target.value);
+                        table.getColumn("code")?.setFilterValue(event.target.value)
                     }}
                     className="h-8 w-[20rem] lg:w-[25rem] placeholder:text-muted"
                 />
-                {/* {table.getColumn("category") && (
-                    <DataTableFacetedFilter
-                        column={table.getColumn("category")}
-                        title="Categoryasdasd"
-                        options={categories}
-                    />
-                )}
-                {table.getColumn("type") && (
-                    <DataTableFacetedFilter
-                        column={table.getColumn("type")}
-                        title="Type"
-                        options={incomeType}
-                    />
-                )} */}
                 {isFiltered && (
                     <Button
                         variant="ghost"
@@ -94,16 +97,16 @@ export function DataTableToolbarCreateProgram<TData>({
                         <Cross2Icon className="ml-2 h-4 w-4" />
                     </Button>
                 )}
-                {/* <CalendarDatePicker
-                    date={dateRange}
-                    onDateSelect={handleDateSelect}
-                    className="w-[250px] h-8"
-                    variant="outline"
-                /> */}
+                {
+                    isrows &&
+                    <Button onClick={handleRemoveProgram} variant={`default`} size={`sm`} type="button">
+                        Remove
+                    </Button>
+                }
             </div>
             <div className="flex gap-2 items-center">
                 <DialogContainer
-                    submit={handleSubmit}
+                    submit={handleAddProgram}
                     title="Add Program"
                     description="Please fill-out the required fields."
                     Trigger={
@@ -128,13 +131,6 @@ export function DataTableToolbarCreateProgram<TData>({
                         </>
                     }
                 />
-                <AlertDialogConfirmation
-                    btnTitle="Export"
-                    title="Are you sure?"
-                    description={`This will export the current data you are viewing.`}
-                    btnContinue={() => navigate('/program')}
-                />
-                <DataTableViewOptions table={table} />
             </div>
         </div>
     )
