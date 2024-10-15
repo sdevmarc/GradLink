@@ -11,7 +11,7 @@ export class ProgramsService {
         @InjectModel('Curriculum') private readonly CurriculumModel: Model<ICurriculum>
     ) { }
 
-    async findAllActive(): Promise<IPromisePrograms> {
+    async findAllInActive(): Promise<IPromisePrograms> {
         try {
             const response = await this.CurriculumModel.aggregate([
                 { $match: { isActive: true } },
