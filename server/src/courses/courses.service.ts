@@ -1,21 +1,73 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { ICourses, IPromiseCourse } from './courses.interface';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/mongoose'
+import { Model } from 'mongoose'
+import { ICourses, IPromiseCourse } from './courses.interface'
+import { ICurriculum } from 'src/curriculum/curriculum.interface'
 
 @Injectable()
 export class CoursesService {
     constructor(
-        @InjectModel('Course') private readonly CourseModel: Model<ICourses>
+        @InjectModel('Course') private readonly CourseModel: Model<ICourses>,
+        @InjectModel('Curriculum') private readonly CurriculumModel: Model<ICurriculum>
     ) { }
 
-    async findAll()
-        : Promise<IPromiseCourse> {
+    async findAllInActive(): Promise<IPromiseCourse> {
         try {
-            const response = await this.CourseModel.find()
-            return { success: true, message: 'Courses successfully fetched.', data: response }
+            const response = await this.CurriculumModel.aggregate([
+                { $match: { isActive: true } },
+
+                // Lookup programs for this curriculum
+                {
+                    $lookup: {
+                        from: 'programs',
+                        localField: '_id',
+                        foreignField: 'curriculumId',
+                        as: 'programs'
+                    }
+                },
+
+                // Unwind the programs array
+                { $unwind: '$programs' },
+
+                // Lookup courses for each program
+                {
+                    $lookup: {
+                        from: 'courses',
+                        localField: 'programs._id',
+                        foreignField: 'programs',
+                        as: 'courses'
+                    }
+                },
+
+                // Group everything back together
+                {
+                    $group: {
+                        _id: '$_id',
+                        name: { $first: '$name' },
+                        programs: { $push: '$programs' },
+                        courses: { $push: '$courses' }
+                    }
+                },
+
+                // Flatten the courses array
+                {
+                    $project: {
+                        name: 1,
+                        programs: 1,
+                        courses: {
+                            $reduce: {
+                                input: '$courses',
+                                initialValue: [],
+                                in: { $setUnion: ['$$value', '$$this'] }
+                            }
+                        }
+                    }
+                }
+            ])
+
+            return { success: true, message: 'Programs for the current curriculum fetched successfully.', data: response[0] }
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Failed to fetch courses.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+            throw new HttpException({ success: false, message: 'Failed to fetch all program.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
