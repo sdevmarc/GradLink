@@ -64,12 +64,14 @@ export function DataTableToolbarAvailablePrograms<TData>({
             </div>
             <div className="flex gap-2 items-center">
                 <AlertDialogConfirmation
+                    variant={'outline'}
                     btnTitle="New Program"
                     title="Are you sure?"
                     description={`This will add a new program to the current curriculum.`}
                     btnContinue={() => navigate(ROUTES.CREATE_PROGRAM)}
                 />
                 <AlertDialogConfirmation
+                    variant={'outline'}
                     btnTitle="Export"
                     title="Are you sure?"
                     description={`This will export the current data you are viewing.`}
