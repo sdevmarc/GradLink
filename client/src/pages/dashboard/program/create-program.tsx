@@ -97,6 +97,7 @@ export default function CreateProgram() {
                                         isreset={isreset}
                                     />
                                     <AlertDialogConfirmation
+                                        disabled={isLoading}
                                         className='w-full my-3 py-5'
                                         variant={'default'}
                                         btnTitle="Add Program to Current Curriculum"
