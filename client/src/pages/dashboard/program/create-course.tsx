@@ -97,7 +97,8 @@ const CreateForm = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         const { courseno, descriptiveTitle, programs, units, prerequisites } = course
-        if (!courseno?.trim() || !descriptiveTitle || (programs?.length ?? 0) <= 0 || !units) return alert('Please fill-up the required fields.')
+        const upperCourseno = (courseno ?? '').replace(/\s+/g, '').toUpperCase()
+        if (upperCourseno === '' || !descriptiveTitle || (programs?.length ?? 0) <= 0 || !units) return alert('Please fill-up the required fields.')
 
         await insertCourse({ courseno, descriptiveTitle, programs, units, prerequisites })
     }
@@ -199,7 +200,7 @@ const CreateForm = () => {
                                 {
                                     courseFetched &&
                                     <DataTableCreateCourse
-                                        data={dataCourse.data || []} columns={CreateCourseColumns}
+                                        data={dataCourse.data.courses || []} columns={CreateCourseColumns}
                                         fetchCheck={handleCourseChange}
                                         onCancel={(e) => setPre(e)}
                                         resetSelection={resetSelection}
