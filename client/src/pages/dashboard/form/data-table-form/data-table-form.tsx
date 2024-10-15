@@ -122,12 +122,14 @@ export function DataTableForm<TData, TValue>({
                 </div>
                 <div className="flex gap-2 items-center">
                     <AlertDialogConfirmation
+                        variant={'outline'}
                         btnTitle="Fetch Data"
                         title="Are you sure?"
                         description={`This will fetch the current google form's data.`}
                         btnContinue={() => navigate('/program')}
                     />
                     <AlertDialogConfirmation
+                        variant={'outline'}
                         btnTitle="Export"
                         title="Are you sure?"
                         description={`This will export the current data you are viewing.`}
