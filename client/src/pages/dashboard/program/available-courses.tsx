@@ -13,6 +13,8 @@ export default function Courses() {
         queryKey: ['courses']
     })
 
+    if (courseFetched) { console.log(course.data) }
+
     return (
         <>
             <div className="flex flex-col min-h-screen items-center">
@@ -27,13 +29,13 @@ export default function Courses() {
                     </aside>
                     <main className="flex">
                         <Sidebar>
-                            <SidebarNavs title="Programs" link={ROUTES.AVAILABLE_PROGRAMS}/>
+                            <SidebarNavs title="Programs" link={ROUTES.AVAILABLE_PROGRAMS} />
                             <SidebarNavs bg='bg-muted' title="Courses" link={ROUTES.AVAILABLE_COURSES} />
                             <SidebarNavs title="Curriculums" link={ROUTES.CURRICULUM} />
                         </Sidebar>
                         <MainTable>
                             {courseLoading && <div>Loading...</div>}
-                            {courseFetched && <DataTableAvailableCourses columns={CourseColumns} data={course.data || []}/>}
+                            {courseFetched && <DataTableAvailableCourses columns={CourseColumns} data={course.data.courses || []} />}
                         </MainTable>
                     </main>
                 </div>
