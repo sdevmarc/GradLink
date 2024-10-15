@@ -10,19 +10,22 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
 interface IComponents {
     btnTitle: string
     btnContinue: React.MouseEventHandler<HTMLButtonElement>
     title: string
     description: string
+    variant: "link" | "default" | "destructive" | "outline" | "secondary" | "ghost" | null | undefined
+    className?: string
 }
 
-export function AlertDialogConfirmation({ btnTitle, title, description, btnContinue }: IComponents) {
+export function AlertDialogConfirmation({ btnTitle, title, description, btnContinue, variant, className }: IComponents) {
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>
-                <Button variant="outline" size={`sm`}>
+                <Button variant={variant} size={`sm`} className={cn(className)}>
                     {btnTitle}
                 </Button>
             </AlertDialogTrigger>
