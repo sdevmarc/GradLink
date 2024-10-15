@@ -123,6 +123,7 @@ export function DataTableToolbarProgram<TData>({
                     }
                 />
                 <AlertDialogConfirmation
+                    variant={'outline'}
                     btnTitle="Export"
                     title="Are you sure?"
                     description={`This will export the current data you are viewing.`}
