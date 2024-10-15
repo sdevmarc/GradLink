@@ -30,10 +30,10 @@ export default function ContinueDialog({ trigger, title, description, onClose, i
                         <div className="flex flex-col items-center gap-4">
                             {icon}
                             <div className="flex flex-col items-center">
-                                <h1 className="text-lg font-semibold">
+                                <h1 className="text-lg text-center font-semibold">
                                     {title}
                                 </h1>
-                                <p className="text-md font-normal">
+                                <p className="text-md text-center font-normal">
                                     {description}
                                 </p>
                             </div>
