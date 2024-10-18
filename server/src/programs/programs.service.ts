@@ -1,15 +1,49 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { Model } from 'mongoose'
+import mongoose, { Model } from 'mongoose'
 import { IPrograms, IPromisePrograms, IRequestPrograms } from './programs.interface'
 import { ICurriculum } from 'src/curriculum/curriculum.interface'
+import { ICourses } from 'src/courses/courses.interface'
 
 @Injectable()
 export class ProgramsService {
     constructor(
+        @InjectModel('Course') private readonly CourseModel: Model<ICourses>,
         @InjectModel('Program') private readonly ProgramModel: Model<IPrograms>,
         @InjectModel('Curriculum') private readonly CurriculumModel: Model<ICurriculum>
     ) { }
+
+    encodeBase64(input: string): string {
+        return Buffer.from(input, 'utf-8').toString('base64')
+    }
+
+    decodeBase64(encoded: string): string {
+        return Buffer.from(encoded, 'base64').toString('utf-8')
+    }
+
+    async validate({ programs }: IRequestPrograms): Promise<IPromisePrograms> {
+        try {
+            const validationResults = await Promise.all(programs.map(async (item) => {
+                const { code, descriptiveTitle, residency } = item
+                if (!code || !descriptiveTitle || !residency) return { success: false, message: 'Missing required fields.' }
+
+                const existingProgram = await this.ProgramModel.findOne({ code })
+                if (existingProgram) return { success: false, message: `Code ${code} already exists.` }
+
+                return { success: true, message: 'Validation passed.' }
+            }))
+
+            const filteredResults = validationResults.filter(item => !item.success)
+
+            const allValid = validationResults.every(result => result.success)
+            if (!allValid) return { success: false, message: filteredResults[0].message, data: validationResults }
+
+            return { success: true, message: 'All programs validated successfully.', data: validationResults }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Failed to validate programs', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
 
     async findAllInActive(): Promise<IPromisePrograms> {
         try {
@@ -53,35 +87,49 @@ export class ProgramsService {
         }
     }
 
-    // async findOne({ code }: IPrograms): Promise<IPromisePrograms> {
-    //     try {
-    //         const response = await this.ProgramModel.findOne({ code })
-    //         return { success: true, message: 'Program fetched successfully', data: response }
-    //     } catch (error) {
-    //         throw new HttpException({ success: false, message: 'Failed to fetch all program.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
-    //     }
-    // }
-
-    async validate({ programs }: IRequestPrograms): Promise<IPromisePrograms> {
+    async findOne({ id }: { id: string }): Promise<IPromisePrograms> {
         try {
-            const validationResults = await Promise.all(programs.map(async (item) => {
-                const { code, descriptiveTitle, residency } = item
-                if (!code || !descriptiveTitle || !residency) return { success: false, message: 'Missing required fields.' }
+            const response = await this.ProgramModel.aggregate([
+                {
+                    $match: { _id: new mongoose.Types.ObjectId(id) }
+                },
+                {
+                    $lookup: {
+                        from: 'curriculums',
+                        localField: 'curriculumId',
+                        foreignField: '_id',
+                        as: 'curriculums'
+                    }
+                },
+                {
+                    $unwind: '$curriculums'
+                },
+                {
+                    $lookup: {
+                        from: 'courses',
+                        localField: '_id',
+                        foreignField: 'programs',
+                        as: 'courses'
+                    }
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        code: 1,
+                        descriptiveTitle: 1,
+                        residency: 1,
+                        courses: '$courses',
+                        curriculum: '$curriculums.name'
+                    }
+                }
+            ])
 
-                const existingProgram = await this.ProgramModel.findOne({ code })
-                if (existingProgram) return { success: false, message: `Code ${code} already exists.` }
-
-                return { success: true, message: 'Validation passed.' }
-            }))
-
-            const filteredResults = validationResults.filter(item => !item.success)
-
-            const allValid = validationResults.every(result => result.success)
-            if (!allValid) return { success: false, message: filteredResults[0].message, data: validationResults }
-
-            return { success: true, message: 'All programs validated successfully.', data: validationResults }
+            return { success: true, message: 'Program fetched successfully', data: response[0] };
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Failed to validate programs', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+            if (error instanceof HttpException) {
+                throw error;
+            }
+            throw new HttpException({ success: false, message: 'Failed to fetch program.', error: error.message }, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -103,8 +151,8 @@ export class ProgramsService {
 
     async addProgramToActiveCurriculum({ programs }: IRequestPrograms): Promise<IPromisePrograms> {
         try {
-            const activeCurriculum = await this.CurriculumModel.findOne({ isActive: true });
-            if (!activeCurriculum) return { success: false, message: 'No active curriculum found.' };
+            const activeCurriculum = await this.CurriculumModel.findOne({ isActive: true })
+            if (!activeCurriculum) return { success: false, message: 'No active curriculum found.' }
             const createdPrograms = await Promise.all(programs.map(async (item) => {
                 const { code, descriptiveTitle, residency } = item
                 const newProgram = await this.ProgramModel.create({ code, descriptiveTitle, residency, curriculumId: activeCurriculum._id })
@@ -116,7 +164,7 @@ export class ProgramsService {
             throw new HttpException(
                 { success: false, message: 'Failed to add program to active curriculum', error },
                 HttpStatus.INTERNAL_SERVER_ERROR
-            );
+            )
         }
     }
 
