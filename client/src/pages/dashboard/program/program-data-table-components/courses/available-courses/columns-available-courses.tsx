@@ -8,7 +8,7 @@ import { IAPICourse } from '@/interface/course.interface'
 import { DataTableColumnHeader } from "@/components/data-table-components/data-table-column-header"
 import { DataTableRowActionsAvailableCourses } from "./data-table-row-actions-available-courses"
 
-export const CurriculumColumns: ColumnDef<IAPICourse>[] = [
+export const AvailableCoursesColumns: ColumnDef<IAPICourse>[] = [
     {
         accessorKey: "courseno",
         header: ({ column }) => (
