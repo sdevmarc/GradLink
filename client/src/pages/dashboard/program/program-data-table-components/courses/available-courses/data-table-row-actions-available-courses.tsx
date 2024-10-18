@@ -26,13 +26,6 @@ export function DataTableRowActionsAvailableCourses<TData>({ row }: DataTableRow
         navigate(`/student/details/${encoded_id}`)
     }
 
-    const handleEvaluate = () => {
-        // console.log(row.original)
-        const { _id: id } = row.original as { _id: string }
-        const encoded_id = btoa(id)
-        navigate(`/student/evaluation/${encoded_id}`)
-    }
-
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -45,9 +38,8 @@ export function DataTableRowActionsAvailableCourses<TData>({ row }: DataTableRow
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[160px]">
-                <DropdownMenuItem onClick={handleViewDetails}>View details</DropdownMenuItem>
-                <DropdownMenuItem>Update Enrollment</DropdownMenuItem>
-                <DropdownMenuItem onClick={handleEvaluate}>Evaluate</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleViewDetails}>View Details</DropdownMenuItem>
+                <DropdownMenuItem>View Enrollees</DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
     );
