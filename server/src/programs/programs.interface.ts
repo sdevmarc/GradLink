@@ -1,7 +1,7 @@
 import mongoose from "mongoose"
 
 export interface IPrograms {
-    pid?: mongoose.Schema.Types.ObjectId
+    id?: mongoose.Schema.Types.ObjectId
     code?: string
     descriptiveTitle?: string
     residency?: number
