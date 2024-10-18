@@ -1,5 +1,5 @@
 import { HOST } from '@/constants'
-import { IRequestPrograms } from '@/interface/program.interface'
+import { IAPIPrograms, IRequestPrograms } from '@/interface/program.interface'
 import axios from 'axios'
 
 export const API_PROGRAM_FINDALL = async () => {
@@ -11,14 +11,15 @@ export const API_PROGRAM_FINDALL = async () => {
     }
 }
 
-// export const API_PROGRAM_FINDONE = async ({ code }: IAPIPrograms) => {
-//     try {
-//         const response = await axios.get(`${HOST}/programs/${code}`)
-//         return response.data
-//     } catch (error) {
-//         console.error(error)
-//     }
-// }
+export const API_PROGRAM_FINDONE = async ({ _id }: IAPIPrograms) => {
+    try {
+        const baseId = btoa(_id || '')
+        const response = await axios.get(`${HOST}/programs/${baseId}`)
+        return response.data
+    } catch (error) {
+        console.error(error)
+    }
+}
 
 export const API_PROGRAM_ADD_PROGRAM = async ({ programs }: IRequestPrograms) => {
     try {
