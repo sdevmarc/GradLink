@@ -75,7 +75,7 @@ const BreadCrumbs = ({ children }: { children: React.ReactNode }) => {
 
 const HeaderDashboard = () => {
     const location = useLocation()
-    const { sid } = useParams()
+    const { sid, id } = useParams()
     return (
         <>
             <header className="hdashboard z-[1] backdrop-blur-[1rem] backdrop-saturate-50 fixed top-0 left-0 w-full h-[6rem] border-b-[0.7px] border-black/20 flex justify-center items-center">
@@ -109,6 +109,28 @@ const HeaderDashboard = () => {
                                                 </BreadcrumbItem>
                                             </BreadCrumbs>
                                         );
+                                    case `/program/details/${id}`:
+                                        return (
+                                            <BreadCrumbs>
+                                                <BreadcrumbItem>
+                                                    <BreadcrumbPage className='text-md'>LOGO</BreadcrumbPage>
+                                                </BreadcrumbItem>
+                                                <BreadcrumbSeparator>
+                                                    <Slash />
+                                                </BreadcrumbSeparator>
+                                                <BreadcrumbItem>
+                                                    <BreadcrumbItem className='text-md font-light'>Gradlink</BreadcrumbItem>
+                                                </BreadcrumbItem>
+                                                <BreadcrumbSeparator>
+                                                    <Slash />
+                                                </BreadcrumbSeparator>
+                                                <BreadcrumbItem>
+                                                    <BreadcrumbPage className='text-md font-medium'>
+                                                        View details
+                                                    </BreadcrumbPage>
+                                                </BreadcrumbItem>
+                                            </BreadCrumbs>
+                                        )
                                     case ROUTES.CREATE_STUDENT:
                                         return (
                                             <BreadCrumbs>
