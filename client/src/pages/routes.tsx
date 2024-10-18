@@ -17,6 +17,7 @@ import StudentEvaluation from "./dashboard/student/student-evaluation"
 import Curriculum from "./dashboard/program/curriculum"
 import CreateProgram from "./dashboard/program/create-program"
 import CreateCurriculum from "./dashboard/program/create-curriculum"
+import ViewProgramDetails from "./dashboard/program/view-program-details"
 
 const Routes = createBrowserRouter([
     {
@@ -36,6 +37,7 @@ const Routes = createBrowserRouter([
 
             //Program
             { path: '/program', element: <Program /> },
+            { path: '/program/details/:id', element: <ViewProgramDetails /> },
             { path: '/program/program/create', element: <CreateProgram /> },
             { path: '/program/courses', element: <Courses /> },
             { path: '/program/courses/create', element: <CreateCourse /> },
