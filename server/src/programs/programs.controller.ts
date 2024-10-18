@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common'
 import { ProgramsService } from './programs.service'
-import { IRequestPrograms } from './programs.interface'
+import { IPrograms, IRequestPrograms } from './programs.interface'
 import { CurriculumService } from 'src/curriculum/curriculum.service'
 
 @Controller('programs')
@@ -15,10 +15,11 @@ export class ProgramsController {
         return await this.programService.findAllInActive()
     }
 
-    // @Get(':code')
-    // async findOneProgram(@Param() { code }: IPrograms) {
-    //     return await this.programService.findOne({ code })
-    // }
+    @Get(':id')
+    async findOneProgram(@Param() { id }: { id: string }) {
+        const decoded = this.programService.decodeBase64(id)
+        return await this.programService.findOne({ id: decoded })
+    }
 
     @Post('create')
     async createProgram(
