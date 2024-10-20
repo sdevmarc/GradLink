@@ -9,6 +9,16 @@ export class CurriculumService {
         @InjectModel('Curriculum') private readonly CurriculumModel: Model<ICurriculum>
     ) { }
 
+    async isCurriculumExists(): Promise<IPromiseCurriculum> {
+        try {
+            const response = await this.CurriculumModel.find({ isActive: true })
+            if (response.length > 0) return { success: true, message: 'Curriculum exists.' }
+            return { success: false, message: 'Curriculum does not exists, please make a curriculum first.' }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Search for curriculum if exists failed.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
     async findAll()
         : Promise<IPromiseCurriculum> {
         try {
