@@ -107,7 +107,7 @@ function ViewProgramDetails<TData>({ row }: DataTableRowActionsProps<TData>) {
                                                 </div>
                                                 <div className="flex items-center">
                                                     <BookOpen className="h-5 w-5 mr-2 text-muted-foreground" />
-                                                    <span>Credits: 26 (no backend)</span>
+                                                    <span>Credits: {program.data.totalUnits}</span>
                                                 </div>
                                             </div>
                                         </section>
