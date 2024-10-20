@@ -71,6 +71,16 @@ export class CoursesService {
         }
     }
 
+    // async findAllStudentsEnrolled(): Promise<IPromiseCourse> {
+    //     try {
+    //         const response = await this.CourseModel.aggregate([
+    //             {}
+    //         ])
+    //     } catch (error) {
+    //         throw new HttpException({ success: false, message: 'Students enrolled in course failed to fetch.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+    //     }
+    // }
+
     async findOne({ courseno }: ICourses)
         : Promise<IPromiseCourse> {
         try {
