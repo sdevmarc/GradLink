@@ -1,28 +1,26 @@
 import { useNavigate } from "react-router-dom";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from "./ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "./ui/dialog";
+import { Button } from "./ui/button";
 
 interface IComponents {
-    trigger: boolean
+    isDialog: boolean
     title: string
     description: string
-    onClose: () => void
+    setDialog: (e: boolean) => void
     icon: React.ReactNode
+    btnContinue?: React.MouseEventHandler<HTMLButtonElement>
 }
 
-export default function ContinueDialog({ trigger, title, description, onClose, icon }: IComponents) {
+export default function ContinueDialog({ isDialog, title, description, setDialog, icon, btnContinue }: IComponents) {
     const navigate = useNavigate()
 
     const handleGoBack = () => {
-        onClose()
         navigate(-1)
     }
 
-    const handleContinue = () => {
-        onClose()
-    }
     return (
         <>
-            <Dialog open={trigger} onOpenChange={(open) => !open && onClose()}>
+            <Dialog open={isDialog} onOpenChange={(open) => setDialog && setDialog(open)}>
                 <DialogTitle className="sr-only"></DialogTitle>
                 <DialogDescription></DialogDescription>
                 <DialogContent className="sm:max-w-[425px]">
@@ -45,11 +43,9 @@ export default function ContinueDialog({ trigger, title, description, onClose, i
                                 <button onClick={handleGoBack} className="px-6 text-sm py-3 hover:bg-red-600/60 font-medium text-primary duration-200 ease-in-out rounded-xl">
                                     Cancel
                                 </button>
-                                <DialogClose asChild>
-                                    <button onClick={handleContinue} className="px-6 py-3 text-sm bg-primary text-primary-foreground hover:bg-black/60 duration-200 ease-in-out rounded-xl">
-                                        Continue
-                                    </button>
-                                </DialogClose>
+                                <Button variant={`default`} onClick={btnContinue}>
+                                    Continue
+                                </Button>
                             </div>
 
                         </div>
