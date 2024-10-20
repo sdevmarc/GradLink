@@ -122,6 +122,7 @@ export function DataTableForm<TData, TValue>({
                 </div>
                 <div className="flex gap-2 items-center">
                     <AlertDialogConfirmation
+                        type={`default`}
                         variant={'outline'}
                         btnTitle="Fetch Data"
                         title="Are you sure?"
@@ -129,6 +130,7 @@ export function DataTableForm<TData, TValue>({
                         btnContinue={() => navigate('/program')}
                     />
                     <AlertDialogConfirmation
+                        type={`default`}
                         variant={'outline'}
                         btnTitle="Export"
                         title="Are you sure?"
