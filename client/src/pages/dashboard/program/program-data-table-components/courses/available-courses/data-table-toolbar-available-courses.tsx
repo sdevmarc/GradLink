@@ -64,6 +64,7 @@ export function DataTableToolbarAvailableCourses<TData>({
             </div>
             <div className="flex gap-2 items-center">
                 <AlertDialogConfirmation
+                    type={`default`}
                     variant={'outline'}
                     btnTitle="New Course"
                     title="Are you sure?"
@@ -71,6 +72,7 @@ export function DataTableToolbarAvailableCourses<TData>({
                     btnContinue={() => navigate(ROUTES.CREATE_COURSE)}
                 />
                 <AlertDialogConfirmation
+                    type={`default`}
                     variant={'outline'}
                     btnTitle="Export"
                     title="Are you sure?"
