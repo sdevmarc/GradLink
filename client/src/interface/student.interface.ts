@@ -17,4 +17,5 @@ export interface IAPIStudents {
     status?: string
     enrollments?: IEnrollments
     isenrolled?: boolean
+    semester?: string
 }
