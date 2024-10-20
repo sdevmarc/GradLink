@@ -9,6 +9,11 @@ export class CurriculumController {
 
     @Get()
     async findAllCurriculum() {
-        return this.CurriculumService.findAll()
+        return await this.CurriculumService.findAll()
+    }
+
+    @Get('check-curriculum')
+    async isCurriculumExists() {
+        return await this.CurriculumService.isCurriculumExists()
     }
 }
