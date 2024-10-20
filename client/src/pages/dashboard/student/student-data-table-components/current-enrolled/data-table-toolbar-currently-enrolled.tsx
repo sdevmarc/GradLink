@@ -9,6 +9,9 @@ import { DataTableViewOptions } from "@/components/data-table-components/data-ta
 import { AlertDialogConfirmation } from "@/components/alert-dialog"
 import { useNavigate } from "react-router-dom"
 import { ROUTES } from "@/constants"
+import { useQuery } from "@tanstack/react-query"
+import { API_SEMESTER_ISEXISTS } from "@/api/curriculum"
+import { useEffect, useState } from "react"
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>
@@ -21,6 +24,18 @@ export function DataTableToolbarCurrentlyEnrolled<TData>({
 }: DataTableToolbarProps<TData>) {
     const isFiltered = table.getState().columnFilters.length > 0
     const navigate = useNavigate()
+    const [isSem, setSem] = useState<boolean>(false)
+
+    const { data: issemester, isFetched: issemesterFetched } = useQuery({
+        queryFn: () => API_SEMESTER_ISEXISTS(),
+        queryKey: ['semester_exists']
+    })
+
+    useEffect(() => {
+        if (issemesterFetched && issemester.success) {
+            setSem(true)
+        }
+    }, [])
 
     return (
         <div className="flex flex-wrap items-center justify-between">
@@ -52,13 +67,27 @@ export function DataTableToolbarCurrentlyEnrolled<TData>({
             </div>
             <div className="flex gap-2 items-center">
                 <AlertDialogConfirmation
+                    type={`default`}
                     variant={'outline'}
-                    btnTitle="New Student"
+                    btnTitle="Add Student"
                     title="Are you sure?"
-                    description={`You will be redirect to a page for creating a new student.`}
+                    description={`You will be redirect to a page for creating a new student for the current semester.`}
                     btnContinue={() => navigate(ROUTES.CREATE_STUDENT)}
                 />
+                {
+                    isSem &&
+                    <AlertDialogConfirmation
+                        type={`default`}
+                        variant={'outline'}
+                        btnTitle="New Semester"
+                        title="Are you sure?"
+                        description={`You will be redirect to a page for creating a new student for the new semester.`}
+                        btnContinue={() => navigate(ROUTES.CREATE_STUDENT)}
+                    />
+                }
+
                 <AlertDialogConfirmation
+                    type={`default`}
                     variant={'outline'}
                     btnTitle="Export"
                     title="Are you sure?"
