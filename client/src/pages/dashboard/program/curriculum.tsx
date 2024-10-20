@@ -10,7 +10,7 @@ import { API_CURRICULUM_FINDALL } from '@/api/curriculum'
 export default function Curriculum() {
     const { data: curriculum, isLoading: curriculumLoading, isFetched: curriculumFetched } = useQuery({
         queryFn: () => API_CURRICULUM_FINDALL(),
-        queryKey: ['curriculum']
+        queryKey: ['curriculums']
     })
 
     return (
