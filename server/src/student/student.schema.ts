@@ -19,11 +19,6 @@ export const StudentSchema = new mongoose.Schema({
     educationalBackground: {},
     trainingAdvanceStudies: {},
     enrollments: [{
-        semester: {
-            type: Number,
-            enum: [1, 2, 3],
-            required: true,
-        },
         progress: {
             type: String,
             enum: ['ongoing', 'done', 'dropout'],
