@@ -3,28 +3,32 @@ import { StudentService } from './student.service';
 import { IStudent } from './student.interface';
 import { FormsService } from 'src/forms/forms.service';
 import { ConstantsService } from 'src/constants/constants.service';
+import { SemesterService } from 'src/semester/semester.service';
+import { CurriculumService } from 'src/curriculum/curriculum.service';
 
 @Controller('student')
 export class StudentController {
     constructor(
         private readonly studentService: StudentService,
         private readonly formService: FormsService,
-        private readonly constantsService: ConstantsService
+        private readonly constantsService: ConstantsService,
+        private readonly semesterService: SemesterService,
+        private readonly curriculumService: CurriculumService,
     ) { }
 
     @Get()
     async findAllStudent() {
-        return this.studentService.findAllStudents()
+        return await this.studentService.findAllStudents()
     }
 
     @Get('enrolled')
     async findAllEnrolledStudent() {
-        return this.studentService.findAllStudentsEnrolled()
+        return await this.studentService.findAllStudentsEnrolled()
     }
 
     @Get('alumni')
     async findAllAlumniStudents() {
-        return this.studentService.findAllAlumni()
+        return await this.studentService.findAllAlumni()
     }
 
     @Get('findone/:idNumber')
@@ -35,17 +39,13 @@ export class StudentController {
 
     @Post('create')
     async createStudent(
-        @Body() { idNumber, name, email, enrollments, isenrolled }: IStudent
+        @Body() { idNumber, name, email, enrollments, isenrolled, semester }: IStudent
     ) {
-        return await this.studentService.create(
-            {
-                idNumber,
-                name,
-                email,
-                enrollments,
-                isenrolled
-            }
-        )
+        const student = await this.studentService.create({ idNumber, name, email, enrollments, isenrolled })
+        if (!student.success) return student
+
+        await this.semesterService.insert({ semester: Number(semester), studentsEnrolled: student.data.toString() })
+        return { success: true, message: 'Student enrolled successfully.' }
     }
 
     @Post('unenroll-all')
