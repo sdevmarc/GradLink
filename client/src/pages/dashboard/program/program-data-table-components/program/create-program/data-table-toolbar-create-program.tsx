@@ -9,8 +9,8 @@ import { DialogContainer } from "@/components/dialog"
 import { Label } from "@/components/ui/label"
 import { useEffect, useState } from "react"
 import { IAPIPrograms } from "@/interface/program.interface"
-import ContinueDialog from "@/components/continue-dialog"
 import { CircleCheck, CircleX } from "lucide-react"
+import { AlertDialogConfirmation } from "@/components/alert-dialog"
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>
@@ -34,7 +34,7 @@ export function DataTableToolbarCreateProgram<TData>({
         descriptiveTitle: '',
         residency: ''
     })
-    const [dialogState, setDialogState] = useState({
+    const [alertdialogstate, setAlertDialogState] = useState({
         show: false,
         title: '',
         description: '',
@@ -60,10 +60,10 @@ export function DataTableToolbarCreateProgram<TData>({
     const handleAddProgram = async () => {
         const { code, descriptiveTitle, residency } = programs
         const upperCode = code.replace(/\s+/g, '').toUpperCase()
-        if (upperCode === '' || descriptiveTitle === '' || residency === '') return setDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Please fill-up the required fields.' })
+        if (upperCode === '' || descriptiveTitle === '' || residency === '') return setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Please fill-up the required fields.' })
         const programExists = values.some(program => program.code === upperCode)
 
-        if (programExists) return setDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'A program with this code or descriptive title already exists.' })
+        if (programExists) return setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'A program with this code or descriptive title already exists.' })
         setValues(prev => [...prev, { code: upperCode, descriptiveTitle, residency }])
         setprograms({ code: '', descriptiveTitle: '', residency: '' })
     }
@@ -86,12 +86,17 @@ export function DataTableToolbarCreateProgram<TData>({
 
     return (
         <div className="flex flex-wrap items-center justify-between">
-            <ContinueDialog
-                icon={dialogState.success ? <CircleCheck color="#42a626" size={70} /> : <CircleX color="#880808" size={70} />}
-                trigger={dialogState.show}
-                title={dialogState.title}
-                description={dialogState.description}
-                onClose={() => { setDialogState(prev => ({ ...prev, show: false })) }}
+            <AlertDialogConfirmation
+                btnTitle='Continue'
+                className='w-full py-4'
+                isDialog={alertdialogstate.show}
+                setDialog={(open) => setAlertDialogState(prev => ({ ...prev, show: open }))}
+                type={`alert`}
+                title={alertdialogstate.title}
+                description={alertdialogstate.description}
+                icon={alertdialogstate.success ? <CircleCheck color="#42a626" size={70} /> : <CircleX color="#880808" size={70} />}
+                variant={`default`}
+                btnContinue={() => { setAlertDialogState(prev => ({ ...prev, show: false })) }}
             />
             <div className="flex flex-1 flex-wrap items-center gap-2">
                 <Input
