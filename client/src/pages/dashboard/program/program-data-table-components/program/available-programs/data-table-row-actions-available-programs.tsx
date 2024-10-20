@@ -17,6 +17,7 @@ import { BookOpen, Clock, GraduationCap } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useQuery } from "@tanstack/react-query"
 import { API_PROGRAM_FINDONE } from "@/api/program"
+import Loading from "@/components/loading"
 
 interface DataTableRowActionsProps<TData> {
     row: Row<TData>
@@ -74,6 +75,7 @@ function ViewProgramDetails<TData>({ row }: DataTableRowActionsProps<TData>) {
     return (
         <>
             <div className="flex flex-col min-h-screen items-center">
+                {programLoading && <Loading />}
                 <div className="w-full max-w-[90rem] flex flex-col">
                     <main className="flex justify-center items-center py-4">
                         <div className="min-h-screen w-full max-w-[70rem]">
