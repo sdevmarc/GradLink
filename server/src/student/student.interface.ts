@@ -22,6 +22,8 @@ export interface IStudent {
     enrollments?: IStudentEnrollments[]
     status?: string
     isenrolled?: boolean
+    semester?: number
+    
 }
 
 export interface IPromiseStudent {
