@@ -17,6 +17,7 @@ import { ConstantsService } from './constants/constants.service';
 import { MailModule } from './mail/mail.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { CurriculumModule } from './curriculum/curriculum.module';
+import { SemesterModule } from './semester/semester.module';
 
 @Module({
     imports: [
@@ -54,6 +55,7 @@ import { CurriculumModule } from './curriculum/curriculum.module';
         FormsModule,
         MailModule,
         CurriculumModule,
+        SemesterModule,
     ],
     controllers: [AppController],
     providers: [AppService, AuditlogService, OtpService, ConstantsService],
