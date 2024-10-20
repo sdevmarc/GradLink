@@ -19,3 +19,13 @@ export const API_PROGRAM_ADD_NEW_CURRICULUM = async ({ name, programs }: IReques
         console.error(error)
     }
 }
+
+export const API_CURRICULUM_ISEXISTS = async () => {
+    const response = await axios.get(`${HOST}/curriculum/check-curriculum`)
+    return response.data
+}
+
+export const API_SEMESTER_ISEXISTS = async () => {
+    const response = await axios.get(`${HOST}/semester/check-semester`)
+    return response.data
+}
