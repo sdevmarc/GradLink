@@ -13,9 +13,9 @@ export class ProgramsService {
         @InjectModel('Curriculum') private readonly CurriculumModel: Model<ICurriculum>
     ) { }
 
-    encodeBase64(input: string): string {
-        return Buffer.from(input, 'utf-8').toString('base64')
-    }
+    // encodeBase64(input: string): string {
+    //     return Buffer.from(input, 'utf-8').toString('base64')
+    // }
 
     decodeBase64(encoded: string): string {
         return Buffer.from(encoded, 'base64').toString('utf-8')
@@ -113,13 +113,19 @@ export class ProgramsService {
                     }
                 },
                 {
+                    $addFields: {
+                        totalUnits: { $sum: '$courses.units' }
+                    }
+                },
+                {
                     $project: {
                         _id: 1,
                         code: 1,
                         descriptiveTitle: 1,
                         residency: 1,
                         courses: '$courses',
-                        curriculum: '$curriculums.name'
+                        curriculum: '$curriculums.name',
+                        totalUnits: 1
                     }
                 }
             ])
