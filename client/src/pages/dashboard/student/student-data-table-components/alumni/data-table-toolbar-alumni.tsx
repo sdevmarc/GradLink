@@ -75,6 +75,7 @@ export function DataTableToolbarAlumni<TData>({
             </div>
             <div className="flex gap-2 items-center">
                 <AlertDialogConfirmation
+                    type={`default`}
                     variant={'outline'}
                     btnTitle="Export"
                     title="Are you sure?"
