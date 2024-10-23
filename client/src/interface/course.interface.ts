@@ -8,6 +8,7 @@ interface IPrograms {
 
 export interface IAPICourse {
     _id?: string
+    code?: number
     courseno?: string
     descriptiveTitle?: string
     programs?: IPrograms[]
