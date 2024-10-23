@@ -17,14 +17,14 @@ export default function Overview() {
                     </HeadSection>
                 </aside>
                 <div className="py-4 flex justify-evenly items-center flex-wrap gap-6">
-                    <PieChartComponent />
+                    {/* <PieChartComponent />
                     <BarChartCustomeLabelComponent />
                     <BarChartMixedComponent />
                     <PieChartComponent />
                     <BarChartCustomeLabelComponent />
                     <BarChartMixedComponent />
                     <PieChartComponent />
-                    <BarChartCustomeLabelComponent />
+                    <BarChartCustomeLabelComponent /> */}
                 </div>
             </main>
         </div>
