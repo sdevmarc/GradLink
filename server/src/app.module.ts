@@ -1,23 +1,22 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { UsersModule } from './users/users.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { StudentModule } from './student/student.module';
-import { AuditlogService } from './auditlog/auditlog.service';
-import { OtpService } from './otp/otp.service';
-import { MongooseModule } from '@nestjs/mongoose';
-import { OtpModule } from './otp/otp.module';
-import { AuditlogModule } from './auditlog/auditlog.module';
-import { JwtModule } from '@nestjs/jwt';
-import { ProgramsModule } from './programs/programs.module';
-import { CoursesModule } from './courses/courses.module';
-import { FormsModule } from './forms/forms.module';
-import { ConstantsService } from './constants/constants.service';
-import { MailModule } from './mail/mail.module';
-import { MailerModule } from '@nestjs-modules/mailer';
-import { CurriculumModule } from './curriculum/curriculum.module';
-import { SemesterModule } from './semester/semester.module';
+import { Module } from '@nestjs/common'
+import { AppController } from './app.controller'
+import { AppService } from './app.service'
+import { UsersModule } from './users/users.module'
+import { ConfigModule, ConfigService } from '@nestjs/config'
+import { StudentModule } from './student/student.module'
+import { AuditlogService } from './auditlog/auditlog.service'
+import { OtpService } from './otp/otp.service'
+import { MongooseModule } from '@nestjs/mongoose'
+import { OtpModule } from './otp/otp.module'
+import { AuditlogModule } from './auditlog/auditlog.module'
+import { JwtModule } from '@nestjs/jwt'
+import { ProgramsModule } from './programs/programs.module'
+import { CoursesModule } from './courses/courses.module'
+import { FormsModule } from './forms/forms.module'
+import { ConstantsService } from './constants/constants.service'
+import { MailModule } from './mail/mail.module'
+import { MailerModule } from '@nestjs-modules/mailer'
+import { CurriculumModule } from './curriculum/curriculum.module'
 
 @Module({
     imports: [
@@ -50,12 +49,11 @@ import { SemesterModule } from './semester/semester.module';
         StudentModule,
         OtpModule,
         AuditlogModule,
-        ProgramsModule,
         CoursesModule,
         FormsModule,
         MailModule,
         CurriculumModule,
-        SemesterModule,
+        ProgramsModule
     ],
     controllers: [AppController],
     providers: [AppService, AuditlogService, OtpService, ConstantsService],
