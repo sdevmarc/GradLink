@@ -18,47 +18,37 @@ export const StudentSchema = new mongoose.Schema({
     generalInformation: {},
     educationalBackground: {},
     trainingAdvanceStudies: {},
-    enrollments: [{
-        progress: {
-            type: String,
-            enum: ['ongoing', 'done', 'dropout'],
-            required: true,
-            default: 'ongoing'
-        },
-        enrollment_date: {
-            type: Date,
-            required: true,
-            default: Date.now
-        },
-        courses: [{
-            courseno: {
-                type: String,
-                required: true
-            },
-            descriptive_title: {
-                type: String,
-                required: true
-            },
-            units: {
-                type: Number,
-                required: true
-            },
-            // ispass: {
-            //     type: Boolean,
-            //     required: true,
-            //     default: true
-            // }
-        }]
-    }],
     isenrolled: {
         type: Boolean,
         required: true,
-        default: false
+        default: true
     },
+    enrollments: [{
+        semester: {
+            type: Number,
+            required: true,
+            enum: [1, 2, 3]
+        },
+        course: {
+            //change to course code
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Course',
+            required: true
+        },
+        enrollmentDate: {
+            type: Date,
+            default: Date.now
+        },
+        ispass: {
+            type: String,
+            enum: ['pass', 'fail', 'in-progress'],
+            default: 'in-progress'
+        }
+    }],
     status: {
         type: String,
         required: true,
-        enum: ['student', 'alumni'],
+        enum: ['student', 'alumni', 'drop'],
         default: 'student'
     },
     graduation_date: {
