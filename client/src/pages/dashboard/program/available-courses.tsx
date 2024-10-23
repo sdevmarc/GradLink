@@ -1,11 +1,11 @@
 import HeadSection, { SubHeadSectionDetails } from '@/components/head-section'
 import MainTable from '@/components/main-table'
 import { SidebarNavs, Sidebar } from '@/components/sidebar'
-import { useQuery } from '@tanstack/react-query'
-import { API_COURSE_FINDALL } from '@/api/courses'
 import { ROUTES } from '@/constants'
 import { DataTableAvailableCourses } from './program-data-table-components/courses/available-courses/data-table-available-courses'
 import { AvailableCoursesColumns } from './program-data-table-components/courses/available-courses/columns-available-courses'
+import { API_COURSE_FINDALL } from '@/api/courses'
+import { useQuery } from '@tanstack/react-query'
 
 export default function Courses() {
     const { data: course, isLoading: courseLoading, isFetched: courseFetched } = useQuery({
@@ -33,7 +33,7 @@ export default function Courses() {
                         </Sidebar>
                         <MainTable>
                             {courseLoading && <div>Loading...</div>}
-                            {courseFetched && <DataTableAvailableCourses columns={AvailableCoursesColumns} data={course.data?.courses || []} />}
+                            {courseFetched && <DataTableAvailableCourses columns={AvailableCoursesColumns} data={course.data || []} />}
                         </MainTable>
                     </main>
                 </div>
