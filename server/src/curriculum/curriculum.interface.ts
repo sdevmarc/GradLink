@@ -1,11 +1,18 @@
+interface ICategories {
+    categoryName: string
+    courses: string[]
+}
 
 export interface ICurriculum {
-    name?: string
+    code?: string
+    descriptiveTitle?: string
+    major?: string
+    categories?: ICategories[]
     isActive?: boolean
 }
 
 export interface IPromiseCurriculum {
     success: boolean
     message: string
-    data?: ICurriculum[] | {} 
+    data?: ICurriculum[] | {}
 }
