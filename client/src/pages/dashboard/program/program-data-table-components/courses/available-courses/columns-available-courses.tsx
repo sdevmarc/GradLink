@@ -10,6 +10,17 @@ import { DataTableRowActionsAvailableCourses } from "./data-table-row-actions-av
 
 export const AvailableCoursesColumns: ColumnDef<IAPICourse>[] = [
     {
+        accessorKey: "code",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Code" className="text-text" />
+        ),
+        cell: ({ row }) => (
+            <div className="w-[100px] capitalize">{row.getValue("code")}</div>
+        ),
+        enableSorting: false,
+        enableHiding: false
+    },
+    {
         accessorKey: "courseno",
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="Course No." className="text-text" />
