@@ -1,5 +1,6 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { CurriculumService } from './curriculum.service';
+import { ICurriculum } from './curriculum.interface';
 
 @Controller('curriculum')
 export class CurriculumController {
@@ -7,13 +8,18 @@ export class CurriculumController {
         private readonly CurriculumService: CurriculumService
     ) { }
 
-    @Get()
-    async findAllCurriculum() {
-        return await this.CurriculumService.findAll()
+    @Get('active')
+    async findAllActiveCurriculum() {
+        return await this.CurriculumService.findAllActive()
     }
 
-    @Get('check-curriculum')
-    async isCurriculumExists() {
-        return await this.CurriculumService.isCurriculumExists()
+    @Get('legacy')
+    async findAllInactiveCurriculum() {
+        return await this.CurriculumService.findAllLegacy()
+    }
+
+    @Post('create')
+    async insertCurriculum(@Body() { code, descriptiveTitle, major, categories }: ICurriculum) {
+        return this.CurriculumService.insertNew({ code, descriptiveTitle, major, categories })
     }
 }
