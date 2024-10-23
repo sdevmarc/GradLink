@@ -2,16 +2,33 @@ import HeadSection, { SubHeadSectionDetails } from '@/components/head-section'
 import MainTable from '@/components/main-table'
 import { SidebarNavs, Sidebar } from '@/components/sidebar'
 import { useQuery } from '@tanstack/react-query'
-import { DataTableCurriculum } from './program-data-table-components/curriculum/curriculum/data-table-curriculum'
-import { CurriculumColumns } from './program-data-table-components/curriculum/curriculum/columns-curriculum'
+import { DataTableActiveCurriculum } from './program-data-table-components/curriculum/curriculum/active/data-table-active-curriculum'
+import { ActiveCurriculumColumns } from './program-data-table-components/curriculum/curriculum/active/columns-active-curriculum'
 import { ROUTES } from '@/constants'
-import { API_CURRICULUM_FINDALL } from '@/api/curriculum'
+import { API_CURRICULUM_FINDALL_ACTIVE, API_CURRICULUM_FINDALL_LEGACY } from '@/api/curriculum'
+
+import {
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
+} from "@/components/ui/tabs"
+import { DataTableLegacyCurriculum } from './program-data-table-components/curriculum/curriculum/legacy/data-table-legacy-curriculum'
+import { LegacyCurriculumColumns } from './program-data-table-components/curriculum/curriculum/legacy/columns-legacy-curriculum'
 
 export default function Curriculum() {
-    const { data: curriculum, isLoading: curriculumLoading, isFetched: curriculumFetched } = useQuery({
-        queryFn: () => API_CURRICULUM_FINDALL(),
-        queryKey: ['curriculums']
+    const { data: activecurriculum, isLoading: activecurriculumLoading, isFetched: activecurriculumFetched } = useQuery({
+        queryFn: () => API_CURRICULUM_FINDALL_ACTIVE(),
+        queryKey: ['activecurriculums']
     })
+
+    const { data: legacycurriculum, isLoading: legacycurriculumLoading, isFetched: legacycurriculumFetched } = useQuery({
+        queryFn: () => API_CURRICULUM_FINDALL_LEGACY(),
+        queryKey: ['legacycurriculums']
+    })
+
+    if (activecurriculumFetched) { console.log(activecurriculum.data) }
+    if (legacycurriculumFetched) { console.log(legacycurriculum.data) }
 
     return (
         <>
@@ -32,8 +49,23 @@ export default function Curriculum() {
                             <SidebarNavs bg='bg-muted' title="Curriculums" link={ROUTES.CURRICULUM} />
                         </Sidebar>
                         <MainTable>
-                            {curriculumLoading && <div>Loading...</div>}
-                            {curriculumFetched && <DataTableCurriculum columns={CurriculumColumns} data={curriculum.data || []} />}
+                            <Tabs defaultValue="active" className=''>
+                                <div className="w-full flex items-center justify-end">
+                                    <TabsList className="grid grid-cols-2">
+                                        <TabsTrigger value="active">Active</TabsTrigger>
+                                        <TabsTrigger value="legacy">Legacy</TabsTrigger>
+                                    </TabsList>
+                                </div>
+
+                                <TabsContent value="active">
+                                    {activecurriculumLoading && <div>Loading...</div>}
+                                    {activecurriculumFetched && <DataTableActiveCurriculum columns={ActiveCurriculumColumns} data={activecurriculum.data || []} />}
+                                </TabsContent>
+                                <TabsContent value="legacy">
+                                    {legacycurriculumLoading && <div>Loading...</div>}
+                                    {legacycurriculumFetched && <DataTableLegacyCurriculum columns={LegacyCurriculumColumns} data={legacycurriculum.data || []} />}
+                                </TabsContent>
+                            </Tabs>
                         </MainTable>
                     </main>
                 </div>
