@@ -3,15 +3,12 @@ import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 import { IPromiseStudent, IStudent } from './student.interface'
 import { IModelForm } from 'src/forms/forms.interface'
-import { ISemester } from 'src/semester/semester.interface'
-import { SemesterService } from 'src/semester/semester.service'
 
 @Injectable()
 export class StudentService {
     constructor(
         @InjectModel('Student') private readonly studentModel: Model<IStudent>,
         @InjectModel('Form') private readonly formModel: Model<IModelForm>,
-        @InjectModel('Semester') private readonly semesterModel: Model<ISemester>,
     ) { }
 
     async findAllStudents(): Promise<IPromiseStudent> {
@@ -241,7 +238,7 @@ export class StudentService {
     }
 
     async create(
-        { idNumber, name, email, enrollments, isenrolled }: IStudent
+        { idNumber, name, email, enrollments }: IStudent
     ): Promise<IPromiseStudent> {
         try {
             const isstudent = await this.studentModel.findOne({ idNumber })
@@ -250,8 +247,21 @@ export class StudentService {
             const isemail = await this.studentModel.findOne({ email })
             if (isemail) return { success: false, message: 'Email already exists.' }
 
-            const student = await this.studentModel.create({ idNumber, name, email, enrollments, isenrolled })
-            return { success: true, message: 'Student successfully created.', data: student._id.toString() }
+            enrollments.map(async (item) => {
+                const isCourseAlreadyEnrolled = await this.studentModel.findOne({
+                    'enrollments.course': item.course
+                })
+
+                if (isCourseAlreadyEnrolled) {
+                    return {
+                        success: false,
+                        message: `Course with ID ${item.course} is already enrolled for the student.`
+                    }
+                }
+            })
+
+            await this.studentModel.create({ idNumber, name, email, enrollments })
+            return { success: true, message: 'Student successfully created.' }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Failed to create student.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
@@ -274,14 +284,14 @@ export class StudentService {
         }
     }
 
-    async unrollSelection({ sid }: IStudent)
+    async unrollSelection({ _id }: IStudent)
         : Promise<IPromiseStudent> {
 
-        if (!sid || sid.length === 0) return { success: false, message: 'No students selected for unenrollment.' }
+        if (!_id || _id.length === 0) return { success: false, message: 'No students selected for unenrollment.' }
         try {
             const result = await this.studentModel.updateMany(
                 {
-                    _id: { $in: sid },
+                    _id: { $in: _id },
                     isenrolled: true
                 },
                 {
@@ -303,18 +313,18 @@ export class StudentService {
             //     }
             // )
 
-            if (result.modifiedCount > 0) return { success: true, message: `Successfully unenrolled ${result.modifiedCount} out of ${sid.length} selected students.` }
+            if (result.modifiedCount > 0) return { success: true, message: `Successfully unenrolled ${result.modifiedCount} out of ${_id.length} selected students.` }
             return { success: true, message: 'No changes were made. Selected students may already be unenrolled.' }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Failed to unenroll selected students.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
-    async unrollOne({ sid }: IStudent)
+    async unrollOne({ _id }: IStudent)
         : Promise<IPromiseStudent> {
         try {
             await this.studentModel.findByIdAndUpdate(
-                sid,
+                _id,
                 { isenrolled: false },
                 { new: true }
             )
