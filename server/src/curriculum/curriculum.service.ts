@@ -1,42 +1,73 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { ICurriculum, IPromiseCurriculum } from './curriculum.interface';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/mongoose'
+import { Model } from 'mongoose'
+import { ICurriculum, IPromiseCurriculum } from './curriculum.interface'
+import { ICourses } from 'src/courses/courses.interface'
 
 @Injectable()
 export class CurriculumService {
     constructor(
-        @InjectModel('Curriculum') private readonly CurriculumModel: Model<ICurriculum>
+        @InjectModel('Curriculum') private readonly CurriculumModel: Model<ICurriculum>,
+        @InjectModel('Course') private readonly courseModel: Model<ICourses>,
     ) { }
 
-    async isCurriculumExists(): Promise<IPromiseCurriculum> {
-        try {
-            const response = await this.CurriculumModel.find({ isActive: true })
-            if (response.length > 0) return { success: true, message: 'Curriculum exists.' }
-            return { success: false, message: 'Curriculum does not exists, please make a curriculum first.' }
-        } catch (error) {
-            throw new HttpException({ success: false, message: 'Search for curriculum if exists failed.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
-        }
-    }
-
-    async findAll()
+    async findAllActive()
         : Promise<IPromiseCurriculum> {
         try {
-            const response = await this.CurriculumModel.find().sort({ _id: -1 });
-            return { success: true, message: 'Curriculumns fetched successfully.', data: response }
+            const response = await this.CurriculumModel.aggregate([
+                { $match: { isActive: true } },
+                {
+                    $project: {
+                        _id: 1,
+                        code: 1,
+                        descriptiveTitle: 1,
+                        isActive: 1,
+                        createdAt: 1,
+                        updatedAt: 1,
+                        major: '$programs.descriptiveTitle'
+                    }
+                },
+                { $sort: { createdAt: -1 } }
+            ])
+            return { success: true, message: 'Inactive Curriculumns fetched successfully.', data: response }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Failed to retrieve curriculums.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
-    async insertNew({ name }: ICurriculum) {
+    async findAllLegacy()
+        : Promise<IPromiseCurriculum> {
         try {
-            if (!name) return { success: false, message: 'Please fill-in the required fields.' }
+            const response = await this.CurriculumModel.aggregate([
+                { $match: { isActive: false } },
+                {
+                    $project: {
+                        _id: 1,
+                        code: 1,
+                        descriptiveTitle: 1,
+                        isActive: 1,
+                        createdAt: 1,
+                        updatedAt: 1,
+                        major: '$programs.descriptiveTitle'
+                    }
+                },
+                { $sort: { createdAt: -1 } }
+            ])
+            return { success: true, message: 'Inactive Curriculumns fetched successfully.', data: response }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Failed to retrieve curriculums.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
 
-            await this.CurriculumModel.updateMany({ isActive: true }, { isActive: false, isLegacy: true });
-            const { _id } = await this.CurriculumModel.create({ name })
+    async insertNew({ code, descriptiveTitle, major, categories }: ICurriculum) {
+        try {
+            if (!code || !descriptiveTitle || categories.length === 0) return { success: false, message: 'Please fill-in the required fields.' }
 
-            return { success: true, message: 'Curriculum successfully created.', data: _id }
+            const activeCurriculum = await this.CurriculumModel.findOne({ code, isActive: true })
+            if (activeCurriculum) await this.CurriculumModel.updateMany({ code, isActive: true }, { isActive: false })
+
+            await this.CurriculumModel.create({ code, descriptiveTitle, major, categories })
+            return { success: true, message: 'Curriculum successfully created.' }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Failed to create new curriculum.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
