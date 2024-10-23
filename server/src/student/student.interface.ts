@@ -1,18 +1,13 @@
-export interface IStudentCourse {
-    courseno?: string
-    descriptive_title?: string
-    units?: number
-}
 
 interface IStudentEnrollments {
     semester?: string
-    progress?: string
-    enrollment_date?: string
-    courses?: IStudentCourse[]
+    course?: string[]
+    enrollmentDate?: string
+    ispass?:  boolean
 }
 
 export interface IStudent {
-    sid?: string | string[]
+    _id?: string | string[]
     idNumber?: string
     name?: string
     email?: string
