@@ -5,13 +5,10 @@ export interface IPrograms {
     code?: string
     descriptiveTitle?: string
     residency?: number
-    curriculumId?: mongoose.Schema.Types.ObjectId
 }
 
 export interface IRequestPrograms {
-    name?: string
     programs?: IPrograms[]
-    curriculumId?: string
 }
 
 export interface IPromisePrograms {
