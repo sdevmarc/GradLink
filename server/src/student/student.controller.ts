@@ -1,10 +1,9 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { StudentService } from './student.service';
-import { IStudent } from './student.interface';
-import { FormsService } from 'src/forms/forms.service';
-import { ConstantsService } from 'src/constants/constants.service';
-import { SemesterService } from 'src/semester/semester.service';
-import { CurriculumService } from 'src/curriculum/curriculum.service';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common'
+import { StudentService } from './student.service'
+import { IStudent } from './student.interface'
+import { FormsService } from 'src/forms/forms.service'
+import { ConstantsService } from 'src/constants/constants.service'
+import { CurriculumService } from 'src/curriculum/curriculum.service'
 
 @Controller('student')
 export class StudentController {
@@ -12,7 +11,6 @@ export class StudentController {
         private readonly studentService: StudentService,
         private readonly formService: FormsService,
         private readonly constantsService: ConstantsService,
-        private readonly semesterService: SemesterService,
         private readonly curriculumService: CurriculumService,
     ) { }
 
@@ -39,13 +37,9 @@ export class StudentController {
 
     @Post('create')
     async createStudent(
-        @Body() { idNumber, name, email, enrollments, isenrolled, semester }: IStudent
+        @Body() { idNumber, name, email, enrollments, isenrolled }: IStudent
     ) {
-        const student = await this.studentService.create({ idNumber, name, email, enrollments, isenrolled })
-        if (!student.success) return student
-
-        await this.semesterService.insert({ semester: Number(semester), studentsEnrolled: student.data.toString() })
-        return { success: true, message: 'Student enrolled successfully.' }
+        return await this.studentService.create({ idNumber, name, email, enrollments, isenrolled })
     }
 
     @Post('unenroll-all')
@@ -54,29 +48,29 @@ export class StudentController {
     }
 
     @Post('unenroll-selection')
-    async unrollSelection(@Body() { sid }: IStudent) {
-        return await this.studentService.unrollSelection({ sid })
+    async unrollSelection(@Body() { _id }: IStudent) {
+        return await this.studentService.unrollSelection({ _id })
     }
 
     @Post('unenroll-one/:sid')
-    async unrollOne(@Param('sid') { sid }: IStudent) {
-        return await this.studentService.unrollOne({ sid })
+    async unrollOne(@Param('sid') { _id }: IStudent) {
+        return await this.studentService.unrollOne({ _id })
     }
 
     @Post('update-graduate')
     async updateStudentGraduate() {
-        const response = await this.formService.mapQuestionsToAnswers(this.constantsService.getFormId());
+        const response = await this.formService.mapQuestionsToAnswers(this.constantsService.getFormId())
 
         const updatePromises = response.map(async (item) => {
-            const idNumber = String(item.generalInformation.answers[0].answer);
-            const { generalInformation, educationalBackground, trainingAdvanceStudies } = item;
+            const idNumber = String(item.generalInformation.answers[0].answer)
+            const { generalInformation, educationalBackground, trainingAdvanceStudies } = item
             return await this.studentService.formUpdateStudent({
                 idNumber,
                 generalInformation,
                 educationalBackground,
                 trainingAdvanceStudies,
-            });
-        });
+            })
+        })
 
         const updateResults = await Promise.all(updatePromises)
 
@@ -89,6 +83,6 @@ export class StudentController {
         })
 
         const pendingResults = await Promise.all(resultsPromises)
-        return pendingResults;
+        return pendingResults
     }
 }
