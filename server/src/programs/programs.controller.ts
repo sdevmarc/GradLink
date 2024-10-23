@@ -12,36 +12,34 @@ export class ProgramsController {
 
     @Get()
     async findAllPrograms() {
-        return await this.programService.findAllInActive()
+        return await this.programService.findAll()
     }
 
-    @Get(':id')
-    async findOneProgram(@Param() { id }: { id: string }) {
-        const decoded = this.programService.decodeBase64(id)
-        return await this.programService.findOne({ id: decoded })
-    }
+    // @Get(':id')
+    // async findOneProgram(@Param() { id }: { id: string }) {
+    //     const decoded = this.programService.decodeBase64(id)
+    //     return await this.programService.findOne({ id: decoded })
+    // }
 
     @Post('create')
     async createProgram(
-        @Body() { name, programs }: IRequestPrograms
-    ) {
-        console.log({ name, programs })
-        const validationResult = await this.programService.validate({ programs })
-        if (!validationResult.success) return validationResult
-
-        const { data } = await this.curriculumService.insertNew({ name })
-        return await this.programService.insertNew({ programs, curriculumId: data.toString() })
-    }
-
-    @Post('add-program-to-active-curriculum')
-    async AddToActiveCurriculum(
-        @Body() { programs }: IRequestPrograms
+        @Body() {  programs }: IRequestPrograms
     ) {
         const validationResult = await this.programService.validate({ programs })
         if (!validationResult.success) return validationResult
 
-        return await this.programService.addProgramToActiveCurriculum({ programs })
+        return await this.programService.insertNew({ programs })
     }
+
+    // @Post('add-program-to-active-curriculum')
+    // async AddToActiveCurriculum(
+    //     @Body() { programs }: IRequestPrograms
+    // ) {
+    //     const validationResult = await this.programService.validate({ programs })
+    //     if (!validationResult.success) return validationResult
+
+    //     return await this.programService.addProgramToActiveCurriculum({ programs })
+    // }
 
     // @Post('update')
     // async updateProgram(
