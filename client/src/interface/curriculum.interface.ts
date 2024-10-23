@@ -1,6 +1,12 @@
-import { IAPIPrograms } from "./program.interface";
+import { IAPICourse } from "./course.interface"
+
+interface IRequestCourse {
+    categoryName: string
+    courses: IAPICourse[]
+}
 
 export interface IRequestCurriculum {
-    name: string
-    programs: IAPIPrograms[]
+    code: string
+    major: string
+    categories: IRequestCourse[]
 }
