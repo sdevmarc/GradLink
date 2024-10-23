@@ -1,6 +1,11 @@
 import mongoose from "mongoose";
 
 export const CoursesSchema = new mongoose.Schema({
+    code: {
+        type: Number,
+        required: true,
+        unique: true,
+    },
     courseno: {
         type: String,
         required: true,
@@ -11,11 +16,6 @@ export const CoursesSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    programs: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Program',
-        required: true,
-    }],
     prerequisites: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Course',
