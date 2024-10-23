@@ -1,14 +1,13 @@
-import { IPrograms } from "src/programs/programs.interface"
 
 interface IPrerequisite {
     courseno: string
 }
 
 export interface ICourses {
-    cid?: string
+    _id?: string
+    code?: number
     courseno?: string
     descriptiveTitle?: string
-    programs?: IPrograms[]
     units?: number
     prerequisites?: IPrerequisite[]
 }
