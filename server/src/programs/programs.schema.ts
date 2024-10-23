@@ -15,10 +15,5 @@ export const ProgramSchema = new mongoose.Schema({
         type: Number,
         required: true,
         default: 0
-    },
-    curriculumId: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: 'Curriculum'
     }
 }, { timestamps: true })
