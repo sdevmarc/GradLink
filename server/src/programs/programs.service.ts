@@ -45,107 +45,74 @@ export class ProgramsService {
     }
 
 
-    async findAllInActive(): Promise<IPromisePrograms> {
+    async findAll(): Promise<IPromisePrograms> {
         try {
-            const response = await this.CurriculumModel.aggregate([
-                { $match: { isActive: true } },
-                {
-                    $lookup: {
-                        from: 'programs',
-                        localField: '_id',
-                        foreignField: 'curriculumId',
-                        as: 'programs'
-                    }
-                },
-                {
-                    $project: {
-                        _id: 1,
-                        name: 1,
-                        isActive: 1,
-                        createdAt: 1,
-                        updatedAt: 1,
-                        programs: {
-                            $map: {
-                                input: "$programs",
-                                as: "program",
-                                in: {
-                                    _id: "$$program._id",
-                                    code: "$$program.code",
-                                    descriptiveTitle: "$$program.descriptiveTitle",
-                                    residency: "$$program.residency"
-                                }
-                            }
-                        },
-                        programCount: { $size: "$programs" },
-                    }
-                },
-                { $sort: { createdAt: -1 } }
-            ])
-            return { success: true, message: 'Programs for the current curriculum fetched successfully.', data: response[0] }
+            const response = await this.ProgramModel.find()
+            return { success: true, message: 'Programs for the current curriculum fetched successfully.', data: response }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Failed to fetch all program.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
-    async findOne({ id }: { id: string }): Promise<IPromisePrograms> {
-        try {
-            const response = await this.ProgramModel.aggregate([
-                {
-                    $match: { _id: new mongoose.Types.ObjectId(id) }
-                },
-                {
-                    $lookup: {
-                        from: 'curriculums',
-                        localField: 'curriculumId',
-                        foreignField: '_id',
-                        as: 'curriculums'
-                    }
-                },
-                {
-                    $unwind: '$curriculums'
-                },
-                {
-                    $lookup: {
-                        from: 'courses',
-                        localField: '_id',
-                        foreignField: 'programs',
-                        as: 'courses'
-                    }
-                },
-                {
-                    $addFields: {
-                        totalUnits: { $sum: '$courses.units' }
-                    }
-                },
-                {
-                    $project: {
-                        _id: 1,
-                        code: 1,
-                        descriptiveTitle: 1,
-                        residency: 1,
-                        courses: '$courses',
-                        curriculum: '$curriculums.name',
-                        totalUnits: 1
-                    }
-                }
-            ])
+    // async findOne({ id }: { id: string }): Promise<IPromisePrograms> {
+    //     try {
+    //         const response = await this.ProgramModel.aggregate([
+    //             {
+    //                 $match: { _id: new mongoose.Types.ObjectId(id) }
+    //             },
+    //             {
+    //                 $lookup: {
+    //                     from: 'curriculums',
+    //                     localField: 'curriculumId',
+    //                     foreignField: '_id',
+    //                     as: 'curriculums'
+    //                 }
+    //             },
+    //             {
+    //                 $unwind: '$curriculums'
+    //             },
+    //             {
+    //                 $lookup: {
+    //                     from: 'courses',
+    //                     localField: '_id',
+    //                     foreignField: 'programs',
+    //                     as: 'courses'
+    //                 }
+    //             },
+    //             {
+    //                 $addFields: {
+    //                     totalUnits: { $sum: '$courses.units' }
+    //                 }
+    //             },
+    //             {
+    //                 $project: {
+    //                     _id: 1,
+    //                     code: 1,
+    //                     descriptiveTitle: 1,
+    //                     residency: 1,
+    //                     courses: '$courses',
+    //                     curriculum: '$curriculums.name',
+    //                     totalUnits: 1
+    //                 }
+    //             }
+    //         ])
 
-            return { success: true, message: 'Program fetched successfully', data: response[0] };
-        } catch (error) {
-            if (error instanceof HttpException) {
-                throw error;
-            }
-            throw new HttpException({ success: false, message: 'Failed to fetch program.', error: error.message }, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+    //         return { success: true, message: 'Program fetched successfully', data: response[0] };
+    //     } catch (error) {
+    //         if (error instanceof HttpException) {
+    //             throw error;
+    //         }
+    //         throw new HttpException({ success: false, message: 'Failed to fetch program.', error: error.message }, HttpStatus.INTERNAL_SERVER_ERROR);
+    //     }
+    // }
 
-    async insertNew({ programs, curriculumId }: IRequestPrograms): Promise<IPromisePrograms> {
+    async insertNew({ programs }: IRequestPrograms): Promise<IPromisePrograms> {
         try {
             if (programs.length === 0) return { success: false, message: 'Programs array is empty.' }
 
             const createdPrograms = await Promise.all(programs.map(async (item) => {
                 const { code, descriptiveTitle, residency } = item
-                const newProgram = await this.ProgramModel.create({ code, descriptiveTitle, residency, curriculumId })
+                const newProgram = await this.ProgramModel.create({ code, descriptiveTitle, residency })
                 return { success: true, message: `Program ${code} successfully created.`, data: newProgram }
             }))
 
@@ -155,24 +122,24 @@ export class ProgramsService {
         }
     }
 
-    async addProgramToActiveCurriculum({ programs }: IRequestPrograms): Promise<IPromisePrograms> {
-        try {
-            const activeCurriculum = await this.CurriculumModel.findOne({ isActive: true })
-            if (!activeCurriculum) return { success: false, message: 'No active curriculum found.' }
-            const createdPrograms = await Promise.all(programs.map(async (item) => {
-                const { code, descriptiveTitle, residency } = item
-                const newProgram = await this.ProgramModel.create({ code, descriptiveTitle, residency, curriculumId: activeCurriculum._id })
-                return { success: true, message: `Program ${code} successfully added in the active curriculum.`, data: newProgram }
-            }))
+    // async addProgramToActiveCurriculum({ programs }: IRequestPrograms): Promise<IPromisePrograms> {
+    //     try {
+    //         const activeCurriculum = await this.CurriculumModel.findOne({ isActive: true })
+    //         if (!activeCurriculum) return { success: false, message: 'No active curriculum found.' }
+    //         const createdPrograms = await Promise.all(programs.map(async (item) => {
+    //             const { code, descriptiveTitle, residency } = item
+    //             const newProgram = await this.ProgramModel.create({ code, descriptiveTitle, residency, curriculumId: activeCurriculum._id })
+    //             return { success: true, message: `Program ${code} successfully added in the active curriculum.`, data: newProgram }
+    //         }))
 
-            return { success: true, message: 'All programs successfully added in the active curriculum.', data: createdPrograms }
-        } catch (error) {
-            throw new HttpException(
-                { success: false, message: 'Failed to add program to active curriculum', error },
-                HttpStatus.INTERNAL_SERVER_ERROR
-            )
-        }
-    }
+    //         return { success: true, message: 'All programs successfully added in the active curriculum.', data: createdPrograms }
+    //     } catch (error) {
+    //         throw new HttpException(
+    //             { success: false, message: 'Failed to add program to active curriculum', error },
+    //             HttpStatus.INTERNAL_SERVER_ERROR
+    //         )
+    //     }
+    // }
 
     // async updateActive() {
     //     try {
