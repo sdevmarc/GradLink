@@ -10,26 +10,26 @@ export class CoursesController {
 
     @Get()
     async findAllCourses() {
-        return this.courseService.findAllInActive()
+        return this.courseService.findAll()
     }
 
-    @Get(':courseno')
-    async findOneCourse(@Param() { courseno }: ICourses) {
-        return this.courseService.findOne({ courseno })
-    }
+    // @Get(':courseno')
+    // async findOneCourse(@Param() { courseno }: ICourses) {
+    //     return this.courseService.findOne({ courseno })
+    // }
 
     @Post('create')
-    async createCourse(@Body() { courseno, descriptiveTitle, programs, units, prerequisites }: ICourses) {
-        return this.courseService.create({ courseno, descriptiveTitle, programs, units, prerequisites })
+    async createCourse(@Body() { code, courseno, descriptiveTitle, units, prerequisites }: ICourses) {
+        return this.courseService.create({ code, courseno, descriptiveTitle, units, prerequisites })
     }
 
-    @Post('update')
-    async updateCourse(@Body() { cid, courseno, descriptiveTitle, programs, units }: ICourses) {
-        return this.courseService.findByIdAndUpdate({ cid, courseno, descriptiveTitle, programs, units })
-    }
+    // @Post('update')
+    // async updateCourse(@Body() { cid, courseno, descriptiveTitle, programs, units }: ICourses) {
+    //     return this.courseService.findByIdAndUpdate({ cid, courseno, descriptiveTitle, programs, units })
+    // }
 
-    @Post(':cid')
-    async deleteCourse(@Param() { cid }: ICourses) {
-        return this.courseService.delete({ cid })
-    }
+    // @Post(':cid')
+    // async deleteCourse(@Param() { cid }: ICourses) {
+    //     return this.courseService.delete({ cid })
+    // }
 }
