@@ -8,10 +8,8 @@ import { Input } from "@/components/ui/input"
 import { DataTableViewOptions } from "@/components/data-table-components/data-table-view-options"
 import { AlertDialogConfirmation } from "@/components/alert-dialog"
 import { useNavigate } from "react-router-dom"
-import { ROUTES } from "@/constants"
-import { useQuery } from "@tanstack/react-query"
-import { API_SEMESTER_ISEXISTS } from "@/api/curriculum"
-import { useEffect, useState } from "react"
+import { DialogContainer } from "@/components/dialog"
+import { Label } from "@/components/ui/label"
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>
@@ -24,18 +22,14 @@ export function DataTableToolbarCurrentlyEnrolled<TData>({
 }: DataTableToolbarProps<TData>) {
     const isFiltered = table.getState().columnFilters.length > 0
     const navigate = useNavigate()
-    const [isSem, setSem] = useState<boolean>(false)
 
-    const { data: issemester, isFetched: issemesterFetched } = useQuery({
-        queryFn: () => API_SEMESTER_ISEXISTS(),
-        queryKey: ['semester_exists']
-    })
+    const handleAddStudent = () => {
 
-    useEffect(() => {
-        if (issemesterFetched && issemester.success) {
-            setSem(true)
-        }
-    }, [])
+    }
+
+    const handleOnChange = () => {
+
+    }
 
     return (
         <div className="flex flex-wrap items-center justify-between">
@@ -66,26 +60,40 @@ export function DataTableToolbarCurrentlyEnrolled<TData>({
                 )}
             </div>
             <div className="flex gap-2 items-center">
-                <AlertDialogConfirmation
-                    type={`default`}
-                    variant={'outline'}
-                    btnTitle="Add Student"
-                    title="Are you sure?"
-                    description={`You will be redirect to a page for creating a new student for the current semester.`}
-                    btnContinue={() => navigate(ROUTES.CREATE_STUDENT)}
+                <DialogContainer
+                    submit={handleAddStudent}
+                    title="New Student"
+                    description="Please fill-out the required fields."
+                    Trigger={
+                        <Button variant={`outline`} size={`sm`}>
+                            New Student
+                        </Button>
+                    }
+                    children={
+                        <>
+                            <Label htmlFor="idNumber">
+                                ID Number
+                            </Label>
+                            <Input required id="idNumber" name="idNumber" onChange={handleOnChange} placeholder="eg. 123" className="col-span-3 placeholder:text-muted" />
+                            <Label htmlFor="lastname">
+                                Last Name
+                            </Label>
+                            <Input required id="lastname" name="lastname" onChange={handleOnChange} placeholder="eg. Nueva" className="col-span-3 placeholder:text-muted" />
+                            <Label htmlFor="firstname">
+                                First Name
+                            </Label>
+                            <Input required id="firstname" name="firstname" onChange={handleOnChange} placeholder="eg. Jericho" className="col-span-3 placeholder:text-muted" />
+                            <Label htmlFor="middlename">
+                                Middle Name
+                            </Label>
+                            <Input required id="middlename" name="middlename" onChange={handleOnChange} placeholder="eg. Arman" className="col-span-3 placeholder:text-muted" />
+                            <Label htmlFor="email">
+                                Email
+                            </Label>
+                            <Input required id="email" type="email" name="email" onChange={handleOnChange} placeholder="m@example.com" className="col-span-3 placeholder:text-muted" />
+                        </>
+                    }
                 />
-                {
-                    isSem &&
-                    <AlertDialogConfirmation
-                        type={`default`}
-                        variant={'outline'}
-                        btnTitle="New Semester"
-                        title="Are you sure?"
-                        description={`You will be redirect to a page for creating a new student for the new semester.`}
-                        btnContinue={() => navigate(ROUTES.CREATE_STUDENT)}
-                    />
-                }
-
                 <AlertDialogConfirmation
                     type={`default`}
                     variant={'outline'}
