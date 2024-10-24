@@ -2,7 +2,7 @@ import HeadSection, { BackHeadSection, SubHeadSectionDetails } from '@/component
 import { Sidebar, SidebarNavs } from '@/components/sidebar'
 import MainTable from '@/components/main-table'
 import { ROUTES } from '@/constants'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { AlertDialogConfirmation } from '@/components/alert-dialog'
 import { CircleCheck, CircleX, Plus, X } from 'lucide-react'
@@ -41,7 +41,7 @@ export default function CreateCurriculum() {
         courses: []
     })
     const [values, setValues] = useState<IRequestCurriculum>({
-        code: '',
+        programCode: '',
         major: '',
         categories: []
     })
@@ -67,6 +67,10 @@ export default function CreateCurriculum() {
         queryFn: () => API_PROGRAM_FINDALL(),
         queryKey: ['programs']
     })
+
+    useEffect(() => {
+        console.log(categories)
+    }, [categories])
 
     // const { mutateAsync: addcurriculum, isPending: addcurriculumLoading } = useMutation({
     //     mutationFn: API_PROGRAM_ADD_NEW_CURRICULUM,
@@ -233,9 +237,15 @@ export default function CreateCurriculum() {
                     btnContinue={() => {
                         setStep(thestep)
                         setConditionalDialogState(prev => ({ ...prev, show: false }))
+                        if (statusStepBack) {
+                            window.scrollTo({
+                                top: 0,
+                                behavior: 'smooth'
+                            })
+                        }
 
                         if (step === 0 && !statusStepBack) {
-                            if (values.code === '') {
+                            if (values.programCode === '') {
                                 setAlertDialogState({
                                     success: false,
                                     show: true,
@@ -245,6 +255,10 @@ export default function CreateCurriculum() {
                                 return
                             }
                             setStep(1)
+                            window.scrollTo({
+                                top: 0,
+                                behavior: 'smooth'
+                            })
                         }
                         if (step === 1 && !statusStepBack) {
                             if (values.categories.length === 0) {
@@ -258,6 +272,10 @@ export default function CreateCurriculum() {
                                 return
                             }
                             setStep(2)
+                            window.scrollTo({
+                                top: 0,
+                                behavior: 'smooth'
+                            })
                         }
                         if (step === 2 && !statusStepBack) { handleSubmit() }
 
@@ -404,7 +422,6 @@ export default function CreateCurriculum() {
                                                                     <X color="#000000" size={18} /> Remove
                                                                 </Button>
                                                             </div>
-
                                                             <NormalTable courses={item.courses} />
                                                         </div>
                                                     ))
@@ -444,7 +461,7 @@ export default function CreateCurriculum() {
                                                 </h1>
                                             </div>
                                             <div className="flex flex-col gap-2">
-                                                <h1 className='text-md font-normal'>Program: <span className='text-md font-medium'>{values.code}</span></h1>
+                                                <h1 className='text-md font-normal'>Program: <span className='text-md font-medium'>{values.programCode}</span></h1>
                                                 <h1 className='text-md font-normal'>Major: <span className='text-md font-medium'>{values.major ? values.major : 'None'}</span></h1>
                                                 <h1 className='text-lg font-medium'>Courses:</h1>
                                                 {
@@ -455,7 +472,6 @@ export default function CreateCurriculum() {
                                                                     {i + 1}. {item.categoryName}
                                                                 </h1>
                                                             </div>
-
                                                             <NormalTable courses={item.courses} />
                                                         </div>
                                                     ))
@@ -499,11 +515,12 @@ export default function CreateCurriculum() {
 }
 
 function NormalTable({ courses }: { courses: IAPICourse[] }) {
+
     return (
         <Table>
             <TableHeader>
                 <TableRow>
-                <TableHead className="w-[100px]">Code</TableHead>
+                    <TableHead className="w-[100px]">Code</TableHead>
                     <TableHead className="w-[100px]">Course No</TableHead>
                     <TableHead>Descriptive Title</TableHead>
                     <TableHead>Units</TableHead>
@@ -512,7 +529,7 @@ function NormalTable({ courses }: { courses: IAPICourse[] }) {
             <TableBody>
                 {courses.map((item) => (
                     <TableRow key={item._id}>
-                         <TableCell className="font-medium">{item.code}</TableCell>
+                        <TableCell className="font-medium">{item.code}</TableCell>
                         <TableCell className="font-medium">{item.courseno}</TableCell>
                         <TableCell>{item.descriptiveTitle}</TableCell>
                         <TableCell>{item.units}</TableCell>
