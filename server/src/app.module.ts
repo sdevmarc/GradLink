@@ -53,7 +53,7 @@ import { CurriculumModule } from './curriculum/curriculum.module'
         FormsModule,
         MailModule,
         CurriculumModule,
-        ProgramsModule
+        ProgramsModule,
     ],
     controllers: [AppController],
     providers: [AppService, AuditlogService, OtpService, ConstantsService],
