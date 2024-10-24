@@ -7,6 +7,8 @@ export const ROUTES = {
     LOGIN: '/login',
     OVERVIEW: '/overview',
     TRACER: '/tracer',
+    ENROLLMENT: '/enrollment',
+    CREATE_COURSE_OFFERED: '/enrollment/create-course-offered',
     CURRENTLY_ENROLLED: '/student',
     LIST_OF_STUDENTS: '/student/lists',
     ALUMNI_GRADUATES: '/student/alumni',
