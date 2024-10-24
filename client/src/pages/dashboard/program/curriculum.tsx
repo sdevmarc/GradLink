@@ -27,9 +27,6 @@ export default function Curriculum() {
         queryKey: ['legacycurriculums']
     })
 
-    if (activecurriculumFetched) { console.log(activecurriculum.data) }
-    if (legacycurriculumFetched) { console.log(legacycurriculum.data) }
-
     return (
         <>
             <div className="flex flex-col min-h-screen items-center">
