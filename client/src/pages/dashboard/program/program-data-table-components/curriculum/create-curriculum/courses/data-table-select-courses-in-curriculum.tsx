@@ -70,8 +70,8 @@ export function DataTableSelectCoursesInCurriculum<TData, TValue>({
         const selectedRows = table.getFilteredSelectedRowModel().rows
         const courses = selectedRows.map(row => {
             const original = row.original as IAPICourse
-            const { courseno, descriptiveTitle, units } = original
-            return { courseno, descriptiveTitle, units }
+            const { code, courseno, descriptiveTitle, units } = original
+            return { code, courseno, descriptiveTitle, units }
         })
 
         fetchAddedCourses(courses)
