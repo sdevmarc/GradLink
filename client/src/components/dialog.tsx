@@ -3,7 +3,6 @@ import {
     Dialog,
     DialogContent,
     DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
@@ -43,11 +42,11 @@ export function DialogContainer({ Trigger, title, description, children, submit 
                     <div className="w-full flex flex-col gap-2 py-4">
                         {children}
                     </div>
-                    <DialogFooter>
-                        <Button type="submit" variant="outline" size="sm">
+                    <div className="w-full flex">
+                        <Button className="w-full" type="submit" variant="default" size="sm">
                             Submit
                         </Button>
-                    </DialogFooter>
+                    </div>
                 </form>
             </DialogContent>
         </Dialog>
