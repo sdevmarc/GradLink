@@ -94,6 +94,7 @@ const HeaderDashboard = () => {
                                     case ROUTES.AVAILABLE_PROGRAMS:
                                     case ROUTES.AVAILABLE_COURSES:
                                     case ROUTES.GOOGLE_FORM:
+                                    case ROUTES.ENROLLMENT:
                                     case `/student/details/${sid}`:
                                     case `/student/evaluation/${sid}`:
                                         return (
@@ -265,11 +266,14 @@ const HeaderDashboard = () => {
                             <NavLink to={`/tracer`} className='text-[.8rem] text-text font-normal px-3 py-2'>
                                 Tracer
                             </NavLink>
-                            <NavLink to={`/student`} className='text-[.8rem] text-text font-normal px-3 py-2'>
-                                Student
-                            </NavLink>
                             <NavLink to={`/program`} className='text-[.8rem] text-text font-normal px-3 py-2'>
                                 Program
+                            </NavLink>
+                            <NavLink to={`/enrollment`} className='text-[.8rem] text-text font-normal px-3 py-2'>
+                                Enrollment
+                            </NavLink>
+                            <NavLink to={`/student`} className='text-[.8rem] text-text font-normal px-3 py-2'>
+                                Student
                             </NavLink>
                             <NavLink to={`/form`} className='text-[.8rem] text-text font-normal px-3 py-2'>
                                 Google Form
