@@ -1,20 +1,24 @@
 import mongoose from "mongoose";
 
 export const CurriculumSchema = new mongoose.Schema({
-    code: {
+    // code: {
+    //     type: String,
+    //     required: true,
+    //     unique: true,
+    // },
+    name: {
         type: String,
         required: true,
-        unique: true,
     },
-    descriptiveTitle: {
+    programCode: {
         type: String,
-        required: true
+        required: true,
     },
     major: {
         type: String,
         default: null
     },
-    courses: {},
+    categories: [],
     isActive: {
         type: Boolean,
         default: true
