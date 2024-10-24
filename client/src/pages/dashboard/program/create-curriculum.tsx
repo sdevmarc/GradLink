@@ -2,7 +2,7 @@ import HeadSection, { BackHeadSection, SubHeadSectionDetails } from '@/component
 import { Sidebar, SidebarNavs } from '@/components/sidebar'
 import MainTable from '@/components/main-table'
 import { ROUTES } from '@/constants'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { AlertDialogConfirmation } from '@/components/alert-dialog'
 import { CircleCheck, CircleX, Plus, X } from 'lucide-react'
@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button'
 import { DataTableSelectCoursesInCurriculum } from './program-data-table-components/curriculum/create-curriculum/courses/data-table-select-courses-in-curriculum'
 import { SelectCoursesInCurriculumColumns } from './program-data-table-components/curriculum/create-curriculum/courses/columns-select-courses-in-curriculum'
 import { IAPICourse } from '@/interface/course.interface'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { API_COURSE_FINDALL } from '@/api/courses'
 
 import {
@@ -27,23 +27,33 @@ import { SelectProgramInCurriculumColumns } from './program-data-table-component
 import { API_PROGRAM_FINDALL } from '@/api/program'
 import Loading from '@/components/loading'
 import { Progress } from '@/components/ui/progress'
-import { IRequestCurriculum } from '@/interface/curriculum.interface'
+import { IRequestCourse, IRequestCurriculum, IShowCategories } from '@/interface/curriculum.interface'
+import { API_NEW_CURRICULUM } from '@/api/curriculum'
+import { useNavigate } from 'react-router-dom'
 
 export default function CreateCurriculum() {
-    // const queryClient = useQueryClient()
+    const navigate = useNavigate()
+    const queryClient = useQueryClient()
+    const [isresetprogram, setResetProgram] = useState<boolean>(false)
     const [iseresetCourse, setResetCourse] = useState<boolean>(false)
     const [statusStepBack, setStatusStepBack] = useState<boolean>(false)
-    const [thestep, setTheStep] = useState<0 | 1 | 2>(0)
+    const [thestep, setTheStep] = useState<0 | 1 | 2 | 3>(0)
     const [ismajor, setMajor] = useState<boolean>(false)
-    const [step, setStep] = useState<0 | 1 | 2>(0)
-    const [categories, setCategories] = useState<{ categoryName: string; courses: IAPICourse[] }>({
+    const [step, setStep] = useState<0 | 1 | 2 | 3>(0)
+    const [showcourses, setShowCourses] = useState<IShowCategories>({
         categoryName: '',
-        courses: []
+        courses: [],
+    })
+    const [categories, setCategories] = useState<IRequestCourse>({
+        categoryName: '',
+        courses: [],
     })
     const [values, setValues] = useState<IRequestCurriculum>({
+        name: '',
         programCode: '',
         major: '',
-        categories: []
+        categories: [],
+        showcategories: []
     })
     const [conditionaldialogstate, setConditionalDialogState] = useState({
         show: false,
@@ -68,37 +78,28 @@ export default function CreateCurriculum() {
         queryKey: ['programs']
     })
 
-    useEffect(() => {
-        console.log(categories)
-    }, [categories])
-
-    // const { mutateAsync: addcurriculum, isPending: addcurriculumLoading } = useMutation({
-    //     mutationFn: API_PROGRAM_ADD_NEW_CURRICULUM,
-    //     onSuccess: async (data) => {
-    //         if (!data.success) {
-    //             setDialogSubmit(false)
-    //             setAlertDialogState({ success: false, show: true, title: "Uh, oh. Something went wrong!", description: data.message })
-    //             toast("Uh, oh. Something went wrong!", { description: data.message })
-    //             return
-    //         } else {
-    //             await queryClient.invalidateQueries({ queryKey: ['curriculums', 'curriculum_exists'] })
-    //             await queryClient.refetchQueries({ queryKey: ['curriculums', 'curriculum_exists'] })
-    //             window.scrollTo({
-    //                 top: 0,
-    //                 behavior: 'smooth'
-    //             })
-    //             toast("Yay, success! 🎉", { description: data.message })
-    //             setAlertDialogState({ success: true, show: true, title: "Yay, success! 🎉", description: data.message })
-    //             setDialogSubmit(false)
-    //             setCurriculum('')
-    //             return
-
-    //         }
-    //     },
-    //     onError: (data) => {
-    //         setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: data.message })
-    //     }
-    // })
+    const { mutateAsync: addcurriculum, isPending: addcurriculumLoading } = useMutation({
+        mutationFn: API_NEW_CURRICULUM,
+        onSuccess: async (data) => {
+            if (!data.success) {
+                setAlertDialogState({ success: false, show: true, title: "Uh, oh. Something went wrong!", description: data.message })
+                return
+            } else {
+                await queryClient.invalidateQueries({ queryKey: ['curriculums', 'curriculum_exists'] })
+                await queryClient.refetchQueries({ queryKey: ['curriculums', 'curriculum_exists'] })
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                })
+                navigate(ROUTES.CURRICULUM)
+                setAlertDialogState({ success: true, show: true, title: "Yay, success! 🎉", description: data.message })
+                return
+            }
+        },
+        onError: (data) => {
+            setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: data.message })
+        }
+    })
 
     const handleOnChangeValues = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value, name } = e.target
@@ -114,18 +115,22 @@ export default function CreateCurriculum() {
             ...prev,
             [name]: value
         }))
+        setShowCourses(prev => ({
+            ...prev,
+            [name]: value
+        }))
     }
 
-    const findDuplicateCourses = (existingCategories: typeof values.categories, newCourses: IAPICourse[]) => {
+    const findDuplicateCourses = (existingCategories: typeof values.showcategories, newCourses: IAPICourse[]) => {
         const duplicates: IAPICourse[] = [];
 
         // Check each new course against all existing courses in all categories
         newCourses.forEach(newCourse => {
-            existingCategories.forEach(category => {
-                const isDuplicate = category.courses.some(
-                    existingCourse => existingCourse.courseno === newCourse.courseno
+            existingCategories?.forEach(category => {
+                const isDuplicate = category.courses?.some(
+                    (existingCourse: IAPICourse) => existingCourse.code === newCourse.code
                 );
-                if (isDuplicate && !duplicates.some(d => d.courseno === newCourse.courseno)) {
+                if (isDuplicate && !duplicates.some(d => d.code === newCourse.code)) {
                     duplicates.push(newCourse);
                 }
             });
@@ -140,7 +145,7 @@ export default function CreateCurriculum() {
             return;
         }
 
-        if (categories.courses.length === 0) {
+        if (categories.courses?.length === 0) {
             setAlertDialogState({
                 success: false,
                 show: true,
@@ -151,11 +156,11 @@ export default function CreateCurriculum() {
         }
 
         // Check for duplicate courses
-        const duplicateCourses = findDuplicateCourses(values.categories, categories.courses);
+        const duplicateCourses = findDuplicateCourses(values.showcategories, showcourses.courses || []);
 
         if (duplicateCourses.length > 0) {
             const courseList = duplicateCourses
-                .map(course => `${course.courseno} - ${course.descriptiveTitle}`)
+                .map(course => `${course.code} - ${course.courseno} - ${course.descriptiveTitle}`)
                 .join('\n');
 
             setAlertDialogState({
@@ -171,13 +176,17 @@ export default function CreateCurriculum() {
             ...prev,
             categories: [...prev.categories, {
                 categoryName: categories.categoryName,
-                courses: categories.courses
+                courses: categories.courses || []
+            }],
+            showcategories: [...(prev.showcategories || []), {
+                categoryName: showcourses.categoryName,
+                courses: showcourses.courses
             }]
         }))
         setResetCourse(true)
         setCategories({
             categoryName: '',
-            courses: []
+            courses: [],
         });
     }
 
@@ -190,16 +199,35 @@ export default function CreateCurriculum() {
     };
 
     const handleSubmit = async () => {
-        console.log(values)
+        const { name, programCode, major, categories } = values
+        console.log({ name, programCode, major, categories })
+        setResetProgram(true)
+        setShowCourses({
+            categoryName: '',
+            courses: [],
+        })
+        setCategories({
+            categoryName: '',
+            courses: [],
+        })
+        setValues({
+            name: '',
+            programCode: '',
+            major: '',
+            categories: [],
+            showcategories: []
+        })
+        setMajor(false)
+
         // if (hascurriculum === '') {
         //     setDialogSubmit(false)
         //     setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Please fill-in the required fields.' })
         //     return
         // }
-        // await addcurriculum({ name: hascurriculum })
+        await addcurriculum({ name, programCode, major, categories })
     }
 
-    const isLoading = courseLoading
+    const isLoading = courseLoading || addcurriculumLoading
 
     return (
         <>
@@ -245,13 +273,14 @@ export default function CreateCurriculum() {
                         }
 
                         if (step === 0 && !statusStepBack) {
-                            if (values.programCode === '') {
+                            if (values.name === '') {
                                 setAlertDialogState({
                                     success: false,
                                     show: true,
                                     title: 'Uh, oh. Something went wrong!',
-                                    description: `Please add a program first.`
+                                    description: `Please fill-in the required field.`
                                 });
+                                setStep(0)
                                 return
                             }
                             setStep(1)
@@ -260,13 +289,14 @@ export default function CreateCurriculum() {
                                 behavior: 'smooth'
                             })
                         }
+
                         if (step === 1 && !statusStepBack) {
-                            if (values.categories.length === 0) {
+                            if (values.programCode === '') {
                                 setAlertDialogState({
                                     success: false,
                                     show: true,
                                     title: 'Uh, oh. Something went wrong!',
-                                    description: `Please add a categorized courses first.`
+                                    description: `Please add a program first.`
                                 });
                                 setStep(1)
                                 return
@@ -277,7 +307,24 @@ export default function CreateCurriculum() {
                                 behavior: 'smooth'
                             })
                         }
-                        if (step === 2 && !statusStepBack) { handleSubmit() }
+                        if (step === 2 && !statusStepBack) {
+                            if (values.categories.length === 0) {
+                                setAlertDialogState({
+                                    success: false,
+                                    show: true,
+                                    title: 'Uh, oh. Something went wrong!',
+                                    description: `Please add a categorized courses first.`
+                                });
+                                setStep(2)
+                                return
+                            }
+                            setStep(3)
+                            window.scrollTo({
+                                top: 0,
+                                behavior: 'smooth'
+                            })
+                        }
+                        if (step === 3 && !statusStepBack) { handleSubmit() }
 
                     }}
                 />
@@ -302,15 +349,16 @@ export default function CreateCurriculum() {
                                 <div className="flex flex-col gap-4 px-4">
                                     <div className="flex items-center justify-between">
                                         <span className='text-md font-medium'>
-                                            {step === 0 && 'Select a program'}
-                                            {step === 1 && 'Select the courses'}
-                                            {step === 2 && 'Confirmation'}
+                                            {step === 0 && 'Curriculum Name'}
+                                            {step === 1 && 'Select a program'}
+                                            {step === 2 && 'Select the courses'}
+                                            {step === 3 && 'Confirmation'}
                                         </span>
                                         <span className='text-md font-medium'>
-                                            {step} / 3
+                                            {step} / 4 Done
                                         </span>
                                     </div>
-                                    <Progress value={(step / 3) * 100} className="w-full bg-muted" />
+                                    <Progress value={(step / 4) * 100} className="w-full bg-muted" />
                                 </div>
 
                                 <div className="flex flex-col border gap-4 rounded-md px-4">
@@ -319,48 +367,24 @@ export default function CreateCurriculum() {
                                     </div>
                                     <div className="w-full flex flex-col gap-4">
                                         <div className={`${step === 0 ? 'block' : 'hidden'} w-full flex flex-col gap-4`}>
-                                            <div className="flex flex-col gap-1">
-                                                {programLoading && <div>Programs is loading</div>}
-                                                {
-                                                    programFetched &&
-                                                    <DataTableSelectProgramsInCurriculum
-                                                        columns={SelectProgramInCurriculumColumns}
-                                                        data={program.data || []}
-                                                        fetchAddedPrograms={(e) => setValues(prev => ({
-                                                            ...prev,
-                                                            code: e?.code || ''
-                                                        }))}
-                                                    />
-                                                }
+                                            <div className="flex flex-col gap-2">
+                                                <h1 className="text-sm font-normal">
+                                                    What is the name of this curriculum?
+                                                </h1>
+                                                <Input
+                                                    disabled={isLoading}
+                                                    value={values.name}
+                                                    type='text'
+                                                    name='name'
+                                                    placeholder='eg. New Curriculum 2024'
+                                                    className='h-8 max-w-[400px]'
+                                                    onChange={handleOnChangeValues}
+                                                    required
+                                                />
                                             </div>
-                                            {
-                                                !ismajor &&
-                                                <div className="flex">
-                                                    <Button variant={`outline`} size={`sm`} className="flex items-center gap-4" type="button" onClick={() => setMajor(true)}>
-                                                        <Plus color="#000000" size={18} /> Add Major
-                                                    </Button>
-                                                </div>
-                                            }
 
-                                            {
-                                                ismajor &&
-                                                <div className="flex flex-col gap-1">
-                                                    <div className="flex items-center justify-between py-2">
-                                                        <h1 className='text-[.83rem]'>Major (Optional)</h1>
-                                                        <Button onClick={() => setMajor(false)} variant={`ghost`} size={`sm`}>
-                                                            <X color="#000000" size={18} /> Cancel
-                                                        </Button>
-                                                    </div>
-                                                    <Input
-                                                        name='major'
-                                                        type='text'
-                                                        placeholder='Major in Software Development'
-                                                        onChange={handleOnChangeValues}
-                                                        required
-                                                    />
-                                                </div>
-                                            }
                                             <Button
+                                                disabled={isLoading}
                                                 variant={`default`}
                                                 size={`sm`}
                                                 className='py-5'
@@ -373,7 +397,81 @@ export default function CreateCurriculum() {
                                             </Button>
                                         </div>
 
-                                        <div className={`${step === 1 ? 'block' : 'hidden'} flex flex-col gap-2`}>
+                                        <div className={`${step === 1 ? 'block' : 'hidden'} w-full flex flex-col gap-4`}>
+                                            <div className="flex flex-col gap-1">
+                                                {programLoading && <div>Programs is loading</div>}
+                                                {
+                                                    programFetched &&
+                                                    <DataTableSelectProgramsInCurriculum
+                                                        columns={SelectProgramInCurriculumColumns}
+                                                        data={program.data || []}
+                                                        fetchAddedPrograms={(e) => setValues(prev => ({
+                                                            ...prev,
+                                                            programCode: e?.code || ''
+                                                        }))}
+                                                        reset={isresetprogram}
+                                                    />
+                                                }
+                                            </div>
+                                            {
+                                                !ismajor &&
+                                                <div className="flex">
+                                                    <Button disabled={isLoading} variant={`outline`} size={`sm`} className="flex items-center gap-4" type="button" onClick={() => setMajor(true)}>
+                                                        <Plus color="#000000" size={18} /> Add Major
+                                                    </Button>
+                                                </div>
+                                            }
+
+                                            {
+                                                ismajor &&
+                                                <div className="flex flex-col gap-1">
+                                                    <div className="flex items-center justify-between py-2">
+                                                        <h1 className='text-[.83rem]'>Major (Optional)</h1>
+                                                        <Button disabled={isLoading} onClick={() => setMajor(false)} variant={`ghost`} size={`sm`}>
+                                                            <X color="#000000" size={18} /> Cancel
+                                                        </Button>
+                                                    </div>
+                                                    <Input
+                                                        disabled={isLoading}
+                                                        value={values.major}
+                                                        name='major'
+                                                        type='text'
+                                                        placeholder='Major in Software Development'
+                                                        onChange={handleOnChangeValues}
+                                                        required
+                                                    />
+                                                </div>
+                                            }
+                                            <div className=" flex items-center gap-4 pb-4">
+                                                <Button
+                                                    disabled={isLoading}
+                                                    variant={`outline`}
+                                                    size={`sm`}
+                                                    className='w-full py-5'
+                                                    onClick={() => {
+                                                        setTheStep(0)
+                                                        setStatusStepBack(true)
+                                                        setConditionalDialogState({ success: null, show: true, title: 'Are you sure?', description: 'You will lose your progress for this phase.' })
+                                                    }}
+                                                >
+                                                    Back
+                                                </Button>
+                                                <Button
+                                                    disabled={isLoading}
+                                                    variant={`default`}
+                                                    size={`sm`}
+                                                    className='w-full py-5'
+                                                    onClick={() => {
+                                                        setStatusStepBack(false)
+                                                        setConditionalDialogState({ success: null, show: true, title: 'Are you sure?', description: 'This action cannot be undone. This will permanently recorded to the new curriculum.' })
+                                                    }}
+                                                >
+                                                    Next
+                                                </Button>
+                                            </div>
+                                        </div>
+
+                                        <div className={`${step === 2 ? 'block' : 'hidden'} flex flex-col gap-2`}>
                                             <div className="flex flex-col gap-4">
                                                 <div className="flex flex-col gap-4">
                                                     <div className="flex flex-col gap-2">
@@ -382,6 +480,7 @@ export default function CreateCurriculum() {
                                                         </h1>
                                                         <div className="flex items-center gap-4">
                                                             <Input
+                                                                disabled={isLoading}
                                                                 value={categories.categoryName}
                                                                 type='text'
                                                                 name='categoryName'
@@ -390,7 +489,7 @@ export default function CreateCurriculum() {
                                                                 className='h-8 max-w-[400px]'
                                                                 required
                                                             />
-                                                            <Button onClick={handleAddCoursesToCategories} variant={`outline`} size={`sm`} className="flex items-center gap-4" type="button">
+                                                            <Button disabled={isLoading} onClick={handleAddCoursesToCategories} variant={`outline`} size={`sm`} className="flex items-center gap-4" type="button">
                                                                 <Plus color="#000000" size={18} /> Add Categorized Course
                                                             </Button>
                                                         </div>
@@ -401,10 +500,16 @@ export default function CreateCurriculum() {
                                                         <DataTableSelectCoursesInCurriculum
                                                             columns={SelectCoursesInCurriculumColumns}
                                                             data={course.data || []}
-                                                            fetchAddedCourses={(e) => setCategories(prev => ({
-                                                                ...prev,
-                                                                courses: e || []
-                                                            }))}
+                                                            fetchAddedCourses={(e) => {
+                                                                setShowCourses(prev => ({
+                                                                    ...prev,
+                                                                    courses: e || []
+                                                                }))
+                                                                setCategories(prev => ({
+                                                                    ...prev,
+                                                                    courses: e.map(item => item._id).filter(id => id !== undefined) as string[]
+                                                                }))
+                                                            }}
                                                             resetSelection={iseresetCourse}
                                                             onResetComplete={() => setResetCourse(false)}
                                                         />
@@ -412,7 +517,7 @@ export default function CreateCurriculum() {
 
                                                 </div>
                                                 {
-                                                    values.categories.map((item, i) => (
+                                                    values.showcategories?.map((item, i) => (
                                                         <div key={i} className='flex flex-col gap-2 border p-4 rounded-md'>
                                                             <div className="flex items-center justify-between">
                                                                 <h1 className='font-medium'>
@@ -422,17 +527,18 @@ export default function CreateCurriculum() {
                                                                     <X color="#000000" size={18} /> Remove
                                                                 </Button>
                                                             </div>
-                                                            <NormalTable courses={item.courses} />
+                                                            <NormalTable courses={item.courses || []} />
                                                         </div>
                                                     ))
                                                 }
                                                 <div className=" flex items-center gap-4 pb-4">
                                                     <Button
+                                                        disabled={isLoading}
                                                         variant={`outline`}
                                                         size={`sm`}
                                                         className='w-full py-5'
                                                         onClick={() => {
-                                                            setTheStep(0)
+                                                            setTheStep(1)
                                                             setStatusStepBack(true)
                                                             setConditionalDialogState({ success: null, show: true, title: 'Are you sure?', description: 'You will lose your progress for this phase.' })
                                                         }}
@@ -440,6 +546,7 @@ export default function CreateCurriculum() {
                                                         Back
                                                     </Button>
                                                     <Button
+                                                        disabled={isLoading}
                                                         variant={`default`}
                                                         size={`sm`}
                                                         className='w-full py-5'
@@ -454,36 +561,59 @@ export default function CreateCurriculum() {
                                             </div>
                                         </div>
 
-                                        <div className={`${step === 2 ? 'block' : 'hidden'} w-full flex flex-col gap-4`}>
+                                        <div className={`${step === 3 ? 'block' : 'hidden'} w-full flex flex-col gap-4`}>
                                             <div className="flex flex-col gap-2">
                                                 <h1 className='font-medium text-lg'>
                                                     Summary
                                                 </h1>
                                             </div>
                                             <div className="flex flex-col gap-2">
-                                                <h1 className='text-md font-normal'>Program: <span className='text-md font-medium'>{values.programCode}</span></h1>
-                                                <h1 className='text-md font-normal'>Major: <span className='text-md font-medium'>{values.major ? values.major : 'None'}</span></h1>
-                                                <h1 className='text-lg font-medium'>Courses:</h1>
-                                                {
-                                                    values.categories.map((item, i) => (
-                                                        <div key={i} className='flex flex-col gap-2 border p-4 rounded-md'>
-                                                            <div className="flex items-center justify-between">
-                                                                <h1 className='font-medium'>
-                                                                    {i + 1}. {item.categoryName}
-                                                                </h1>
-                                                            </div>
-                                                            <NormalTable courses={item.courses} />
-                                                        </div>
-                                                    ))
-                                                }
+                                                <div className="flex flex-col px-6 gap-4">
+                                                    <div className="flex flex-col gap-2">
+                                                        <h1 className='text-md font-medium'>
+                                                            Curriculum Name
+                                                        </h1>
+                                                        <Input value={values.name} readOnly />
+                                                    </div>
+                                                    <div className="flex flex-col gap-2">
+                                                        <h1 className='text-md font-medium'>
+                                                            Program Code
+                                                        </h1>
+                                                        <Input value={values.programCode} readOnly />
+                                                    </div>
+                                                    <div className="flex flex-col gap-2">
+                                                        <h1 className='text-md font-medium'>
+                                                            Major
+                                                        </h1>
+                                                        <Input value={values.major || 'None'} readOnly />
+                                                    </div>
+                                                    <div className="flex flex-col gap-2">
+                                                        <h1 className='text-md font-medium'>
+                                                            Courses
+                                                        </h1>
+                                                        {
+                                                            values.showcategories?.map((item, i) => (
+                                                                <div key={i} className='flex flex-col gap-2 border p-4 rounded-md'>
+                                                                    <div className="flex items-center justify-between">
+                                                                        <h1 className='font-medium'>
+                                                                            {i + 1}. {item.categoryName}
+                                                                        </h1>
+                                                                    </div>
+                                                                    <NormalTable courses={item.courses || []} />
+                                                                </div>
+                                                            ))
+                                                        }
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div className=" flex items-center gap-4 pb-4">
                                                 <Button
+                                                    disabled={isLoading}
                                                     variant={`outline`}
                                                     size={`sm`}
                                                     className='w-full py-5'
                                                     onClick={() => {
-                                                        setTheStep(1)
+                                                        setTheStep(2)
                                                         setStatusStepBack(true)
                                                         setConditionalDialogState({ success: null, show: true, title: 'Are you sure?', description: 'You will lose your progress for this phase.' })
                                                     }}
@@ -491,6 +621,7 @@ export default function CreateCurriculum() {
                                                     Back
                                                 </Button>
                                                 <Button
+                                                    disabled={isLoading}
                                                     variant={`default`}
                                                     size={`sm`}
                                                     className='w-full py-5'
@@ -499,7 +630,7 @@ export default function CreateCurriculum() {
                                                         setConditionalDialogState({ success: null, show: true, title: 'Are you sure?', description: 'This action cannot be undone. This will permanently recorded to the new curriculum.' })
                                                     }}
                                                 >
-                                                    Submit
+                                                    {addcurriculumLoading ? 'Creating curriculum...' : 'Create new curriculum'}
                                                 </Button>
                                             </div>
                                         </div>
