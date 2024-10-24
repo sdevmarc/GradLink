@@ -19,17 +19,17 @@ export class CurriculumService {
                 {
                     $project: {
                         _id: 1,
-                        code: 1,
-                        descriptiveTitle: 1,
+                        name: 1,
+                        major: 1,
+                        programCode: 1,
                         isActive: 1,
                         createdAt: 1,
-                        updatedAt: 1,
-                        major: '$programs.descriptiveTitle'
-                    }
+                        updatedAt: 1
+                    },
                 },
                 { $sort: { createdAt: -1 } }
             ])
-            return { success: true, message: 'Inactive Curriculumns fetched successfully.', data: response }
+            return { success: true, message: 'Active Curriculumns fetched successfully.', data: response }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Failed to retrieve curriculums.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
@@ -43,12 +43,12 @@ export class CurriculumService {
                 {
                     $project: {
                         _id: 1,
-                        code: 1,
-                        descriptiveTitle: 1,
+                        name: 1,
+                        major: 1,
+                        programCode: 1,
                         isActive: 1,
                         createdAt: 1,
-                        updatedAt: 1,
-                        major: '$programs.descriptiveTitle'
+                        updatedAt: 1
                     }
                 },
                 { $sort: { createdAt: -1 } }
@@ -59,14 +59,14 @@ export class CurriculumService {
         }
     }
 
-    async insertNew({ code, descriptiveTitle, major, categories }: ICurriculum) {
+    async insertNew({ name, programCode, major, categories }: ICurriculum) {
         try {
-            if (!code || !descriptiveTitle || categories.length === 0) return { success: false, message: 'Please fill-in the required fields.' }
+            if (!name || !programCode || categories.length === 0) return { success: false, message: 'Please fill-in the required fields.' }
 
-            const activeCurriculum = await this.CurriculumModel.findOne({ code, isActive: true })
-            if (activeCurriculum) await this.CurriculumModel.updateMany({ code, isActive: true }, { isActive: false })
+            const activeCurriculum = await this.CurriculumModel.findOne({ programCode, isActive: true })
+            if (activeCurriculum) await this.CurriculumModel.updateMany({ programCode, isActive: true }, { isActive: false })
 
-            await this.CurriculumModel.create({ code, descriptiveTitle, major, categories })
+            await this.CurriculumModel.create({ name, programCode, major, categories })
             return { success: true, message: 'Curriculum successfully created.' }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Failed to create new curriculum.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
