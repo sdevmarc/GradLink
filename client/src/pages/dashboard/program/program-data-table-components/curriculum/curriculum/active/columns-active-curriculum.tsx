@@ -22,13 +22,28 @@ export const ActiveCurriculumColumns: ColumnDef<IAPICourse>[] = [
         enableHiding: false
     },
     {
-        accessorKey: "program",
+        accessorKey: "programCode",
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Program" className="text-text" />
+            <DataTableColumnHeader column={column} title="Code" className="text-text" />
         ),
         cell: ({ row }) => (
-            <div className="w-full capitalize">{row.getValue("program")}</div>
+            <div className="w-full capitalize">{row.getValue("programCode")}</div>
         )
+    },
+    {
+        accessorKey: "major",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Major" className="text-text" />
+        ),
+        cell: ({ row }) => {
+            return (
+                <div className="flex space-x-2">
+                    <span className="max-w-[500px] truncate capitalize font-normal">
+                        {row.getValue("major") === '' ? 'None' : row.getValue("major")}
+                    </span>
+                </div>
+            )
+        }
     },
     {
         accessorKey: "isActive",
