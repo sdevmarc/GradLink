@@ -6,7 +6,7 @@ interface IRequestCourse {
 }
 
 export interface IRequestCurriculum {
-    code: string
+    programCode: string
     major: string
     categories: IRequestCourse[]
 }
