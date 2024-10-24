@@ -26,4 +26,9 @@ export const CoursesSchema = new mongoose.Schema({
         required: true,
         default: 0
     },
+    isoffered: {
+        type: Boolean,
+        required: true,
+        default: false
+    }
 }, { timestamps: true })
