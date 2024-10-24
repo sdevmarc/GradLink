@@ -12,9 +12,9 @@ export const API_STUDENT_FINDALL_ENROLLED = async () => {
     return response.data
 }
 
-export const API_STUDENT_CREATE = async ({ idNumber, name, email, enrollments, isenrolled = true, semester }: IAPIStudents) => {
+export const API_STUDENT_CREATE = async ({ idNumber, name, email, enrollments }: IAPIStudents) => {
     const response = await axios.post(`${HOST}/student/create`, {
-        idNumber, name, email, enrollments, isenrolled, semester
+        idNumber, name, email, enrollments
     })
     return response.data
 }
