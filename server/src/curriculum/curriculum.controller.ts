@@ -19,7 +19,7 @@ export class CurriculumController {
     }
 
     @Post('create')
-    async insertCurriculum(@Body() { code, descriptiveTitle, major, categories }: ICurriculum) {
-        return this.CurriculumService.insertNew({ code, descriptiveTitle, major, categories })
+    async insertCurriculum(@Body() { name, programCode, major, categories }: ICurriculum) {
+        return this.CurriculumService.insertNew({ name, programCode, major, categories })
     }
 }
