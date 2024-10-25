@@ -49,7 +49,8 @@ export const AvailableProgramsColumns: ColumnDef<IAPIPrograms>[] = [
         },
         filterFn: (row, id, value) => {
             return value.includes(row.getValue(id))
-        }
+        },
+        enableColumnFilter: true
     },
     {
         id: "actions",
