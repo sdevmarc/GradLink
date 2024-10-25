@@ -20,11 +20,11 @@ export function DataTableToolbarAvailablePrograms<TData>({
     const isFiltered = table.getState().columnFilters.length > 0;
     const navigate = useNavigate()
     const options = [
-        { label: "1 Residency", value: 1 },
-        { label: "2 Residency", value: 2 },
-        { label: "3 Residency", value: 3 },
-        { label: "4 Residency", value: 4 },
-        { label: "5 Residency", value: 5 },
+        { label: "1 Year", value: 1 },
+        { label: "2 Years", value: 2 },
+        { label: "3 Years", value: 3 },
+        { label: "4 Years", value: 4 },
+        { label: "5 Years", value: 5 },
     ]
 
     return (
