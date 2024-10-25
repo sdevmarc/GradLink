@@ -5,10 +5,10 @@ import { Table } from "@tanstack/react-table"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { DataTableViewOptions } from "@/components/data-table-components/data-table-view-options"
 import { AlertDialogConfirmation } from "@/components/alert-dialog"
 import { useNavigate } from "react-router-dom"
 import { ROUTES } from "@/constants"
+import { DataTableFacetedFilter } from "@/components/data-table-components/data-table-faceted-filter"
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>
@@ -19,6 +19,13 @@ export function DataTableToolbarAvailableCourses<TData>({
 }: DataTableToolbarProps<TData>) {
     const isFiltered = table.getState().columnFilters.length > 0
     const navigate = useNavigate()
+    const options = [
+        { label: "1 Unit", value: 1 },
+        { label: "2 Units", value: 2 },
+        { label: "3 Units", value: 3 },
+        { label: "4 Units", value: 4 },
+        { label: "5 Units", value: 5 },
+    ]
 
     return (
         <div className="flex flex-wrap items-center justify-between">
@@ -29,16 +36,16 @@ export function DataTableToolbarAvailableCourses<TData>({
                     onChange={(event) => {
                         table.getColumn("courseno")?.setFilterValue(event.target.value)
                     }}
-                    className="h-8 w-[20rem] lg:w-[25rem] placeholder:text-muted"
+                    className="h-8 w-[20rem] lg:w-[25rem]"
                 />
-                {/* {table.getColumn("category") && (
+                {table.getColumn("units") && (
                     <DataTableFacetedFilter
-                        column={table.getColumn("courseno")}
-                        title="Categoryasdasd"
-                        options={[]}
+                        column={table.getColumn("units")}
+                        title="Units"
+                        options={options}
                     />
                 )}
-                {table.getColumn("type") && (
+               {/*  {table.getColumn("type") && (
                     <DataTableFacetedFilter
                         column={table.getColumn("courseno")}
                         title="Type"
@@ -79,7 +86,6 @@ export function DataTableToolbarAvailableCourses<TData>({
                     description={`This will export the current data you are viewing.`}
                     btnContinue={() => navigate('/program')}
                 />
-                <DataTableViewOptions table={table} />
             </div>
         </div>
     )
