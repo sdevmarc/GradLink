@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common'
 import { ProgramsService } from './programs.service'
-import { IPrograms, IRequestPrograms } from './programs.interface'
+import { IPrograms } from './programs.interface'
 import { CurriculumService } from 'src/curriculum/curriculum.service'
 
 @Controller('programs')
@@ -23,12 +23,9 @@ export class ProgramsController {
 
     @Post('create')
     async createProgram(
-        @Body() {  programs }: IRequestPrograms
+        @Body() { code, descriptiveTitle, residency }: IPrograms
     ) {
-        const validationResult = await this.programService.validate({ programs })
-        if (!validationResult.success) return validationResult
-
-        return await this.programService.insertNew({ programs })
+        return await this.programService.insertNew({  code, descriptiveTitle, residency })
     }
 
     // @Post('add-program-to-active-curriculum')
