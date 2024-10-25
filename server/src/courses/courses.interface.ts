@@ -10,6 +10,11 @@ export interface ICourses {
     descriptiveTitle?: string
     units?: number
     prerequisites?: IPrerequisite[]
+    isoffered?: boolean
+}
+
+export interface IRequestCourses {
+    id: ICourses[]
 }
 
 export interface IPromiseCourse {
