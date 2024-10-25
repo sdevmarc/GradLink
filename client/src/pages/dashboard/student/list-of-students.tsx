@@ -32,7 +32,13 @@ export default function Student() {
                         </Sidebar>
                         <MainTable>
                             {studentLoading && <div>Loading...</div>}
-                            {studentFetched && <DataTableStudentListOfStudent columns={StudentListOfStudentsColumns} data={students.data || []} />}
+                            {
+                                (!studentLoading && studentFetched) &&
+                                <DataTableStudentListOfStudent
+                                    columns={StudentListOfStudentsColumns}
+                                    data={students?.data || []}
+                                />
+                            }
                         </MainTable>
                     </main>
                 </div>
