@@ -5,7 +5,6 @@ import { Table } from "@tanstack/react-table"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { DataTableViewOptions } from "@/components/data-table-components/data-table-view-options"
 import { AlertDialogConfirmation } from "@/components/alert-dialog"
 import { useNavigate } from "react-router-dom"
 import { ROUTES } from "@/constants"
@@ -29,7 +28,7 @@ export function DataTableToolbarCoursesOfferedInEnrollment<TData>({
                     onChange={(event) => {
                         table.getColumn("code")?.setFilterValue(event.target.value);
                     }}
-                    className="h-8 w-[20rem] lg:w-[25rem] placeholder:text-muted"
+                    className="h-8 w-[20rem] lg:w-[25rem]"
                 />
                 {isFiltered && (
                     <Button
@@ -56,12 +55,20 @@ export function DataTableToolbarCoursesOfferedInEnrollment<TData>({
                 <AlertDialogConfirmation
                     type={`default`}
                     variant={'outline'}
+                    btnTitle="Add Student"
+                    title="Are you sure?"
+                    description={`You will be redirect to a page for creating new courses offered.`}
+                    btnContinue={() => navigate(ROUTES.CREATE_COURSE_OFFERED)}
+                />
+
+                <AlertDialogConfirmation
+                    type={`default`}
+                    variant={'outline'}
                     btnTitle="Export"
                     title="Are you sure?"
                     description={`This will export the current data you are viewing.`}
                     btnContinue={() => navigate('/program')}
                 />
-                <DataTableViewOptions table={table} />
             </div>
         </div>
     )
