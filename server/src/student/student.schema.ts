@@ -6,7 +6,15 @@ export const StudentSchema = new mongoose.Schema({
         unique: true,
         required: true
     },
-    name: {
+    lastname: {
+        type: String,
+        required: true
+    },
+    firstname: {
+        type: String,
+        required: true
+    },
+    middlename: {
         type: String,
         required: true
     },
@@ -21,7 +29,7 @@ export const StudentSchema = new mongoose.Schema({
     isenrolled: {
         type: Boolean,
         required: true,
-        default: true
+        default: false
     },
     enrollments: [{
         semester: {
