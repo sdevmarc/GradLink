@@ -13,9 +13,10 @@ export interface IAPIStudents {
     sid?: string
     idNumber?: string
     name?: string
+    lastname?: string
+    firstname?: string
+    middlename?: string
     email?: string
     status?: string
     enrollments?: IEnrollments
-    isenrolled?: boolean
-    semester?: string
 }
