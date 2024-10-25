@@ -26,7 +26,7 @@ interface DataTableFacetedFilterProps<TData, TValue> {
     title?: string;
     options: {
         label: string;
-        value: string;
+        value: string
         icon?: React.ComponentType<{ className?: string }>;
     }[];
 }
@@ -105,9 +105,9 @@ export function DataTableFacetedFilter<TData, TValue>({
                                     >
                                         <div
                                             className={cn(
-                                                "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
+                                                "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-blue-500",
                                                 isSelected
-                                                    ? "bg-primary text-primary-foreground"
+                                                    ? "bg-blue-500 text-primary-foreground"
                                                     : "opacity-50 [&_svg]:invisible"
                                             )}
                                         >
