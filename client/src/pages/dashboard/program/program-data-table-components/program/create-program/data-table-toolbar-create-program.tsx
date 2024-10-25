@@ -40,6 +40,7 @@ export function DataTableToolbarCreateProgram<TData>({
         description: '',
         success: false
     })
+    const [dialogOpen, setDialogOpen] = useState(false)
 
     useEffect(() => {
         if (values.length > 0) {
@@ -60,12 +61,29 @@ export function DataTableToolbarCreateProgram<TData>({
     const handleAddProgram = async () => {
         const { code, descriptiveTitle, residency } = programs
         const upperCode = code.replace(/\s+/g, '').toUpperCase()
-        if (upperCode === '' || descriptiveTitle === '' || residency === '') return setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Please fill-up the required fields.' })
+        if (upperCode === '' || descriptiveTitle === '' || residency === '') {
+            setAlertDialogState({ 
+                success: false, 
+                show: true, 
+                title: 'Uh, oh! Something went wrong.', 
+                description: 'Please fill-up the required fields.' 
+            })
+            return
+        }
         const programExists = values.some(program => program.code === upperCode)
-
-        if (programExists) return setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'A program with this code or descriptive title already exists.' })
+       
+        if (programExists) {
+            setAlertDialogState({ 
+                success: false, 
+                show: true, 
+                title: 'Uh, oh! Something went wrong.', 
+                description: 'A program with this code or descriptive title already exists.' 
+            })
+            return
+        }
         setValues(prev => [...prev, { code: upperCode, descriptiveTitle, residency }])
         setprograms({ code: '', descriptiveTitle: '', residency: '' })
+        setDialogOpen(false) 
     }
 
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -126,6 +144,8 @@ export function DataTableToolbarCreateProgram<TData>({
             </div>
             <div className="flex gap-2 items-center">
                 <DialogContainer
+                open={dialogOpen}
+                onOpenChange={setDialogOpen}
                     submit={handleAddProgram}
                     title="Add Program"
                     description="Please fill-out the required fields."
@@ -139,15 +159,15 @@ export function DataTableToolbarCreateProgram<TData>({
                             <Label htmlFor="code">
                                 Code
                             </Label>
-                            <Input required id="code" name="code" onChange={handleOnChange} placeholder="eg. MIT" className="col-span-3 placeholder:text-muted" />
+                            <Input value={programs.code} required id="code" name="code" onChange={handleOnChange} placeholder="eg. MIT" className="col-span-3 placeholder:text-muted" />
                             <Label htmlFor="descriptiveTitle">
                                 Descriptive Title
                             </Label>
-                            <Input required id="descriptiveTitle" name="descriptiveTitle" onChange={handleOnChange} placeholder="eg. Master in Information Technology" className="col-span-3 placeholder:text-muted" />
+                            <Input value={programs.descriptiveTitle} required id="descriptiveTitle" name="descriptiveTitle" onChange={handleOnChange} placeholder="eg. Master in Information Technology" className="col-span-3 placeholder:text-muted" />
                             <Label htmlFor="residency">
                                 Residency
                             </Label>
-                            <Input required id="residency" name="residency" onChange={handleOnChange} placeholder="eg. 4" className="col-span-3 placeholder:text-muted" />
+                            <Input value={programs.residency} required id="residency" name="residency" onChange={handleOnChange} placeholder="eg. 4" className="col-span-3 placeholder:text-muted" />
                         </>
                     }
                 />
