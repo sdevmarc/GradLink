@@ -8,7 +8,7 @@ import Alumni from "./dashboard/student/alumni-graduates"
 import CreateStudent from "./dashboard/student/enroll-student"
 import LoginPage from "./home/login"
 import { HeaderLayout, HomeHeaderLayout, TracerHeaderLayout } from "@/components/header"
-import CurrentEnrolledStudent from "./dashboard/student/current-enrolled"
+import CurrentEnrolledStudent from "./dashboard/enrollment/current-enrolled"
 import Overview from "./dashboard/overview/overview"
 import CreateCourse from "./dashboard/program/create-course"
 import Form from "./dashboard/form/form"
@@ -18,7 +18,7 @@ import Curriculum from "./dashboard/program/curriculum"
 import CreateProgram from "./dashboard/program/create-program"
 import CreateCurriculum from "./dashboard/program/create-curriculum"
 import ViewProgramDetails from "./dashboard/program/view-program-details"
-import Enrollment from "./dashboard/enrollment/enrollment"
+import Enrollment from "./dashboard/enrollment/enrollment-courses-offered"
 import CreateCoursesOffered from "./dashboard/enrollment/create-course-offered"
 
 const Routes = createBrowserRouter([
@@ -31,11 +31,11 @@ const Routes = createBrowserRouter([
 
             //Enrollment
             { path: '/enrollment', element: <Enrollment /> },
+            { path: '/enrollment/current-enrolled', element: <CurrentEnrolledStudent /> },
             { path: '/enrollment/create-course-offered', element: <CreateCoursesOffered /> },
 
             //Student
-            { path: '/student', element: <CurrentEnrolledStudent /> },
-            { path: '/student/lists', element: <Student /> },
+            { path: '/student', element: <Student /> },
             { path: '/student/create', element: <CreateStudent /> },
             { path: '/student/alumni', element: <Alumni /> },
             { path: '/student/details/:sid', element: <ViewDetails /> },
