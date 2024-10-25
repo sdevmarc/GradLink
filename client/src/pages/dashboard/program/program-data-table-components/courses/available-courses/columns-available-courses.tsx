@@ -60,7 +60,8 @@ export const AvailableCoursesColumns: ColumnDef<IAPICourse>[] = [
         },
         filterFn: (row, id, value) => {
             return value.includes(row.getValue(id));
-        }
+        },
+        enableColumnFilter: true
     },
     {
         id: "actions",
