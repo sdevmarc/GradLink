@@ -7,10 +7,6 @@ export interface IPrograms {
     residency?: number
 }
 
-export interface IRequestPrograms {
-    programs?: IPrograms[]
-}
-
 export interface IPromisePrograms {
     success: boolean
     message: string
