@@ -5,6 +5,7 @@ import { Table } from "@tanstack/react-table"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { DataTableFacetedFilter } from "@/components/data-table-components/data-table-faceted-filter"
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>
@@ -14,18 +15,32 @@ export function DataTableToolbarCreateCourseOffered<TData>({
     table,
 }: DataTableToolbarProps<TData>) {
     const isFiltered = table.getState().columnFilters.length > 0
-
+    const options = [
+        { label: "1 Unit", value: 1 },
+        { label: "2 Units", value: 2 },
+        { label: "3 Units", value: 3 },
+        { label: "4 Units", value: 4 },
+        { label: "5 Units", value: 5 },
+    ]
+    
     return (
         <div className="flex flex-wrap items-center justify-between">
             <div className="flex flex-1 flex-wrap items-center gap-2">
                 <Input
-                    placeholder="Search course code..."
-                    value={(table.getColumn("code")?.getFilterValue() as string) ?? ""}
+                    placeholder="Search course..."
+                    value={(table.getColumn("courseno")?.getFilterValue() as string) ?? ""}
                     onChange={(event) => {
-                        table.getColumn("code")?.setFilterValue(event.target.value)
+                        table.getColumn("courseno")?.setFilterValue(event.target.value)
                     }}
-                    className="h-8 w-[20rem] lg:w-[25rem] placeholder:text-muted"
+                    className="h-8 w-[20rem] lg:w-[25rem]"
                 />
+                {table.getColumn("units") && (
+                    <DataTableFacetedFilter
+                        column={table.getColumn("units")}
+                        title="Units"
+                        options={options}
+                    />
+                )}
                 {isFiltered && (
                     <Button
                         variant="ghost"
