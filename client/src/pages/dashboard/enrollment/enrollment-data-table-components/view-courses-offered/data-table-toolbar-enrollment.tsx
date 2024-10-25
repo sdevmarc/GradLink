@@ -55,10 +55,10 @@ export function DataTableToolbarCoursesOfferedInEnrollment<TData>({
                 <AlertDialogConfirmation
                     type={`default`}
                     variant={'outline'}
-                    btnTitle="Add Student"
+                    btnTitle="New Student"
                     title="Are you sure?"
                     description={`You will be redirect to a page for creating new courses offered.`}
-                    btnContinue={() => navigate(ROUTES.CREATE_COURSE_OFFERED)}
+                    btnContinue={() => navigate(ROUTES.NEW_STUDENT)}
                 />
 
                 <AlertDialogConfirmation
