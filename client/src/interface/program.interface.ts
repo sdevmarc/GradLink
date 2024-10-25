@@ -3,9 +3,4 @@ export interface IAPIPrograms {
     code?: string
     descriptiveTitle?: string
     residency?: string
-    curriculumId?: string
-}
-
-export interface IRequestPrograms {
-    programs: IAPIPrograms[]
 }
