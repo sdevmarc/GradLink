@@ -9,7 +9,9 @@ interface IStudentEnrollments {
 export interface IStudent {
     _id?: string | string[]
     idNumber?: string
-    name?: string
+    lastname?: string
+    firstname?: string
+    middlename?: string
     email?: string
     generalInformation?: {}
     educationalBackground?: {}
@@ -17,7 +19,6 @@ export interface IStudent {
     enrollments?: IStudentEnrollments[]
     status?: string
     isenrolled?: boolean
-    semester?: number
     
 }
 
