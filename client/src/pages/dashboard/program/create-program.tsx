@@ -174,7 +174,7 @@ export default function CreateProgram() {
                                             disabled={isLoading}
                                             className='w-full my-3 py-5'
                                             variant={'default'}
-                                            btnTitle="Add Program to Current Curriculum"
+                                            btnTitle="Create program"
                                             title="Are you sure?"
                                             description={`This will add new programs to the current curriculum.`}
                                             btnContinue={handleSubmit}
