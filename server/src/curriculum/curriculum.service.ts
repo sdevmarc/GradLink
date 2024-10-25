@@ -11,53 +11,39 @@ export class CurriculumService {
         @InjectModel('Course') private readonly courseModel: Model<ICourses>,
     ) { }
 
-    async findAllActive()
+    async findAll()
         : Promise<IPromiseCurriculum> {
         try {
-            const response = await this.CurriculumModel.aggregate([
-                { $match: { isActive: true } },
-                {
-                    $project: {
-                        _id: 1,
-                        name: 1,
-                        major: 1,
-                        programCode: 1,
-                        isActive: 1,
-                        createdAt: 1,
-                        updatedAt: 1
-                    },
-                },
-                { $sort: { createdAt: -1 } }
-            ])
-            return { success: true, message: 'Active Curriculumns fetched successfully.', data: response }
+            const response = await this.CurriculumModel.find().sort({ updatedAt: -1 })
+            return { success: true, message: 'Curriculumns fetched successfully.', data: response }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Failed to retrieve curriculums.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
-    async findAllLegacy()
-        : Promise<IPromiseCurriculum> {
-        try {
-            const response = await this.CurriculumModel.aggregate([
-                { $match: { isActive: false } },
-                {
-                    $project: {
-                        _id: 1,
-                        name: 1,
-                        major: 1,
-                        programCode: 1,
-                        isActive: 1,
-                        createdAt: 1,
-                        updatedAt: 1
-                    }
-                },
-                { $sort: { createdAt: -1 } }
-            ])
-            return { success: true, message: 'Inactive Curriculumns fetched successfully.', data: response }
-        } catch (error) {
-            throw new HttpException({ success: false, message: 'Failed to retrieve curriculums.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
-        }
-    }
+    // async findAllLegacy()
+    //     : Promise<IPromiseCurriculum> {
+    //     try {
+    //         const response = await this.CurriculumModel.aggregate([
+    //             { $match: { isActive: false } },
+    //             {
+    //                 $project: {
+    //                     _id: 1,
+    //                     name: 1,
+    //                     major: 1,
+    //                     programCode: 1,
+    //                     isActive: 1,
+    //                     createdAt: 1,
+    //                     updatedAt: 1
+    //                 }
+    //             },
+    //             { $sort: { createdAt: -1 } }
+    //         ])
+    //         return { success: true, message: 'Inactive Curriculumns fetched successfully.', data: response }
+    //     } catch (error) {
+    //         throw new HttpException({ success: false, message: 'Failed to retrieve curriculums.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+    //     }
+    // }
 
     async insertNew({ name, programCode, major, categories }: ICurriculum) {
         try {
