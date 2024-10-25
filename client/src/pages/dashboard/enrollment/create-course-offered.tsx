@@ -10,10 +10,11 @@ import { useNavigate } from 'react-router-dom'
 import { DataTableCreateCourseOffered } from './enrollment-data-table-components/create-courses-offered/data-table-create-course-offered.'
 import { CreateCourseOfferedColumns } from './enrollment-data-table-components/create-courses-offered/columns-create-course-offered'
 import { IAPICourse } from '@/interface/course.interface'
-import { useQuery } from '@tanstack/react-query'
-import { API_COURSE_FINDALL } from '@/api/courses'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { API_COURSE_FINDALL_ACTIVE_IN_CURRICULUM, API_COURSE_UPDATE_COURSES_OFFERED } from '@/api/courses'
 
 export default function CreateCoursesOffered() {
+    const queryClient = useQueryClient()
     const navigate = useNavigate()
     const [checkcourses, setCheckCourses] = useState<IAPICourse[]>([])
     const [dialogsubmit, setDialogSubmit] = useState<boolean>(false)
@@ -25,36 +26,33 @@ export default function CreateCoursesOffered() {
     })
 
     const { data: courses, isLoading: coursesLoading, isFetched: coursesFetched } = useQuery({
-        queryFn: () => API_COURSE_FINDALL(),
-        queryKey: ['courses']
+        queryFn: () => API_COURSE_FINDALL_ACTIVE_IN_CURRICULUM(),
+        queryKey: ['curriculums']
     })
 
-    // const { mutateAsync: addprogram, isPending: addprogramLoading } = useMutation({
-    //     mutationFn: API_PROGRAM_ADD_PROGRAM,
-    //     onSuccess: async (data) => {
-    //         if (!data.success) {
-    //             setDialogSubmit(false)
-    //             setAlertDialogState({ success: false, show: true, title: "Uh, oh. Something went wrong!", description: data.message })
-    //             toast("Uh, oh. Something went wrong!", { description: data.message })
-    //             return
-    //         } else {
-    //             await queryClient.invalidateQueries({ queryKey: ['programs'] })
-    //             await queryClient.refetchQueries({ queryKey: ['programs'] })
-    //             window.scrollTo({
-    //                 top: 0,
-    //                 behavior: 'smooth'
-    //             })
-    //             setAlertDialogState({ success: true, show: true, title: "Yay, success! 🎉", description: data.message })
-    //             setReset(true)
-    //             setDialogSubmit(false)
-    //             toast("Yay, success! 🎉", { description: data.message })
-    //             return
-    //         }
-    //     },
-    //     onError: (data) => {
-    //         setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: data.message })
-    //     }
-    // })
+    const { mutateAsync: updatecoursesoffered, isPending: updatecoursesofferedLoading } = useMutation({
+        mutationFn: API_COURSE_UPDATE_COURSES_OFFERED,
+        onSuccess: async (data) => {
+            if (!data.success) {
+                setDialogSubmit(false)
+                setAlertDialogState({ success: false, show: true, title: "Uh, oh. Something went wrong!", description: data.message })
+                return
+            } else {
+                await queryClient.invalidateQueries({ queryKey: ['programs'] })
+                await queryClient.refetchQueries({ queryKey: ['programs'] })
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                })
+                setAlertDialogState({ success: true, show: true, title: "Yay, success! 🎉", description: data.message })
+                setDialogSubmit(false)
+                return
+            }
+        },
+        onError: (data) => {
+            setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: data.message })
+        }
+    })
 
     const handleSubmit = async () => {
         if (checkcourses.length === 0) {
@@ -62,15 +60,11 @@ export default function CreateCoursesOffered() {
             setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Please add at least one program to submit.' })
             return
         }
-        const courseid = checkcourses.map(item => {
-            return item._id
-        })
-        console.log(courseid)
-        // await addprogram({ programs })
-        setDialogSubmit(false)
+        const courseid = checkcourses.map(item => item._id).filter((id): id is string => id !== undefined)
+        await updatecoursesoffered({ id: courseid })
     }
 
-    const isLoading = coursesLoading
+    const isLoading = coursesLoading || updatecoursesofferedLoading
 
     return (
         <>
@@ -106,6 +100,7 @@ export default function CreateCoursesOffered() {
                     <main className="flex">
                         <Sidebar>
                             <SidebarNavs bg='bg-muted' title="Courses Offered" link={ROUTES.ENROLLMENT} />
+                            <SidebarNavs title="Current Enrolled" link={ROUTES.CURRENTLY_ENROLLED} />
                         </Sidebar>
                         <MainTable>
                             <div className="flex flex-col border gap-4 rounded-md">
