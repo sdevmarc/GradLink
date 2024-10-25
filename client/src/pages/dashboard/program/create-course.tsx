@@ -6,7 +6,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { API_COURSE_CREATE, API_COURSE_FINDALL } from '@/api/courses'
 import { DataTableCreateCourse } from './program-data-table-components/courses/create-course/data-table-courses-create'
 import { IAPICourse } from '@/interface/course.interface'
-import React from 'react'
+import React, { useState } from 'react'
 import { ROUTES } from '@/constants'
 import { CircleCheck, CircleX, Plus } from 'lucide-react'
 import { CreateCourseColumns } from './program-data-table-components/courses/create-course/columns'
@@ -49,8 +49,9 @@ const CreateForm = () => {
     const [resetSelection, setResetSelection] = React.useState(false)
     const [dialogsubmit, setDialogSubmit] = React.useState<boolean>(false)
     const [isPre, setPre] = React.useState<boolean>(false)
+    const [isValid, setValid] = useState<boolean>(false)
     const [course, setCourse] = React.useState<IAPICourse>({
-        code: 0,
+        code: '',
         courseno: '',
         descriptiveTitle: '',
         units: '',
@@ -83,29 +84,47 @@ const CreateForm = () => {
                     top: 0,
                     behavior: 'smooth'
                 })
-                toast("Yay, success! 🎉", { description: data.message })
+                setValid(true)
                 setAlertDialogState({ success: true, show: true, title: "Yay, success! 🎉", description: data.message })
                 setDialogSubmit(false)
                 setResetSelection(true)
                 setPre(false)
-                setCourse(prev => ({ ...prev, courseno: '', descriptiveTitle: '', prerequisites: [], units: '' }))
+                setCourse(({ code: '', courseno: '', descriptiveTitle: '', prerequisites: [], units: '' }))
                 return
             }
         },
         onError: (data) => {
+            setDialogSubmit(false)
             setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: data.message })
         }
     })
 
     const handleSubmit = async () => {
-        const { courseno, descriptiveTitle, units, prerequisites } = course
+        const { code, courseno, descriptiveTitle, units, prerequisites } = course
+        const nospaceCode = (code ?? '').replace(/\s+/g, '')
+        const nospaceUnits = (units ?? '').replace(/\s+/g, '')
         const upperCourseno = (courseno ?? '').replace(/\s+/g, '').toUpperCase()
-        if (upperCourseno === '' || !descriptiveTitle || !units) {
+        if (nospaceCode === '' || upperCourseno === '' || !descriptiveTitle || nospaceUnits === '') {
             setDialogSubmit(false)
+            setValid(false)
             setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Please fill-up the required fields.' })
             return
         }
-        await insertCourse({ courseno: upperCourseno, descriptiveTitle, units, prerequisites })
+
+        if (isNaN(Number(nospaceCode))) {
+            setDialogSubmit(false)
+            setValid(false)
+            setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Code must be a number.' })
+            return
+        }
+
+        if (isNaN(Number(nospaceUnits))) {
+            setDialogSubmit(false)
+            setValid(false)
+            setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Units must be a number.' })
+            return
+        }
+        await insertCourse({ code: nospaceCode, courseno: upperCourseno, descriptiveTitle, units: nospaceUnits, prerequisites })
     }
 
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -140,8 +159,8 @@ const CreateForm = () => {
                 icon={alertdialogstate.success ? <CircleCheck color="#42a626" size={70} /> : <CircleX color="#880808" size={70} />}
                 variant={`default`}
                 btnContinue={() => {
-                    navigate(-1)
                     setAlertDialogState(prev => ({ ...prev, show: false }))
+                    if (isValid) return navigate(-1)
                 }}
             />
 
@@ -151,11 +170,11 @@ const CreateForm = () => {
                 </div>
                 <div className="w-full py-2 flex flex-col justify-between">
                     <div className="w-full flex flex-col gap-4">
-                    <div className="flex flex-col px-4 gap-1">
+                        <div className="flex flex-col px-4 gap-1">
                             <h1 className='text-[.83rem]'>Code</h1>
                             <Input
                                 disabled={isLoading}
-                                value={course.courseno}
+                                value={course.code}
                                 name='code'
                                 type='text'
                                 placeholder='eg. 100'
@@ -224,7 +243,7 @@ const CreateForm = () => {
                                     {
                                         courseFetched &&
                                         <DataTableCreateCourse
-                                            data={dataCourse.data?.courses || []} columns={CreateCourseColumns}
+                                            data={dataCourse?.data || []} columns={CreateCourseColumns}
                                             fetchCheck={handleCourseChange}
                                             onCancel={(e) => setPre(e)}
                                             resetSelection={resetSelection}
