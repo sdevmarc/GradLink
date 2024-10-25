@@ -56,11 +56,11 @@ export default function Curriculum() {
 
                                 <TabsContent value="active">
                                     {activecurriculumLoading && <div>Loading...</div>}
-                                    {activecurriculumFetched && <DataTableActiveCurriculum columns={ActiveCurriculumColumns} data={activecurriculum.data || []} />}
+                                    {activecurriculumFetched && <DataTableActiveCurriculum columns={ActiveCurriculumColumns} data={activecurriculum?.data || []} />}
                                 </TabsContent>
                                 <TabsContent value="legacy">
                                     {legacycurriculumLoading && <div>Loading...</div>}
-                                    {legacycurriculumFetched && <DataTableLegacyCurriculum columns={LegacyCurriculumColumns} data={legacycurriculum.data || []} />}
+                                    {legacycurriculumFetched && <DataTableLegacyCurriculum columns={LegacyCurriculumColumns} data={legacycurriculum?.data || []} />}
                                 </TabsContent>
                             </Tabs>
                         </MainTable>
