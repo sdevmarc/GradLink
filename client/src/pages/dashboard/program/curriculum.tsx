@@ -34,10 +34,13 @@ export default function Curriculum() {
                         </Sidebar>
                         <MainTable>
                             {curriculumLoading && <div>Loading...</div>}
-                            {curriculumFetched &&
+                            {
+                                (!curriculumLoading && curriculumFetched) &&
                                 <DataTableCurriculum
                                     columns={CurriculumColumns}
-                                    data={curriculum?.data || []} />}
+                                    data={curriculum?.data || []}
+                                />
+                            }
                         </MainTable>
                     </main>
                 </div>
