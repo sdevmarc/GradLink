@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
-import { ICourses, IPromiseCourse } from './courses.interface'
+import { ICourses, IPromiseCourse, IRequestCourses } from './courses.interface'
 import { ICurriculum } from 'src/curriculum/curriculum.interface'
 
 @Injectable()
@@ -18,6 +18,49 @@ export class CoursesService {
             return { success: true, message: 'Courses fetched successfully', data: response }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Failed to fetch all program.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async findAllCoursesOffered(): Promise<IPromiseCourse> {
+        try {
+            const response = await this.CourseModel.find({ isoffered: true }).sort({ _id: -1 })
+
+            return { success: true, message: 'Courses fetched successfully', data: response }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Failed to fetch all program.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async findAllCoursesInActiveCurricullum(): Promise<IPromiseCourse> {
+        try {
+            const activeCurriculum = await this.CurriculumModel.findOne({ isActive: true });
+
+            // if (!activeCurriculum) return { success: false, message: 'No active curriculum found', data: [] }
+
+            // Extract all course IDs from all categories
+            const courseIds = activeCurriculum.categories.reduce((acc, category) => {
+                return [...acc, ...category.courses];
+            }, []);
+
+            // Remove duplicates if any
+            const uniqueCourseIds = [...new Set(courseIds)];
+
+            // Fetch all courses that match these IDs
+            const courses = await this.CourseModel.find({
+                _id: { $in: uniqueCourseIds }
+            }).populate('prerequisites')
+
+            return { success: true, message: 'Courses from active curriculum fetched successfully', data: courses };
+
+        } catch (error) {
+            throw new HttpException(
+                {
+                    success: false,
+                    message: 'Failed to fetch courses from active curriculum',
+                    error
+                },
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
         }
     }
 
@@ -54,6 +97,20 @@ export class CoursesService {
             return { success: true, message: 'Course successfully created.' }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Failed to create course.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async updateToCourseOffered({ id }: IRequestCourses)
+        : Promise<IPromiseCourse> {
+        try {
+            await this.CourseModel.updateMany({ isoffered: true }, { isoffered: false })
+            const coursesOffered = await Promise.all(id.map(async (item) => {
+                const newCourses = await this.CourseModel.findByIdAndUpdate(item, { isoffered: true }, { new: true })
+                return { success: true, message: `Course successfully added in the courses offered.`, data: newCourses }
+            }))
+            return { success: true, message: 'Courses offered updated successfully.', data: coursesOffered }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Failed to create new curriculum.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
