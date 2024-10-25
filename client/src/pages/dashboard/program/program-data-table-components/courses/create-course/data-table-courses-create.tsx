@@ -13,14 +13,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
-import { ChevronDown } from "lucide-react"
 
-import {
-    DropdownMenu,
-    DropdownMenuCheckboxItem,
-    DropdownMenuContent,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import {
     Table,
     TableBody,
@@ -32,6 +25,7 @@ import {
 import { IAPICourse } from '@/interface/course.interface'
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { X } from "lucide-react"
 
 
 interface DataTableProps<TData, TValue> {
@@ -95,16 +89,16 @@ export function DataTableCreateCourse<TData, TValue>({
     return (
         <div className="w-full">
             <div className="w-full flex justify-between items-center pb-2">
-                <div className="w-[50%] flex items-center gap-2">
+                <div className="w-full flex items-center justify-between gap-2">
                     <Input
                         placeholder="Search courseno..."
                         value={(table.getColumn("courseno")?.getFilterValue() as string) ?? ""}
                         onChange={(event) =>
                             table.getColumn("courseno")?.setFilterValue(event.target.value)
                         }
-                        className="h-8 w-[20rem] lg:w-[25rem] placeholder:text-muted"
+                        className="h-8 w-[20rem] lg:w-[25rem]"
                     />
-                    <DropdownMenu>
+                    {/* <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="outline" size={`sm`}>
                                 Type <ChevronDown className="ml-2 h-4 w-4" />
@@ -129,9 +123,9 @@ export function DataTableCreateCourse<TData, TValue>({
                                     )
                                 })}
                         </DropdownMenuContent>
-                    </DropdownMenu>
-                    <Button onClick={() => onCancel(false)} variant={`outline`} size={`sm`} className="flex items-center gap-4 bg-red-500 text-primary-foreground" type="button">
-                        Cancel
+                    </DropdownMenu> */}
+                    <Button onClick={() => onCancel(false)} variant={`ghost`} size={`sm`} type="button" className=" flex items-center gap-4">
+                        <X color="#000000" size={18} />   Cancel
                     </Button>
                 </div>
             </div>
