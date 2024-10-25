@@ -20,10 +20,10 @@ export const API_COURSE_FINDONE = async ({ courseno }: IAPICourse) => {
     }
 }
 
-export const API_COURSE_CREATE = async ({ courseno, descriptiveTitle, units, prerequisites }: IAPICourse) => {
+export const API_COURSE_CREATE = async ({ code, courseno, descriptiveTitle, units, prerequisites }: IAPICourse) => {
     try {
         const response = await axios.post(`${HOST}/courses/create`, {
-            courseno, descriptiveTitle, units, prerequisites
+            code, courseno, descriptiveTitle, units, prerequisites
         })
 
         return response.data
