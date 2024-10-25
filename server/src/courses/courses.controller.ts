@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { CoursesService } from './courses.service';
-import { ICourses } from './courses.interface';
+import { ICourses, IRequestCourses } from './courses.interface';
 
 @Controller('courses')
 export class CoursesController {
@@ -13,6 +13,16 @@ export class CoursesController {
         return this.courseService.findAll()
     }
 
+    @Get('courses-offered')
+    async findAllCoursesOffered() {
+        return this.courseService.findAllCoursesOffered()
+    }
+
+    @Get('courses-active-curriculum')
+    async findAllCoursesInActiveCurriculum() {
+        return this.courseService.findAllCoursesInActiveCurricullum()
+    }
+
     // @Get(':courseno')
     // async findOneCourse(@Param() { courseno }: ICourses) {
     //     return this.courseService.findOne({ courseno })
@@ -23,10 +33,10 @@ export class CoursesController {
         return this.courseService.create({ code, courseno, descriptiveTitle, units, prerequisites })
     }
 
-    // @Post('update')
-    // async updateCourse(@Body() { cid, courseno, descriptiveTitle, programs, units }: ICourses) {
-    //     return this.courseService.findByIdAndUpdate({ cid, courseno, descriptiveTitle, programs, units })
-    // }
+    @Post('update-courses-offered')
+    async updateCourse(@Body() { id }: IRequestCourses) {
+        return this.courseService.updateToCourseOffered({ id })
+    }
 
     // @Post(':cid')
     // async deleteCourse(@Param() { cid }: ICourses) {
