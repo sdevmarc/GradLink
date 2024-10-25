@@ -8,15 +8,15 @@ export class CurriculumController {
         private readonly CurriculumService: CurriculumService
     ) { }
 
-    @Get('active')
+    @Get()
     async findAllActiveCurriculum() {
-        return await this.CurriculumService.findAllActive()
+        return await this.CurriculumService.findAll()
     }
 
-    @Get('legacy')
-    async findAllInactiveCurriculum() {
-        return await this.CurriculumService.findAllLegacy()
-    }
+    // @Get('legacy')
+    // async findAllInactiveCurriculum() {
+    //     return await this.CurriculumService.findAllLegacy()
+    // }
 
     @Post('create')
     async insertCurriculum(@Body() { name, programCode, major, categories }: ICurriculum) {
