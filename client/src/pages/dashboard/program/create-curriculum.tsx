@@ -404,7 +404,7 @@ export default function CreateCurriculum() {
                                                     programFetched &&
                                                     <DataTableSelectProgramsInCurriculum
                                                         columns={SelectProgramInCurriculumColumns}
-                                                        data={program.data || []}
+                                                        data={program?.data || []}
                                                         fetchAddedPrograms={(e) => setValues(prev => ({
                                                             ...prev,
                                                             programCode: e?.code || ''
