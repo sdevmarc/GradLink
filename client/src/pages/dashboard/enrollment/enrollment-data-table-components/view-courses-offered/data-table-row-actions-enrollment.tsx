@@ -42,7 +42,7 @@ export function DataTableRowActionsCoursesOfferedInEnrollment<TData>({ row }: Da
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-[160px]">
                     <DropdownMenuItem onClick={handleViewDetails}>View Details</DropdownMenuItem>
-                    <DropdownMenuItem>View Enrollees</DropdownMenuItem>
+                    <DropdownMenuItem>Enroll student</DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
 
