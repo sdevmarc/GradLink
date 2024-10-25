@@ -23,10 +23,7 @@ export default function Enrollment() {
                         <SidebarNavs bg='bg-muted' title="Courses Offered" link={ROUTES.ENROLLMENT} />
                     </Sidebar>
                     <MainTable>
-                        <DataTableCoursesOfferedInEnrollment
-                            columns={CoursesOfferedInEnrollmentColumns}
-                            data={[]}
-                        />
+                        <DataTableCoursesOfferedInEnrollment columns={CoursesOfferedInEnrollmentColumns} data={[]} />
                     </MainTable>
                 </main>
             </div>
