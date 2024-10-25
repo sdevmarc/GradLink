@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React from "react"
 import {
     Dialog,
     DialogContent,
@@ -14,22 +14,27 @@ interface DialogContainerProps {
     title?: string
     description?: string
     children?: React.ReactNode
-    submit?: (e: React.FormEvent<HTMLFormElement>) => Promise<void> | void
+    submit: (e: React.FormEvent<HTMLFormElement>) => Promise<void> | void
+    open?: boolean
+    onOpenChange?: (open: boolean) => void
 }
 
-export function DialogContainer({ Trigger, title, description, children, submit }: DialogContainerProps) {
-    const [open, setOpen] = useState(false)
-
+export function DialogContainer({
+    Trigger,
+    title,
+    description,
+    children,
+    submit,
+    open,
+    onOpenChange
+}: DialogContainerProps) {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        if (submit) {
-            await submit(e)
-            setOpen(false)
-        }
+        await submit(e)
     }
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogTrigger asChild>
                 {Trigger}
             </DialogTrigger>
