@@ -5,10 +5,10 @@ import { Table } from "@tanstack/react-table"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { DataTableViewOptions } from "@/components/data-table-components/data-table-view-options"
 import { AlertDialogConfirmation } from "@/components/alert-dialog"
 import { useNavigate } from "react-router-dom"
 import { ROUTES } from "@/constants"
+import { DataTableFacetedFilter } from "@/components/data-table-components/data-table-faceted-filter"
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>
@@ -19,26 +19,33 @@ export function DataTableToolbarAvailablePrograms<TData>({
 }: DataTableToolbarProps<TData>) {
     const isFiltered = table.getState().columnFilters.length > 0;
     const navigate = useNavigate()
+    const options = [
+        { label: "1 Residency", value: 1 },
+        { label: "2 Residency", value: 2 },
+        { label: "3 Residency", value: 3 },
+        { label: "4 Residency", value: 4 },
+        { label: "5 Residency", value: 5 },
+    ]
 
     return (
         <div className="flex flex-wrap items-center justify-between">
             <div className="flex flex-1 flex-wrap items-center gap-2">
                 <Input
-                    placeholder="Search program..."
+                    placeholder="Search program code..."
                     value={(table.getColumn("code")?.getFilterValue() as string) ?? ""}
                     onChange={(event) => {
                         table.getColumn("code")?.setFilterValue(event.target.value);
                     }}
-                    className="h-8 w-[20rem] lg:w-[25rem] placeholder:text-muted"
+                    className="h-8 w-[20rem] lg:w-[25rem]"
                 />
-                {/* {table.getColumn("category") && (
+                 {table.getColumn("residency") && (
                     <DataTableFacetedFilter
-                        column={table.getColumn("category")}
-                        title="Categoryasdasd"
-                        options={categories}
+                        column={table.getColumn("residency")}
+                        title="Residency"
+                        options={options}
                     />
                 )}
-                {table.getColumn("type") && (
+               {/* {table.getColumn("type") && (
                     <DataTableFacetedFilter
                         column={table.getColumn("type")}
                         title="Type"
@@ -79,7 +86,6 @@ export function DataTableToolbarAvailablePrograms<TData>({
                     description={`This will export the current data you are viewing.`}
                     btnContinue={() => navigate('/program')}
                 />
-                <DataTableViewOptions table={table} />
             </div>
         </div>
     )
