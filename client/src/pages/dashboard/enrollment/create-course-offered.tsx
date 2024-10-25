@@ -117,7 +117,7 @@ export default function CreateCoursesOffered() {
                                         coursesFetched &&
                                         <DataTableCreateCourseOffered
                                             columns={CreateCourseOfferedColumns}
-                                            data={courses.data || []}
+                                            data={courses?.data || []}
                                             fetchCourses={(e) => setCheckCourses(e)}
                                         />
                                     }
