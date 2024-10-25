@@ -33,7 +33,7 @@ export default function Courses() {
                         </Sidebar>
                         <MainTable>
                             {courseLoading && <div>Loading...</div>}
-                            {courseFetched && <DataTableAvailableCourses columns={AvailableCoursesColumns} data={course.data || []} />}
+                            {courseFetched && <DataTableAvailableCourses columns={AvailableCoursesColumns} data={course?.data || []} />}
                         </MainTable>
                     </main>
                 </div>
