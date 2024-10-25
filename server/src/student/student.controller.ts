@@ -14,48 +14,48 @@ export class StudentController {
         private readonly curriculumService: CurriculumService,
     ) { }
 
-    @Get()
-    async findAllStudent() {
-        return await this.studentService.findAllStudents()
-    }
+    // @Get()
+    // async findAllStudent() {
+    //     return await this.studentService.findAllStudents()
+    // }
 
-    @Get('enrolled')
-    async findAllEnrolledStudent() {
-        return await this.studentService.findAllStudentsEnrolled()
-    }
+    // @Get('enrolled')
+    // async findAllEnrolledStudent() {
+    //     return await this.studentService.findAllStudentsEnrolled()
+    // }
 
-    @Get('alumni')
-    async findAllAlumniStudents() {
-        return await this.studentService.findAllAlumni()
-    }
+    // @Get('alumni')
+    // async findAllAlumniStudents() {
+    //     return await this.studentService.findAllAlumni()
+    // }
 
-    @Get('findone/:idNumber')
-    async findOneStudent(@Param('idNumber') idNumber: IStudent) {
+    // @Get('findone/:idNumber')
+    // async findOneStudent(@Param('idNumber') idNumber: IStudent) {
 
-        return await this.studentService.findOne(idNumber)
-    }
+    //     return await this.studentService.findOne(idNumber)
+    // }
 
-    @Post('create')
+    @Post('new-student')
     async createStudent(
-        @Body() { idNumber, name, email, enrollments, isenrolled }: IStudent
+        @Body() { idNumber, lastname, firstname, middlename, email }: IStudent
     ) {
-        return await this.studentService.create({ idNumber, name, email, enrollments, isenrolled })
+        return await this.studentService.create({ idNumber, lastname, firstname, middlename, email })
     }
 
-    @Post('unenroll-all')
-    async unrollAllStudents() {
-        return await this.studentService.unrollAll()
-    }
+    // @Post('unenroll-all')
+    // async unrollAllStudents() {
+    //     return await this.studentService.unrollAll()
+    // }
 
-    @Post('unenroll-selection')
-    async unrollSelection(@Body() { _id }: IStudent) {
-        return await this.studentService.unrollSelection({ _id })
-    }
+    // @Post('unenroll-selection')
+    // async unrollSelection(@Body() { _id }: IStudent) {
+    //     return await this.studentService.unrollSelection({ _id })
+    // }
 
-    @Post('unenroll-one/:sid')
-    async unrollOne(@Param('sid') { _id }: IStudent) {
-        return await this.studentService.unrollOne({ _id })
-    }
+    // @Post('unenroll-one/:sid')
+    // async unrollOne(@Param('sid') { _id }: IStudent) {
+    //     return await this.studentService.unrollOne({ _id })
+    // }
 
     @Post('update-graduate')
     async updateStudentGraduate() {
