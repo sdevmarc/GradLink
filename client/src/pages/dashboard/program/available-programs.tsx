@@ -33,7 +33,7 @@ export default function Program() {
                         </Sidebar>
                         <MainTable>
                             {programLoading && <div>Loading...</div>}
-                            {programFetched && <DataTableAvailablePrograms columns={AvailableProgramsColumns} data={program.data || []} />}
+                            {programFetched && <DataTableAvailablePrograms columns={AvailableProgramsColumns} data={program?.data || []} />}
                         </MainTable>
                     </main>
                 </div>
