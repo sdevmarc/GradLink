@@ -32,7 +32,13 @@ export default function Alumni() {
                         </Sidebar>
                         <MainTable>
                             {alumniLoading && <div>Loading...</div>}
-                            {alumniFetched && <DataTableStudentAlumni columns={StudentAlumniColumns} data={dataAlumni.data || []} />}
+                            {
+                                (!alumniLoading && alumniFetched) &&
+                                <DataTableStudentAlumni
+                                    columns={StudentAlumniColumns}
+                                    data={dataAlumni?.data || []}
+                                />
+                            }
                         </MainTable>
                     </main>
                 </div>
