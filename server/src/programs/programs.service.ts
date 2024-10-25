@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import mongoose, { Model } from 'mongoose'
-import { IPrograms, IPromisePrograms, IRequestPrograms } from './programs.interface'
+import { IPrograms, IPromisePrograms } from './programs.interface'
 import { ICurriculum } from 'src/curriculum/curriculum.interface'
 import { ICourses } from 'src/courses/courses.interface'
 
@@ -21,34 +21,33 @@ export class ProgramsService {
         return Buffer.from(encoded, 'base64').toString('utf-8')
     }
 
-    async validate({ programs }: IRequestPrograms): Promise<IPromisePrograms> {
-        try {
-            const validationResults = await Promise.all(programs.map(async (item) => {
-                const { code, descriptiveTitle, residency } = item
-                if (!code || !descriptiveTitle || !residency) return { success: false, message: 'Missing required fields.' }
+    // async validate({ programs }: IRequestPrograms): Promise<IPromisePrograms> {
+    //     try {
+    //         const validationResults = await Promise.all(programs.map(async (item) => {
+    //             const { code, descriptiveTitle, residency } = item
+    //             if (!code || !descriptiveTitle || !residency) return { success: false, message: 'Missing required fields.' }
 
-                const existingProgram = await this.ProgramModel.findOne({ code })
-                if (existingProgram) return { success: false, message: `Code ${code} already exists.` }
+    //             const existingProgram = await this.ProgramModel.findOne({ code })
+    //             if (existingProgram) return { success: false, message: `Code ${code} already exists.` }
 
-                return { success: true, message: 'Validation passed.' }
-            }))
+    //             return { success: true, message: 'Validation passed.' }
+    //         }))
 
-            const filteredResults = validationResults.filter(item => !item.success)
+    //         const filteredResults = validationResults.filter(item => !item.success)
 
-            const allValid = validationResults.every(result => result.success)
-            if (!allValid) return { success: false, message: filteredResults[0].message, data: validationResults }
+    //         const allValid = validationResults.every(result => result.success)
+    //         if (!allValid) return { success: false, message: filteredResults[0].message, data: validationResults }
 
-            return { success: true, message: 'All programs validated successfully.', data: validationResults }
-        } catch (error) {
-            throw new HttpException({ success: false, message: 'Failed to validate programs', error }, HttpStatus.INTERNAL_SERVER_ERROR)
-        }
-    }
-
+    //         return { success: true, message: 'All programs validated successfully.', data: validationResults }
+    //     } catch (error) {
+    //         throw new HttpException({ success: false, message: 'Failed to validate programs', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+    //     }
+    // }
 
     async findAll(): Promise<IPromisePrograms> {
         try {
             const response = await this.ProgramModel.find()
-            return { success: true, message: 'Programs for the current curriculum fetched successfully.', data: response }
+            return { success: true, message: 'Programs fetched successfully.', data: response }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Failed to fetch all program.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
@@ -106,17 +105,13 @@ export class ProgramsService {
     //     }
     // }
 
-    async insertNew({ programs }: IRequestPrograms): Promise<IPromisePrograms> {
+    async insertNew({ code, descriptiveTitle, residency }: IPrograms): Promise<IPromisePrograms> {
         try {
-            if (programs.length === 0) return { success: false, message: 'Programs array is empty.' }
+            const isCode = await this.ProgramModel.findOne({ code })
+            if (isCode) return { success: false, message: 'The code already exists.' }
 
-            const createdPrograms = await Promise.all(programs.map(async (item) => {
-                const { code, descriptiveTitle, residency } = item
-                const newProgram = await this.ProgramModel.create({ code, descriptiveTitle, residency })
-                return { success: true, message: `Program ${code} successfully created.`, data: newProgram }
-            }))
-
-            return { success: true, message: 'All programs successfully created.', data: createdPrograms }
+            await this.ProgramModel.create({ code, descriptiveTitle, residency })
+            return { success: true, message: 'Program created successfully.' }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Failed to create programs', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
