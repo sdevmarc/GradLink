@@ -58,12 +58,4 @@ export class CurriculumService {
             throw new HttpException({ success: false, message: 'Failed to create new curriculum.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
-
-    // async update() {
-    //     try {
-
-    //     } catch (error) {
-    //         throw new HttpException({ success: false, message: 'Failed to create new curriculum.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
-    //     }
-    // }
 }
