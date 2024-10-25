@@ -15,3 +15,7 @@ export interface IAPICourse {
     units?: string | ''
     prerequisites?: IPrerequisite[]
 }
+
+export interface IRequestUpdateCourse {
+    id: string[]
+}
