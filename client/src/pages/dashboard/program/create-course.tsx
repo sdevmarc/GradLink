@@ -262,7 +262,7 @@ const CreateForm = () => {
                             disabled={isLoading}
                             className='w-full my-3 py-5'
                             variant={'default'}
-                            btnTitle="Add Course to Current Curriculum"
+                            btnTitle="Create course"
                             title="Are you sure?"
                             description={`This will add new programs to the current curriculum.`}
                             btnContinue={handleSubmit}
