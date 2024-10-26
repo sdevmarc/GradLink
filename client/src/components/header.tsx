@@ -13,6 +13,7 @@ import {
 import { ROUTES } from '@/constants'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
+import { useEffect, useState } from 'react'
 // import { Button } from './ui/button'
 
 // export function BreadcrumbWithCustomSeparator() {
@@ -74,8 +75,18 @@ const BreadCrumbs = ({ children }: { children: React.ReactNode }) => {
 }
 
 const HeaderDashboard = () => {
+    const [coursename, setCoursesName] = useState<string>('')
     const location = useLocation()
     const { sid, id } = useParams()
+
+    useEffect(() => {
+        if (id) {
+            const jsonString = atob(id);
+            const parsedObject = JSON.parse(jsonString);
+            setCoursesName(parsedObject.descriptiveTitle)
+        }
+    }, [id])
+
     return (
         <>
             <header className="hdashboard z-[1] backdrop-blur-[1rem] backdrop-saturate-50 fixed top-0 left-0 w-full h-[6rem] border-b-[0.7px] border-black/20 flex justify-center items-center">
@@ -151,6 +162,28 @@ const HeaderDashboard = () => {
                                                 <BreadcrumbItem>
                                                     <BreadcrumbPage className='text-md font-medium'>
                                                         Create a student
+                                                    </BreadcrumbPage>
+                                                </BreadcrumbItem>
+                                            </BreadCrumbs>
+                                        )
+                                    case `/enrollment/enroll-student/${id}`:
+                                        return (
+                                            <BreadCrumbs>
+                                                <BreadcrumbItem>
+                                                    <BreadcrumbPage className='text-md'>LOGO</BreadcrumbPage>
+                                                </BreadcrumbItem>
+                                                <BreadcrumbSeparator>
+                                                    <Slash />
+                                                </BreadcrumbSeparator>
+                                                <BreadcrumbItem>
+                                                    <BreadcrumbItem className='text-md font-light'>Gradlink</BreadcrumbItem>
+                                                </BreadcrumbItem>
+                                                <BreadcrumbSeparator>
+                                                    <Slash />
+                                                </BreadcrumbSeparator>
+                                                <BreadcrumbItem>
+                                                    <BreadcrumbPage className='text-md font-medium'>
+                                                        {coursename}
                                                     </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                             </BreadCrumbs>
