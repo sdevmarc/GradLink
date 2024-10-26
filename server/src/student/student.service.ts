@@ -11,6 +11,24 @@ export class StudentService {
         @InjectModel('Form') private readonly formModel: Model<IModelForm>,
     ) { }
 
+    async findAllEnrollees(): Promise<IPromiseStudent> {
+        try {
+            const response = await this.studentModel.find({ status: 'enrollee' })
+            return { success: true, message: 'Enrollees fetched successfully', data: response }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Enrollees failed to fetch.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async findAllCurrentlyEnrolled(): Promise<IPromiseStudent> {
+        try {
+            const response = await this.studentModel.find({ status: 'student', isenrolled: true })
+            return { success: true, message: 'Current enrolled students fetched successfully', data: response }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Enrollees failed to fetch.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
     // async findAllStudents(): Promise<IPromiseStudent> {
     //     try {
     //         const response = await this.studentModel.aggregate([
@@ -237,7 +255,7 @@ export class StudentService {
     //     }
     // }
 
-    async create(
+    async createEnrollee(
         { idNumber, lastname, firstname, middlename, email }: IStudent
     ): Promise<IPromiseStudent> {
         try {
