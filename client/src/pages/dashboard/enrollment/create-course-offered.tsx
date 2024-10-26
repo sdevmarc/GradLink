@@ -100,6 +100,7 @@ export default function CreateCoursesOffered() {
                     <main className="flex">
                         <Sidebar>
                             <SidebarNavs bg='bg-muted' title="Courses Offered" link={ROUTES.ENROLLMENT} />
+                            <SidebarNavs title="Enrollees" link={ROUTES.STUDENT_ENROLLEE} />
                             <SidebarNavs title="Current Enrolled" link={ROUTES.CURRENTLY_ENROLLED} />
                         </Sidebar>
                         <MainTable>
