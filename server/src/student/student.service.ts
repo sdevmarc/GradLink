@@ -1,14 +1,16 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
-import { IPromiseStudent, IStudent } from './student.interface'
+import { IPromiseStudent, IRequestStudent, IStudent } from './student.interface'
 import { IModelForm } from 'src/forms/forms.interface'
+import { ICourses } from 'src/courses/courses.interface'
 
 @Injectable()
 export class StudentService {
     constructor(
         @InjectModel('Student') private readonly studentModel: Model<IStudent>,
         @InjectModel('Form') private readonly formModel: Model<IModelForm>,
+        @InjectModel('Course') private readonly courseModel: Model<ICourses>,
     ) { }
 
     async findAllEnrollees(): Promise<IPromiseStudent> {
@@ -267,6 +269,31 @@ export class StudentService {
 
             await this.studentModel.create({ idNumber, lastname, firstname, middlename, email })
             return { success: true, message: 'Student successfully created.' }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Failed to create student.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async enrollStudent(
+        { course, id }: IRequestStudent
+    ): Promise<IPromiseStudent> {
+        try {
+            const iscourse = await this.courseModel.findById(course)
+            if (!iscourse) return { success: false, message: 'Course do not exists.' }
+
+            id.map(async (item) => {
+                await this.studentModel.findByIdAndUpdate(
+                    item,
+                    {
+                        isenrolled: true,
+                        status: 'student',
+                        $push: { enrollments: { course } }
+                    },
+
+                )
+            })
+
+            return { success: true, message: `Students successfully enrolled to the course ${iscourse.descriptiveTitle}` }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Failed to create student.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
