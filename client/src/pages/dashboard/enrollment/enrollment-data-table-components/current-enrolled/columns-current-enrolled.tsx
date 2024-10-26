@@ -44,14 +44,29 @@ export const StudentCurrentEnrolledColumns: ColumnDef<IAPICourse>[] = [
         enableHiding: false
     },
     {
-        accessorKey: "name",
+        accessorKey: "lastname",
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Full Name" className="text-text" />
+            <DataTableColumnHeader column={column} title="Last Name" className="text-text" />
         ),
         cell: ({ row }) => {
             return (
                 <div className="flex space-x-2">
-                    <span className="max-w-[400px] truncate capitalize font-medium">
+                    <span className="max-w-[400px] truncate normal-case">
+                        {row.getValue("lastname")}
+                    </span>
+                </div>
+            );
+        }
+    },
+    {
+        accessorKey: "firstname",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="First Name" className="text-text" />
+        ),
+        cell: ({ row }) => {
+            return (
+                <div className="flex space-x-2">
+                    <span className="max-w-[400px] truncate normal-case">
                         {row.getValue("name")}
                     </span>
                 </div>
@@ -59,53 +74,52 @@ export const StudentCurrentEnrolledColumns: ColumnDef<IAPICourse>[] = [
         }
     },
     {
-        accessorKey: "semester",
+        accessorKey: "middlename",
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Semester" className="w-[1rem] text-text" />
+            <DataTableColumnHeader column={column} title="Middle Name" className="text-text" />
         ),
         cell: ({ row }) => {
             return (
-                <div className="flex w-[50px] items-center">
-                    <span className="text-center">{row.getValue("semester")}</span>
+                <div className="flex space-x-2">
+                    <span className="max-w-[400px] truncate normal-case">
+                        {row.getValue("name")}
+                    </span>
                 </div>
             );
-        },
-        filterFn: (row, id, value) => {
-            return value.includes(row.getValue(id));
         }
     },
-    {
-        accessorKey: "enrollment_date",
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Enrollment Date" className="w-[1rem] text-text" />
-        ),
-        cell: ({ row }) => {
-            return (
-                <div className="flex items-center">
-                    <span className="capitalize">{row.getValue("enrollment_date")}</span>
-                </div>
-            );
-        },
-        filterFn: (row, id, value) => {
-            return value.includes(row.getValue(id));
-        },
-    },
-    {
-        accessorKey: "progress",
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Progress" className="w-[1rem] text-text" />
-        ),
-        cell: ({ row }) => {
-            return (
-                <div className="flex w-[50px] items-center">
-                    <span className="capitalize"> {row.getValue("progress")}</span>
-                </div>
-            );
-        },
-        filterFn: (row, id, value) => {
-            return value.includes(row.getValue(id));
-        }
-    },
+    // {
+    //     accessorKey: "enrollment_date",
+    //     header: ({ column }) => (
+    //         <DataTableColumnHeader column={column} title="Enrollment Date" className="w-[1rem] text-text" />
+    //     ),
+    //     cell: ({ row }) => {
+    //         return (
+    //             <div className="flex items-center">
+    //                 <span className="normal-case">{row.getValue("enrollment_date")}</span>
+    //             </div>
+    //         );
+    //     },
+    //     filterFn: (row, id, value) => {
+    //         return value.includes(row.getValue(id));
+    //     },
+    // },
+    // {
+    //     accessorKey: "progress",
+    //     header: ({ column }) => (
+    //         <DataTableColumnHeader column={column} title="Progress" className="w-[1rem] text-text" />
+    //     ),
+    //     cell: ({ row }) => {
+    //         return (
+    //             <div className="flex w-[50px] items-center">
+    //                 <span className="capitalize"> {row.getValue("progress")}</span>
+    //             </div>
+    //         );
+    //     },
+    //     filterFn: (row, id, value) => {
+    //         return value.includes(row.getValue(id));
+    //     }
+    // },
     {
         id: "actions",
         cell: ({ row }) => <DataTableRowActionsCurrentEnrolled row={row} />
