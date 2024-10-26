@@ -20,3 +20,8 @@ export interface IAPIStudents {
     status?: string
     enrollments?: IEnrollments
 }
+
+export interface IRequestStudents {
+    course: string
+    id: string[]
+}
