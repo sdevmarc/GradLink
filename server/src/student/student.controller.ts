@@ -29,6 +29,11 @@ export class StudentController {
         return this.studentService.findAllCurrentlyEnrolled()
     }
 
+    @Get('alumni')
+    async findAllAlumniGraduates() {
+        return this.studentService.findAllAlumni()
+    }
+
     // @Get()
     // async findAllStudent() {
     //     return await this.studentService.findAllStudents()
