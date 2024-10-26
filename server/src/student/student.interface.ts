@@ -1,9 +1,9 @@
 
 interface IStudentEnrollments {
-    semester?: string
+    // semester?: string
     course?: string[]
     enrollmentDate?: string
-    ispass?:  boolean
+    ispass?: boolean
 }
 
 export interface IStudent {
@@ -19,7 +19,12 @@ export interface IStudent {
     enrollments?: IStudentEnrollments[]
     status?: string
     isenrolled?: boolean
-    
+
+}
+
+export interface IRequestStudent {
+    course: ''
+    id: string[]
 }
 
 export interface IPromiseStudent {
