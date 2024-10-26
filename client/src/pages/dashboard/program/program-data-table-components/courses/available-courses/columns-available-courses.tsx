@@ -17,7 +17,6 @@ export const AvailableCoursesColumns: ColumnDef<IAPICourse>[] = [
         cell: ({ row }) => (
             <div className="w-[100px] capitalize">{row.getValue("code")}</div>
         ),
-        enableSorting: false,
         enableHiding: false
     },
     {
@@ -28,7 +27,6 @@ export const AvailableCoursesColumns: ColumnDef<IAPICourse>[] = [
         cell: ({ row }) => (
             <div className="w-[100px] capitalize">{row.getValue("courseno")}</div>
         ),
-        enableSorting: false,
         enableHiding: false
     },
     {
@@ -39,7 +37,7 @@ export const AvailableCoursesColumns: ColumnDef<IAPICourse>[] = [
         cell: ({ row }) => {
             return (
                 <div className="flex space-x-2">
-                    <span className="max-w-[200px] truncate capitalize font-medium">
+                    <span className="max-w-[200px] truncate normal-case">
                         {row.getValue("descriptiveTitle")}
                     </span>
                 </div>
