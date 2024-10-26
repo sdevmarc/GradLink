@@ -128,6 +128,15 @@ export class StudentService {
         }
     }
 
+    async findAllAlumni(): Promise<IPromiseStudent> {
+        try {
+            const response = await this.studentModel.find({ status: 'alumni' }).sort({ createdAt: -1 })
+            return { success: true, message: 'Alumni(s) fetched successfully', data: response }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Enrollees failed to fetch.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
     // async findAllStudents(): Promise<IPromiseStudent> {
     //     try {
     //         const response = await this.studentModel.aggregate([
