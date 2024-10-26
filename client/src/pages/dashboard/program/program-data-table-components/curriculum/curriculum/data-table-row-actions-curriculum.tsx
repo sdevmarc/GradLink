@@ -42,7 +42,6 @@ export function DataTableRowActionsCurriculum<TData>({ row }: DataTableRowAction
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-[160px]">
                     <DropdownMenuItem onClick={handleViewDetails}>View Details</DropdownMenuItem>
-                    <DropdownMenuItem>View Enrollees</DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
 
