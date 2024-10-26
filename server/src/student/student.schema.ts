@@ -32,11 +32,6 @@ export const StudentSchema = new mongoose.Schema({
         default: false
     },
     enrollments: [{
-        // semester: {
-        //     type: Number,
-        //     required: true,
-        //     enum: [1, 2, 3]
-        // },
         course: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Course',
@@ -44,11 +39,13 @@ export const StudentSchema = new mongoose.Schema({
         },
         enrollmentDate: {
             type: Date,
+            required: true,
             default: Date.now
         },
         ispass: {
             type: String,
-            enum: ['pass', 'fail', 'ongoing'],
+            required: true,
+            enum: ['pass', 'fail','inc', 'ongoing'],
             default: 'ongoing'
         }
     }],
