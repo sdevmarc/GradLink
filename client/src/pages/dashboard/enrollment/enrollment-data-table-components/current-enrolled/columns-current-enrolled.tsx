@@ -40,8 +40,6 @@ export const StudentCurrentEnrolledColumns: ColumnDef<IAPICourse>[] = [
         cell: ({ row }) => (
             <div className="w-[70px] capitalize">{row.getValue("idNumber")}</div>
         ),
-        enableSorting: false,
-        enableHiding: false
     },
     {
         accessorKey: "lastname",
