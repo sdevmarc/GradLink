@@ -17,8 +17,6 @@ export const StudentEnrolleesColumns: ColumnDef<IAPIStudents>[] = [
         cell: ({ row }) => (
             <div className="w-[100px] capitalize">{row.getValue("idNumber")}</div>
         ),
-        enableSorting: false,
-        enableHiding: false
     },
     {
         accessorKey: "lastname",
