@@ -56,8 +56,8 @@ export const StudentSchema = new mongoose.Schema({
     status: {
         type: String,
         required: true,
-        enum: ['student', 'alumni', 'drop'],
-        default: 'student'
+        enum: ['student', 'alumni', 'enrollee', 'drop'],
+        default: 'enrollee'
     },
     graduation_date: {
         type: Date
