@@ -57,7 +57,7 @@ export function DataTableRowActionsAvailablePrograms<TData>({ row }: DataTableRo
                 onOpenChange={handleOpenChange}
                 title="Program Details"
                 description="View details of the selected program."
-                content={<ViewProgramDetails row={row} />}
+                content={''}
             />
         </>
     )
@@ -68,7 +68,7 @@ function ViewProgramDetails<TData>({ row }: DataTableRowActionsProps<TData>) {
 
     const { data: program, isLoading: programLoading, isFetched: programFetched } = useQuery({
         queryFn: () => API_PROGRAM_FINDONE({ _id: id ?? '' }),
-        queryKey: ['findone_program'],
+        queryKey: ['findone-program'],
         enabled: !!id
     })
 
