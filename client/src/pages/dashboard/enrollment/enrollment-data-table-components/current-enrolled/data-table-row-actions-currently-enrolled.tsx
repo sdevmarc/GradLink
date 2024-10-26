@@ -42,7 +42,6 @@ export function DataTableRowActionsCurrentEnrolled<TData>({ row }: DataTableRowA
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-[160px]">
                     <DropdownMenuItem onClick={handleViewDetails}>View Details</DropdownMenuItem>
-                    <DropdownMenuItem>View Enrollees</DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
 
