@@ -18,7 +18,7 @@ export const ROUTES = {
     NEW_STUDENT: '/enrollment/new-student',
 
     //STUDENT
-    LIST_OF_ENROLLED_STUDENTS: '/student',
+    LIST_OF_STUDENTS: '/student',
     ALUMNI_GRADUATES: '/student/alumni',
     CREATE_STUDENT: '/student/create',
 
