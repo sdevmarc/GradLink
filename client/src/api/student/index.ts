@@ -1,5 +1,5 @@
 import { HOST } from '@/constants'
-import { IAPIStudents } from '@/interface/student.interface'
+import { IAPIStudents, IRequestStudents } from '@/interface/student.interface'
 import axios from 'axios'
 
 export const API_STUDENT_FINDALL = async () => {
@@ -20,6 +20,13 @@ export const API_STUDENT_FINDALL_CURRENTLY_ENROLLED = async () => {
 export const API_STUDENT_NEW_STUDENT = async ({ idNumber, lastname, firstname, middlename, email }: IAPIStudents) => {
     const response = await axios.post(`${HOST}/student/new-student`, {
         idNumber, lastname, firstname, middlename, email
+    })
+    return response.data
+}
+
+export const API_STUDENT_ENROLL_STUDENT = async ({ course, id }: IRequestStudents) => {
+    const response = await axios.post(`${HOST}/student/enroll-student`, {
+        course, id
     })
     return response.data
 }
