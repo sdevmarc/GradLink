@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common'
 import { StudentService } from './student.service'
-import { IStudent } from './student.interface'
+import { IRequestStudent, IStudent } from './student.interface'
 import { FormsService } from 'src/forms/forms.service'
 import { ConstantsService } from 'src/constants/constants.service'
 import { CurriculumService } from 'src/curriculum/curriculum.service'
@@ -50,6 +50,13 @@ export class StudentController {
         @Body() { idNumber, lastname, firstname, middlename, email }: IStudent
     ) {
         return await this.studentService.createEnrollee({ idNumber, lastname, firstname, middlename, email })
+    }
+
+    @Post('enroll-student')
+    async enrollStudentEnrollee(
+        @Body() { course, id }: IRequestStudent
+    ) {
+        return await this.studentService.enrollStudent({ course, id })
     }
 
     // @Post('unenroll-all')
