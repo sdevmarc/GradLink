@@ -1,6 +1,5 @@
 
 interface IStudentEnrollments {
-    // semester?: string
     course?: string[]
     enrollmentDate?: string
     ispass?: boolean
