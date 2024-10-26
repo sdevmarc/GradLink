@@ -14,6 +14,11 @@ export class StudentController {
         private readonly curriculumService: CurriculumService,
     ) { }
 
+    @Get()
+    async findAllRegisteredStudents() {
+        return this.studentService.findAllStudents()
+    }
+
     @Get('enrollees')
     async findAllStudentStatusEnrollees() {
         return this.studentService.findAllEnrollees()
