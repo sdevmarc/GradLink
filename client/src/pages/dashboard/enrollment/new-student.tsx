@@ -9,6 +9,7 @@ import { API_STUDENT_NEW_STUDENT } from '@/api/student'
 import { CircleCheck, CircleX } from 'lucide-react'
 import Loading from '@/components/loading'
 import { AlertDialogConfirmation } from '@/components/alert-dialog'
+import { useNavigate } from 'react-router-dom'
 
 export default function NewStudent() {
     return (
@@ -36,7 +37,9 @@ export default function NewStudent() {
 }
 
 const CreateForm = () => {
+    const navigate = useNavigate()
     const queryClient = useQueryClient()
+    const [isinsertsuccess, setInsertSuccess] = React.useState<boolean>(false)
     const [dialogsubmit, setDialogSubmit] = React.useState<boolean>(false)
     const [alertdialogstate, setAlertDialogState] = React.useState({
         show: false,
@@ -57,15 +60,17 @@ const CreateForm = () => {
         onSuccess: async (data) => {
             if (!data.success) {
                 setDialogSubmit(false)
+                setInsertSuccess(false)
                 setAlertDialogState({ success: false, show: true, title: "Uh, oh. Something went wrong!", description: data.message })
                 return
             } else {
-                await queryClient.invalidateQueries({ queryKey: ['students'] })
-                await queryClient.refetchQueries({ queryKey: ['students'] })
+                await queryClient.invalidateQueries({ queryKey: ['student-enrollees'] })
+                await queryClient.refetchQueries({ queryKey: ['student-enrollees'] })
                 window.scrollTo({
                     top: 0,
                     behavior: 'smooth'
                 })
+                setInsertSuccess(true)
                 setAlertDialogState({ success: true, show: true, title: "Yay, success! 🎉", description: data.message })
                 setDialogSubmit(false)
                 setStudent(prev => ({ ...prev, idNumber: '', lastname: '', firstname: '', middlename: '', email: '' }))
@@ -73,6 +78,7 @@ const CreateForm = () => {
             }
         },
         onError: (data) => {
+            setInsertSuccess(false)
             setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: data.message })
         }
     })
@@ -113,7 +119,13 @@ const CreateForm = () => {
                             description={alertdialogstate.description}
                             icon={alertdialogstate.success ? <CircleCheck color="#42a626" size={70} /> : <CircleX color="#880808" size={70} />}
                             variant={`default`}
-                            btnContinue={() => { setAlertDialogState(prev => ({ ...prev, show: false })) }}
+                            btnContinue={() => {
+                                setAlertDialogState(prev => ({ ...prev, show: false }))
+                                if (isinsertsuccess) {
+                                    navigate(-1)
+                                    setInsertSuccess(false)
+                                }
+                            }}
                         />
 
                         <form className="w-[80%] flex flex-col justify-start gap-4 rounded-lg border">
