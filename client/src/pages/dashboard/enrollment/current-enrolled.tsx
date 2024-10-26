@@ -2,7 +2,7 @@ import MainTable from "@/components/main-table"
 import HeadSection, { SubHeadSectionDetails } from "@/components/head-section"
 import { Sidebar, SidebarNavs } from "@/components/sidebar"
 import { useQuery } from "@tanstack/react-query"
-import { API_STUDENT_FINDALL_ENROLLED } from "@/api/student"
+import { API_STUDENT_FINDALL_CURRENTLY_ENROLLED } from "@/api/student"
 import { ROUTES } from "@/constants"
 import { useState } from "react"
 import { DataTableStudentCurrentEnrolled } from "./enrollment-data-table-components/current-enrolled/data-table-current-enrolled"
@@ -13,8 +13,8 @@ export default function CurrentEnrolledStudent() {
     const [resetSelection, setResetSelection] = useState(false)
 
     const { data: students, isLoading: studentLoading, isFetched: studentFetched } = useQuery({
-        queryFn: () => API_STUDENT_FINDALL_ENROLLED(),
-        queryKey: ['students']
+        queryFn: () => API_STUDENT_FINDALL_CURRENTLY_ENROLLED(),
+        queryKey: ['currently-enrolled']
     })
 
     const handleStudentChange = (selectedStudent: IAPIStudents[]) => {
@@ -38,6 +38,7 @@ export default function CurrentEnrolledStudent() {
                     <main className="flex">
                         <Sidebar>
                             <SidebarNavs title="Courses Offered" link={ROUTES.ENROLLMENT} />
+                            <SidebarNavs title="Enrollees" link={ROUTES.STUDENT_ENROLLEE} />
                             <SidebarNavs bg='bg-muted' title="Current Enrolled" link={ROUTES.CURRENTLY_ENROLLED} />
                         </Sidebar>
                         <MainTable>
@@ -45,7 +46,7 @@ export default function CurrentEnrolledStudent() {
                             {(!isLoading && studentFetched) &&
                                 <DataTableStudentCurrentEnrolled
                                     columns={StudentCurrentEnrolledColumns}
-                                    data={students.data || []}
+                                    data={students?.data || []}
                                     fetchCheck={handleStudentChange}
                                     resetSelection={resetSelection}
                                     onResetComplete={() => setResetSelection(false)}
