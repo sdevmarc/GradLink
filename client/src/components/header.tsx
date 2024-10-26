@@ -100,7 +100,7 @@ const HeaderDashboard = () => {
                                     case ROUTES.OVERVIEW:
                                     case ROUTES.CURRENTLY_ENROLLED:
                                     case ROUTES.STUDENT_ENROLLEE:
-                                    case ROUTES.LIST_OF_ENROLLED_STUDENTS:
+                                    case ROUTES.LIST_OF_STUDENTS:
                                     case ROUTES.ALUMNI_GRADUATES:
                                     case ROUTES.CURRICULUM:
                                     case ROUTES.AVAILABLE_PROGRAMS:
