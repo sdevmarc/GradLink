@@ -13,9 +13,106 @@ export class StudentService {
         @InjectModel('Course') private readonly courseModel: Model<ICourses>,
     ) { }
 
+    async findAllStudents(): Promise<IPromiseStudent> {
+        try {
+            const students = await this.studentModel.aggregate([
+                {
+                    $match: {
+                        status: { $in: ['student', 'alumni'] }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'courses',
+                        localField: 'enrollments.course',
+                        foreignField: '_id',
+                        as: 'courseDetails'
+                    }
+                },
+                {
+                    $addFields: {
+                        // Calculate total units enrolled
+                        totalOfUnitsEnrolled: {
+                            $reduce: {
+                                input: '$courseDetails',
+                                initialValue: 0,
+                                in: { $add: ['$$value', '$$this.units'] }
+                            }
+                        },
+                        // Calculate total units earned (passed courses)
+                        totalOfUnitsEarned: {
+                            $reduce: {
+                                input: {
+                                    $filter: {
+                                        input: {
+                                            $zip: {
+                                                inputs: ['$enrollments', '$courseDetails']
+                                            }
+                                        },
+                                        as: 'item',
+                                        cond: {
+                                            $eq: [{ $arrayElemAt: ['$$item.0.ispass', 0] }, 'pass']
+                                        }
+                                    }
+                                },
+                                initialValue: 0,
+                                in: {
+                                    $add: ['$$value', { $arrayElemAt: ['$$this.1.units', 0] }]
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    $addFields: {
+                        // Calculate progress based on units earned vs enrolled
+                        progress: {
+                            $cond: {
+                                if: {
+                                    $and: [
+                                        // Check if totalOfUnitsEnrolled is greater than 0
+                                        { $gt: ['$totalOfUnitsEnrolled', 0] },
+                                        // Check if totalOfUnitsEarned equals totalOfUnitsEnrolled
+                                        { $eq: ['$totalOfUnitsEarned', '$totalOfUnitsEnrolled'] }
+                                    ]
+                                },
+                                then: 'done',
+                                else: 'ongoing'
+                            }
+                        }
+                    }
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        idNumber: 1,
+                        createdAt: 1,
+                        updatedAt: 1,
+                        progress: 1,
+                        lastname: 1,
+                        firstname: 1,
+                        middlename: 1,
+                        email: 1,
+                        totalOfUnitsEnrolled: 1,
+                        totalOfUnitsEarned: 1
+                    }
+                },
+                {
+                    $sort: {
+                        createdAt: -1
+                    }
+                }
+            ]);
+
+            return { success: true, message: 'Students fetched successfully', data: students }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Enrollees failed to fetch.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
     async findAllEnrollees(): Promise<IPromiseStudent> {
         try {
-            const response = await this.studentModel.find({ status: 'enrollee' })
+            const response = await this.studentModel.find({ status: 'enrollee' }).sort({ createdAt: -1 })
             return { success: true, message: 'Enrollees fetched successfully', data: response }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Enrollees failed to fetch.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
@@ -24,7 +121,7 @@ export class StudentService {
 
     async findAllCurrentlyEnrolled(): Promise<IPromiseStudent> {
         try {
-            const response = await this.studentModel.find({ status: 'student', isenrolled: true })
+            const response = await this.studentModel.find({ status: 'student', isenrolled: true }).sort({ createdAt: -1 })
             return { success: true, message: 'Current enrolled students fetched successfully', data: response }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Enrollees failed to fetch.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
