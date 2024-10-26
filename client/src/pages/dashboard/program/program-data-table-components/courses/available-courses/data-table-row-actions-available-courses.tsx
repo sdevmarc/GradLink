@@ -1,26 +1,23 @@
-"use client";
+"use client"
 
-import { DotsHorizontalIcon } from "@radix-ui/react-icons";
-import { Row } from "@tanstack/react-table";
+import { DotsHorizontalIcon } from "@radix-ui/react-icons"
+import { Row } from "@tanstack/react-table"
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import { RightSheetModal } from "@/components/right-sheet-modal";
-import { useQuery } from "@tanstack/react-query";
-import Loading from "@/components/loading";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { BookOpen, Clock, GraduationCap } from "lucide-react";
-import { useState } from "react";
-import { API_PROGRAM_FINDONE } from "@/api/program";
+} from "@/components/ui/dropdown-menu"
+import { RightSheetModal } from "@/components/right-sheet-modal"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { BookOpen, Clock, GraduationCap } from "lucide-react"
+import { useState } from "react"
 
 interface DataTableRowActionsProps<TData> {
-    row: Row<TData>;
+    row: Row<TData>
 }
 
 export function DataTableRowActionsAvailableCourses<TData>({ row }: DataTableRowActionsProps<TData>) {
@@ -48,7 +45,6 @@ export function DataTableRowActionsAvailableCourses<TData>({ row }: DataTableRow
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-[160px]">
                     <DropdownMenuItem onClick={handleViewDetails}>View Details</DropdownMenuItem>
-                    <DropdownMenuItem>View Enrollees</DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
 
@@ -62,7 +58,7 @@ export function DataTableRowActionsAvailableCourses<TData>({ row }: DataTableRow
             />
         </>
 
-    );
+    )
 }
 
 function ViewCourseDetails<TData>({ row }: DataTableRowActionsProps<TData>) {
