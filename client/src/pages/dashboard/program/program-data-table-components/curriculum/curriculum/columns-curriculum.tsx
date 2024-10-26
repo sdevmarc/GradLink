@@ -16,7 +16,7 @@ export const CurriculumColumns: ColumnDef<IAPICourse>[] = [
             <DataTableColumnHeader column={column} title="Name" className="text-text" />
         ),
         cell: ({ row }) => (
-            <div className="w-full capitalize">{row.getValue("name")}</div>
+            <div className="w-full normal-case">{row.getValue("name")}</div>
         ),
         enableSorting: false,
         enableHiding: false
@@ -38,7 +38,7 @@ export const CurriculumColumns: ColumnDef<IAPICourse>[] = [
         cell: ({ row }) => {
             return (
                 <div className="flex space-x-2">
-                    <span className="max-w-[500px] truncate capitalize font-normal">
+                    <span className="max-w-[500px] truncate normal-case">
                         {row.getValue("major") === '' ? 'None' : row.getValue("major")}
                     </span>
                 </div>
