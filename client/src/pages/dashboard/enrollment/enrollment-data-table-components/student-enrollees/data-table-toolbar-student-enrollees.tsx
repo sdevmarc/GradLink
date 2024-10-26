@@ -33,12 +33,12 @@ export function DataTableToolbarStudentEnrollees<TData>({
         <div className="flex flex-wrap items-center justify-between">
             <div className="flex flex-1 flex-wrap items-center gap-2">
                 <Input
-                    placeholder="Search for ID Numbers..."
+                    placeholder="Search ID Number..."
                     value={(table.getColumn("idNumber")?.getFilterValue() as string) ?? ""}
                     onChange={(event) => {
                         table.getColumn("idNumber")?.setFilterValue(event.target.value);
                     }}
-                    className="h-8 w-[20rem] lg:w-[25rem] placeholder:text-muted"
+                    className="h-8 w-[20rem] lg:w-[25rem]"
                 />
                 {/* {table.getColumn("category") && (
                     <DataTableFacetedFilter
