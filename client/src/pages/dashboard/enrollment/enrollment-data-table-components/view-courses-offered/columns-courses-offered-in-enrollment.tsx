@@ -16,9 +16,7 @@ export const CoursesOfferedInEnrollmentColumns: ColumnDef<IAPICourse>[] = [
         ),
         cell: ({ row }) => (
             <div className="w-[100px] capitalize">{row.getValue("code")}</div>
-        ),
-        enableSorting: false,
-        enableHiding: false
+        )
     },
     {
         accessorKey: "courseno",
@@ -27,9 +25,7 @@ export const CoursesOfferedInEnrollmentColumns: ColumnDef<IAPICourse>[] = [
         ),
         cell: ({ row }) => (
             <div className="w-[100px] capitalize">{row.getValue("courseno")}</div>
-        ),
-        enableSorting: false,
-        enableHiding: false
+        )
     },
     {
         accessorKey: "descriptiveTitle",
