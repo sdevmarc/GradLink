@@ -20,7 +20,7 @@ export default function Program() {
                     <aside className="px-4 pb-4 pt-[8rem]">
                         <HeadSection>
                             <SubHeadSectionDetails
-                                title="AVAILABLE PROGRAMS"
+                                title="PROGRAMS"
                                 description="Here's a list of avalailable programs."
                             />
                         </HeadSection>
