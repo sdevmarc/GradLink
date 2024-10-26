@@ -40,19 +40,47 @@ export const StudentAlumniColumns: ColumnDef<IAPICourse>[] = [
         cell: ({ row }) => (
             <div className="w-[70px] capitalize">{row.getValue("idNumber")}</div>
         ),
-        enableSorting: false,
-        enableHiding: false
     },
     {
-        accessorKey: "name",
+        accessorKey: "lastname",
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Full Name" className="max-w-[100px] text-text" />
+            <DataTableColumnHeader column={column} title="Last Name" className="max-w-[100px] text-text" />
         ),
         cell: ({ row }) => {
             return (
                 <div className="flex space-x-2">
-                    <span className=" truncate capitalize font-medium">
-                        {row.getValue("name")}
+                    <span className=" truncate normal-case">
+                        {row.getValue("lastname")}
+                    </span>
+                </div>
+            );
+        }
+    },
+    {
+        accessorKey: "firstname",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="First Name" className="max-w-[100px] text-text" />
+        ),
+        cell: ({ row }) => {
+            return (
+                <div className="flex space-x-2">
+                    <span className=" truncate normal-case">
+                        {row.getValue("firstname")}
+                    </span>
+                </div>
+            );
+        }
+    },
+    {
+        accessorKey: "middlename",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Middle Name" className="max-w-[100px] text-text" />
+        ),
+        cell: ({ row }) => {
+            return (
+                <div className="flex space-x-2">
+                    <span className=" truncate normal-case">
+                        {row.getValue("middlename")}
                     </span>
                 </div>
             );
@@ -66,7 +94,7 @@ export const StudentAlumniColumns: ColumnDef<IAPICourse>[] = [
         cell: ({ row }) => {
             return (
                 <div className="flex w-[100px] items-center">
-                    <span className="text-center">{row.getValue("email")}</span>
+                    <span className="text-center lowercase">{row.getValue("email")}</span>
                 </div>
             );
         },
