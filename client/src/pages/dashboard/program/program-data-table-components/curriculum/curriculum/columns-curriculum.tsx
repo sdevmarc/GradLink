@@ -43,7 +43,8 @@ export const CurriculumColumns: ColumnDef<IAPICourse>[] = [
                     </span>
                 </div>
             )
-        }
+        },
+        enableSorting: false
     },
     {
         accessorKey: "isActive",
@@ -64,7 +65,8 @@ export const CurriculumColumns: ColumnDef<IAPICourse>[] = [
         filterFn: (row, id, value) => {
             return value.includes(row.getValue(id));
         },
-        enableColumnFilter: true
+        enableColumnFilter: true,
+        enableSorting: false
     },
     {
         id: "actions",
