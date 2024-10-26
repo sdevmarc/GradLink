@@ -18,10 +18,10 @@ import ViewProgramDetails from "./dashboard/program/view-program-details"
 import Enrollment from "./dashboard/enrollment/enrollment-courses-offered"
 import CreateCoursesOffered from "./dashboard/enrollment/create-course-offered"
 import NewStudent from "./dashboard/enrollment/new-student"
-import ListOfEnrolledStudent from "./dashboard/student/list-of-enrolled-students"
 import StudentInformation from "./dashboard/enrollment/student-enrollees"
 import StudentEnrollees from "./dashboard/enrollment/student-enrollees"
 import EnrollStudent from "./dashboard/enrollment/enroll-student"
+import ListOfStudents from "./dashboard/student/list-of-registered-students"
 
 const Routes = createBrowserRouter([
     {
@@ -40,7 +40,7 @@ const Routes = createBrowserRouter([
             { path: '/enrollment/enroll-student/:id', element: <EnrollStudent /> },
 
             //Student
-            { path: '/student', element: <ListOfEnrolledStudent /> },
+            { path: '/student', element: <ListOfStudents /> },
             // { path: '/student/create', element: <CreateStudent /> },
             { path: '/student/alumni', element: <Alumni /> },
             { path: '/student/details/:sid', element: <ViewDetails /> },
