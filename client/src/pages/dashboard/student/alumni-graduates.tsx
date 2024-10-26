@@ -27,7 +27,7 @@ export default function Alumni() {
                     </aside>
                     <main className="flex">
                         <Sidebar>
-                            <SidebarNavs title="List of Students" link={ROUTES.LIST_OF_STUDENTS} />
+                            <SidebarNavs title="List of Enrolled Students" link={ROUTES.LIST_OF_ENROLLED_STUDENTS} />
                             <SidebarNavs bg='bg-muted' title="Alumni Graduates" link={ROUTES.ALUMNI_GRADUATES} />
                         </Sidebar>
                         <MainTable>
