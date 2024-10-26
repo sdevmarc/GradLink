@@ -14,6 +14,16 @@ export class StudentController {
         private readonly curriculumService: CurriculumService,
     ) { }
 
+    @Get('enrollees')
+    async findAllStudentStatusEnrollees() {
+        return this.studentService.findAllEnrollees()
+    }
+
+    @Get('currently-enrolled')
+    async findAllStudentCurrentlyEnrolled() {
+        return this.studentService.findAllCurrentlyEnrolled()
+    }
+
     // @Get()
     // async findAllStudent() {
     //     return await this.studentService.findAllStudents()
@@ -36,10 +46,10 @@ export class StudentController {
     // }
 
     @Post('new-student')
-    async createStudent(
+    async createStudentEnrollee(
         @Body() { idNumber, lastname, firstname, middlename, email }: IStudent
     ) {
-        return await this.studentService.create({ idNumber, lastname, firstname, middlename, email })
+        return await this.studentService.createEnrollee({ idNumber, lastname, firstname, middlename, email })
     }
 
     // @Post('unenroll-all')
