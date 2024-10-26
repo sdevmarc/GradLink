@@ -7,8 +7,13 @@ export const API_STUDENT_FINDALL = async () => {
     return response.data
 }
 
-export const API_STUDENT_FINDALL_ENROLLED = async () => {
-    const response = await axios.get(`${HOST}/student/enrolled`)
+export const API_STUDENT_FINDALL_ENROLLEES = async () => {
+    const response = await axios.get(`${HOST}/student/enrollees`)
+    return response.data
+}
+
+export const API_STUDENT_FINDALL_CURRENTLY_ENROLLED = async () => {
+    const response = await axios.get(`${HOST}/student/currently-enrolled`)
     return response.data
 }
 
