@@ -33,24 +33,24 @@ export class CoursesService {
 
     async findAllCoursesInActiveCurricullum(): Promise<IPromiseCourse> {
         try {
-            const activeCurriculum = await this.CurriculumModel.findOne({ isActive: true });
+            const activeCurriculum = await this.CurriculumModel.findOne({ isActive: true })
 
             // if (!activeCurriculum) return { success: false, message: 'No active curriculum found', data: [] }
 
             // Extract all course IDs from all categories
             const courseIds = activeCurriculum.categories.reduce((acc, category) => {
-                return [...acc, ...category.courses];
-            }, []);
+                return [...acc, ...category.courses]
+            }, [])
 
             // Remove duplicates if any
-            const uniqueCourseIds = [...new Set(courseIds)];
+            const uniqueCourseIds = [...new Set(courseIds)]
 
             // Fetch all courses that match these IDs
             const courses = await this.CourseModel.find({
                 _id: { $in: uniqueCourseIds }
             }).populate('prerequisites')
 
-            return { success: true, message: 'Courses from active curriculum fetched successfully', data: courses };
+            return { success: true, message: 'Courses from active curriculum fetched successfully', data: courses }
 
         } catch (error) {
             throw new HttpException(
@@ -60,7 +60,7 @@ export class CoursesService {
                     error
                 },
                 HttpStatus.INTERNAL_SERVER_ERROR
-            );
+            )
         }
     }
 
@@ -87,13 +87,62 @@ export class CoursesService {
     async create({ code, courseno, descriptiveTitle, units, prerequisites }: ICourses)
         : Promise<IPromiseCourse> {
         try {
-            const iscode = await this.CourseModel.findOne({ code })
-            if (iscode) return { success: false, message: 'Code already exist.' }
+            // Validate and convert code to number
+            const numericCode = Number(code)
+            const numericUnits = Number(units)
+            if (isNaN(numericCode)) return { success: false, message: 'Course code must be a valid number.' }
 
-            const iscourseno = await this.CourseModel.findOne({ courseno })
-            if (iscourseno) return { success: false, message: 'Course number already exist.' }
 
-            await this.CourseModel.create({ code, courseno, descriptiveTitle, units, prerequisites })
+            // Normalize inputs
+            const normalizedCourseNo = courseno.trim().toUpperCase()
+            const normalizedTitle = descriptiveTitle.trim()
+
+            // Validate code existence
+            const existingCode = await this.CourseModel.findOne({ code: numericCode })
+
+            if (existingCode) return { success: false, message: 'Course code already exists.' }
+
+            // Validate course number
+            const existingCourseNo = await this.CourseModel.findOne({
+                courseno: {
+                    $regex: `^${normalizedCourseNo.replace(/\s+/g, '\\s*')}$`,
+                    $options: 'i'
+                }
+            })
+
+            if (existingCourseNo) return { success: false, message: 'Course number already exists.' }
+
+            // Validate descriptive title for duplicates
+            const existingTitle = await this.CourseModel.findOne({
+                descriptiveTitle: {
+                    $regex: `^${normalizedTitle.replace(/\s+/g, '\\s*')}$`,
+                    $options: 'i'
+                }
+            })
+
+            if (existingTitle) return { success: false, message: 'Course descriptive title already exists.' }
+
+            // Validate units
+            if (typeof numericUnits !== 'number' || numericUnits <= 0) return { success: false, message: 'Units must be a positive number.' }
+
+            // Validate prerequisites if provided
+            if (prerequisites && prerequisites.length > 0) {
+                const prerequisitesCourses = await this.CourseModel.find({
+                    _id: { $in: prerequisites }
+                })
+
+                if (prerequisitesCourses.length !== prerequisites.length) return { success: false, message: 'One or more prerequisites courses do not exist.' }
+            }
+
+            // Create new course with numeric code
+            await this.CourseModel.create({
+                code: numericCode,
+                courseno: normalizedCourseNo,
+                descriptiveTitle: normalizedTitle,
+                units: numericUnits,
+                prerequisites: prerequisites || []
+            })
+
             return { success: true, message: 'Course successfully created.' }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Failed to create course.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
