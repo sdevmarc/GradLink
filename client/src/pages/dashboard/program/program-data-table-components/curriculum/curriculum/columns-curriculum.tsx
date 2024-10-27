@@ -7,7 +7,9 @@ import {
 import { IAPICourse } from '@/interface/course.interface'
 import { DataTableColumnHeader } from "@/components/data-table-components/data-table-column-header"
 import { Badge } from "@/components/ui/badge"
-import { DataTableRowActionsCurriculum } from "./data-table-row-actions-curriculum"
+import { Button } from "@/components/ui/button"
+import { RightSheetModal } from "@/components/right-sheet-modal"
+import { useState } from "react"
 
 export const CurriculumColumns: ColumnDef<IAPICourse>[] = [
     {
@@ -70,6 +72,32 @@ export const CurriculumColumns: ColumnDef<IAPICourse>[] = [
     },
     {
         id: "actions",
-        cell: ({ row }) => <DataTableRowActionsCurriculum row={row} />
+        cell: ({ row }) => {
+            const [isOpen, setIsOpen] = useState<boolean>(false)
+
+            const handleViewDetails = () => {
+                setIsOpen(true)
+            }
+
+            const handleOpenChange = (open: boolean) => {
+                setIsOpen(open)
+            }
+            return (
+                <>
+                    <Button onClick={handleViewDetails} variant={`outline`} size={`sm`}>
+                        View Details
+                    </Button>
+                    <RightSheetModal
+                        className="w-[60%]"
+                        isOpen={isOpen}
+                        onOpenChange={handleOpenChange}
+                        title="Curriculum Details"
+                        description="View details of the selected curriculum."
+                        content={''}
+                    />
+                </>
+
+            )
+        }
     }
 ]
