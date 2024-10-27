@@ -6,7 +6,6 @@ import {
 
 import { DataTableColumnHeader } from "@/components/data-table-components/data-table-column-header"
 import { IAPIStudents } from "@/interface/student.interface"
-import { DataTableRowActionsStudentEnrollees } from "./data-table-row-actions-student-enrollees"
 
 export const StudentEnrolleesColumns: ColumnDef<IAPIStudents>[] = [
     {
@@ -26,7 +25,7 @@ export const StudentEnrolleesColumns: ColumnDef<IAPIStudents>[] = [
         cell: ({ row }) => {
             return (
                 <div className="flex space-x-2">
-                    <span className="max-w-[500px] truncate normal-case">
+                    <span className="max-w-[500px] truncate capitalize">
                         {row.getValue("lastname")}
                     </span>
                 </div>
@@ -41,7 +40,7 @@ export const StudentEnrolleesColumns: ColumnDef<IAPIStudents>[] = [
         cell: ({ row }) => {
             return (
                 <div className="flex space-x-2">
-                    <span className="max-w-[500px] truncate normal-case">
+                    <span className="max-w-[500px] truncate capitalize">
                         {row.getValue("firstname")}
                     </span>
                 </div>
@@ -56,8 +55,10 @@ export const StudentEnrolleesColumns: ColumnDef<IAPIStudents>[] = [
         cell: ({ row }) => {
             return (
                 <div className="flex space-x-2">
-                    <span className="max-w-[500px] truncate normal-case">
-                        {row.getValue("middlename")}
+                    <span className="max-w-[500px] truncate capitalize">
+                        {
+                            row.getValue("middlename") ? row.getValue("middlename") : '[No Middlename]'
+                        }
                     </span>
                 </div>
             )
@@ -78,8 +79,8 @@ export const StudentEnrolleesColumns: ColumnDef<IAPIStudents>[] = [
             )
         }
     },
-    {
-        id: "actions",
-        cell: ({ row }) => <DataTableRowActionsStudentEnrollees row={row} />
-    }
+    // {
+    //     id: "actions",
+    //     cell: ({ row }) => <DataTableRowActionsStudentEnrollees row={row} />
+    // }
 ]
