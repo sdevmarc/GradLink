@@ -105,14 +105,46 @@ export class ProgramsService {
     //     }
     // }
 
-    async insertNew({ code, descriptiveTitle, residency }: IPrograms): Promise<IPromisePrograms> {
+    async insertNew({ code, descriptiveTitle, residency, department }: IPrograms): Promise<IPromisePrograms> {
         try {
-            const isCode = await this.ProgramModel.findOne({ code })
-            if (isCode) return { success: false, message: 'The code already exists.' }
+            // Normalize inputs early to avoid redundant processing
+            const normalizedCode = code.trim().toUpperCase();
+            const normalizedTitle = descriptiveTitle.trim().toUpperCase().replace(/\s+/g, '');
 
-            await this.ProgramModel.create({ code, descriptiveTitle, residency })
+            const existingCode = await this.ProgramModel.findOne({ code: normalizedCode })
+
+            if (existingCode) return { success: false, message: 'The code already exists.' }
+
+
+            // Check for existing title
+            const existingTitle = await this.ProgramModel.findOne({
+                descriptiveTitle: {
+                    $regex: `^${descriptiveTitle.trim().replace(/\s+/g, '\\s*')}$`,
+                    $options: 'i'
+                }
+            })
+
+            if (existingTitle) return { success: false, message: 'Descriptive title already exists.' }
+
+            await this.ProgramModel.create({
+                code: normalizedCode,
+                descriptiveTitle: descriptiveTitle.trim(),
+                residency,
+                department
+            });
+
             return { success: true, message: 'Program created successfully.' }
         } catch (error) {
+            // if (error instanceof MongoError) {
+            //     throw new HttpException(
+            //         { 
+            //             success: false, 
+            //             message: 'Database operation failed', 
+            //             error: error.message 
+            //         }, 
+            //         HttpStatus.BAD_REQUEST
+            //     );
+            // }
             throw new HttpException({ success: false, message: 'Failed to create programs', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
