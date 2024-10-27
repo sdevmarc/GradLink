@@ -12,10 +12,14 @@ import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 interface DataTableToolbarProps<TData> {
     table: Table<TData>
+    isenroll: boolean
+    setEnroll: (e: boolean) => void
 }
 
 export function DataTableToolbarCoursesOfferedInEnrollment<TData>({
     table,
+    isenroll,
+    setEnroll
 }: DataTableToolbarProps<TData>) {
     const isFiltered = table.getState().columnFilters.length > 0
     const navigate = useNavigate()
@@ -45,7 +49,8 @@ export function DataTableToolbarCoursesOfferedInEnrollment<TData>({
             </div>
             <div className="flex gap-2 items-center">
                 <div className="flex items-center space-x-2">
-                    <Switch checked={true} id="airplane-mode" />
+                    {/* <Switch checked={true} id="airplane-mode" /> */}
+                    <Switch id="airplane-mode" checked={isenroll} onCheckedChange={setEnroll} />
                     <Label htmlFor="airplane-mode">Enroll Mode</Label>
                 </div>
                 <AlertDialogConfirmation
