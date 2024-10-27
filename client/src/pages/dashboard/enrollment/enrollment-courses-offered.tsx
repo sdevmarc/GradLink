@@ -2,8 +2,8 @@ import MainTable from "@/components/main-table"
 import HeadSection, { SubHeadSectionDetails } from "@/components/head-section"
 import { Sidebar, SidebarNavs } from "@/components/sidebar"
 import { ROUTES } from "@/constants"
-import { DataTableCoursesOfferedInEnrollment } from "./enrollment-data-table-components/view-courses-offered/data-table-courses-offered-in-enrollment"
-import { CoursesOfferedInEnrollmentColumns } from "./enrollment-data-table-components/view-courses-offered/columns-courses-offered-in-enrollment"
+import { DataTableCoursesOfferedInEnrollment } from "./enrollment-data-table-components/courses-offered/data-table-courses-offered-in-enrollment"
+import { CoursesOfferedInEnrollmentColumns } from "./enrollment-data-table-components/courses-offered/columns-courses-offered-in-enrollment"
 import { useQuery } from "@tanstack/react-query"
 import { API_COURSE_FINDALL_COURSES_OFFERED } from "@/api/courses"
 
@@ -28,7 +28,7 @@ export default function Enrollment() {
                     <Sidebar>
                         <SidebarNavs bg='bg-muted' title="Courses Offered" link={ROUTES.ENROLLMENT} />
                         <SidebarNavs title="Enrollees" link={ROUTES.STUDENT_ENROLLEE} />
-                        <SidebarNavs title="Current Enrolled" link={ROUTES.CURRENTLY_ENROLLED} />
+                        {/* <SidebarNavs title="Current Enrolled" link={ROUTES.CURRENTLY_ENROLLED} /> */}
                     </Sidebar>
                     <MainTable>
                         {coursesLoading && <div>Loading...</div>}
