@@ -51,7 +51,7 @@ export const CreateProgramColumns: ColumnDef<IAPIPrograms>[] = [
         cell: ({ row }) => {
             return (
                 <div className="flex space-x-2">
-                    <span className="max-w-[500px] truncate capitalize font-medium">
+                    <span className="max-w-[500px] truncate capitalize">
                         {row.getValue("descriptiveTitle")}
                     </span>
                 </div>
