@@ -22,11 +22,11 @@ export const StudentSchema = new mongoose.Schema({
         unique: true,
         required: true
     },
-    program: [{
+    program: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Program',
         required: true
-    }],
+    },
     generalInformation: {},
     educationalBackground: {},
     trainingAdvanceStudies: {},
