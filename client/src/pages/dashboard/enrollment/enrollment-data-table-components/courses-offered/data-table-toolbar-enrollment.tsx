@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input"
 import { AlertDialogConfirmation } from "@/components/alert-dialog"
 import { useNavigate } from "react-router-dom"
 import { ROUTES } from "@/constants"
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@/components/ui/label"
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>
@@ -69,6 +71,10 @@ export function DataTableToolbarCoursesOfferedInEnrollment<TData>({
                     description={`This will export the current data you are viewing.`}
                     btnContinue={() => navigate('/program')}
                 />
+                <div className="flex items-center space-x-2">
+                    <Switch checked={true} id="airplane-mode" />
+                    <Label htmlFor="airplane-mode">Enroll Mode</Label>
+                </div>
             </div>
         </div>
     )
