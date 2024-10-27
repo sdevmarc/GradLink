@@ -7,6 +7,9 @@ import {
 import { IAPICourse } from '@/interface/course.interface'
 import { DataTableColumnHeader } from "@/components/data-table-components/data-table-column-header"
 import { DataTableRowActionsAvailableCourses } from "./data-table-row-actions-available-courses"
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { RightSheetModal } from "@/components/right-sheet-modal"
 
 export const AvailableCoursesColumns: ColumnDef<IAPICourse>[] = [
     {
@@ -63,6 +66,32 @@ export const AvailableCoursesColumns: ColumnDef<IAPICourse>[] = [
     },
     {
         id: "actions",
-        cell: ({ row }) => <DataTableRowActionsAvailableCourses row={row} />
+        cell: ({ row }) => {
+            const [isOpen, setIsOpen] = useState<boolean>(false)
+
+            const handleViewDetails = () => {
+                setIsOpen(true)
+            }
+
+            const handleOpenChange = (open: boolean) => {
+                setIsOpen(open)
+            }
+            return (
+                <>
+                    <Button onClick={handleViewDetails} variant={`outline`} size={`sm`}>
+                        View Details
+                    </Button>
+                    <RightSheetModal
+                        className="w-[60%]"
+                        isOpen={isOpen}
+                        onOpenChange={handleOpenChange}
+                        title="Course Details"
+                        description="View details of the selected course."
+                        content={''}
+                    />
+                </>
+
+            )
+        }
     }
 ]
