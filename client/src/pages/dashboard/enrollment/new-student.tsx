@@ -1,7 +1,7 @@
 import HeadSection, { BackHeadSection, SubHeadSectionDetails } from '@/components/head-section'
 import { Sidebar, SidebarNavs } from '@/components/sidebar'
 import { Input } from '@/components/ui/input'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import * as React from "react"
 import { ROUTES } from '@/constants'
 import { IAPIStudents } from '@/interface/student.interface'
@@ -10,6 +10,9 @@ import { CircleCheck, CircleX } from 'lucide-react'
 import Loading from '@/components/loading'
 import { AlertDialogConfirmation } from '@/components/alert-dialog'
 import { useNavigate } from 'react-router-dom'
+import { Combobox } from '@/components/combobox'
+import { API_PROGRAM_FINDALL } from '@/api/program'
+import { IAPIPrograms } from '@/interface/program.interface'
 
 export default function NewStudent() {
     return (
@@ -42,6 +45,7 @@ const CreateForm = () => {
     const queryClient = useQueryClient()
     const [isinsertsuccess, setInsertSuccess] = React.useState<boolean>(false)
     const [dialogsubmit, setDialogSubmit] = React.useState<boolean>(false)
+    const [formattedprograms, setFormattedPrograms] = React.useState([])
     const [alertdialogstate, setAlertDialogState] = React.useState({
         show: false,
         title: '',
@@ -54,7 +58,23 @@ const CreateForm = () => {
         firstname: '',
         middlename: '',
         email: '',
+        program: ''
     })
+
+    const { data: programs, isLoading: programsLoading, isFetched: programsFetched } = useQuery({
+        queryFn: () => API_PROGRAM_FINDALL(),
+        queryKey: ['programs']
+    })
+
+    React.useEffect(() => {
+        if (programsFetched) {
+            const formatprograms = programs?.data?.map((item: IAPIPrograms) => {
+                const { _id, descriptiveTitle } = item
+                return { value: _id, label: descriptiveTitle }
+            })
+            setFormattedPrograms(formatprograms)
+        }
+    }, [programs])
 
     const { mutateAsync: insertStudent, isPending: insertstudentLoading } = useMutation({
         mutationFn: API_STUDENT_NEW_STUDENT,
@@ -74,27 +94,28 @@ const CreateForm = () => {
                 setInsertSuccess(true)
                 setAlertDialogState({ success: true, show: true, title: "Yay, success! 🎉", description: data.message })
                 setDialogSubmit(false)
-                setStudent(prev => ({ ...prev, idNumber: '', lastname: '', firstname: '', middlename: '', email: '' }))
+                setStudent(prev => ({ ...prev, idNumber: '', lastname: '', firstname: '', middlename: '', email: '', program: '' }))
                 return
             }
         },
         onError: (data) => {
             setInsertSuccess(false)
+            setDialogSubmit(false)
             setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: data.message })
         }
     })
 
     const handleSubmit = async () => {
-        const { idNumber, lastname, firstname, middlename, email } = student
+        const { idNumber, lastname, firstname, middlename, email, program } = student
         const nospaceIdNumber = (idNumber ?? '').replace(/\s+/g, '')
         const nospaceEmail = (email ?? '').replace(/\s+/g, '').toLowerCase()
 
-        if (nospaceIdNumber === '' || lastname === '' || firstname === '' || middlename === '' || nospaceEmail === '') {
+        if (nospaceIdNumber === '' || lastname === '' || firstname === '' || nospaceEmail === '' || !program) {
             setDialogSubmit(false)
             setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Please fill-up the required fields.' })
             return
         }
-        await insertStudent({ idNumber: nospaceIdNumber, lastname, firstname, middlename, email: nospaceEmail })
+        await insertStudent({ idNumber: nospaceIdNumber, lastname, firstname, middlename, email: nospaceEmail, program })
     }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -102,7 +123,7 @@ const CreateForm = () => {
         setStudent((prev) => ({ ...prev, [name]: value }))
     }
 
-    const isLoading = insertstudentLoading
+    const isLoading = insertstudentLoading || programsLoading
 
     return (
         <>
@@ -148,6 +169,16 @@ const CreateForm = () => {
                                             required
                                         />
                                     </div>
+                                    <div className="max-w-[400px] flex flex-col px-4 gap-1">
+                                        <h1 className='text-[.83rem]'>Select Program</h1>
+                                        <Combobox
+                                            lists={formattedprograms || []}
+                                            placeholder={`None`}
+                                            setValue={(item) => setStudent(prev => ({ ...prev, program: item }))}
+                                            value={student.program || ''}
+                                        />
+                                    </div>
+
                                     <div className="flex items-center justify-start">
                                         <div className="flex flex-col px-4 gap-1">
                                             <h1 className='text-[.83rem]'>Last Name</h1>
