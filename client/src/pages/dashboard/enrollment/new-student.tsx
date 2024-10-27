@@ -172,7 +172,7 @@ const CreateForm = () => {
                                     <div className="max-w-[400px] flex flex-col px-4 gap-1">
                                         <h1 className='text-[.83rem]'>Select Program</h1>
                                         <Combobox
-                                        className='w-[300px]'
+                                            className='w-[300px]'
                                             lists={formattedprograms || []}
                                             placeholder={`None`}
                                             setValue={(item) => setStudent(prev => ({ ...prev, program: item }))}
