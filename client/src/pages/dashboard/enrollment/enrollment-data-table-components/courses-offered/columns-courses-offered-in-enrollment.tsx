@@ -9,7 +9,7 @@ import { DataTableColumnHeader } from "@/components/data-table-components/data-t
 import { useNavigate } from "react-router-dom"
 import { AlertDialogConfirmation } from "@/components/alert-dialog"
 
-export const CoursesOfferedInEnrollmentColumns: ColumnDef<IAPICourse>[] = [
+export const CoursesOfferedInEnrollmentColumns = (isenroll: boolean): ColumnDef<IAPICourse>[] => [
     {
         accessorKey: "code",
         header: ({ column }) => (
@@ -74,13 +74,16 @@ export const CoursesOfferedInEnrollmentColumns: ColumnDef<IAPICourse>[] = [
             }
             return (
                 <AlertDialogConfirmation
-                    type={`default`}
-                    variant={'outline'}
-                    btnTitle="Enroll Student"
-                    title="Are you sure?"
-                    description={`You will be redirect to a page for enrolling students for the course ${descriptiveTitle}`}
-                    btnContinue={handleNavigateEnrollStudent}
-                />
+                type="default"
+                variant="outline"
+                btnTitle={isenroll ? "Enroll Student" : "Evaluate Student"}
+                title="Are you sure?"
+                description={isenroll 
+                    ? `You will be redirected to a page for enrolling students in ${descriptiveTitle}`
+                    : `You will be redirected to a page for evaluating students in ${descriptiveTitle}`
+                }
+                btnContinue={handleNavigateEnrollStudent}
+            />
             )
         }
     }
