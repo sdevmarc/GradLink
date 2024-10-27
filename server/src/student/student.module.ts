@@ -9,6 +9,7 @@ import { ConstantsService } from 'src/constants/constants.service'
 import { CurriculumSchema } from 'src/curriculum/curriculum.schema'
 import { CurriculumService } from 'src/curriculum/curriculum.service'
 import { CoursesSchema } from 'src/courses/courses.schema'
+import { ProgramSchema } from 'src/programs/programs.schema'
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { CoursesSchema } from 'src/courses/courses.schema'
       { name: 'Form', schema: FormSchema },
       { name: 'Curriculum', schema: CurriculumSchema },
       { name: 'Course', schema: CoursesSchema },
+      { name: 'Program', schema: ProgramSchema },
     ])
   ],
   providers: [StudentService, FormsService, ConstantsService, CurriculumService],
