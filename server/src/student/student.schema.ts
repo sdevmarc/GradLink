@@ -16,13 +16,17 @@ export const StudentSchema = new mongoose.Schema({
     },
     middlename: {
         type: String,
-        required: true
     },
     email: {
         type: String,
         unique: true,
         required: true
     },
+    program: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Program',
+        required: true
+    }],
     generalInformation: {},
     educationalBackground: {},
     trainingAdvanceStudies: {},
@@ -45,7 +49,7 @@ export const StudentSchema = new mongoose.Schema({
         ispass: {
             type: String,
             required: true,
-            enum: ['pass', 'fail','inc', 'ongoing'],
+            enum: ['pass', 'fail', 'inc', 'ongoing'],
             default: 'ongoing'
         }
     }],
