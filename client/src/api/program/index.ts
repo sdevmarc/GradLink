@@ -21,9 +21,9 @@ export const API_PROGRAM_FINDONE = async ({ _id }: IAPIPrograms) => {
     }
 }
 
-export const API_PROGRAM_NEW_PROGRAM = async ({ code, descriptiveTitle, residency }: IAPIPrograms) => {
+export const API_PROGRAM_NEW_PROGRAM = async ({ code, descriptiveTitle, residency, department }: IAPIPrograms) => {
     try {
-        const response = await axios.post(`${HOST}/programs/create`, { code, descriptiveTitle, residency })
+        const response = await axios.post(`${HOST}/programs/create`, { code, descriptiveTitle, residency, department })
         return response.data
     } catch (error) {
         console.error(error)
