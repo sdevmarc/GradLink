@@ -49,7 +49,7 @@ export const StudentAlumniColumns: ColumnDef<IAPICourse>[] = [
         cell: ({ row }) => {
             return (
                 <div className="flex space-x-2">
-                    <span className=" truncate normal-case">
+                    <span className=" truncate capitalize">
                         {row.getValue("lastname")}
                     </span>
                 </div>
@@ -64,7 +64,7 @@ export const StudentAlumniColumns: ColumnDef<IAPICourse>[] = [
         cell: ({ row }) => {
             return (
                 <div className="flex space-x-2">
-                    <span className=" truncate normal-case">
+                    <span className=" truncate capitalize">
                         {row.getValue("firstname")}
                     </span>
                 </div>
@@ -79,7 +79,7 @@ export const StudentAlumniColumns: ColumnDef<IAPICourse>[] = [
         cell: ({ row }) => {
             return (
                 <div className="flex space-x-2">
-                    <span className=" truncate normal-case">
+                    <span className=" truncate capitalize">
                         {row.getValue("middlename")}
                     </span>
                 </div>
