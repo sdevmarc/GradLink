@@ -5,8 +5,10 @@ import {
 } from "@tanstack/react-table"
 
 import { DataTableColumnHeader } from "@/components/data-table-components/data-table-column-header"
-import { DataTableRowActionsAvailablePrograms } from "./data-table-row-actions-available-programs"
 import { IAPIPrograms } from "@/interface/program.interface"
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { RightSheetModal } from "@/components/right-sheet-modal"
 
 export const AvailableProgramsColumns: ColumnDef<IAPIPrograms>[] = [
     {
@@ -54,6 +56,32 @@ export const AvailableProgramsColumns: ColumnDef<IAPIPrograms>[] = [
     },
     {
         id: "actions",
-        cell: ({ row }) => <DataTableRowActionsAvailablePrograms row={row} />
+        cell: ({ row }) => {
+            const [isOpen, setIsOpen] = useState<boolean>(false)
+
+            const handleViewDetails = () => {
+                setIsOpen(true)
+            }
+
+            const handleOpenChange = (open: boolean) => {
+                setIsOpen(open)
+            }
+            return (
+                <>
+                    <Button onClick={handleViewDetails} variant={`outline`} size={`sm`}>
+                        View Details
+                    </Button>
+                    <RightSheetModal
+                        className="w-[60%]"
+                        isOpen={isOpen}
+                        onOpenChange={handleOpenChange}
+                        title="Program Details"
+                        description="View details of the selected program."
+                        content={''}
+                    />
+                </>
+
+            )
+        }
     }
 ]
