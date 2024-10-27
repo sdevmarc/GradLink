@@ -33,6 +33,15 @@ interface IComboBox {
 
 export function Combobox({ lists, placeholder, value, setValue }: IComboBox) {
     const [open, setOpen] = React.useState(false)
+    const [searchQuery, setSearchQuery] = React.useState("")
+
+    const filteredItems = React.useMemo(() => {
+        if (!searchQuery) return lists
+
+        return lists.filter(item =>
+            item.label.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+    }, [lists, searchQuery])
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -41,7 +50,7 @@ export function Combobox({ lists, placeholder, value, setValue }: IComboBox) {
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    className="w-full h-8 px-2 lg:px-3 justify-between"
+                    className="w-full h-8 px-2 lg:px-3 justify-between capitalize"
                 >
                     {value
                         ? lists.find((item) => item.value === value)?.label
@@ -49,20 +58,23 @@ export function Combobox({ lists, placeholder, value, setValue }: IComboBox) {
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[200px] p-0">
+            <PopoverContent className="w-[300px] p-0">
                 <Command>
                     <CommandInput placeholder={placeholder} />
                     <CommandList>
-                        <CommandEmpty>No framework found.</CommandEmpty>
+                        <CommandEmpty>No item found.</CommandEmpty>
                         <CommandGroup>
-                            {lists.map((item) => (
+                            {filteredItems.map((item) => (
                                 <CommandItem
                                     key={item.value}
-                                    value={item.value}
-                                    onSelect={(currentValue) => {
-                                        setValue(currentValue === value ? "" : currentValue)
-                                        setOpen(false)
+                                    value={item.label}
+                                    onSelect={(currentLabel) => {
+                                        const selectedItem = lists.find(i => i.label.toLowerCase() === currentLabel.toLowerCase());
+                                        setValue(value === selectedItem?.value ? "" : (selectedItem?.value || ""));
+                                        setOpen(false);
+                                        setSearchQuery("");
                                     }}
+                                    className="capitalize"
                                 >
                                     <Check
                                         className={cn(
