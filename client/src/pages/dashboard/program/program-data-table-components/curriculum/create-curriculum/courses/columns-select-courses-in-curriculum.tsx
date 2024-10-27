@@ -7,7 +7,6 @@ import {
 import { IAPICourse } from '@/interface/course.interface'
 import { DataTableColumnHeader } from "@/components/data-table-components/data-table-column-header"
 import { Checkbox } from "@/components/ui/checkbox"
-import { DataTableRowActionsSelectCoursesInCurriculum } from "./data-table-row-actions-select-courses-in-curriculum"
 
 export const SelectCoursesInCurriculumColumns: ColumnDef<IAPICourse>[] = [
     {
@@ -84,9 +83,5 @@ export const SelectCoursesInCurriculumColumns: ColumnDef<IAPICourse>[] = [
         filterFn: (row, id, value) => {
             return value.includes(row.getValue(id))
         }
-    },
-    {
-        id: "actions",
-        cell: ({ row }) => <DataTableRowActionsSelectCoursesInCurriculum row={row} />
     }
 ]
