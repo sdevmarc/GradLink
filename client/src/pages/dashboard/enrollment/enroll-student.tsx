@@ -2,21 +2,23 @@ import HeadSection, { BackHeadSection, SubHeadSectionDetails } from '@/component
 import { Sidebar, SidebarNavs } from '@/components/sidebar'
 import { ROUTES } from '@/constants'
 import MainTable from '@/components/main-table'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { CircleCheck, CircleX } from 'lucide-react'
 import { AlertDialogConfirmation } from '@/components/alert-dialog'
 import Loading from '@/components/loading'
 import { useNavigate, useParams } from 'react-router-dom'
 import { IAPICourse } from '@/interface/course.interface'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { API_STUDENT_ENROLL_STUDENT, API_STUDENT_FINDALL_ENROLLEES } from '@/api/student'
+import { API_STUDENT_ENROLL_STUDENT, API_STUDENT_FINDALL_ENROLLEES_IN_COURSE } from '@/api/student'
 import { DataTableEnrollStudent } from './enrollment-data-table-components/enroll-student/data-table-enroll-student'
 import { EnrollStudentColumns } from './enrollment-data-table-components/enroll-student/columns-enroll-student'
 
 export default function EnrollStudent() {
     const queryClient = useQueryClient()
     const { id } = useParams()
+
     const navigate = useNavigate()
+    const [courseid, setCourseId] = useState<string>('')
     const [checkstudents, setCheckStudents] = useState<IAPICourse[]>([])
     const [dialogsubmit, setDialogSubmit] = useState<boolean>(false)
     const [alertdialogstate, setAlertDialogState] = useState({
@@ -26,9 +28,19 @@ export default function EnrollStudent() {
         success: false
     })
 
+    useEffect(() => {
+        if (id) {
+            const jsonString = atob(id);
+            const parsedObject = JSON.parse(jsonString);
+            const theid = parsedObject.id
+            setCourseId(theid)
+        }
+    }, [id, courseid])
+
     const { data: students, isLoading: studentLoading, isFetched: studentFetched } = useQuery({
-        queryFn: () => API_STUDENT_FINDALL_ENROLLEES(),
-        queryKey: ['student-enrollees']
+        queryFn: () => API_STUDENT_FINDALL_ENROLLEES_IN_COURSE(courseid),
+        queryKey: ['student-enrollees', courseid],
+        enabled: !!courseid
     })
 
     const { mutateAsync: enrollstudent, isPending: enrollstudentLoading } = useMutation({
@@ -39,8 +51,8 @@ export default function EnrollStudent() {
                 setAlertDialogState({ success: false, show: true, title: "Uh, oh. Something went wrong!", description: data.message })
                 return
             } else {
-                await queryClient.invalidateQueries({ queryKey: ['programs'] })
-                await queryClient.refetchQueries({ queryKey: ['programs'] })
+                await queryClient.invalidateQueries({ queryKey: ['student-enrollees'] })
+                await queryClient.refetchQueries({ queryKey: ['student-enrollees'] })
                 window.scrollTo({
                     top: 0,
                     behavior: 'smooth'
