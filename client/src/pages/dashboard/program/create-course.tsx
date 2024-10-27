@@ -12,7 +12,6 @@ import { CircleCheck, CircleX, Plus } from 'lucide-react'
 import { CreateCourseColumns } from './program-data-table-components/courses/create-course/columns'
 import { AlertDialogConfirmation } from '@/components/alert-dialog'
 import Loading from '@/components/loading'
-import { toast } from "sonner"
 import { useNavigate } from 'react-router-dom'
 
 export default function CreateCourse() {
@@ -54,7 +53,7 @@ const CreateForm = () => {
         code: '',
         courseno: '',
         descriptiveTitle: '',
-        units: '',
+        units: 0,
         prerequisites: [],
     })
     const [alertdialogstate, setAlertDialogState] = React.useState({
@@ -75,7 +74,6 @@ const CreateForm = () => {
             if (!data.success) {
                 setDialogSubmit(false)
                 setAlertDialogState({ success: false, show: true, title: "Uh, oh. Something went wrong!", description: data.message })
-                toast("Uh, oh. Something went wrong!", { description: data.message })
                 return
             } else {
                 await queryClient.invalidateQueries({ queryKey: ['courses'] })
@@ -89,7 +87,7 @@ const CreateForm = () => {
                 setDialogSubmit(false)
                 setResetSelection(true)
                 setPre(false)
-                setCourse(({ code: '', courseno: '', descriptiveTitle: '', prerequisites: [], units: '' }))
+                setCourse(({ code: '', courseno: '', descriptiveTitle: '', prerequisites: [], units: 0 }))
                 return
             }
         },
@@ -101,10 +99,13 @@ const CreateForm = () => {
 
     const handleSubmit = async () => {
         const { code, courseno, descriptiveTitle, units, prerequisites } = course
+
         const nospaceCode = (code ?? '').replace(/\s+/g, '')
-        const nospaceUnits = (units ?? '').replace(/\s+/g, '')
+        const nospaceUnits = String(units ?? '').replace(/\s+/g, '')
         const upperCourseno = (courseno ?? '').replace(/\s+/g, '').toUpperCase()
-        if (nospaceCode === '' || upperCourseno === '' || !descriptiveTitle || nospaceUnits === '') {
+        const trimmedDescriptiveTitle = descriptiveTitle?.trim()
+
+        if (nospaceCode === '' || upperCourseno === '' || !trimmedDescriptiveTitle || nospaceUnits === '') {
             setDialogSubmit(false)
             setValid(false)
             setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Please fill-up the required fields.' })
@@ -124,7 +125,7 @@ const CreateForm = () => {
             setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Units must be a number.' })
             return
         }
-        await insertCourse({ code: nospaceCode, courseno: upperCourseno, descriptiveTitle, units: nospaceUnits, prerequisites })
+        await insertCourse({ code: nospaceCode, courseno: upperCourseno, descriptiveTitle: trimmedDescriptiveTitle, units: Number(nospaceUnits), prerequisites })
     }
 
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
