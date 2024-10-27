@@ -3,4 +3,5 @@ export interface IAPIPrograms {
     code?: string
     descriptiveTitle?: string
     residency?: string
+    department?: string
 }
