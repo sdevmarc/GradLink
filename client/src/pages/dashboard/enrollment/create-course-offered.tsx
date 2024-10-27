@@ -11,7 +11,7 @@ import { DataTableCreateCourseOffered } from './enrollment-data-table-components
 import { CreateCourseOfferedColumns } from './enrollment-data-table-components/create-courses-offered/columns-create-course-offered'
 import { IAPICourse } from '@/interface/course.interface'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { API_COURSE_FINDALL_ACTIVE_IN_CURRICULUM, API_COURSE_UPDATE_COURSES_OFFERED } from '@/api/courses'
+import { API_COURSE_FINDALL, API_COURSE_UPDATE_COURSES_OFFERED } from '@/api/courses'
 
 export default function CreateCoursesOffered() {
     const queryClient = useQueryClient()
@@ -26,8 +26,8 @@ export default function CreateCoursesOffered() {
     })
 
     const { data: courses, isLoading: coursesLoading, isFetched: coursesFetched } = useQuery({
-        queryFn: () => API_COURSE_FINDALL_ACTIVE_IN_CURRICULUM(),
-        queryKey: ['curriculums']
+        queryFn: () => API_COURSE_FINDALL(),
+        queryKey: ['courses']
     })
 
     const { mutateAsync: updatecoursesoffered, isPending: updatecoursesofferedLoading } = useMutation({
