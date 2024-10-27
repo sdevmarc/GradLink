@@ -24,7 +24,7 @@ export const CurriculumColumns: ColumnDef<IAPICourse>[] = [
     {
         accessorKey: "programCode",
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Code" className="text-text" />
+            <DataTableColumnHeader column={column} title="Program Code" className="text-text" />
         ),
         cell: ({ row }) => (
             <div className="w-full capitalize">{row.getValue("programCode")}</div>
@@ -38,7 +38,7 @@ export const CurriculumColumns: ColumnDef<IAPICourse>[] = [
         cell: ({ row }) => {
             return (
                 <div className="flex space-x-2">
-                    <span className="max-w-[500px] truncate normal-case">
+                    <span className="max-w-[500px] truncate capitalize">
                         {row.getValue("major") === '' ? 'None' : row.getValue("major")}
                     </span>
                 </div>
