@@ -38,7 +38,7 @@ export const CreateCourseColumns: ColumnDef<IAPICourse>[] = [
     {
         accessorKey: "descriptiveTitle",
         header: 'Descriptive Title',
-        cell: ({ row }) => <div className="normal-case">{row.getValue("descriptiveTitle")}</div>,
+        cell: ({ row }) => <div className="capitalize">{row.getValue("descriptiveTitle")}</div>,
     },
     {
         accessorKey: "units",
