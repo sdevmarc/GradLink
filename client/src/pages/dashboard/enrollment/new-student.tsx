@@ -172,6 +172,7 @@ const CreateForm = () => {
                                     <div className="max-w-[400px] flex flex-col px-4 gap-1">
                                         <h1 className='text-[.83rem]'>Select Program</h1>
                                         <Combobox
+                                        className='w-[300px]'
                                             lists={formattedprograms || []}
                                             placeholder={`None`}
                                             setValue={(item) => setStudent(prev => ({ ...prev, program: item }))}
@@ -245,7 +246,7 @@ const CreateForm = () => {
                                         variant={'default'}
                                         btnTitle="Create new student"
                                         title="Are you sure?"
-                                        description={`This will add new programs to the current curriculum.`}
+                                        description={`This will add new student to the system and cannot be modified.`}
                                         btnContinue={handleSubmit}
                                     />
                                 </div>
