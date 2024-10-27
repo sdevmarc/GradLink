@@ -18,7 +18,7 @@ export interface IStudent {
     enrollments?: IStudentEnrollments[]
     status?: string
     isenrolled?: boolean
-
+    program?: string
 }
 
 export interface IRequestStudent {
