@@ -6,7 +6,20 @@ import {
 
 import { DataTableColumnHeader } from "@/components/data-table-components/data-table-column-header"
 import { IAPIStudents } from "@/interface/student.interface"
-import { DataTableRowActionsListOfStudent } from "./data-table-row-actions-list-of-students"
+import { Button } from "@/components/ui/button"
+import { RightSheetModal } from "@/components/right-sheet-modal"
+import { useState } from "react"
+
+const dateRangeFilter = (row: any, columnId: string, filterValue: [Date, Date]) => {
+    const cellDate = new Date(row.getValue(columnId));
+    const [start, end] = filterValue;
+
+    // Reset time part for accurate date comparison
+    const startDate = new Date(start.setHours(0, 0, 0, 0));
+    const endDate = new Date(end.setHours(23, 59, 59, 999));
+
+    return cellDate >= startDate && cellDate <= endDate;
+};
 
 export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
     {
@@ -99,7 +112,58 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
         enableSorting: false,
     },
     {
+        accessorKey: "program",
+        enableColumnFilter: true,
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id))
+        },
+        enableHiding: true,
+        enableSorting: false,
+    },
+    {
+        accessorKey: "department",
+        enableColumnFilter: true,
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id))
+        },
+        enableHiding: true,
+        enableSorting: false,
+    },
+    {
+        accessorKey: "createdAt",
+        enableColumnFilter: true,
+        filterFn: dateRangeFilter,
+        enableHiding: true,
+        enableSorting: false,
+    },
+    {
         id: "actions",
-        cell: ({ row }) => <DataTableRowActionsListOfStudent row={row} />
+        cell: ({ row }) => {
+            const [isOpen, setIsOpen] = useState<boolean>(false)
+
+            const handleViewDetails = () => {
+                setIsOpen(true)
+            }
+
+            const handleOpenChange = (open: boolean) => {
+                setIsOpen(open)
+            }
+            return (
+                <>
+                    <Button onClick={handleViewDetails} variant={`outline`} size={`sm`}>
+                        View Details
+                    </Button>
+                    <RightSheetModal
+                        className="w-[60%]"
+                        isOpen={isOpen}
+                        onOpenChange={handleOpenChange}
+                        title="Curriculum Details"
+                        description="View details of the selected curriculum."
+                        content={''}
+                    />
+                </>
+
+            )
+        }
     }
 ]
