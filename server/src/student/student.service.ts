@@ -1,15 +1,17 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { Model } from 'mongoose'
+import mongoose, { Model } from 'mongoose'
 import { IPromiseStudent, IRequestStudent, IStudent } from './student.interface'
 import { IModelForm } from 'src/forms/forms.interface'
 import { ICourses } from 'src/courses/courses.interface'
+import { IPrograms } from 'src/programs/programs.interface'
 
 @Injectable()
 export class StudentService {
     constructor(
         @InjectModel('Student') private readonly studentModel: Model<IStudent>,
         @InjectModel('Form') private readonly formModel: Model<IModelForm>,
+        @InjectModel('Program') private readonly programModel: Model<IPrograms>,
         @InjectModel('Course') private readonly courseModel: Model<ICourses>,
     ) { }
 
@@ -113,7 +115,83 @@ export class StudentService {
     async findAllEnrollees(): Promise<IPromiseStudent> {
         try {
             const response = await this.studentModel.find({ status: 'enrollee' }).sort({ createdAt: -1 })
+
             return { success: true, message: 'Enrollees fetched successfully', data: response }
+
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Enrollees failed to fetch.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async findAllEnrolleesInCourse(courseid: string): Promise<IPromiseStudent> {
+        try {
+            const response = await this.studentModel.aggregate([
+                // Match students with 'enrollee' status
+                { $match: { status: 'enrollee' } },
+
+                // Lookup to get program details
+                {
+                    $lookup: {
+                        from: 'programs',
+                        localField: 'program',
+                        foreignField: '_id',
+                        as: 'programInfo'
+                    }
+                },
+
+                // Lookup to get curriculum details for the program
+                {
+                    $lookup: {
+                        from: 'curriculums',
+                        localField: 'programInfo.code',
+                        foreignField: 'programCode',
+                        as: 'curriculumInfo'
+                    }
+                },
+
+                {
+                    $match: {
+                        'curriculumInfo.categories.courses': courseid
+                    }
+                },
+
+                // Match students who haven't passed the course
+                {
+                    $match: {
+                        'enrollments': {
+                            $not: {
+                                $elemMatch: {
+                                    'course': new mongoose.Types.ObjectId(courseid),
+                                    'ispass': 'pass'
+                                }
+                            }
+                        }
+                    }
+                },
+
+                // Project only the required fields
+                {
+                    $project: {
+                        _id: 1,
+                        createdAt: 1,
+                        updatedAt: 1,
+                        idNumber: 1,
+                        lastname: 1,
+                        firstname: 1,
+                        middlename: 1,
+                        email: 1
+                    }
+                }
+            ]);
+
+
+            return {
+                success: true,
+                message: 'Enrollees fetched successfully',
+                data: response
+            }
+
+
         } catch (error) {
             throw new HttpException({ success: false, message: 'Enrollees failed to fetch.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
@@ -363,18 +441,113 @@ export class StudentService {
     //     }
     // }
 
+    private capitalizeWords(str: string): string {
+        return str
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join(' ');
+    }
+
     async createEnrollee(
-        { idNumber, lastname, firstname, middlename, email }: IStudent
+        { idNumber, lastname, firstname, middlename, email, program }: IStudent
     ): Promise<IPromiseStudent> {
         try {
-            const isstudent = await this.studentModel.findOne({ idNumber })
-            if (isstudent) return { success: false, message: 'ID Number already exists.' }
+            // Input validation
+            if (!idNumber || !lastname || !firstname || !email) return { success: false, message: 'Required fields (ID number, last name, first name, email) cannot be empty.' }
 
-            const isemail = await this.studentModel.findOne({ email })
-            if (isemail) return { success: false, message: 'Email already exists.' }
+            // Program validation
+            if (!program || typeof program !== 'string' || program.trim() === '') {
+                return {
+                    success: false,
+                    message: 'A program must be selected.'
+                };
+            }
 
-            await this.studentModel.create({ idNumber, lastname, firstname, middlename, email })
-            return { success: true, message: 'Student successfully created.' }
+            // Normalize inputs
+            const normalizedData = {
+                idNumber: idNumber.toString().trim(),
+                lastname: lastname.trim(),
+                firstname: firstname.trim(),
+                middlename: middlename?.trim() || '',
+                email: email.trim().toLowerCase(),
+                program: program.trim()
+            }
+
+            // Email format validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(normalizedData.email)) {
+                return {
+                    success: false,
+                    message: 'Please provide a valid email address.'
+                };
+            }
+
+            // Name validation (prevent numbers and special characters)
+            const nameRegex = /^[a-zA-ZÀ-ÿ\s'-]+$/;
+            if (!nameRegex.test(normalizedData.lastname) ||
+                !nameRegex.test(normalizedData.firstname) ||
+                (normalizedData.middlename && !nameRegex.test(normalizedData.middlename))) {
+                return {
+                    success: false,
+                    message: 'Names should only contain letters, hyphens, and apostrophes.'
+                };
+            }
+
+            // ID Number validation and duplicate check
+            const existingIdNumber = await this.studentModel.findOne({
+                idNumber: {
+                    $regex: `^${normalizedData.idNumber.replace(/\s+/g, '\\s*')}$`,
+                    $options: 'i'
+                }
+            })
+
+            if (existingIdNumber) return { success: false, message: 'ID Number already exists.' }
+
+            // Email duplicate check
+            const existingEmail = await this.studentModel.findOne({
+                email: normalizedData.email
+            })
+
+            if (existingEmail) return { success: false, message: 'Email address already exists.' }
+
+            // // Check for similar names to prevent duplicates
+            // const similarStudent = await this.studentModel.findOne({
+            //     $and: [
+            //         {
+            //             lastname: {
+            //                 $regex: `^${normalizedData.lastname.replace(/\s+/g, '\\s*')}$`,
+            //                 $options: 'i'
+            //             }
+            //         },
+            //         {
+            //             firstname: {
+            //                 $regex: `^${normalizedData.firstname.replace(/\s+/g, '\\s*')}$`,
+            //                 $options: 'i'
+            //             }
+            //         },
+            //         {
+            //             middlename: normalizedData.middlename ? {
+            //                 $regex: `^${normalizedData.middlename.replace(/\s+/g, '\\s*')}$`,
+            //                 $options: 'i'
+            //             } : ''
+            //         }
+            //     ]
+            // })
+
+            // if (similarStudent)  return { success: false,message: 'A student with similar name already exists. Please verify if this is a duplicate entry.'}
+
+            // Create new student with normalized data
+            await this.studentModel.create({
+                idNumber: normalizedData.idNumber,
+                lastname: this.capitalizeWords(normalizedData.lastname),
+                firstname: this.capitalizeWords(normalizedData.firstname),
+                middlename: normalizedData.middlename ? this.capitalizeWords(normalizedData.middlename) : '',
+                email: normalizedData.email,
+                program: normalizedData.program
+            });
+
+            return { success: true, message: 'Student successfully created.', }
+
         } catch (error) {
             throw new HttpException({ success: false, message: 'Failed to create student.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
