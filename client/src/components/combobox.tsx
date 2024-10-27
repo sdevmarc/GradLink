@@ -29,9 +29,10 @@ interface IComboBox {
     placeholder: string
     value: string
     setValue: (e: string) => void
+    className?: string
 }
 
-export function Combobox({ lists, placeholder, value, setValue }: IComboBox) {
+export function Combobox({ lists, placeholder, value, setValue, className }: IComboBox) {
     const [open, setOpen] = React.useState(false)
     const [searchQuery, setSearchQuery] = React.useState("")
 
@@ -58,7 +59,7 @@ export function Combobox({ lists, placeholder, value, setValue }: IComboBox) {
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[300px] p-0">
+            <PopoverContent className={cn(className, `p-0`)}>
                 <Command>
                     <CommandInput placeholder={placeholder} />
                     <CommandList>
