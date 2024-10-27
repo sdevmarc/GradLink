@@ -5,6 +5,7 @@ export interface IPrograms {
     code?: string
     descriptiveTitle?: string
     residency?: number
+    department?: string
 }
 
 export interface IPromisePrograms {
