@@ -11,7 +11,6 @@ export class StudentService {
     constructor(
         @InjectModel('Student') private readonly studentModel: Model<IStudent>,
         @InjectModel('Form') private readonly formModel: Model<IModelForm>,
-        @InjectModel('Program') private readonly programModel: Model<IPrograms>,
         @InjectModel('Course') private readonly courseModel: Model<ICourses>,
     ) { }
 
@@ -20,7 +19,7 @@ export class StudentService {
             const students = await this.studentModel.aggregate([
                 {
                     $match: {
-                        status: { $in: ['student', 'alumni'] }
+                        status: { $in: ['student'] }
                     }
                 },
                 {
@@ -29,6 +28,14 @@ export class StudentService {
                         localField: 'enrollments.course',
                         foreignField: '_id',
                         as: 'courseDetails'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'programs',
+                        localField: 'program',
+                        foreignField: '_id',
+                        as: 'programDetails'
                     }
                 },
                 {
@@ -62,8 +69,10 @@ export class StudentService {
                                     $add: ['$$value', { $arrayElemAt: ['$$this.1.units', 0] }]
                                 }
                             }
-                        }
+                        },
+                        department: { $arrayElemAt: ['$programDetails.department', 0] }
                     }
+
                 },
                 {
                     $addFields: {
@@ -95,6 +104,8 @@ export class StudentService {
                         firstname: 1,
                         middlename: 1,
                         email: 1,
+                        program: 1,
+                        department: 1,
                         totalOfUnitsEnrolled: 1,
                         totalOfUnitsEarned: 1
                     }
@@ -127,7 +138,12 @@ export class StudentService {
         try {
             const response = await this.studentModel.aggregate([
                 // Match students with 'enrollee' status
-                { $match: { status: 'enrollee' } },
+                {
+                    $match: {
+                        status: { $in: ['student', 'enrollee'] }
+                    }
+                },
+                // { $match: { status: 'enrollee' } },
 
                 // Lookup to get program details
                 {
@@ -137,6 +153,11 @@ export class StudentService {
                         foreignField: '_id',
                         as: 'programInfo'
                     }
+                },
+
+                // Unwind programInfo since program is now a single ObjectId, not an array
+                {
+                    $unwind: '$programInfo'
                 },
 
                 // Lookup to get curriculum details for the program
@@ -151,23 +172,48 @@ export class StudentService {
 
                 {
                     $match: {
-                        'curriculumInfo.categories.courses': courseid
+                        'curriculumInfo.categories.courses': courseid,
+                        'curriculumInfo.isActive': true
                     }
                 },
 
-                // Match students who haven't passed the course
+                // Match only if the course exists in curriculum and curriculum is active
                 {
                     $match: {
-                        'enrollments': {
-                            $not: {
-                                $elemMatch: {
-                                    'course': new mongoose.Types.ObjectId(courseid),
-                                    'ispass': 'pass'
+                        'curriculumInfo.categories.courses': courseid,
+                        'curriculumInfo.isActive': true,
+                        // Ensure the student hasn't passed the course
+                        $nor: [
+                            {
+                                // Exclude if course exists in enrollments
+                                'enrollments.course': new mongoose.Types.ObjectId(courseid)
+                            },
+                            {
+                                // Exclude if course is passed
+                                enrollments: {
+                                    $elemMatch: {
+                                        course: new mongoose.Types.ObjectId(courseid),
+                                        ispass: 'pass'
+                                    }
                                 }
                             }
-                        }
+                        ]
                     }
                 },
+
+                // // Match students who haven't passed the course
+                // {
+                //     $match: {
+                //         'enrollments': {
+                //             $not: {
+                //                 $elemMatch: {
+                //                     'course': new mongoose.Types.ObjectId(courseid),
+                //                     'ispass': 'pass'
+                //                 }
+                //             }
+                //         }
+                //     }
+                // },
 
                 // Project only the required fields
                 {
