@@ -136,6 +136,7 @@ export function AlertDialogConfirmation({
                                     </div>
 
                                     <Combobox
+                                        className="w-[300px]"
                                         lists={semester}
                                         placeholder={`Select semester...`}
                                         setValue={(item) => setCombobox && setCombobox(item)}
@@ -165,7 +166,7 @@ export function AlertDialogConfirmation({
                         <AlertDialogContent>
                             <AlertDialogHeader>
                                 <AlertDialogTitle>{title}</AlertDialogTitle>
-                                <AlertDialogDescription>{description}</AlertDialogDescription>
+                                <AlertDialogDescription className="text-black/80">{description}</AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
