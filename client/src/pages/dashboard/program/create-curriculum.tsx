@@ -193,14 +193,14 @@ export default function CreateCurriculum() {
     const handleRemoveCategorizedCourse = (index: number) => {
         setValues(prev => ({
             ...prev,
-            categories: prev.categories.filter((_, i) => i !== index)
+            showcategories: (prev.showcategories || []).filter((_, i) => i !== index)
         }));
-
     };
 
     const handleSubmit = async () => {
         const { name, programCode, major, categories } = values
-        console.log({ name, programCode, major, categories })
+        const trimmedMajor = major.trim()
+
         setResetProgram(true)
         setShowCourses({
             categoryName: '',
@@ -218,13 +218,7 @@ export default function CreateCurriculum() {
             showcategories: []
         })
         setMajor(false)
-
-        // if (hascurriculum === '') {
-        //     setDialogSubmit(false)
-        //     setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Please fill-in the required fields.' })
-        //     return
-        // }
-        await addcurriculum({ name, programCode, major, categories })
+        await addcurriculum({ name, programCode, major: trimmedMajor, categories })
     }
 
     const isLoading = courseLoading || addcurriculumLoading
