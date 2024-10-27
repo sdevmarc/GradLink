@@ -157,8 +157,8 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                         className="w-[60%]"
                         isOpen={isOpen}
                         onOpenChange={handleOpenChange}
-                        title="Curriculum Details"
-                        description="View details of the selected curriculum."
+                        title="Student Details"
+                        description="View details of the selected student."
                         content={''}
                     />
                 </>
