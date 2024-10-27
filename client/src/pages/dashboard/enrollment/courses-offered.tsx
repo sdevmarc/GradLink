@@ -6,8 +6,16 @@ import { DataTableCoursesOfferedInEnrollment } from "./enrollment-data-table-com
 import { CoursesOfferedInEnrollmentColumns } from "./enrollment-data-table-components/courses-offered/columns-courses-offered-in-enrollment"
 import { useQuery } from "@tanstack/react-query"
 import { API_COURSE_FINDALL_COURSES_OFFERED } from "@/api/courses"
+import { useState } from "react"
 
 export default function Enrollment() {
+    const [isenroll, setEnroll] = useState<boolean>(false);
+
+    const toggleEnroll = () => {
+        setEnroll((prev) => !prev);
+        console.log("Enroll mode toggled:", !isenroll); // Check the toggling
+    };
+
     const { data: courses, isLoading: coursesLoading, isFetched: coursesFetched } = useQuery({
         queryFn: () => API_COURSE_FINDALL_COURSES_OFFERED(),
         queryKey: ['courses-offered']
@@ -34,7 +42,12 @@ export default function Enrollment() {
                         {coursesLoading && <div>Loading...</div>}
                         {
                             (!coursesLoading && coursesFetched) &&
-                            <DataTableCoursesOfferedInEnrollment columns={CoursesOfferedInEnrollmentColumns} data={courses?.data || []} />
+                            <DataTableCoursesOfferedInEnrollment
+                                columns={CoursesOfferedInEnrollmentColumns(isenroll)}
+                                data={courses?.data || []}
+                                isenroll={isenroll}
+                                setEnroll={toggleEnroll}
+                            />
                         }
                     </MainTable>
                 </main>
