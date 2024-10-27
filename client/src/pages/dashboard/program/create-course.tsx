@@ -265,7 +265,7 @@ const CreateForm = () => {
                             variant={'default'}
                             btnTitle="Create course"
                             title="Are you sure?"
-                            description={`This will add new programs to the current curriculum.`}
+                            description={`This will permanently add a new course to the system, and cannot be modified.`}
                             btnContinue={handleSubmit}
                         />
                     </div>
