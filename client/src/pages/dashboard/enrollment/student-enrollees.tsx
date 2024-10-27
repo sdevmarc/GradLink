@@ -29,7 +29,7 @@ export default function StudentEnrollees() {
                         <Sidebar>
                             <SidebarNavs title="Courses Offered" link={ROUTES.ENROLLMENT} />
                             <SidebarNavs bg='bg-muted' title="Enrollees" link={ROUTES.STUDENT_ENROLLEE} />
-                            <SidebarNavs title="Current Enrolled" link={ROUTES.CURRENTLY_ENROLLED} />
+                            {/* <SidebarNavs title="Current Enrolled" link={ROUTES.CURRENTLY_ENROLLED} /> */}
                         </Sidebar>
                         <MainTable>
                             {studentLoading && <div>Loading...</div>}
