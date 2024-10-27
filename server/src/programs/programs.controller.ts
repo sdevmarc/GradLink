@@ -23,9 +23,9 @@ export class ProgramsController {
 
     @Post('create')
     async createProgram(
-        @Body() { code, descriptiveTitle, residency }: IPrograms
+        @Body() { code, descriptiveTitle, residency, department }: IPrograms
     ) {
-        return await this.programService.insertNew({  code, descriptiveTitle, residency })
+        return await this.programService.insertNew({ code, descriptiveTitle, residency, department })
     }
 
     // @Post('add-program-to-active-curriculum')
