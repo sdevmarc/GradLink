@@ -12,7 +12,7 @@ export interface IAPICourse {
     courseno?: string
     descriptiveTitle?: string
     programs?: IPrograms[]
-    units?: string | ''
+    units?: number
     prerequisites?: IPrerequisite[]
 }
 
