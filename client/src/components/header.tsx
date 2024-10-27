@@ -167,6 +167,7 @@ const HeaderDashboard = () => {
                                             </BreadCrumbs>
                                         )
                                     case `/enrollment/enroll-student/${id}`:
+                                  
                                         return (
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
@@ -182,7 +183,7 @@ const HeaderDashboard = () => {
                                                     <Slash />
                                                 </BreadcrumbSeparator>
                                                 <BreadcrumbItem>
-                                                    <BreadcrumbPage className='text-md font-medium'>
+                                                    <BreadcrumbPage className='text-md font-medium capitalize'>
                                                         {coursename}
                                                     </BreadcrumbPage>
                                                 </BreadcrumbItem>
