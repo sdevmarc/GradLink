@@ -26,7 +26,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
         cell: ({ row }) => {
             return (
                 <div className="flex space-x-2">
-                    <span className="max-w-[500px] truncate normal-case">
+                    <span className="max-w-[500px] truncate capitalize">
                         {row.getValue("lastname")}
                     </span>
                 </div>
@@ -41,7 +41,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
         cell: ({ row }) => {
             return (
                 <div className="flex space-x-2">
-                    <span className="max-w-[500px] truncate normal-case">
+                    <span className="max-w-[500px] truncate capitalize">
                         {row.getValue("firstname")}
                     </span>
                 </div>
@@ -56,7 +56,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
         cell: ({ row }) => {
             return (
                 <div className="flex space-x-2">
-                    <span className="max-w-[500px] truncate normal-case">
+                    <span className="max-w-[500px] truncate capitalize">
                         {row.getValue("middlename")}
                     </span>
                 </div>
