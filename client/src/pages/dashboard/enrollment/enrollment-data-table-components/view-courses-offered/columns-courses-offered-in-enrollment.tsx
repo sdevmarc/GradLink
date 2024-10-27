@@ -6,7 +6,8 @@ import {
 
 import { IAPICourse } from '@/interface/course.interface'
 import { DataTableColumnHeader } from "@/components/data-table-components/data-table-column-header"
-import { DataTableRowActionsCoursesOfferedInEnrollment } from "./data-table-row-actions-enrollment"
+import { Button } from "@/components/ui/button"
+import { useNavigate } from "react-router-dom"
 
 export const CoursesOfferedInEnrollmentColumns: ColumnDef<IAPICourse>[] = [
     {
@@ -35,7 +36,7 @@ export const CoursesOfferedInEnrollmentColumns: ColumnDef<IAPICourse>[] = [
         cell: ({ row }) => {
             return (
                 <div className="flex space-x-2">
-                    <span className="max-w-[200px] truncate normal-case">
+                    <span className="max-w-[200px] truncate capitalize">
                         {row.getValue("descriptiveTitle")}
                     </span>
                 </div>
@@ -60,6 +61,21 @@ export const CoursesOfferedInEnrollmentColumns: ColumnDef<IAPICourse>[] = [
     },
     {
         id: "actions",
-        cell: ({ row }) => <DataTableRowActionsCoursesOfferedInEnrollment row={row} />
+        cell: ({ row }) => {
+            const navigate = useNavigate()
+            const handleNavigateEnrollStudent = () => {
+                const id = (row.original as any)._id
+                const descriptiveTitle = (row.original as any).descriptiveTitle
+                const combinedString = JSON.stringify({ id, descriptiveTitle });
+                const base64ID = btoa(combinedString)
+
+                navigate(`/enrollment/enroll-student/${base64ID}`)
+            }
+            return (
+                <Button onClick={handleNavigateEnrollStudent} variant={`outline`} size={`sm`}>
+                    Enroll Student
+                </Button>
+            )
+        }
     }
 ]
