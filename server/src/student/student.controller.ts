@@ -24,6 +24,11 @@ export class StudentController {
         return this.studentService.findAllEnrollees()
     }
 
+    @Get('enrollees/:id')
+    async findAllStudentStatusEnrolleesInCourse(@Param('id') id: string) {
+        return this.studentService.findAllEnrolleesInCourse(id)
+    }
+
     @Get('currently-enrolled')
     async findAllStudentCurrentlyEnrolled() {
         return this.studentService.findAllCurrentlyEnrolled()
@@ -57,9 +62,9 @@ export class StudentController {
 
     @Post('new-student')
     async createStudentEnrollee(
-        @Body() { idNumber, lastname, firstname, middlename, email }: IStudent
+        @Body() { idNumber, lastname, firstname, middlename, email, program }: IStudent
     ) {
-        return await this.studentService.createEnrollee({ idNumber, lastname, firstname, middlename, email })
+        return await this.studentService.createEnrollee({ idNumber, lastname, firstname, middlename, email, program })
     }
 
     @Post('enroll-student')
