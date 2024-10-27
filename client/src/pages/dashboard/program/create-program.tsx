@@ -68,8 +68,9 @@ export default function CreateProgram() {
         const { code, descriptiveTitle, residency } = values
         const upperCode = (code ?? '').replace(/\s+/g, '').toUpperCase()
         const noSpaceResidency = (residency ?? '').replace(/\s+/g, '').toUpperCase()
+        const trimmedDescriptiveTitle = descriptiveTitle?.trim()
 
-        if (upperCode === '' || !descriptiveTitle || noSpaceResidency === '') {
+        if (upperCode === '' || !trimmedDescriptiveTitle || noSpaceResidency === '') {
             setDialogSubmit(false)
             setValid(false)
             setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Please fill-up the required fields.' })
@@ -82,7 +83,7 @@ export default function CreateProgram() {
             setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Residency should be a number.' })
             return
         }
-        await addprogram({ code: upperCode, descriptiveTitle, residency: noSpaceResidency })
+        await addprogram({ code: upperCode, descriptiveTitle: trimmedDescriptiveTitle, residency: noSpaceResidency })
     }
 
     const isLoading = addprogramLoading
