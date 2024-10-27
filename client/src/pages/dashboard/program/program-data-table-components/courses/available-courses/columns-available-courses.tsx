@@ -37,7 +37,7 @@ export const AvailableCoursesColumns: ColumnDef<IAPICourse>[] = [
         cell: ({ row }) => {
             return (
                 <div className="flex space-x-2">
-                    <span className="max-w-[200px] truncate normal-case">
+                    <span className="max-w-[200px] truncate capitalize">
                         {row.getValue("descriptiveTitle")}
                     </span>
                 </div>
