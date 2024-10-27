@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input'
 import { IAPIPrograms } from '@/interface/program.interface'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { API_PROGRAM_NEW_PROGRAM } from '@/api/program'
+import { Combobox } from '@/components/combobox'
 
 export default function CreateProgram() {
     const queryClient = useQueryClient()
@@ -26,8 +27,16 @@ export default function CreateProgram() {
     const [values, setValues] = useState<IAPIPrograms>({
         code: '',
         descriptiveTitle: '',
-        residency: ''
+        residency: '',
+        department: ''
     })
+    const department = [
+        { label: 'School of Engineering, Architecture and Information Technology', value: 'SEAIT' },
+        { label: 'School of Accountancy and Business', value: 'SAB' },
+        { label: 'School of of Teacher Education and Humanities', value: 'STEH' },
+        { label: 'School of of Health and Natural Sciences', value: 'SHANS' },
+        { label: 'College of Law', value: 'CL' }
+    ]
 
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
@@ -54,7 +63,7 @@ export default function CreateProgram() {
                 setValid(true)
                 setDialogSubmit(false)
                 setAlertDialogState({ success: true, show: true, title: "Yay, success! 🎉", description: data.message })
-                setValues({ code: '', descriptiveTitle: '', residency: '' })
+                setValues({ code: '', descriptiveTitle: '', residency: '', department: '' })
                 return
             }
         },
@@ -65,12 +74,12 @@ export default function CreateProgram() {
     })
 
     const handleSubmit = async () => {
-        const { code, descriptiveTitle, residency } = values
+        const { code, descriptiveTitle, residency, department } = values
         const upperCode = (code ?? '').replace(/\s+/g, '').toUpperCase()
         const noSpaceResidency = (residency ?? '').replace(/\s+/g, '').toUpperCase()
         const trimmedDescriptiveTitle = descriptiveTitle?.trim()
 
-        if (upperCode === '' || !trimmedDescriptiveTitle || noSpaceResidency === '') {
+        if (upperCode === '' || !trimmedDescriptiveTitle || noSpaceResidency === '' || !department) {
             setDialogSubmit(false)
             setValid(false)
             setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Please fill-up the required fields.' })
@@ -83,7 +92,7 @@ export default function CreateProgram() {
             setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Residency should be a number.' })
             return
         }
-        await addprogram({ code: upperCode, descriptiveTitle: trimmedDescriptiveTitle, residency: noSpaceResidency })
+        await addprogram({ code: upperCode, descriptiveTitle: trimmedDescriptiveTitle, residency: noSpaceResidency, department })
     }
 
     const isLoading = addprogramLoading
@@ -155,6 +164,16 @@ export default function CreateProgram() {
                                                 required
                                             />
                                         </div>
+                                        <div className="overflow-hidden max-w-[500px] flex flex-col px-4 gap-1">
+                                            <h1 className='text-[.83rem]'>Select Department</h1>
+                                            <Combobox
+                                                className='w-[400px]'
+                                                lists={department || []}
+                                                placeholder={`None`}
+                                                setValue={(item) => setValues(prev => ({ ...prev, department: item }))}
+                                                value={values.department || ''}
+                                            />
+                                        </div>
                                         <div className="flex flex-col px-4 gap-1">
                                             <h1 className='text-[.83rem]'>Residency</h1>
                                             <Input
@@ -177,7 +196,7 @@ export default function CreateProgram() {
                                             variant={'default'}
                                             btnTitle="Create program"
                                             title="Are you sure?"
-                                            description={`This will add new programs to the current curriculum.`}
+                                            description={`This will permanently add a new program to the system and cannot be modified.`}
                                             btnContinue={handleSubmit}
                                         />
                                     </div>
