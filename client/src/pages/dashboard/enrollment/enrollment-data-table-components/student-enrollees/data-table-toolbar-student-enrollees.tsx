@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { DataTableViewOptions } from "@/components/data-table-components/data-table-view-options";
 import { AlertDialogConfirmation } from "@/components/alert-dialog";
 import { useNavigate } from "react-router-dom";
+import { ROUTES } from "@/constants";
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>;
@@ -80,6 +81,14 @@ export function DataTableToolbarStudentEnrollees<TData>({
                     title="Are you sure?"
                     description={`This will export the current data you are viewing.`}
                     btnContinue={() => navigate('/program')}
+                />
+                <AlertDialogConfirmation
+                    type={`default`}
+                    variant={'outline'}
+                    btnTitle="New Student"
+                    title="Are you sure?"
+                    description={`You will be redirect to a page for creating new courses offered.`}
+                    btnContinue={() => navigate(ROUTES.NEW_STUDENT)}
                 />
                 <DataTableViewOptions table={table} />
             </div>
