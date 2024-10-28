@@ -65,15 +65,6 @@ export function DataTableToolbarCoursesOfferedInEnrollment<TData>({
                 <AlertDialogConfirmation
                     type={`default`}
                     variant={'outline'}
-                    btnTitle="New Student"
-                    title="Are you sure?"
-                    description={`You will be redirect to a page for creating new courses offered.`}
-                    btnContinue={() => navigate(ROUTES.NEW_STUDENT)}
-                />
-
-                <AlertDialogConfirmation
-                    type={`default`}
-                    variant={'outline'}
                     btnTitle="Export"
                     title="Are you sure?"
                     description={`This will export the current data you are viewing.`}
