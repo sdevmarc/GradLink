@@ -18,14 +18,21 @@ interface DataTableToolbarProps<TData> {
     table: Table<TData>;
 }
 
+interface ProgramOption {
+    value: string;
+    label: string;
+    department: string;
+}
+
 export function DataTableToolbarListOfStudent<TData>({
     table
 }: DataTableToolbarProps<TData>) {
     const isFiltered = table.getState().columnFilters.length > 0;
-    const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({
-        from: new Date(new Date().getFullYear(), 0, 1),
-        to: new Date()
-    });
+    const [dateRange, setDateRange] = useState<{ from: Date; to: Date } | null>(null);
+    // const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({
+    //     from: new Date(new Date().getFullYear(), 0, 1),
+    //     to: new Date()
+    // });
 
     const handleDateSelect = ({ from, to }: { from: Date; to: Date }) => {
         setDateRange({ from, to });
@@ -40,7 +47,8 @@ export function DataTableToolbarListOfStudent<TData>({
         }
     }
     const navigate = useNavigate()
-    const [formattedprogram, setFormattedProgram] = useState([])
+    const [formattedprogram, setFormattedProgram] = useState<ProgramOption[]>([]);
+    const [filteredPrograms, setFilteredPrograms] = useState<ProgramOption[]>([]);
     const department_options = [
         { value: 'SEAIT', label: 'SEAIT' },
         { value: 'SHANS', label: 'SHANS' },
@@ -49,31 +57,48 @@ export function DataTableToolbarListOfStudent<TData>({
         { value: 'CL', label: 'CL' },
     ]
 
-    useEffect(() => {
-        // Set initial date filter when component mounts
-        if (dateRange.from && dateRange.to) {
-            table.getColumn("createdAt")?.setFilterValue([
-                dateRange.from,
-                dateRange.to
-            ]);
-        }
-    }, []);
-
     const { data: program, isLoading: programLoading, isFetched: programFetched } = useQuery({
         queryFn: () => API_PROGRAM_FINDALL(),
         queryKey: ['programs']
     })
 
     useEffect(() => {
-        if (programFetched) {
+        if (!programLoading && programFetched) {
             const formatprogram = program.data.map((item: IAPIPrograms) => {
-                const { _id, code } = item
-                return { value: _id, label: code }
+                const { _id, code, department } = item
+                return {  value: _id, label: code, department: department // Make sure your API returns this
+                }
             })
 
             setFormattedProgram(formatprogram)
+            setFilteredPrograms(formatprogram)
         }
     }, [program])
+
+    useEffect(() => {
+        const selectedDepartment = table.getColumn("department")?.getFilterValue() as string[];
+        
+        if (selectedDepartment && selectedDepartment.length > 0) {
+            const filtered = formattedprogram.filter((prog: any) => 
+                selectedDepartment.includes(prog.department)
+            );
+            setFilteredPrograms(filtered);
+            
+            // Clear program filter if selected program is not in filtered list
+            const currentProgramFilter = table.getColumn("program")?.getFilterValue() as string[];
+            if (currentProgramFilter && currentProgramFilter.length > 0) {
+                const validPrograms = filtered.map(p => p.value);
+                const newProgramFilter = currentProgramFilter.filter(p => 
+                    validPrograms.includes(p)
+                );
+                if (newProgramFilter.length !== currentProgramFilter.length) {
+                    table.getColumn("program")?.setFilterValue(newProgramFilter);
+                }
+            }
+        } else {
+            setFilteredPrograms(formattedprogram);
+        }
+    }, [table.getColumn("department")?.getFilterValue()]);
 
     return (
         <div className="flex flex-wrap items-center justify-between">
@@ -86,13 +111,6 @@ export function DataTableToolbarListOfStudent<TData>({
                     }}
                     className="h-8 w-[250px] lg:w-[300px]"
                 />
-                {(table.getColumn("program") && programFetched) && (
-                    <DataTableFacetedFilter
-                        column={table.getColumn("program")}
-                        title="Program"
-                        options={formattedprogram}
-                    />
-                )}
                 {table.getColumn("department") && (
                     <DataTableFacetedFilter
                         column={table.getColumn("department")}
@@ -100,8 +118,18 @@ export function DataTableToolbarListOfStudent<TData>({
                         options={department_options}
                     />
                 )}
+                {(table.getColumn("program") && programFetched) && (
+                    <DataTableFacetedFilter
+                        column={table.getColumn("program")}
+                        title="Program"
+                        options={filteredPrograms}
+                    />
+                )}
                 <CalendarDatePicker
-                    date={dateRange}
+                    date={dateRange || {
+                        from: new Date(new Date().getFullYear(), 0, 1),
+                        to: new Date()
+                    }}
                     onDateSelect={handleDateSelect}
                     className="w-[200px] h-8"
                     variant={`outline`}
