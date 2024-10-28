@@ -170,18 +170,19 @@ export class StudentService {
                     }
                 },
 
-                {
-                    $match: {
-                        'curriculumInfo.categories.courses': courseid,
-                        'curriculumInfo.isActive': true
-                    }
-                },
+                // {
+                //     $match: {
+                //         'curriculumInfo.categories.courses': courseid,
+                //         'curriculumInfo.isActive': true
+                //     }
+                // },
 
                 // Match only if the course exists in curriculum and curriculum is active
                 {
                     $match: {
                         'curriculumInfo.categories.courses': courseid,
-                        'curriculumInfo.isActive': true,
+                        // 'curriculumInfo.isActive': true,
+
                         // Ensure the student hasn't passed the course
                         $nor: [
                             {
