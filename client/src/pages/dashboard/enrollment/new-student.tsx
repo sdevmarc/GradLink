@@ -29,9 +29,9 @@ export default function NewStudent() {
                 </aside>
                 <main className="flex">
                     <Sidebar>
-                        <SidebarNavs bg='bg-muted' title="Courses Offered" link={ROUTES.ENROLLMENT} />
-                        <SidebarNavs title="Enrollees" link={ROUTES.STUDENT_ENROLLEE} />
-                        <SidebarNavs title="Current Enrolled" link={ROUTES.CURRENTLY_ENROLLED} />
+                        <SidebarNavs title="Courses Offered" link={ROUTES.ENROLLMENT} />
+                        <SidebarNavs bg='bg-muted' title="Enrollees" link={ROUTES.STUDENT_ENROLLEE} />
+                        {/* <SidebarNavs title="Current Enrolled" link={ROUTES.CURRENTLY_ENROLLED} /> */}
                     </Sidebar>
                     <CreateForm />
                 </main>
