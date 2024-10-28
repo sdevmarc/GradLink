@@ -74,16 +74,16 @@ export const CoursesOfferedInEnrollmentColumns = (isenroll: boolean): ColumnDef<
             }
             return (
                 <AlertDialogConfirmation
-                type="default"
-                variant="outline"
-                btnTitle={isenroll ? "Enroll Student" : "Evaluate Student"}
-                title="Are you sure?"
-                description={isenroll 
-                    ? `You will be redirected to a page for enrolling students in ${descriptiveTitle}`
-                    : `You will be redirected to a page for evaluating students in ${descriptiveTitle}`
-                }
-                btnContinue={handleNavigateEnrollStudent}
-            />
+                    type="default"
+                    variant={isenroll ? 'default' : 'outline'}
+                    btnTitle={isenroll ? "Enroll Student" : "Evaluate Student"}
+                    title="Are you sure?"
+                    description={isenroll
+                        ? `You will be redirected to a page for enrolling students in ${descriptiveTitle}`
+                        : `You will be redirected to a page for evaluating students in ${descriptiveTitle}`
+                    }
+                    btnContinue={handleNavigateEnrollStudent}
+                />
             )
         }
     }
