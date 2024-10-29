@@ -19,7 +19,7 @@ export class StudentService {
             const students = await this.studentModel.aggregate([
                 {
                     $match: {
-                        status: { $in: ['student'] }
+                        status: { $in: ['student', 'enrollee'] }
                     }
                 },
                 {
@@ -32,8 +32,16 @@ export class StudentService {
                 },
                 {
                     $lookup: {
-                        from: 'programs',
+                        from: 'curriculums',
                         localField: 'program',
+                        foreignField: '_id',
+                        as: 'curriculumDetails'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'programs',
+                        localField: 'curriculumDetails.programid',
                         foreignField: '_id',
                         as: 'programDetails'
                     }
@@ -94,6 +102,9 @@ export class StudentService {
                     }
                 },
                 {
+                    $unwind: '$programDetails'
+                },
+                {
                     $project: {
                         _id: 1,
                         idNumber: 1,
@@ -104,7 +115,7 @@ export class StudentService {
                         firstname: 1,
                         middlename: 1,
                         email: 1,
-                        program: 1,
+                        program: '$programDetails._id',
                         department: 1,
                         totalOfUnitsEnrolled: 1,
                         totalOfUnitsEarned: 1
@@ -123,6 +134,8 @@ export class StudentService {
         }
     }
 
+
+    //Will be removed
     async findAllEnrollees(): Promise<IPromiseStudent> {
         try {
             const response = await this.studentModel.find({ status: 'enrollee' }).sort({ createdAt: -1 })
@@ -134,89 +147,81 @@ export class StudentService {
         }
     }
 
+    //Copy paste lang sa baba, di pa nababago
     async findAllEnrolleesInCourse(courseid: string): Promise<IPromiseStudent> {
         try {
             const response = await this.studentModel.aggregate([
-                // Match students with 'enrollee' status
+                // Match students with valid status
                 {
                     $match: {
                         status: { $in: ['student', 'enrollee'] }
                     }
                 },
-                // { $match: { status: 'enrollee' } },
 
-                // Lookup to get program details
-                {
-                    $lookup: {
-                        from: 'programs',
-                        localField: 'program',
-                        foreignField: '_id',
-                        as: 'programInfo'
-                    }
-                },
-
-                // Unwind programInfo since program is now a single ObjectId, not an array
-                {
-                    $unwind: '$programInfo'
-                },
-
-                // Lookup to get curriculum details for the program
+                // Lookup curriculum details
                 {
                     $lookup: {
                         from: 'curriculums',
-                        localField: 'programInfo.code',
-                        foreignField: 'programCode',
+                        localField: 'program',  // program field in Student now references Curriculum
+                        foreignField: '_id',    // Changed from programid to _id since we're referencing Curriculum directly
                         as: 'curriculumInfo'
                     }
                 },
 
-                // {
-                //     $match: {
-                //         'curriculumInfo.categories.courses': courseid,
-                //         'curriculumInfo.isActive': true
-                //     }
-                // },
+                // Unwind curriculum array (since lookup returns an array)
+                {
+                    $unwind: '$curriculumInfo'
+                },
 
-                // Match only if the course exists in curriculum and curriculum is active
+                // Match students whose curriculum contains the course and is active
                 {
                     $match: {
-                        'curriculumInfo.categories.courses': courseid,
                         // 'curriculumInfo.isActive': true,
+                        'curriculumInfo.categories': {
+                            $elemMatch: {
+                                'courses': courseid
+                            }
+                        }
+                    }
+                },
 
-                        // Ensure the student hasn't passed the course
-                        $nor: [
+                // Match students who haven't passed or aren't currently enrolled in the course
+                {
+                    $match: {
+                        $or: [
+                            // No enrollments at all
+                            { enrollments: { $size: 0 } },
+
+                            // Has enrollments but not for this course or not passed
                             {
-                                // Exclude if course exists in enrollments
-                                'enrollments.course': new mongoose.Types.ObjectId(courseid)
-                            },
-                            {
-                                // Exclude if course is passed
-                                enrollments: {
-                                    $elemMatch: {
-                                        course: new mongoose.Types.ObjectId(courseid),
-                                        ispass: 'pass'
+                                $and: [
+                                    {
+                                        enrollments: {
+                                            $not: {
+                                                $elemMatch: {
+                                                    course: courseid,
+                                                    ispass: 'pass'
+                                                }
+                                            }
+                                        }
+                                    },
+                                    {
+                                        enrollments: {
+                                            $not: {
+                                                $elemMatch: {
+                                                    course: courseid,
+                                                    ispass: 'ongoing'
+                                                }
+                                            }
+                                        }
                                     }
-                                }
+                                ]
                             }
                         ]
                     }
                 },
 
-                // // Match students who haven't passed the course
-                // {
-                //     $match: {
-                //         'enrollments': {
-                //             $not: {
-                //                 $elemMatch: {
-                //                     'course': new mongoose.Types.ObjectId(courseid),
-                //                     'ispass': 'pass'
-                //                 }
-                //             }
-                //         }
-                //     }
-                // },
-
-                // Project only the required fields
+                // Project required fields
                 {
                     $project: {
                         _id: 1,
@@ -243,6 +248,108 @@ export class StudentService {
             throw new HttpException({ success: false, message: 'Enrollees failed to fetch.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
+
+    //Parang nasa active curriculum bumabase
+    // async findAllEnrolleesInCourse(courseid: string): Promise<IPromiseStudent> {
+    //     try {
+    //         const response = await this.studentModel.aggregate([
+    //             // Match students with valid status
+    //             {
+    //                 $match: {
+    //                     status: { $in: ['student', 'enrollee'] }
+    //                 }
+    //             },
+
+    //             // Lookup curriculum details
+    //             {
+    //                 $lookup: {
+    //                     from: 'curriculums',
+    //                     localField: 'program',  // program field in Student now references Curriculum
+    //                     foreignField: '_id',    // Changed from programid to _id since we're referencing Curriculum directly
+    //                     as: 'curriculumInfo'
+    //                 }
+    //             },
+
+    //             // Unwind curriculum array (since lookup returns an array)
+    //             {
+    //                 $unwind: '$curriculumInfo'
+    //             },
+
+    //             // Match students whose curriculum contains the course and is active
+    //             {
+    //                 $match: {
+    //                     // 'curriculumInfo.isActive': true,
+    //                     'curriculumInfo.categories': {
+    //                         $elemMatch: {
+    //                             'courses': courseid
+    //                         }
+    //                     }
+    //                 }
+    //             },
+
+    //             // Match students who haven't passed or aren't currently enrolled in the course
+    //             {
+    //                 $match: {
+    //                     $or: [
+    //                         // No enrollments at all
+    //                         { enrollments: { $size: 0 } },
+
+    //                         // Has enrollments but not for this course or not passed
+    //                         {
+    //                             $and: [
+    //                                 {
+    //                                     enrollments: {
+    //                                         $not: {
+    //                                             $elemMatch: {
+    //                                                 course: courseid,
+    //                                                 ispass: 'pass'
+    //                                             }
+    //                                         }
+    //                                     }
+    //                                 },
+    //                                 {
+    //                                     enrollments: {
+    //                                         $not: {
+    //                                             $elemMatch: {
+    //                                                 course: courseid,
+    //                                                 ispass: 'ongoing'
+    //                                             }
+    //                                         }
+    //                                     }
+    //                                 }
+    //                             ]
+    //                         }
+    //                     ]
+    //                 }
+    //             },
+
+    //             // Project required fields
+    //             {
+    //                 $project: {
+    //                     _id: 1,
+    //                     createdAt: 1,
+    //                     updatedAt: 1,
+    //                     idNumber: 1,
+    //                     lastname: 1,
+    //                     firstname: 1,
+    //                     middlename: 1,
+    //                     email: 1
+    //                 }
+    //             }
+    //         ]);
+
+
+    //         return {
+    //             success: true,
+    //             message: 'Enrollees fetched successfully',
+    //             data: response
+    //         }
+
+
+    //     } catch (error) {
+    //         throw new HttpException({ success: false, message: 'Enrollees failed to fetch.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+    //     }
+    // }
 
     async findAllCurrentlyEnrolled(): Promise<IPromiseStudent> {
         try {
@@ -496,7 +603,7 @@ export class StudentService {
     }
 
     async createEnrollee(
-        { idNumber, lastname, firstname, middlename, email, program }: IStudent
+        { idNumber, lastname, firstname, middlename, email, program, courses }: IStudent
     ): Promise<IPromiseStudent> {
         try {
             // Input validation
@@ -583,15 +690,29 @@ export class StudentService {
 
             // if (similarStudent)  return { success: false,message: 'A student with similar name already exists. Please verify if this is a duplicate entry.'}
 
-            // Create new student with normalized data
-            await this.studentModel.create({
+            // Prepare student data
+            const studentData = {
                 idNumber: normalizedData.idNumber,
                 lastname: this.capitalizeWords(normalizedData.lastname),
                 firstname: this.capitalizeWords(normalizedData.firstname),
                 middlename: normalizedData.middlename ? this.capitalizeWords(normalizedData.middlename) : '',
                 email: normalizedData.email,
-                program: normalizedData.program
-            });
+                program: new mongoose.Types.ObjectId(normalizedData.program),
+                status: 'enrollee'
+            };
+
+            // Add enrollments only if courses are provided
+            if (courses && Array.isArray(courses) && courses.length > 0) {
+                const enrollments = courses.map(courseId => ({
+                    course: new mongoose.Types.ObjectId(courseId),
+                    enrollmentDate: new Date(),
+                    ispass: 'ongoing'
+                }));
+                Object.assign(studentData, { enrollments });
+            }
+
+            // Create new student with normalized data
+            const newStudent = await this.studentModel.create(studentData);
 
             return { success: true, message: 'Student successfully created.', }
 
