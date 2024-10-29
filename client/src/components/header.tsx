@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/breadcrumb"
 import { ROUTES } from '@/constants'
 import { Input } from './ui/input'
-import { Button } from './ui/button'
 import { useEffect, useState } from 'react'
 import { Combobox } from './combobox'
 import { useQuery } from '@tanstack/react-query'
@@ -104,8 +103,6 @@ const HeaderDashboard = () => {
 
                                 switch (key) {
                                     case ROUTES.OVERVIEW:
-                                    case ROUTES.CURRENTLY_ENROLLED:
-                                    case ROUTES.STUDENT_ENROLLEE:
                                     case ROUTES.LIST_OF_STUDENTS:
                                     case ROUTES.ALUMNI_GRADUATES:
                                     case ROUTES.CURRICULUM:
@@ -410,6 +407,7 @@ export const HeaderTracer = () => {
             setFormattedProgram(formatprogram)
         }
     }, [program])
+    
     return (
         <>
             <div className="z-[1] fixed top-0 left-0 w-full h-[4rem] flex justify-center items-center">
