@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { Model } from 'mongoose'
+import mongoose, { Model } from 'mongoose'
 import { ICourses, IPromiseCourse, IRequestCourses } from './courses.interface'
 import { ICurriculum } from 'src/curriculum/curriculum.interface'
 
@@ -24,6 +24,33 @@ export class CoursesService {
     async findAllCoursesOffered(): Promise<IPromiseCourse> {
         try {
             const response = await this.CourseModel.find({ isoffered: true }).sort({ _id: -1 })
+
+            return { success: true, message: 'Courses fetched successfully', data: response }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Failed to fetch all program.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async findAllCoursesForAdditional({ curriculumid }: ICourses): Promise<IPromiseCourse> {
+        try {
+            const curriculum = await this.CurriculumModel.findById(curriculumid);
+
+            if (!curriculum) {
+                throw new HttpException(
+                    { success: false, message: 'Curriculum not found' },
+                    HttpStatus.NOT_FOUND
+                );
+            }
+
+            // Extract all course IDs from all categories
+            const curriculumCourseIds = curriculum.categories.reduce((acc, category) => {
+                return [...acc, ...category.courses.map(id => new mongoose.Types.ObjectId(id))];
+            }, []);
+
+            // Now find all courses that are not in the curriculum
+            const response = await this.CourseModel.find({
+                _id: { $nin: curriculumCourseIds }
+            });
 
             return { success: true, message: 'Courses fetched successfully', data: response }
         } catch (error) {
