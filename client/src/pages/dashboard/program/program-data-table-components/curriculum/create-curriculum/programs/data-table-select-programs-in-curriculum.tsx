@@ -68,16 +68,13 @@ export function DataTableSelectProgramsInCurriculum<TData, TValue>({
         const selectedRows = table.getFilteredSelectedRowModel().rows
         const program = selectedRows.map(row => {
             const original = row.original as IAPIPrograms
-            const { code, descriptiveTitle, } = original
-            return { code, descriptiveTitle }
+            const { _id, code, descriptiveTitle, } = original
+            return { _id, code, descriptiveTitle }
         })
 
         if (fetchAddedPrograms && program.length > 0) {
             fetchAddedPrograms(program[0])
-        } else {
-            fetchAddedPrograms({ programCode: '', descriptiveTitle: '' } as IAPIPrograms)
         }
-
 
     }, [rowSelection, table])
 
