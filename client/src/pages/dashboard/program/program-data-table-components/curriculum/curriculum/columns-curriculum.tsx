@@ -24,12 +24,12 @@ export const CurriculumColumns: ColumnDef<IAPICourse>[] = [
         enableHiding: false
     },
     {
-        accessorKey: "programCode",
+        accessorKey: "program",
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Program Code" className="text-text" />
+            <DataTableColumnHeader column={column} title="Program" className="text-text" />
         ),
         cell: ({ row }) => (
-            <div className="w-full capitalize">{row.getValue("programCode")}</div>
+            <div className="w-full capitalize">{row.getValue("program")}</div>
         )
     },
     {
