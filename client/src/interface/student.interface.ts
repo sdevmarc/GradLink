@@ -13,6 +13,7 @@ export interface IAPIStudents {
     status?: string
     enrollments?: IEnrollments[]
     program?: string
+    courses?: string[]
 }
 
 export interface IRequestStudents {
