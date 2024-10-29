@@ -27,7 +27,7 @@ import { SelectProgramInCurriculumColumns } from './program-data-table-component
 import { API_PROGRAM_FINDALL } from '@/api/program'
 import Loading from '@/components/loading'
 import { Progress } from '@/components/ui/progress'
-import { IRequestCourse, IRequestCurriculum, IShowCategories } from '@/interface/curriculum.interface'
+import { ICurriculum, IRequestCourse, IShowCategories } from '@/interface/curriculum.interface'
 import { API_NEW_CURRICULUM } from '@/api/curriculum'
 import { useNavigate } from 'react-router-dom'
 
@@ -48,10 +48,12 @@ export default function CreateCurriculum() {
         categoryName: '',
         courses: [],
     })
-    const [values, setValues] = useState<IRequestCurriculum>({
+    const [values, setValues] = useState<ICurriculum>({
         name: '',
-        programCode: '',
+        programid: '',
         major: '',
+        programcode: '',
+        programDescriptiveTitle: '',
         categories: [],
         showcategories: []
     })
@@ -93,6 +95,27 @@ export default function CreateCurriculum() {
                 })
                 navigate(ROUTES.CURRICULUM)
                 setAlertDialogState({ success: true, show: true, title: "Yay, success! 🎉", description: data.message })
+                
+                //Below are transferred.
+                setResetProgram(true)
+                setShowCourses({
+                    categoryName: '',
+                    courses: [],
+                })
+                setCategories({
+                    categoryName: '',
+                    courses: [],
+                })
+                setValues({
+                    name: '',
+                    programid: '',
+                    programcode: '',
+                    programDescriptiveTitle: '',
+                    major: '',
+                    categories: [],
+                    showcategories: []
+                })
+                setMajor(false)
                 return
             }
         },
@@ -198,27 +221,10 @@ export default function CreateCurriculum() {
     };
 
     const handleSubmit = async () => {
-        const { name, programCode, major, categories } = values
+        const { name, programid, major, categories } = values
         const trimmedMajor = major.trim()
 
-        setResetProgram(true)
-        setShowCourses({
-            categoryName: '',
-            courses: [],
-        })
-        setCategories({
-            categoryName: '',
-            courses: [],
-        })
-        setValues({
-            name: '',
-            programCode: '',
-            major: '',
-            categories: [],
-            showcategories: []
-        })
-        setMajor(false)
-        await addcurriculum({ name, programCode, major: trimmedMajor, categories })
+        await addcurriculum({ name, programid, major: trimmedMajor, categories })
     }
 
     const isLoading = courseLoading || addcurriculumLoading
@@ -285,7 +291,7 @@ export default function CreateCurriculum() {
                         }
 
                         if (step === 1 && !statusStepBack) {
-                            if (values.programCode === '') {
+                            if (values.programid === '') {
                                 setAlertDialogState({
                                     success: false,
                                     show: true,
@@ -349,15 +355,17 @@ export default function CreateCurriculum() {
                                             {step === 3 && 'Confirmation'}
                                         </span>
                                         <span className='text-md font-medium'>
-                                            {step} / 4 Done
+                                            {step} / 3 Done
                                         </span>
                                     </div>
-                                    <Progress value={(step / 4) * 100} className="w-full bg-muted" />
+                                    <Progress value={(step / 3) * 100} className="w-full bg-muted" />
                                 </div>
 
                                 <div className="flex flex-col border gap-4 rounded-md px-4">
                                     <div className="w-full py-3 border-b">
-                                        <h1 className='text-text font-semibold text-lg'>Configuration</h1>
+                                        <h1 className='text-text font-semibold text-lg'>
+                                            {step === 3 ? 'Summary' : 'Configuration'}
+                                        </h1>
                                     </div>
                                     <div className="w-full flex flex-col gap-4">
                                         <div className={`${step === 0 ? 'block' : 'hidden'} w-full flex flex-col gap-4`}>
@@ -399,10 +407,15 @@ export default function CreateCurriculum() {
                                                     <DataTableSelectProgramsInCurriculum
                                                         columns={SelectProgramInCurriculumColumns}
                                                         data={program?.data || []}
-                                                        fetchAddedPrograms={(e) => setValues(prev => ({
-                                                            ...prev,
-                                                            programCode: e?.code || ''
-                                                        }))}
+                                                        fetchAddedPrograms={(e) => {
+
+                                                            setValues(prev => ({
+                                                                ...prev,
+                                                                programid: e?._id || '',
+                                                                programcode: e?.code || '',
+                                                                programDescriptiveTitle: e?.descriptiveTitle || ''
+                                                            }))
+                                                        }}
                                                         reset={isresetprogram}
                                                     />
                                                 }
@@ -557,11 +570,6 @@ export default function CreateCurriculum() {
 
                                         <div className={`${step === 3 ? 'block' : 'hidden'} w-full flex flex-col gap-4`}>
                                             <div className="flex flex-col gap-2">
-                                                <h1 className='font-medium text-lg'>
-                                                    Summary
-                                                </h1>
-                                            </div>
-                                            <div className="flex flex-col gap-2">
                                                 <div className="flex flex-col px-6 gap-4">
                                                     <div className="flex flex-col gap-2">
                                                         <h1 className='text-md font-medium'>
@@ -573,7 +581,13 @@ export default function CreateCurriculum() {
                                                         <h1 className='text-md font-medium'>
                                                             Program Code
                                                         </h1>
-                                                        <Input value={values.programCode} readOnly />
+                                                        <Input value={values.programcode} readOnly />
+                                                    </div>
+                                                    <div className="flex flex-col gap-2">
+                                                        <h1 className='text-md font-medium'>
+                                                            Program Title
+                                                        </h1>
+                                                        <Input value={values.programDescriptiveTitle} readOnly />
                                                     </div>
                                                     <div className="flex flex-col gap-2">
                                                         <h1 className='text-md font-medium'>
