@@ -5,9 +5,9 @@ import { Table } from "@tanstack/react-table"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { DataTableViewOptions } from "@/components/data-table-components/data-table-view-options"
 import { AlertDialogConfirmation } from "@/components/alert-dialog"
 import { useNavigate } from "react-router-dom"
+import { ROUTES } from "@/constants"
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>
@@ -77,12 +77,20 @@ export function DataTableToolbarAlumni<TData>({
                 <AlertDialogConfirmation
                     type={`default`}
                     variant={'outline'}
+                    btnTitle="New Student"
+                    title="Are you sure?"
+                    description={`You will be redirect to page for creating new student.`}
+                    btnContinue={() => navigate(ROUTES.NEW_STUDENT)}
+                />
+                <AlertDialogConfirmation
+                    type={`default`}
+                    variant={'outline'}
                     btnTitle="Export"
                     title="Are you sure?"
                     description={`This will export the current data you are viewing.`}
                     btnContinue={() => navigate('/program')}
                 />
-                <DataTableViewOptions table={table} />
+                {/* <DataTableViewOptions table={table} /> */}
             </div>
         </div>
     )
