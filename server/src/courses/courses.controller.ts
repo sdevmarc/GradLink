@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { CoursesService } from './courses.service';
 import { ICourses, IRequestCourses } from './courses.interface';
+import mongoose from 'mongoose';
 
 @Controller('courses')
 export class CoursesController {
@@ -21,6 +22,11 @@ export class CoursesController {
     @Get('courses-active-curriculum')
     async findAllCoursesInActiveCurriculum() {
         return this.courseService.findAllCoursesInActiveCurricullum()
+    }
+
+    @Get('courses-additional/:curriculumid')
+    async findAllCoursesAddtional(@Param('curriculumid') curriculumid: string ) {
+        return this.courseService.findAllCoursesForAdditional({ curriculumid })
     }
 
     // @Get(':courseno')
