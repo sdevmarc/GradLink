@@ -14,7 +14,82 @@ export class CurriculumService {
     async findAll()
         : Promise<IPromiseCurriculum> {
         try {
-            const response = await this.CurriculumModel.find().sort({ updatedAt: -1 })
+            const response = await this.CurriculumModel.aggregate([
+                {
+                    $lookup: {
+                        from: 'programs',
+                        localField: 'programid',
+                        foreignField: '_id',
+                        as: 'programdetails'
+                    }
+                },
+                {
+                    $unwind: '$programdetails'
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        name: 1,
+                        program: '$programdetails.descriptiveTitle',
+                        createdAt: 1,
+                        updatedAt: 1,
+                        major: 1,
+                        categories: 1,
+                        isActive: 1
+                    }
+                },
+                {
+                    $sort: {
+                        createdAt: -1
+                    }
+                }
+            ])
+
+            return { success: true, message: 'Curriculumns fetched successfully.', data: response }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Failed to retrieve curriculums.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async findAllActive()
+        : Promise<IPromiseCurriculum> {
+        try {
+            const response = await this.CurriculumModel.aggregate([
+                {
+                    $match: {
+                        isActive: true
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'programs',
+                        localField: 'programid',
+                        foreignField: '_id',
+                        as: 'programdetails'
+                    }
+                },
+                {
+                    $unwind: '$programdetails'
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        name: 1,
+                        program: '$programdetails.descriptiveTitle',
+                        createdAt: 1,
+                        updatedAt: 1,
+                        major: 1,
+                        categories: 1,
+                        isActive: 1
+                    }
+                },
+                {
+                    $sort: {
+                        createdAt: -1
+                    }
+                }
+            ])
+
             return { success: true, message: 'Curriculumns fetched successfully.', data: response }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Failed to retrieve curriculums.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
@@ -45,14 +120,14 @@ export class CurriculumService {
     //     }
     // }
 
-    async insertNew({ name, programCode, major, categories }: ICurriculum) {
+    async insertNew({ name, programid, major, categories }: ICurriculum) {
         try {
-            if (!name || !programCode || categories.length === 0) return { success: false, message: 'Please fill-in the required fields.' }
+            if (!name || !programid || categories.length === 0) return { success: false, message: 'Please fill-in the required fields.' }
 
-            const activeCurriculum = await this.CurriculumModel.findOne({ programCode, isActive: true })
-            if (activeCurriculum) await this.CurriculumModel.updateMany({ programCode, isActive: true }, { isActive: false })
+            const activeCurriculum = await this.CurriculumModel.findOne({ programid, isActive: true })
+            if (activeCurriculum) await this.CurriculumModel.updateMany({ programid, isActive: true }, { isActive: false })
 
-            await this.CurriculumModel.create({ name, programCode, major, categories })
+            await this.CurriculumModel.create({ name, programid, major, categories })
             return { success: true, message: 'Curriculum successfully created.' }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Failed to create new curriculum.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
