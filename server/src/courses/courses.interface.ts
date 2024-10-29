@@ -11,6 +11,7 @@ export interface ICourses {
     units?: number
     prerequisites?: IPrerequisite[]
     isoffered?: boolean
+    curriculumid?: string
 }
 
 export interface IRequestCourses {
