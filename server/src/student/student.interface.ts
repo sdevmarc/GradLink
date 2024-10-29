@@ -19,6 +19,7 @@ export interface IStudent {
     status?: string
     isenrolled?: boolean
     program?: string
+    courses?: string[]
 }
 
 export interface IRequestStudent {
