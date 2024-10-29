@@ -10,10 +10,14 @@ export interface IShowCategories {
     courses?: IAPICourse[]
 }
 
-export interface IRequestCurriculum {
+export interface ICurriculum {
+    _id?: string
     name: string
-    programCode: string
+    programid: string
     major: string
     categories: IRequestCourse[]
     showcategories?: IShowCategories[]
+    program?: string
+    programcode?: string
+    programDescriptiveTitle?: string
 }
