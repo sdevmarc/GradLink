@@ -14,6 +14,7 @@ export interface IAPICourse {
     programs?: IPrograms[]
     units?: number
     prerequisites?: IPrerequisite[]
+    curriculumid?: string
 }
 
 export interface IRequestUpdateCourse {
