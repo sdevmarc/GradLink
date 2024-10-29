@@ -9,8 +9,13 @@ export class CurriculumController {
     ) { }
 
     @Get()
-    async findAllActiveCurriculum() {
+    async findAllCurriculum() {
         return await this.CurriculumService.findAll()
+    }
+
+    @Get('active')
+    async findAllActiveCurriculum() {
+        return await this.CurriculumService.findAllActive()
     }
 
     // @Get('legacy')
@@ -19,7 +24,7 @@ export class CurriculumController {
     // }
 
     @Post('create')
-    async insertCurriculum(@Body() { name, programCode, major, categories }: ICurriculum) {
-        return this.CurriculumService.insertNew({ name, programCode, major, categories })
+    async insertCurriculum(@Body() { name, programid, major, categories }: ICurriculum) {
+        return this.CurriculumService.insertNew({ name, programid, major, categories })
     }
 }
