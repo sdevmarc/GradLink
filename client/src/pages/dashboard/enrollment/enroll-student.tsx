@@ -119,8 +119,6 @@ export default function EnrollStudent() {
                     <main className="flex">
                         <Sidebar>
                             <SidebarNavs bg='bg-muted' title="Courses Offered" link={ROUTES.ENROLLMENT} />
-                            <SidebarNavs title="Enrollees" link={ROUTES.STUDENT_ENROLLEE} />
-                            {/* <SidebarNavs title="Current Enrolled" link={ROUTES.CURRENTLY_ENROLLED} /> */}
                         </Sidebar>
                         <MainTable>
                             <div className="flex flex-col border gap-4 rounded-md">
