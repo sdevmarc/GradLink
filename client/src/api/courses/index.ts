@@ -20,6 +20,15 @@ export const API_COURSE_FINDALL_COURSES_OFFERED = async () => {
     }
 }
 
+export const API_COURSE_FINDALL_COURSES_IN_NEW_STUDENT = async ({ curriculumid }: IAPICourse) => {
+    try {
+        const response = await axios.get(`${HOST}/courses/courses-additional/${curriculumid}`)
+        return response.data
+    } catch (error) {
+        console.error(error)
+    }
+}
+
 export const API_COURSE_FINDALL_ACTIVE_IN_CURRICULUM = async () => {
     try {
         const response = await axios.get(`${HOST}/courses/courses-active-curriculum`)
