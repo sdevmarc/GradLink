@@ -4,8 +4,9 @@ interface ICategories {
 }
 
 export interface ICurriculum {
+    _id?: string
     name?: string
-    programCode?: string
+    programid?: string
     major?: string
     categories?: ICategories[]
     isActive?: boolean
