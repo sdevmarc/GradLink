@@ -5,8 +5,8 @@ export const CurriculumSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    programCode: {
-        type: String,
+    programid: {
+        type: mongoose.Schema.Types.ObjectId,
         required: true,
     },
     major: {
