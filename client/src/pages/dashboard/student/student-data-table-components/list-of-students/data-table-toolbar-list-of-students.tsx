@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { IAPIPrograms } from "@/interface/program.interface";
 import { DataTableFacetedFilter } from "@/components/data-table-components/data-table-faceted-filter";
 import { CalendarDatePicker } from "@/components/calendar-date-picker";
+import { ROUTES } from "@/constants";
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>;
@@ -66,7 +67,8 @@ export function DataTableToolbarListOfStudent<TData>({
         if (!programLoading && programFetched) {
             const formatprogram = program.data.map((item: IAPIPrograms) => {
                 const { _id, code, department } = item
-                return {  value: _id, label: code, department: department // Make sure your API returns this
+                return {
+                    value: _id, label: code, department: department // Make sure your API returns this
                 }
             })
 
@@ -77,18 +79,18 @@ export function DataTableToolbarListOfStudent<TData>({
 
     useEffect(() => {
         const selectedDepartment = table.getColumn("department")?.getFilterValue() as string[];
-        
+
         if (selectedDepartment && selectedDepartment.length > 0) {
-            const filtered = formattedprogram.filter((prog: any) => 
+            const filtered = formattedprogram.filter((prog: any) =>
                 selectedDepartment.includes(prog.department)
             );
             setFilteredPrograms(filtered);
-            
+
             // Clear program filter if selected program is not in filtered list
             const currentProgramFilter = table.getColumn("program")?.getFilterValue() as string[];
             if (currentProgramFilter && currentProgramFilter.length > 0) {
                 const validPrograms = filtered.map(p => p.value);
-                const newProgramFilter = currentProgramFilter.filter(p => 
+                const newProgramFilter = currentProgramFilter.filter(p =>
                     validPrograms.includes(p)
                 );
                 if (newProgramFilter.length !== currentProgramFilter.length) {
@@ -147,6 +149,15 @@ export function DataTableToolbarListOfStudent<TData>({
                 )}
             </div>
             <div className="flex gap-2 items-center">
+                <AlertDialogConfirmation
+                    type={`default`}
+                    variant={'outline'}
+                    btnTitle="New Student"
+                    title="Are you sure?"
+                    description={`You will be redirect to page for creating new student.`}
+                    btnContinue={() => navigate(ROUTES.NEW_STUDENT)}
+                />
+
                 <AlertDialogConfirmation
                     type={`default`}
                     variant={'outline'}
