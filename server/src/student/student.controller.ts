@@ -62,9 +62,9 @@ export class StudentController {
 
     @Post('new-student')
     async createStudentEnrollee(
-        @Body() { idNumber, lastname, firstname, middlename, email, program }: IStudent
+        @Body() { idNumber, lastname, firstname, middlename, email, program, courses }: IStudent
     ) {
-        return await this.studentService.createEnrollee({ idNumber, lastname, firstname, middlename, email, program })
+        return await this.studentService.createEnrollee({ idNumber, lastname, firstname, middlename, email, program, courses })
     }
 
     @Post('enroll-student')
