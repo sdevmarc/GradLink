@@ -177,7 +177,7 @@ export default function CreateProgram() {
                                         </div>
                                         <div className="flex flex-col px-4 gap-1">
                                             <h1 className="text-md font-medium">
-                                                Residency
+                                                Residency (Years)
                                             </h1>
                                             <Input
                                                 value={values.residency}
