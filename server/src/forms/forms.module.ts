@@ -8,6 +8,7 @@ import { StudentSchema } from 'src/student/student.schema'
 import { StudentService } from 'src/student/student.service'
 import { CoursesSchema } from 'src/courses/courses.schema'
 import { ProgramSchema } from 'src/programs/programs.schema'
+import { OfferedSchema } from 'src/offered/offered.schema'
 
 @Module({
     imports: [MongooseModule.forFeature([
@@ -15,6 +16,7 @@ import { ProgramSchema } from 'src/programs/programs.schema'
         { name: 'Student', schema: StudentSchema },
         { name: 'Course', schema: CoursesSchema },
         { name: 'Program', schema: ProgramSchema },
+        { name: 'Offered', schema: OfferedSchema },
     ])],
     providers: [
         FormsService,
