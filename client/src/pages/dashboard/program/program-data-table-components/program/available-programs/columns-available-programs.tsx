@@ -166,7 +166,7 @@ export const AvailableProgramsColumns: ColumnDef<IAPIPrograms>[] = [
                                                                                         {(course as any)?.descriptiveTitle || 'No Title'}
                                                                                     </div>
                                                                                     <h1 className="flex items-center gap-2">
-                                                                                        {(course as any)?.units}<span>Units</span>
+                                                                                        {(course as any)?.units || 0}<span>Units</span>
                                                                                     </h1>
                                                                                 </li>
                                                                             </ul>
