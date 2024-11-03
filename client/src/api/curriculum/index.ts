@@ -20,9 +20,9 @@ export const API_CURRICULUM_FINDALL_ACTIVE = async () => {
     }
 }
 
-export const API_NEW_CURRICULUM = async ({ name, programid, major, categories }: ICurriculum) => {
+export const API_NEW_CURRICULUM = async ({ name, programid, major, categories, department }: ICurriculum) => {
     try {
-        const response = await axios.post(`${HOST}/curriculum/create`, { name, programid, major, categories })
+        const response = await axios.post(`${HOST}/curriculum/create`, { name, programid, major, categories, department })
         return response.data
     } catch (error) {
         console.error(error)
