@@ -7,98 +7,102 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AlertDialogConfirmation } from "@/components/alert-dialog";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { CalendarDatePicker } from "@/components/calendar-date-picker";
+import { useEffect, useState } from "react";
 import { ROUTES } from "@/constants";
 import { DataTableFacetedFilter } from "@/components/data-table-components/data-table-faceted-filter";
 import { Plus } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { API_PROGRAM_FINDALL } from "@/api/program";
+import { IAPIPrograms } from "@/interface/program.interface";
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>;
 }
 
-// interface ProgramOption {
-//     value: string;
-//     label: string;
-//     department: string;
-// }
+interface ProgramOption {
+    value: string;
+    label: string;
+    department: string;
+}
 
 export function DataTableToolbarListOfStudent<TData>({
     table
 }: DataTableToolbarProps<TData>) {
     const isFiltered = table.getState().columnFilters.length > 0;
-    const [dateRange, setDateRange] = useState<{ from: Date; to: Date } | null>(null);
+    const navigate = useNavigate()
+    const [formattedprogram, setFormattedProgram] = useState<ProgramOption[]>([]);
+    const [filteredPrograms, setFilteredPrograms] = useState<ProgramOption[]>([]);
+    // const [dateRange, setDateRange] = useState<{ from: Date; to: Date } | null>(null);
     // const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({
     //     from: new Date(new Date().getFullYear(), 0, 1),
     //     to: new Date()
-    // });
+    // }); //This is a no no
 
-    const handleDateSelect = ({ from, to }: { from: Date; to: Date }) => {
-        setDateRange({ from, to });
-        // Filter table data based on selected date range
-        if (from && to) {
-            table.getColumn("createdAt")?.setFilterValue([
-                new Date(from),
-                new Date(to)
-            ]);
-        } else {
-            table.getColumn("createdAt")?.setFilterValue(undefined);
-        }
-    }
-    const navigate = useNavigate()
-    // const [formattedprogram, setFormattedProgram] = useState<ProgramOption[]>([]);
-    // const [filteredPrograms, setFilteredPrograms] = useState<ProgramOption[]>([]);
-    // const department_options = [
-    //     { value: 'SEAIT', label: 'SEAIT' },
-    //     { value: 'SHANS', label: 'SHANS' },
-    //     { value: 'SAB', label: 'SAB' },
-    //     { value: 'STEH', label: 'STEH' },
-    //     { value: 'CL', label: 'CL' },
-    // ]
-
-    // const { data: program, isLoading: programLoading, isFetched: programFetched } = useQuery({
-    //     queryFn: () => API_PROGRAM_FINDALL(),
-    //     queryKey: ['programs']
-    // })
-
-    // useEffect(() => {
-    //     if (!programLoading && programFetched) {
-    //         const formatprogram = program.data.map((item: IAPIPrograms) => {
-    //             const { _id, code, department } = item
-    //             return {
-    //                 value: _id, label: code, department: department // Make sure your API returns this
-    //             }
-    //         })
-
-    //         setFormattedProgram(formatprogram)
-    //         setFilteredPrograms(formatprogram)
-    //     }
-    // }, [program])
-
-    // useEffect(() => {
-    //     const selectedDepartment = table.getColumn("department")?.getFilterValue() as string[];
-
-    //     if (selectedDepartment && selectedDepartment.length > 0) {
-    //         const filtered = formattedprogram.filter((prog: any) =>
-    //             selectedDepartment.includes(prog.department)
-    //         );
-    //         setFilteredPrograms(filtered);
-
-    //         // Clear program filter if selected program is not in filtered list
-    //         const currentProgramFilter = table.getColumn("program")?.getFilterValue() as string[];
-    //         if (currentProgramFilter && currentProgramFilter.length > 0) {
-    //             const validPrograms = filtered.map(p => p.value);
-    //             const newProgramFilter = currentProgramFilter.filter(p =>
-    //                 validPrograms.includes(p)
-    //             );
-    //             if (newProgramFilter.length !== currentProgramFilter.length) {
-    //                 table.getColumn("program")?.setFilterValue(newProgramFilter);
-    //             }
-    //         }
+    // const handleDateSelect = ({ from, to }: { from: Date; to: Date }) => {
+    //     setDateRange({ from, to });
+    //     // Filter table data based on selected date range
+    //     if (from && to) {
+    //         table.getColumn("createdAt")?.setFilterValue([
+    //             new Date(from),
+    //             new Date(to)
+    //         ]);
     //     } else {
-    //         setFilteredPrograms(formattedprogram);
+    //         table.getColumn("createdAt")?.setFilterValue(undefined);
     //     }
-    // }, [table.getColumn("department")?.getFilterValue()]);
+    // }
+
+
+    const department_options = [
+        { value: 'SEAIT', label: 'SEAIT' },
+        { value: 'SHANS', label: 'SHANS' },
+        { value: 'SAB', label: 'SAB' },
+        { value: 'STEH', label: 'STEH' },
+        { value: 'CL', label: 'CL' },
+    ]
+
+    const { data: program, isLoading: programLoading, isFetched: programFetched } = useQuery({
+        queryFn: () => API_PROGRAM_FINDALL(),
+        queryKey: ['programs']
+    })
+
+    useEffect(() => {
+        if (!programLoading && programFetched) {
+            const formatprogram = program.data.map((item: IAPIPrograms) => {
+                const { _id, code, department } = item
+                return {
+                    value: _id, label: code, department: department // Make sure your API returns this
+                }
+            })
+
+            setFormattedProgram(formatprogram)
+            setFilteredPrograms(formatprogram)
+        }
+    }, [program])
+
+    useEffect(() => {
+        const selectedDepartment = table.getColumn("department")?.getFilterValue() as string[];
+
+        if (selectedDepartment && selectedDepartment.length > 0) {
+            const filtered = formattedprogram.filter((prog: any) =>
+                selectedDepartment.includes(prog.department)
+            );
+            setFilteredPrograms(filtered);
+
+            // Clear program filter if selected program is not in filtered list
+            const currentProgramFilter = table.getColumn("program")?.getFilterValue() as string[];
+            if (currentProgramFilter && currentProgramFilter.length > 0) {
+                const validPrograms = filtered.map(p => p.value);
+                const newProgramFilter = currentProgramFilter.filter(p =>
+                    validPrograms.includes(p)
+                );
+                if (newProgramFilter.length !== currentProgramFilter.length) {
+                    table.getColumn("program")?.setFilterValue(newProgramFilter);
+                }
+            }
+        } else {
+            setFilteredPrograms(formattedprogram);
+        }
+    }, [table.getColumn("department")?.getFilterValue()]);
 
     return (
         <div className="flex flex-wrap items-center justify-between">
@@ -111,17 +115,7 @@ export function DataTableToolbarListOfStudent<TData>({
                     }}
                     className="h-8 w-[250px] lg:w-[300px]"
                 />
-                <DataTableFacetedFilter
-                    column={table.getColumn("department")}
-                    title="Department"
-                    options={[]}
-                />
-                <DataTableFacetedFilter
-                    column={table.getColumn("department")}
-                    title="Program"
-                    options={[]}
-                />
-                {/* {table.getColumn("department") && (
+                {table.getColumn("department") && (
                     <DataTableFacetedFilter
                         column={table.getColumn("department")}
                         title="Department"
@@ -134,7 +128,7 @@ export function DataTableToolbarListOfStudent<TData>({
                         title="Program"
                         options={filteredPrograms}
                     />
-                )} */}
+                )}
                 {/* <CalendarDatePicker
                     date={dateRange || {
                         from: new Date(new Date().getFullYear(), 0, 1),
