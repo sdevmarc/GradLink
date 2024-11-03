@@ -48,8 +48,20 @@ export class StudentService {
                     }
                 },
                 {
+                    $lookup: {
+                        from: 'offereds',
+                        pipeline: [
+                            {
+                                $match: {
+                                    isActive: true
+                                }
+                            }
+                        ],
+                        as: 'offeredDetails'
+                    }
+                },
+                {
                     $addFields: {
-                        // Calculate total units enrolled
                         totalOfUnitsEnrolled: {
                             $reduce: {
                                 input: '$courseDetails',
@@ -57,7 +69,6 @@ export class StudentService {
                                 in: { $add: ['$$value', '$$this.units'] }
                             }
                         },
-                        // Fixed calculation for total units earned
                         totalOfUnitsEarned: {
                             $reduce: {
                                 input: {
@@ -91,6 +102,129 @@ export class StudentService {
                                             }
                                         }
                                     ]
+                                }
+                            }
+                        },
+                        detailedEnrollments: {
+                            $map: {
+                                input: '$enrollments',
+                                as: 'enrollment',
+                                in: {
+                                    $let: {
+                                        vars: {
+                                            courseDetail: {
+                                                $arrayElemAt: [
+                                                    {
+                                                        $filter: {
+                                                            input: '$courseDetails',
+                                                            as: 'course',
+                                                            cond: { $eq: ['$$course._id', '$$enrollment.course'] }
+                                                        }
+                                                    },
+                                                    0
+                                                ]
+                                            },
+                                            offeredDetail: {
+                                                $arrayElemAt: [
+                                                    {
+                                                        $filter: {
+                                                            input: '$offeredDetails',
+                                                            as: 'offered',
+                                                            cond: {
+                                                                $and: [
+                                                                    { $in: ['$$enrollment.course', '$$offered.courses'] },
+                                                                    {
+                                                                        $and: [
+                                                                            { $lte: ['$$offered.createdAt', '$$enrollment.enrollmentDate'] },
+                                                                            { $eq: ['$$offered.isActive', true] }
+                                                                        ]
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    },
+                                                    0
+                                                ]
+                                            }
+                                        },
+                                        in: {
+                                            _id: '$$courseDetail._id',
+                                            code: '$$courseDetail.code',
+                                            courseno: '$$courseDetail.courseno',
+                                            descriptiveTitle: '$$courseDetail.descriptiveTitle',
+                                            units: '$$courseDetail.units',
+                                            enrollmentDate: '$$enrollment.enrollmentDate',
+                                            status: '$$enrollment.ispass',
+                                            semester: '$$offeredDetail.semester',
+                                            academicYear: {
+                                                startDate: '$$offeredDetail.academicYear.startDate',
+                                                endDate: '$$offeredDetail.academicYear.endDate'
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    $addFields: {
+                        enrolledCourses: {
+                            $reduce: {
+                                input: '$detailedEnrollments',
+                                initialValue: [],
+                                in: {
+                                    $cond: {
+                                        if: {
+                                            $gt: [
+                                                {
+                                                    $size: {
+                                                        $filter: {
+                                                            input: '$$value',
+                                                            as: 'year',
+                                                            cond: {
+                                                                $and: [
+                                                                    { $eq: ['$$year.academicYear.startDate', '$$this.academicYear.startDate'] },
+                                                                    { $eq: ['$$year.academicYear.endDate', '$$this.academicYear.endDate'] }
+                                                                ]
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                0
+                                            ]
+                                        },
+                                        then: {
+                                            $map: {
+                                                input: '$$value',
+                                                as: 'year',
+                                                in: {
+                                                    $cond: {
+                                                        if: {
+                                                            $and: [
+                                                                { $eq: ['$$year.academicYear.startDate', '$$this.academicYear.startDate'] },
+                                                                { $eq: ['$$year.academicYear.endDate', '$$this.academicYear.endDate'] }
+                                                            ]
+                                                        },
+                                                        then: {
+                                                            academicYear: '$$year.academicYear',
+                                                            courses: { $concatArrays: ['$$year.courses', ['$$this']] }
+                                                        },
+                                                        else: '$$year'
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        else: {
+                                            $concatArrays: [
+                                                '$$value',
+                                                [{
+                                                    academicYear: '$$this.academicYear',
+                                                    courses: ['$$this']
+                                                }]
+                                            ]
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -135,7 +269,8 @@ export class StudentService {
                         isenrolled: 1,
                         department: '$programDetails.department',
                         totalOfUnitsEnrolled: 1,
-                        totalOfUnitsEarned: 1
+                        totalOfUnitsEarned: 1,
+                        enrolledCourses: 1
                     }
                 },
                 {
@@ -145,9 +280,12 @@ export class StudentService {
                 }
             ]);
 
-            return { success: true, message: 'Students fetched successfully', data: response }
+            return { success: true, message: 'Students fetched successfully', data: response };
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Enrollees failed to fetch.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+            throw new HttpException(
+                { success: false, message: 'Enrollees failed to fetch.', error },
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
         }
     }
 
