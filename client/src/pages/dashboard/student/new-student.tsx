@@ -1,9 +1,7 @@
 import HeadSection, { BackHeadSection, SubHeadSectionDetails } from '@/components/head-section'
-import { Sidebar, SidebarNavs } from '@/components/sidebar'
 import { Input } from '@/components/ui/input'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import * as React from "react"
-import { ROUTES } from '@/constants'
 import { IAPIStudents } from '@/interface/student.interface'
 import { API_STUDENT_NEW_STUDENT } from '@/api/student'
 import { CircleCheck, CircleX, Plus, X } from 'lucide-react'
@@ -31,11 +29,7 @@ export default function NewStudent() {
                         />
                     </HeadSection>
                 </aside>
-                <main className="flex">
-                    <Sidebar>
-                        <SidebarNavs bg='bg-muted' title="Student Information" link={ROUTES.LIST_OF_STUDENTS} />
-                        <SidebarNavs title="Alumni Graduates" link={ROUTES.ALUMNI_GRADUATES} />
-                    </Sidebar>
+                <main className="flex justify-end">
                     <CreateForm />
                 </main>
             </div>
@@ -166,12 +160,14 @@ const CreateForm = () => {
 
                         <form className="w-[80%] flex flex-col justify-start gap-4 rounded-lg border">
                             <div className="w-full px-4 py-3 border-b">
-                                <h1 className='text-text font-semibold text-lg'>Create a student</h1>
+                                <h1 className='text-text font-semibold text-lg'>Configuration</h1>
                             </div>
                             <div className="w-full py-2 flex flex-col">
                                 <div className="w-full flex flex-col gap-4">
                                     <div className="flex flex-col px-4 gap-1">
-                                        <h1 className='text-[.83rem]'>ID Number</h1>
+                                        <h1 className="text-md font-medium">
+                                            ID Number
+                                        </h1>
                                         <Input
                                             disabled={isLoading}
                                             value={student.idNumber}
@@ -184,7 +180,9 @@ const CreateForm = () => {
                                         />
                                     </div>
                                     <div className="max-w-[400px] flex flex-col px-4 gap-1">
-                                        <h1 className='text-[.83rem]'>Select Program</h1>
+                                        <h1 className="text-md font-medium">
+                                            Select Program
+                                        </h1>
                                         <Combobox
                                             className='w-[300px]'
                                             lists={formattedprograms || []}
@@ -196,7 +194,9 @@ const CreateForm = () => {
 
                                     <div className="flex items-center justify-start">
                                         <div className="flex flex-col px-4 gap-1">
-                                            <h1 className='text-[.83rem]'>Last Name</h1>
+                                            <h1 className="text-md font-medium">
+                                                Last Name
+                                            </h1>
                                             <Input
                                                 disabled={isLoading}
                                                 value={student.lastname}
@@ -209,7 +209,9 @@ const CreateForm = () => {
                                             />
                                         </div>
                                         <div className="flex flex-col px-4 gap-1">
-                                            <h1 className='text-[.83rem]'>First Name</h1>
+                                            <h1 className="text-md font-medium">
+                                                First Name
+                                            </h1>
                                             <Input
                                                 disabled={isLoading}
                                                 value={student.firstname}
@@ -224,7 +226,9 @@ const CreateForm = () => {
                                     </div>
                                     <div className="flex items-center justify-start">
                                         <div className="flex flex-col px-4 gap-1">
-                                            <h1 className='text-[.83rem]'>Middle Name (Optional)</h1>
+                                            <h1 className="text-md font-medium">
+                                                Middle Name (Optional)
+                                            </h1>
                                             <Input
                                                 disabled={isLoading}
                                                 value={student.middlename}
@@ -237,7 +241,9 @@ const CreateForm = () => {
                                             />
                                         </div>
                                         <div className="flex flex-col px-4 gap-1">
-                                            <h1 className='text-[.83rem]'>Email Address</h1>
+                                            <h1 className="text-md font-medium">
+                                                Email Address
+                                            </h1>
                                             <Input
                                                 disabled={isLoading}
                                                 value={student.email}
@@ -257,7 +263,7 @@ const CreateForm = () => {
                                                 if (!student.program) return setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Please select a program first.' })
                                                 setAdditional(true)
                                             }
-                                            } variant={`outline`} size={`sm`} type='button' className='flex gap-4'>
+                                            } variant={`outline`} size={`sm`} type='button' className='flex gap-2'>
                                                 <Plus color="#000000" size={18} /> Add Additional Course
                                             </Button>
                                         </div>
@@ -267,7 +273,9 @@ const CreateForm = () => {
                                         isAdditional &&
                                         <div className="flex flex-col px-6 gap-2">
                                             <div className="flex items-center justify-between">
-                                                <h1 className='text-md font-medium'>Additional Courses</h1>
+                                                <h1 className='text-md font-medium'>
+                                                    Additional Courses
+                                                </h1>
                                                 <Button onClick={() => {
                                                     setAdditional(false)
                                                     setStudent(prev => ({
