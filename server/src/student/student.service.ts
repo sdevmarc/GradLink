@@ -129,7 +129,7 @@ export class StudentService {
                         firstname: 1,
                         middlename: 1,
                         email: 1,
-                        program: 1,
+                        program: '$programDetails._id',
                         programCode: '$programDetails.code',
                         programName: '$programDetails.descriptiveTitle',
                         isenrolled: 1,
