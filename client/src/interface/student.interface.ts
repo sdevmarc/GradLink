@@ -3,7 +3,7 @@ interface IEnrollments {
 }
 
 export interface IAPIStudents {
-    sid?: string
+    _id?: string
     idNumber?: string
     name?: string
     lastname?: string
