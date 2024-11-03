@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button"
 import { RightSheetModal } from "@/components/right-sheet-modal"
 import { useState } from "react"
 import { Bookmark, TableOfContents } from "lucide-react"
+import { BookOpen, Clock, GraduationCap } from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 export const CurriculumColumns: ColumnDef<IAPICourse>[] = [
     {
@@ -103,7 +105,63 @@ export const CurriculumColumns: ColumnDef<IAPICourse>[] = [
                         onOpenChange={handleOpenChange}
                         title="Curriculum Details"
                         description="View details of the selected curriculum."
-                        content={''}
+                        content={
+                            <div className="flex flex-col min-h-screen items-center">
+                                <div className="w-full max-w-[90rem] flex flex-col">
+                                    <main className="flex justify-center items-center py-4">
+                                        <div className="min-h-screen w-full max-w-[70rem]">
+                                            <Card className="w-full mx-auto">
+                                                <CardHeader>
+                                                    <div className="flex justify-between items-start">
+                                                        <div>
+                                                            <CardTitle className="capitalize text-3xl font-bold">
+                                                                Master of Information Technology
+                                                            </CardTitle>
+                                                            <CardDescription className="mt-2">
+                                                                <Badge variant="default" className="mr-2">
+                                                                    MIT
+                                                                </Badge>
+                                                                <span className="text-muted-foreground">
+                                                                    New Curriculum 2024
+                                                                </span>
+                                                            </CardDescription>
+                                                        </div>
+                                                        {/* <Button>Apply Now</Button> */}
+                                                    </div>
+                                                </CardHeader>
+                                                <CardContent className="space-y-4">
+                                                    <section className="space-y-4">
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                            <div className="flex items-center">
+                                                                <Clock className="h-5 w-5 mr-2 text-muted-foreground" />
+                                                                <span>Residency: 3 years</span>
+                                                            </div>
+                                                            <div className="flex items-center">
+                                                                <BookOpen className="h-5 w-5 mr-2 text-muted-foreground" />
+                                                                <span>Credits: 26</span>
+                                                            </div>
+                                                        </div>
+                                                    </section>
+
+                                                    <section className="space-y-4">
+                                                        <div>
+                                                            <h3 className="font-semibold text-lg">Courses</h3>
+                                                            <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
+                                                                <li className="flex items-center">
+                                                                    <GraduationCap className="h-5 w-5 mr-2 text-muted-foreground" />
+                                                                    Data Analytics
+                                                                </li>
+
+                                                            </ul>
+                                                        </div>
+                                                    </section>
+                                                </CardContent>
+                                            </Card>
+                                        </div>
+                                    </main>
+                                </div>
+                            </div>
+                        }
                     />
                 </div>
             )
