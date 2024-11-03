@@ -9,6 +9,8 @@ import { IAPIStudents } from "@/interface/student.interface"
 import { Button } from "@/components/ui/button"
 import { RightSheetModal } from "@/components/right-sheet-modal"
 import { useState } from "react"
+import { Badge } from "@/components/ui/badge"
+import { CircleUserRound, TableOfContents } from "lucide-react"
 
 const dateRangeFilter = (row: any, columnId: string, filterValue: [Date, Date]) => {
     const cellDate = new Date(row.getValue(columnId));
@@ -23,13 +25,68 @@ const dateRangeFilter = (row: any, columnId: string, filterValue: [Date, Date]) 
 
 export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
     {
+        id: "icon",
+        cell: () => {
+            return (
+                <div className="w-0">
+                    <CircleUserRound color="#000000" />
+                </div>
+            )
+
+        }
+    },
+    {
         accessorKey: "idNumber",
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="ID" className="text-text" />
+            <DataTableColumnHeader column={column} title="ID No." className="text-primary flex items-center justify-start" />
         ),
         cell: ({ row }) => (
-            <div className="w-[100px] capitalize">{row.getValue("idNumber")}</div>
+            <div className="flex justify-start items-center capitalize gap-4 ">
+                <Badge variant={`default`}>
+                    {row.getValue("idNumber")}
+                </Badge>
+            </div>
         )
+    },
+    {
+        id: "fullname",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Name and Email" className="text-primary flex justify-start items-center" />
+        ),
+        cell: ({ row }) => {
+            return (
+                <div className="flex flex-col items-start justify-center">
+                    <span className="flex items-center uppercase font-medium text-sm justify-end">
+                        {row.getValue("lastname")},  {row.getValue("firstname")} {row.getValue("middlename")}
+                    </span>
+                    <span className="flex items-center lowercase font-normal text-[.7rem] justify-end">
+                        {row.getValue("email")}
+                    </span>
+                </div>
+            )
+        },
+        enableColumnFilter: true,
+        filterFn: "includesString"
+    },
+    {
+        id: "program",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Program" className="text-primary flex justify-start items-center" />
+        ),
+        cell: ({ row }) => {
+            return (
+                <div className="flex flex-col items-start justify-center">
+                    <span className="flex items-center uppercase font-medium text-sm justify-end">
+                        {row.getValue("programName")}
+                    </span>
+                    <span className="flex items-center uppercase font-normal text-[.7rem] justify-end">
+                        {row.getValue("email")} | {row.getValue("email")} | {row.getValue("totalOfUnitsEarned")} / {row.getValue("totalOfUnitsEarned")} Units Earned
+                    </span>
+                </div>
+            )
+        },
+        enableColumnFilter: true,
+        filterFn: "includesString"
     },
     {
         accessorKey: "lastname",
@@ -75,7 +132,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                 <div className="flex space-x-2">
                     <span className="max-w-[500px] truncate capitalize">
                         {
-                            row.getValue("middlename") ? row.getValue("middlename") : '[No Middlename]'
+                            row.getValue("middlename") ? row.getValue("middlename") : '[ No Middlename ]'
                         }
                     </span>
                 </div>
@@ -105,8 +162,8 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
         ),
         cell: ({ row }) => {
             return (
-                <div className="flex w-[100px] items-center">
-                    <span className="capitalize"> {row.getValue("progress")}</span>
+                <div className="flex items-center">
+                    <span className="capitalize">{row.getValue("progress")}</span>
                 </div>
             )
         },
@@ -114,6 +171,23 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
             return value.includes(row.getValue(id))
         },
         enableSorting: false,
+    },
+    {
+        id: "units",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Units Earned" className="text-text flex items-center justify-center" />
+        ),
+        cell: ({ row }) => {
+            const totalEnrolled = row.original.totalOfUnitsEnrolled;
+            const totalEarned = row.original.totalOfUnitsEarned;
+            return (
+                <div className="flex items-center justify-center">
+                    <span className="flex uppercase">
+                        {totalEarned} / {totalEnrolled}
+                    </span>
+                </div>
+            )
+        },
     },
     {
         accessorKey: "program",
@@ -153,9 +227,9 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                 setIsOpen(open)
             }
             return (
-                <>
-                    <Button onClick={handleViewDetails} variant={`outline`} size={`sm`}>
-                        View Details
+                <div className="flex justify-end">
+                    <Button onClick={handleViewDetails} variant={`outline`} size={`sm`} className="flex items-center gap-4">
+                        <TableOfContents color="#000000" size={18} />   View Profile
                     </Button>
                     <RightSheetModal
                         className="w-[60%]"
@@ -165,8 +239,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                         description="View details of the selected student."
                         content={''}
                     />
-                </>
-
+                </div>
             )
         }
     }
