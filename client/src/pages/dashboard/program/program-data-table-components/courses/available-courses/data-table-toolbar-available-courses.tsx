@@ -9,6 +9,7 @@ import { AlertDialogConfirmation } from "@/components/alert-dialog"
 import { useNavigate } from "react-router-dom"
 import { ROUTES } from "@/constants"
 import { DataTableFacetedFilter } from "@/components/data-table-components/data-table-faceted-filter"
+import { Plus } from "lucide-react"
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>
@@ -45,7 +46,7 @@ export function DataTableToolbarAvailableCourses<TData>({
                         options={options}
                     />
                 )}
-               {/*  {table.getColumn("type") && (
+                {/*  {table.getColumn("type") && (
                     <DataTableFacetedFilter
                         column={table.getColumn("courseno")}
                         title="Type"
@@ -71,8 +72,10 @@ export function DataTableToolbarAvailableCourses<TData>({
             </div>
             <div className="flex gap-2 items-center">
                 <AlertDialogConfirmation
+                    className="flex items-center gap-2"
                     type={`default`}
                     variant={'outline'}
+                    btnIcon={<Plus color="#000000" size={18} />}
                     btnTitle="New Course"
                     title="Are you sure?"
                     description={`You will be redirect to a page for creating a course.`}
