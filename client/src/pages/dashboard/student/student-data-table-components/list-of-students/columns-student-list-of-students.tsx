@@ -11,6 +11,7 @@ import { RightSheetModal } from "@/components/right-sheet-modal"
 import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { CircleUserRound, TableOfContents } from "lucide-react"
+import { Checkbox } from "@/components/ui/checkbox"
 
 const dateRangeFilter = (row: any, columnId: string, filterValue: [Date, Date]) => {
     const cellDate = new Date(row.getValue(columnId));
@@ -24,6 +25,28 @@ const dateRangeFilter = (row: any, columnId: string, filterValue: [Date, Date]) 
 };
 
 export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
+    {
+        id: "select",
+        header: ({ table }) => (
+            <Checkbox
+                checked={
+                    table.getIsAllPageRowsSelected() ||
+                    (table.getIsSomePageRowsSelected() && "indeterminate")
+                }
+                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                aria-label="Select all"
+            />
+        ),
+        cell: ({ row }) => (
+            <Checkbox
+                checked={row.getIsSelected()}
+                onCheckedChange={(value) => row.toggleSelected(!!value)}
+                aria-label="Select row"
+            />
+        ),
+        enableSorting: false,
+        enableHiding: false,
+    },
     {
         id: "icon",
         cell: () => {
@@ -61,26 +84,6 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                     </span>
                     <span className="flex items-center lowercase font-normal text-[.7rem] justify-end">
                         {row.getValue("email")}
-                    </span>
-                </div>
-            )
-        },
-        enableColumnFilter: true,
-        filterFn: "includesString"
-    },
-    {
-        id: "program",
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Program" className="text-primary flex justify-start items-center" />
-        ),
-        cell: ({ row }) => {
-            return (
-                <div className="flex flex-col items-start justify-center">
-                    <span className="flex items-center uppercase font-medium text-sm justify-end">
-                        {row.getValue("programName")}
-                    </span>
-                    <span className="flex items-center uppercase font-normal text-[.7rem] justify-end">
-                        {row.getValue("email")} | {row.getValue("email")} | {row.getValue("totalOfUnitsEarned")} / {row.getValue("totalOfUnitsEarned")} Units Earned
                     </span>
                 </div>
             )
