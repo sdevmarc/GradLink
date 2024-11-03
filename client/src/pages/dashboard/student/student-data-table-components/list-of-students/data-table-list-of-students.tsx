@@ -25,6 +25,8 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { DataTableToolbarListOfStudent } from './data-table-toolbar-list-of-students'
+import { IAPIStudents } from '@/interface/student.interface'
+import { Send } from 'lucide-react'
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -47,6 +49,7 @@ export function DataTableStudentListOfStudent<TData, TValue>({
         email: false
     })
     const [rowSelection, setRowSelection] = React.useState({})
+    const [values, setValues] = React.useState<IAPIStudents[]>([])
 
     const table = useReactTable({
         data,
@@ -67,9 +70,43 @@ export function DataTableStudentListOfStudent<TData, TValue>({
         },
     })
 
+    React.useEffect(() => {
+        const selectedRows = table.getFilteredSelectedRowModel().rows
+        const student = selectedRows.map(row => {
+            const original = row.original as IAPIStudents
+            const { _id, idNumber, } = original
+            return { _id, idNumber }
+        })
+
+        if (student.length > 0) {
+            setValues(student)
+        } else {
+            setValues([])
+        }
+
+    }, [rowSelection, table])
+
+    // React.useEffect(() => {
+    //     if (reset) {
+    //         table.resetRowSelection()
+    //     }
+    // }, [reset])
+
     return (
         <div className="w-full flex flex-col gap-4">
             <DataTableToolbarListOfStudent table={table} />
+            {
+                values.length > 0 &&
+                <div className="flex items-center gap-4">
+                    <Button variant={`outline`} size={`sm`} className='flex items-center gap-2'>
+                        <Send color="#000000" size={18} /> Send Tracer
+                    </Button>
+                    {/* <Button variant={`outline`} size={`sm`}>
+                        Make an Email
+                    </Button> */}
+                </div>
+            }
+
             <div className="rounded-md border">
                 <Table className=''>
                     <TableHeader>
