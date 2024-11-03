@@ -11,8 +11,7 @@ export class CurriculumService {
         @InjectModel('Course') private readonly courseModel: Model<ICourses>,
     ) { }
 
-    async findAll()
-        : Promise<IPromiseCurriculum> {
+    async findAll(): Promise<IPromiseCurriculum> {
         try {
             const response = await this.CurriculumModel.aggregate([
                 {
@@ -27,16 +26,70 @@ export class CurriculumService {
                     $unwind: '$programdetails'
                 },
                 {
+                    $lookup: {
+                        from: 'courses',
+                        localField: 'categories.courses',
+                        foreignField: '_id',
+                        as: 'allCourses'
+                    }
+                },
+                {
+                    $addFields: {
+                        'categories': {
+                            $map: {
+                                input: '$categories',
+                                as: 'category',
+                                in: {
+                                    categoryName: '$$category.categoryName',
+                                    courses: {
+                                        $filter: {
+                                            input: '$allCourses',
+                                            as: 'course',
+                                            cond: {
+                                                $in: ['$$course._id', '$$category.courses']
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
                     $project: {
                         _id: 1,
                         name: 1,
+                        residency: '$programdetails.residency',
                         program: '$programdetails.descriptiveTitle',
                         createdAt: { $dateToString: { format: "%d-%m-%Y", date: "$createdAt" } },
                         updatedAt: 1,
                         major: 1,
                         department: '$programdetails.department',
-                        categories: 1,
-                        isActive: 1
+                        isActive: 1,
+                        totalOfUnits: { 
+                            $sum: '$allCourses.units' 
+                        },
+                        categories: {
+                            $map: {
+                                input: '$categories',
+                                as: 'category',
+                                in: {
+                                    categoryName: '$$category.categoryName',
+                                    courses: {
+                                        $map: {
+                                            input: '$$category.courses',
+                                            as: 'course',
+                                            in: {
+                                                _id: '$$course._id',
+                                                code: '$$course.code',
+                                                descriptiveTitle: '$$course.descriptiveTitle',
+                                                units: '$$course.units'
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 },
                 {
@@ -44,11 +97,22 @@ export class CurriculumService {
                         createdAt: -1
                     }
                 }
-            ])
-
-            return { success: true, message: 'Curriculumns fetched successfully.', data: response }
+            ]);
+    
+            return { 
+                success: true, 
+                message: 'Curriculums fetched successfully.', 
+                data: response 
+            };
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Failed to retrieve curriculums.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+            throw new HttpException(
+                { 
+                    success: false, 
+                    message: 'Failed to retrieve curriculums.', 
+                    error 
+                }, 
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
         }
     }
 
