@@ -2,7 +2,7 @@
 interface IStudentEnrollments {
     course?: string[]
     enrollmentDate?: string
-    ispass?: boolean
+    ispass?: 'pass' | 'fail' | 'inc' | 'ongoing' | 'drop' | 'discontinue'
 }
 
 export interface IStudent {
@@ -23,8 +23,9 @@ export interface IStudent {
 }
 
 export interface IRequestStudent {
-    course: ''
+    course: string
     id: string[]
+    ispass?: 'pass' | 'fail' | 'inc' | 'ongoing' | 'drop' | 'discontinue'
 }
 
 export interface IPromiseStudent {
