@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button"
 import { RightSheetModal } from "@/components/right-sheet-modal"
 import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
-import { CircleUserRound, TableOfContents } from "lucide-react"
+import { CircleDashed, CircleUserRound, TableOfContents } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { BookOpen, Clock, GraduationCap } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -223,6 +223,21 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
         id: "actions",
         cell: ({ row }) => {
             const [isOpen, setIsOpen] = useState<boolean>(false)
+            const {
+                idNumber,
+                lastname,
+                firstname,
+                middlename,
+                email,
+                isenrolled,
+                totalOfUnitsEnrolled,
+                totalOfUnitsEarned,
+                enrolledCourses,
+                programName,
+                programCode,
+                department,
+                progress
+            } = row.original
 
             const handleViewDetails = () => {
                 setIsOpen(true)
@@ -251,15 +266,18 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                 <CardHeader>
                                                     <div className="flex justify-between items-start">
                                                         <div>
-                                                            <CardTitle className="capitalize text-3xl font-bold">
-                                                                Master of Information Technology
+                                                            <CardTitle className="uppercase text-3xl font-bold flex flex-col">
+                                                                {lastname}, {firstname} {middlename}
+                                                                <span className="font-normal text-md lowercase">
+                                                                    {email || 'No valid Email'}
+                                                                </span>
                                                             </CardTitle>
                                                             <CardDescription className="mt-2">
                                                                 <Badge variant="default" className="mr-2">
-                                                                    MIT
+                                                                    {idNumber || 'No valid ID Number'}
                                                                 </Badge>
                                                                 <span className="text-muted-foreground">
-                                                                    New Curriculum 2024
+                                                                    {department} | {programCode} | {programName}
                                                                 </span>
                                                             </CardDescription>
                                                         </div>
@@ -271,26 +289,42 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                             <div className="flex items-center">
                                                                 <Clock className="h-5 w-5 mr-2 text-muted-foreground" />
-                                                                <span>Residency: 3 years</span>
+                                                                <span className="capitalize">Status: {progress}</span>
                                                             </div>
                                                             <div className="flex items-center">
                                                                 <BookOpen className="h-5 w-5 mr-2 text-muted-foreground" />
-                                                                <span>Credits: 26</span>
+                                                                <span>Credits: {totalOfUnitsEarned} / {totalOfUnitsEnrolled}</span>
                                                             </div>
                                                         </div>
                                                     </section>
 
                                                     <section className="space-y-4">
-                                                        <div>
-                                                            <h3 className="font-semibold text-lg">Courses</h3>
-                                                            <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
-                                                                <li className="flex items-center">
-                                                                    <GraduationCap className="h-5 w-5 mr-2 text-muted-foreground" />
-                                                                    Data Analytics
-                                                                </li>
-
-                                                            </ul>
-                                                        </div>
+                                                        {
+                                                            enrolledCourses?.map((item, i) => (
+                                                                <div key={i} className="flex flex-col">
+                                                                    <div className="flex flex-col gap-2">
+                                                                        <h1 className="text-lg font-semibold uppercase">Enrollments</h1>
+                                                                        <h3 className="font-medium text-md">
+                                                                            Academic Year: {item?.academicYear?.startDate} - {item.academicYear?.endDate}
+                                                                        </h3>
+                                                                        {
+                                                                            item?.courses?.map(course => (
+                                                                                <div className="flex items-center justify-between">
+                                                                                    <h1 className="capitalize text-md font-normal flex items-center gap-2">
+                                                                                        <GraduationCap size={18} className="h-5 w-5 mr-2 text-muted-foreground" />
+                                                                                        {course.courseno}
+                                                                                    </h1>
+                                                                                    <h1 className="text-md font-normal flex items-center gap-2 capitalize">
+                                                                                        <CircleDashed color="#000000" size={18} />
+                                                                                        {course.status}
+                                                                                    </h1>
+                                                                                </div>
+                                                                            ))
+                                                                        }
+                                                                    </div>
+                                                                </div>
+                                                            ))
+                                                        }
                                                     </section>
                                                 </CardContent>
                                             </Card>
