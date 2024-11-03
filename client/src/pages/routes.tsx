@@ -2,15 +2,12 @@ import { createBrowserRouter } from "react-router-dom"
 import Tracer from "./dashboard/tracer/tracer"
 import Program from "./dashboard/program/available-programs"
 import Profile from "./dashboard/settings/profile"
-import Courses from "./dashboard/program/available-courses"
-import Alumni from "./dashboard/student/alumni-graduates"
 import LoginPage from "./home/login"
 import { HeaderLayout, HomeHeaderLayout, TracerHeaderLayout } from "@/components/header"
 import Overview from "./dashboard/overview/overview"
 import CreateCourse from "./dashboard/program/create-course"
 import Form from "./dashboard/form/form"
 import ViewDetails from "./dashboard/student/view-details"
-import Curriculum from "./dashboard/program/curriculum"
 import CreateProgram from "./dashboard/program/create-program"
 import CreateCurriculum from "./dashboard/program/create-curriculum"
 import ViewProgramDetails from "./dashboard/program/view-program-details"
@@ -36,17 +33,14 @@ const Routes = createBrowserRouter([
 
             //Student
             { path: '/student', element: <ListOfStudents /> },
-            { path: '/student/alumni', element: <Alumni /> },
             { path: '/student/details/:sid', element: <ViewDetails /> },
 
             //Program
             { path: '/program', element: <Program /> },
             { path: '/program/details/:id', element: <ViewProgramDetails /> },
-            { path: '/program/program/create', element: <CreateProgram /> },
-            { path: '/program/courses', element: <Courses /> },
-            { path: '/program/courses/create', element: <CreateCourse /> },
-            { path: '/program/curriculum', element: <Curriculum /> },
-            { path: '/program/curriculum/create', element: <CreateCurriculum /> },
+            { path: '/program/create-program', element: <CreateProgram /> },
+            { path: '/program/create-course', element: <CreateCourse /> },
+            { path: '/program/create-curriculum', element: <CreateCurriculum /> },
 
             //Form
             { path: '/form', element: <Form /> },
