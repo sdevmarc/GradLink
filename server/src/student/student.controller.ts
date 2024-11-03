@@ -3,7 +3,6 @@ import { StudentService } from './student.service'
 import { IRequestStudent, IStudent } from './student.interface'
 import { FormsService } from 'src/forms/forms.service'
 import { ConstantsService } from 'src/constants/constants.service'
-import { CurriculumService } from 'src/curriculum/curriculum.service'
 
 @Controller('student')
 export class StudentController {
@@ -11,7 +10,6 @@ export class StudentController {
         private readonly studentService: StudentService,
         private readonly formService: FormsService,
         private readonly constantsService: ConstantsService,
-        private readonly curriculumService: CurriculumService,
     ) { }
 
     @Get()
@@ -19,46 +17,25 @@ export class StudentController {
         return this.studentService.findAllStudents()
     }
 
-    @Get('enrollees')
-    async findAllStudentStatusEnrollees() {
-        return this.studentService.findAllEnrollees()
-    }
-
     @Get('enrollees/:id')
     async findAllStudentStatusEnrolleesInCourse(@Param('id') id: string) {
         return this.studentService.findAllEnrolleesInCourse(id)
     }
 
-    @Get('currently-enrolled')
-    async findAllStudentCurrentlyEnrolled() {
-        return this.studentService.findAllCurrentlyEnrolled()
+    @Get('evaluation/:id')
+    async findAllStudentsInCourseForEvaluation(@Param('id') id: string) {
+        return this.studentService.findAllStudentsInCourseForEvaluation(id)
+    }
+
+    @Get('attrition/:id')
+    async findAllStudentsInCourseForAttrition(@Param('id') id: string) {
+        return this.studentService.findAllStudentsInCourseForAttritionRate(id)
     }
 
     @Get('alumni')
     async findAllAlumniGraduates() {
         return this.studentService.findAllAlumni()
     }
-
-    // @Get()
-    // async findAllStudent() {
-    //     return await this.studentService.findAllStudents()
-    // }
-
-    // @Get('enrolled')
-    // async findAllEnrolledStudent() {
-    //     return await this.studentService.findAllStudentsEnrolled()
-    // }
-
-    // @Get('alumni')
-    // async findAllAlumniStudents() {
-    //     return await this.studentService.findAllAlumni()
-    // }
-
-    // @Get('findone/:idNumber')
-    // async findOneStudent(@Param('idNumber') idNumber: IStudent) {
-
-    //     return await this.studentService.findOne(idNumber)
-    // }
 
     @Post('new-student')
     async createStudentEnrollee(
@@ -74,20 +51,19 @@ export class StudentController {
         return await this.studentService.enrollStudent({ course, id })
     }
 
-    // @Post('unenroll-all')
-    // async unrollAllStudents() {
-    //     return await this.studentService.unrollAll()
-    // }
+    @Post('evaluate-student')
+    async evaluateStudentEnrollee(
+        @Body() { ispass, course, id }: IRequestStudent
+    ) {
+        return await this.studentService.evaluateStudent({ ispass, course, id })
+    }
 
-    // @Post('unenroll-selection')
-    // async unrollSelection(@Body() { _id }: IStudent) {
-    //     return await this.studentService.unrollSelection({ _id })
-    // }
-
-    // @Post('unenroll-one/:sid')
-    // async unrollOne(@Param('sid') { _id }: IStudent) {
-    //     return await this.studentService.unrollOne({ _id })
-    // }
+    @Post('activate-student')
+    async activateStudent(
+        @Body() { studentid }: { studentid: string }
+    ) {
+        return await this.studentService.activateExisitngStudent(studentid)
+    }
 
     @Post('update-graduate')
     async updateStudentGraduate() {
