@@ -1,6 +1,4 @@
 import HeadSection, { BackHeadSection, SubHeadSectionDetails } from '@/components/head-section'
-import { Sidebar, SidebarNavs } from '@/components/sidebar'
-import { ROUTES } from '@/constants'
 import MainTable from '@/components/main-table'
 import { useState } from 'react'
 import { CircleCheck, CircleX } from 'lucide-react'
@@ -28,8 +26,9 @@ export default function CreateProgram() {
         code: '',
         descriptiveTitle: '',
         residency: '',
-        department: ''
+        department: '',
     })
+
     const department = [
         { label: 'School of Engineering, Architecture and Information Technology', value: 'SEAIT' },
         { label: 'School of Accountancy and Business', value: 'SAB' },
@@ -63,7 +62,7 @@ export default function CreateProgram() {
                 setValid(true)
                 setDialogSubmit(false)
                 setAlertDialogState({ success: true, show: true, title: "Yay, success! 🎉", description: data.message })
-                setValues({ code: '', descriptiveTitle: '', residency: '', department: '' })
+                setValues({ code: '', descriptiveTitle: '', residency: '' })
                 return
             }
         },
@@ -127,12 +126,8 @@ export default function CreateProgram() {
                             />
                         </HeadSection>
                     </aside>
-                    <main className="flex">
-                        <Sidebar>
-                            <SidebarNavs bg='bg-muted' title="Programs" link={ROUTES.AVAILABLE_PROGRAMS} />
-                            <SidebarNavs title="Courses" link={ROUTES.AVAILABLE_COURSES} />
-                            <SidebarNavs title="Curriculums" link={ROUTES.CURRICULUM} />
-                        </Sidebar>
+                    <main className="flex justify-end">
+
                         <MainTable>
                             <div className="flex flex-col border gap-4 rounded-md">
                                 <div className="w-full px-4 py-3 border-b">
@@ -141,7 +136,9 @@ export default function CreateProgram() {
                                 <div className="w-full py-2 flex flex-col justify-between">
                                     <div className="w-full flex flex-col gap-4">
                                         <div className="flex flex-col px-4 gap-1">
-                                            <h1 className='text-[.83rem]'>Code</h1>
+                                            <h1 className="text-md font-medium">
+                                                Code
+                                            </h1>
                                             <Input
                                                 value={values.code}
                                                 disabled={isLoading}
@@ -153,7 +150,9 @@ export default function CreateProgram() {
                                             />
                                         </div>
                                         <div className="flex flex-col px-4 gap-1">
-                                            <h1 className='text-[.83rem]'>Descriptive Title</h1>
+                                            <h1 className="text-md font-medium">
+                                                Descriptive Title
+                                            </h1>
                                             <Input
                                                 value={values.descriptiveTitle}
                                                 disabled={isLoading}
@@ -165,7 +164,9 @@ export default function CreateProgram() {
                                             />
                                         </div>
                                         <div className="overflow-hidden max-w-[500px] flex flex-col px-4 gap-1">
-                                            <h1 className='text-[.83rem]'>Select Department</h1>
+                                            <h1 className="text-md font-medium">
+                                                Department
+                                            </h1>
                                             <Combobox
                                                 className='w-[400px]'
                                                 lists={department || []}
@@ -175,7 +176,9 @@ export default function CreateProgram() {
                                             />
                                         </div>
                                         <div className="flex flex-col px-4 gap-1">
-                                            <h1 className='text-[.83rem]'>Residency</h1>
+                                            <h1 className="text-md font-medium">
+                                                Residency
+                                            </h1>
                                             <Input
                                                 value={values.residency}
                                                 disabled={isLoading}
@@ -186,19 +189,20 @@ export default function CreateProgram() {
                                                 required
                                             />
                                         </div>
-
-                                        <AlertDialogConfirmation
-                                            isDialog={dialogsubmit}
-                                            setDialog={(open) => setDialogSubmit(open)}
-                                            type={`default`}
-                                            disabled={isLoading}
-                                            className='w-full my-3 py-5'
-                                            variant={'default'}
-                                            btnTitle="Create program"
-                                            title="Are you sure?"
-                                            description={`This will permanently add a new program to the system and cannot be modified.`}
-                                            btnContinue={handleSubmit}
-                                        />
+                                        <div className="px-4">
+                                            <AlertDialogConfirmation
+                                                isDialog={dialogsubmit}
+                                                setDialog={(open) => setDialogSubmit(open)}
+                                                type={`default`}
+                                                disabled={isLoading}
+                                                className='w-full my-3 py-5'
+                                                variant={'default'}
+                                                btnTitle="Create program"
+                                                title="Are you sure?"
+                                                description={`This will permanently add a new program to the system and cannot be modified.`}
+                                                btnContinue={handleSubmit}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
