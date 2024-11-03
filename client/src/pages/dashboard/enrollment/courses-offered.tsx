@@ -1,15 +1,12 @@
-import MainTable from "@/components/main-table"
 import HeadSection, { SubHeadSectionDetails } from "@/components/head-section"
-import { Sidebar, SidebarNavs } from "@/components/sidebar"
-import { ROUTES } from "@/constants"
 import { DataTableCoursesOfferedInEnrollment } from "./enrollment-data-table-components/courses-offered/data-table-courses-offered-in-enrollment"
 import { CoursesOfferedInEnrollmentColumns } from "./enrollment-data-table-components/courses-offered/columns-courses-offered-in-enrollment"
 import { useQuery } from "@tanstack/react-query"
-import { API_COURSE_FINDALL_COURSES_OFFERED } from "@/api/courses"
 import { useState } from "react"
+import { API_FINDALL_COURSES_OFFERED } from "@/api/offered"
 
 export default function Enrollment() {
-    const [isenroll, setEnroll] = useState<boolean>(false);
+    const [isenroll, setEnroll] = useState<boolean>(true);
 
     const toggleEnroll = () => {
         setEnroll((prev) => !prev);
@@ -17,7 +14,7 @@ export default function Enrollment() {
     };
 
     const { data: courses, isLoading: coursesLoading, isFetched: coursesFetched } = useQuery({
-        queryFn: () => API_COURSE_FINDALL_COURSES_OFFERED(),
+        queryFn: () => API_FINDALL_COURSES_OFFERED(),
         queryKey: ['courses-offered']
     })
 
@@ -28,26 +25,26 @@ export default function Enrollment() {
                     <HeadSection>
                         <SubHeadSectionDetails
                             title="COURSES OFFERED"
-                            description="Here's a list of currently offered courses."
+                            description={`Here's a list of offered courses ${
+                                courses?.data[0]?.semester === 1 ? 'for the First semester.' :
+                                courses?.data[0]?.semester === 2 ? 'for the Second semester.' :
+                                courses?.data[0]?.semester === 3 ? 'for the Third semester.' :
+                                ''
+                            }.`}
                         />
                     </HeadSection>
                 </aside>
-                <main className="flex">
-                    <Sidebar>
-                        <SidebarNavs bg='bg-muted' title="Courses Offered" link={ROUTES.ENROLLMENT} />
-                    </Sidebar>
-                    <MainTable>
-                        {coursesLoading && <div>Loading...</div>}
-                        {
-                            (!coursesLoading && coursesFetched) &&
-                            <DataTableCoursesOfferedInEnrollment
-                                columns={CoursesOfferedInEnrollmentColumns(isenroll)}
-                                data={courses?.data || []}
-                                isenroll={isenroll}
-                                setEnroll={toggleEnroll}
-                            />
-                        }
-                    </MainTable>
+                <main className="flex px-8">
+                    {coursesLoading && <div>Loading...</div>}
+                    {
+                        (!coursesLoading && coursesFetched) &&
+                        <DataTableCoursesOfferedInEnrollment
+                            columns={CoursesOfferedInEnrollmentColumns(isenroll)}
+                            data={courses?.data || []}
+                            isenroll={isenroll}
+                            setEnroll={toggleEnroll}
+                        />
+                    }
                 </main>
             </div>
         </div>
