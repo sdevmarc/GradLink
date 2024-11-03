@@ -176,7 +176,6 @@ export const AvailableProgramsColumns: ColumnDef<IAPIPrograms>[] = [
                                                                 </div>
                                                             ))
                                                         }
-
                                                     </section>
                                                 </CardContent>
                                             </Card>
