@@ -14,6 +14,9 @@ export interface IAPIStudents {
     enrollments?: IEnrollments[]
     program?: string
     courses?: string[]
+    units?: string
+    totalOfUnitsEarned?: number
+    totalOfUnitsEnrolled?: number
 }
 
 export interface IRequestStudents {
