@@ -16,7 +16,7 @@ export default function Loading() {
                         speed="1"
                         color="black"
                     ></l-waveform>
-                    <h1 className='text-lg'>Wait, I'm loading the map. </h1>
+                    <h1 className='text-lg'>Wait a moment, I am loading...</h1>
                 </div>
             </div > :
                 <div className="fixed top-0 left-0 w-full h-screen bg-background flex justify-center items-center z-[1]">
