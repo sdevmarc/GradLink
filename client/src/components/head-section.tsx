@@ -15,7 +15,7 @@ export default function HeadSection({ children }: IFCChildren) {
 export const SubHeadSectionDetails = ({ title, description }: IFCChildren) => {
     return (
         <div className="flex flex-col gap-2 px-4">
-            <h1 className="text-text font-semibold text-xl">
+            <h1 className="text-text font-semibold text-lg">
                 {title}
             </h1>
             <p className="text-text font-light text-sm">
