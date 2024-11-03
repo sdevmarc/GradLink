@@ -85,8 +85,7 @@ export function DataTableSelectCoursesInCurriculum<TData, TValue>({
         }
     }, [resetSelection, table, onResetComplete])
     return (
-        <div className="w-full flex flex-col gap-2 border py-2 px-4 rounded-md">
-            <h1 className='font-medium text-lg'>Courses Available</h1>
+        <div className="w-full flex flex-col gap-2">
             <DataTableToolbarSelectCoursesInCurriculum table={table} />
             <div className="rounded-md border">
                 <Table>
