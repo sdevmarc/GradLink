@@ -24,7 +24,6 @@ export const StudentSchema = new mongoose.Schema({
     },
     program: {
         type: mongoose.Schema.Types.ObjectId,
-        // ref: 'Program',
         ref: 'Curriculum',
         required: true
     },
@@ -50,15 +49,18 @@ export const StudentSchema = new mongoose.Schema({
         ispass: {
             type: String,
             required: true,
-            // enum: ['pass', 'fail', 'inc', 'ongoing'],
-            enum: ['pass', 'fail', 'inc', 'ongoing', 'drop'],
+            enum: ['pass', 'fail', 'inc', 'ongoing', 'drop', 'discontinue'],
             default: 'ongoing'
-        }
+        },
+        // //Will be implemented later
+        // assessmentForm: {
+        //     type: String,
+        //     default: null
+        // }
     }],
     status: {
         type: String,
         required: true,
-        // enum: ['student', 'alumni', 'enrollee', 'drop'],
         enum: ['student', 'alumni', 'enrollee'],
         default: 'enrollee'
     },
