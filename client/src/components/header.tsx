@@ -173,7 +173,30 @@ const HeaderDashboard = () => {
                                             </BreadCrumbs>
                                         )
                                     case `/enrollment/enroll-student/${id}`:
-
+                                        return (
+                                            <BreadCrumbs>
+                                                <BreadcrumbItem>
+                                                    <BreadcrumbPage className='text-md'>
+                                                        <GraduationCap color="#000000" />
+                                                    </BreadcrumbPage>
+                                                </BreadcrumbItem>
+                                                <BreadcrumbSeparator>
+                                                    <Slash />
+                                                </BreadcrumbSeparator>
+                                                <BreadcrumbItem>
+                                                    <BreadcrumbItem className='text-md font-light'>Gradlink</BreadcrumbItem>
+                                                </BreadcrumbItem>
+                                                <BreadcrumbSeparator>
+                                                    <Slash />
+                                                </BreadcrumbSeparator>
+                                                <BreadcrumbItem>
+                                                    <BreadcrumbPage className='text-md font-medium capitalize'>
+                                                        {coursename}
+                                                    </BreadcrumbPage>
+                                                </BreadcrumbItem>
+                                            </BreadCrumbs>
+                                        )
+                                    case `/enrollment/evaluate-student/${id}`:
                                         return (
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
