@@ -1,7 +1,7 @@
 import { NavLink, Outlet, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { UserAvatar } from '@/components/user-avatar'
 import './index.css'
-import { House, Slash } from "lucide-react"
+import { GraduationCap, House, Slash } from "lucide-react"
 
 import {
     Breadcrumb,
@@ -104,10 +104,7 @@ const HeaderDashboard = () => {
                                 switch (key) {
                                     case ROUTES.OVERVIEW:
                                     case ROUTES.LIST_OF_STUDENTS:
-                                    case ROUTES.ALUMNI_GRADUATES:
-                                    case ROUTES.CURRICULUM:
-                                    case ROUTES.AVAILABLE_PROGRAMS:
-                                    case ROUTES.AVAILABLE_COURSES:
+                                    case ROUTES.PROGRAMS:
                                     case ROUTES.GOOGLE_FORM:
                                     case ROUTES.ENROLLMENT:
                                     case `/student/details/${sid}`:
@@ -115,7 +112,9 @@ const HeaderDashboard = () => {
                                         return (
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
-                                                    <BreadcrumbPage className='text-md'>LOGO</BreadcrumbPage>
+                                                    <BreadcrumbPage className='text-md'>
+                                                        <GraduationCap color="#000000" />
+                                                    </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                                 <BreadcrumbSeparator>
                                                     <Slash />
@@ -129,7 +128,9 @@ const HeaderDashboard = () => {
                                         return (
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
-                                                    <BreadcrumbPage className='text-md'>LOGO</BreadcrumbPage>
+                                                    <BreadcrumbPage className='text-md'>
+                                                        <GraduationCap color="#000000" />
+                                                    </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                                 <BreadcrumbSeparator>
                                                     <Slash />
@@ -151,7 +152,9 @@ const HeaderDashboard = () => {
                                         return (
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
-                                                    <BreadcrumbPage className='text-md'>LOGO</BreadcrumbPage>
+                                                    <BreadcrumbPage className='text-md'>
+                                                        <GraduationCap color="#000000" />
+                                                    </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                                 <BreadcrumbSeparator>
                                                     <Slash />
@@ -174,7 +177,9 @@ const HeaderDashboard = () => {
                                         return (
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
-                                                    <BreadcrumbPage className='text-md'>LOGO</BreadcrumbPage>
+                                                    <BreadcrumbPage className='text-md'>
+                                                        <GraduationCap color="#000000" />
+                                                    </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                                 <BreadcrumbSeparator>
                                                     <Slash />
@@ -192,33 +197,35 @@ const HeaderDashboard = () => {
                                                 </BreadcrumbItem>
                                             </BreadCrumbs>
                                         )
-                                    case `/program/details/${id}`:
-                                        return (
-                                            <BreadCrumbs>
-                                                <BreadcrumbItem>
-                                                    <BreadcrumbPage className='text-md'>LOGO</BreadcrumbPage>
-                                                </BreadcrumbItem>
-                                                <BreadcrumbSeparator>
-                                                    <Slash />
-                                                </BreadcrumbSeparator>
-                                                <BreadcrumbItem>
-                                                    <BreadcrumbItem className='text-md font-light'>Gradlink</BreadcrumbItem>
-                                                </BreadcrumbItem>
-                                                <BreadcrumbSeparator>
-                                                    <Slash />
-                                                </BreadcrumbSeparator>
-                                                <BreadcrumbItem>
-                                                    <BreadcrumbPage className='text-md font-medium'>
-                                                        View details
-                                                    </BreadcrumbPage>
-                                                </BreadcrumbItem>
-                                            </BreadCrumbs>
-                                        )
+                                    // case `/program/details/${id}`:
+                                    //     return (
+                                    //         <BreadCrumbs>
+                                    //             <BreadcrumbItem>
+                                    //                 <BreadcrumbPage className='text-md'>LOGO</BreadcrumbPage>
+                                    //             </BreadcrumbItem>
+                                    //             <BreadcrumbSeparator>
+                                    //                 <Slash />
+                                    //             </BreadcrumbSeparator>
+                                    //             <BreadcrumbItem>
+                                    //                 <BreadcrumbItem className='text-md font-light'>Gradlink</BreadcrumbItem>
+                                    //             </BreadcrumbItem>
+                                    //             <BreadcrumbSeparator>
+                                    //                 <Slash />
+                                    //             </BreadcrumbSeparator>
+                                    //             <BreadcrumbItem>
+                                    //                 <BreadcrumbPage className='text-md font-medium'>
+                                    //                     View details
+                                    //                 </BreadcrumbPage>
+                                    //             </BreadcrumbItem>
+                                    //         </BreadCrumbs>
+                                    //     )
                                     case ROUTES.CREATE_STUDENT:
                                         return (
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
-                                                    <BreadcrumbPage className='text-md'>LOGO</BreadcrumbPage>
+                                                    <BreadcrumbPage className='text-md'>
+                                                        <GraduationCap color="#000000" />
+                                                    </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                                 <BreadcrumbSeparator>
                                                     <Slash />
@@ -240,7 +247,9 @@ const HeaderDashboard = () => {
                                         return (
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
-                                                    <BreadcrumbPage className='text-md'>LOGO</BreadcrumbPage>
+                                                    <BreadcrumbPage className='text-md'>
+                                                        <GraduationCap color="#000000" />
+                                                    </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                                 <BreadcrumbSeparator>
                                                     <Slash />
@@ -262,7 +271,9 @@ const HeaderDashboard = () => {
                                         return (
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
-                                                    <BreadcrumbPage className='text-md'>LOGO</BreadcrumbPage>
+                                                    <BreadcrumbPage className='text-md'>
+                                                        <GraduationCap color="#000000" />
+                                                    </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                                 <BreadcrumbSeparator>
                                                     <Slash />
@@ -284,7 +295,9 @@ const HeaderDashboard = () => {
                                         return (
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
-                                                    <BreadcrumbPage className='text-md'>LOGO</BreadcrumbPage>
+                                                    <BreadcrumbPage className='text-md'>
+                                                        <GraduationCap color="#000000" />
+                                                    </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                                 <BreadcrumbSeparator>
                                                     <Slash />
@@ -357,9 +370,9 @@ const HeaderDashboard = () => {
                             <NavLink to={`/student`} className='text-[.8rem] text-text font-normal px-3 py-2'>
                                 Student
                             </NavLink>
-                            <NavLink to={`/form`} className='text-[.8rem] text-text font-normal px-3 py-2'>
+                            {/* <NavLink to={`/form`} className='text-[.8rem] text-text font-normal px-3 py-2'>
                                 Google Form
-                            </NavLink>
+                            </NavLink> */}
                         </nav>
                     </div>
                 </div>
@@ -407,7 +420,7 @@ export const HeaderTracer = () => {
             setFormattedProgram(formatprogram)
         }
     }, [program])
-    
+
     return (
         <>
             <div className="z-[1] fixed top-0 left-0 w-full h-[4rem] flex justify-center items-center">
