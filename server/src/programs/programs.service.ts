@@ -2,15 +2,11 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import mongoose, { Model } from 'mongoose'
 import { IPrograms, IPromisePrograms } from './programs.interface'
-import { ICurriculum } from 'src/curriculum/curriculum.interface'
-import { ICourses } from 'src/courses/courses.interface'
 
 @Injectable()
 export class ProgramsService {
     constructor(
-        @InjectModel('Course') private readonly CourseModel: Model<ICourses>,
         @InjectModel('Program') private readonly ProgramModel: Model<IPrograms>,
-        @InjectModel('Curriculum') private readonly CurriculumModel: Model<ICurriculum>
     ) { }
 
     // encodeBase64(input: string): string {
@@ -23,10 +19,204 @@ export class ProgramsService {
 
     async findAll(): Promise<IPromisePrograms> {
         try {
-            const response = await this.ProgramModel.find()
-            return { success: true, message: 'Programs fetched successfully.', data: response }
+            const response = await this.ProgramModel.aggregate([
+                // Sort by createdAt in descending order
+                {
+                    $sort: { createdAt: -1 }
+                },
+                // Lookup curricula for all programs
+                {
+                    $lookup: {
+                        from: 'curriculums',
+                        localField: '_id',
+                        foreignField: 'programid',
+                        as: 'curricula'
+                    }
+                },
+                // Unwind the curricula array
+                {
+                    $unwind: {
+                        path: '$curricula',
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                // Unwind the categories array
+                {
+                    $unwind: {
+                        path: '$curricula.categories',
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                // Lookup courses for each category
+                {
+                    $lookup: {
+                        from: 'courses',
+                        localField: 'curricula.categories.courses',
+                        foreignField: '_id',
+                        as: 'curricula.categories.courseDetails'
+                    }
+                },
+                // Group back to reconstruct the documents
+                {
+                    $group: {
+                        _id: '$_id',
+                        createdAt: { $first: '$createdAt' },
+                        code: { $first: '$code' },
+                        descriptiveTitle: { $first: '$descriptiveTitle' },
+                        residency: { $first: '$residency' },
+                        department: { $first: '$department' },
+                        curriculumName: { $first: '$curricula.name' },
+                        curriculumId: { $first: '$curricula._id' },
+                        major: { $first: '$curricula.major' },
+                        isActiveCurriculum: { $first: '$curricula.isActive' },
+                        categories: {
+                            $push: {
+                                $cond: {
+                                    if: { $ifNull: ['$curricula.categories', false] },
+                                    then: {
+                                        categoryName: '$curricula.categories.categoryName',
+                                        courses: '$curricula.categories.courseDetails',
+                                        totalUnits: {
+                                            $reduce: {
+                                                input: '$curricula.categories.courseDetails',
+                                                initialValue: 0,
+                                                in: { $add: ['$$value', '$$this.units'] }
+                                            }
+                                        }
+                                    },
+                                    else: '$$REMOVE'
+                                }
+                            }
+                        },
+                        totalUnits: {
+                            $sum: {
+                                $reduce: {
+                                    input: '$curricula.categories.courseDetails',
+                                    initialValue: 0,
+                                    in: { $add: ['$$value', '$$this.units'] }
+                                }
+                            }
+                        }
+                    }
+                },
+                // Sort again after grouping to maintain order
+                {
+                    $sort: { createdAt: -1 }
+                },
+                // Project the fields in a nice structure
+                {
+                    $project: {
+                        _id: 1,
+                        createdAt: 1,
+                        code: 1,
+                        descriptiveTitle: 1,
+                        residency: 1,
+                        department: 1,
+                        totalUnits: 1,
+                        curriculum: {
+                            _id: '$curriculumId',
+                            name: '$curriculumName',
+                            major: '$major',
+                            isActive: '$isActiveCurriculum',
+                            categories: {
+                                $filter: {
+                                    input: '$categories',
+                                    as: 'category',
+                                    cond: { $ne: ['$$category', null] }
+                                }
+                            }
+                        }
+                    }
+                }
+            ]);
+
+            return {
+                success: true,
+                message: 'Programs fetched successfully.',
+                data: response
+            };
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Failed to fetch all program.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+            throw new HttpException(
+                { success: false, message: 'Failed to fetch all programs.', error },
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    async findOne(id: string): Promise<IPromisePrograms> {
+        try {
+            const response = await this.ProgramModel.aggregate([
+                // Match the specific program by ID
+                {
+                    $match: {
+                        _id: new mongoose.Types.ObjectId(id)
+                    }
+                },
+                // Lookup curricula for this program
+                {
+                    $lookup: {
+                        from: 'curriculums',
+                        localField: '_id',
+                        foreignField: 'programid',
+                        as: 'curricula'
+                    }
+                },
+                // Unwind the curricula array
+                {
+                    $unwind: '$curricula'
+                },
+                // Unwind the categories array
+                {
+                    $unwind: '$curricula.categories'
+                },
+                // Lookup courses for each category
+                {
+                    $lookup: {
+                        from: 'courses',
+                        localField: 'curricula.categories.courses',
+                        foreignField: '_id',
+                        as: 'curricula.categories.courseDetails'
+                    }
+                },
+                // Group back to reconstruct the document
+                {
+                    $group: {
+                        _id: '$_id',
+                        code: { $first: '$code' },
+                        descriptiveTitle: { $first: '$descriptiveTitle' },
+                        residency: { $first: '$residency' },
+                        department: { $first: '$department' },
+                        categories: {
+                            $push: {
+                                categoryName: '$curricula.categories.categoryName',
+                                courses: '$curricula.categories.courseDetails'
+                            }
+                        }
+                    }
+                },
+                // Project only the required fields
+                {
+                    $project: {
+                        _id: 1,
+                        code: 1,
+                        descriptiveTitle: 1,
+                        residency: 1,
+                        department: 1,
+                        courses: '$categories'
+                    }
+                }
+            ]);
+
+            return {
+                success: true,
+                message: 'Program fetched successfully.',
+                data: response[0] || null
+            };
+        } catch (error) {
+            throw new HttpException(
+                { success: false, message: 'Failed to fetch program.', error },
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
         }
     }
 
