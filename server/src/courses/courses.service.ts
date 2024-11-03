@@ -13,17 +13,7 @@ export class CoursesService {
 
     async findAll(): Promise<IPromiseCourse> {
         try {
-            const response = await this.CourseModel.find()
-
-            return { success: true, message: 'Courses fetched successfully', data: response }
-        } catch (error) {
-            throw new HttpException({ success: false, message: 'Failed to fetch all program.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
-        }
-    }
-
-    async findAllCoursesOffered(): Promise<IPromiseCourse> {
-        try {
-            const response = await this.CourseModel.find({ isoffered: true }).sort({ _id: -1 })
+            const response = await this.CourseModel.find().sort({ _id: -1 })
 
             return { success: true, message: 'Courses fetched successfully', data: response }
         } catch (error) {
@@ -39,18 +29,18 @@ export class CoursesService {
                 throw new HttpException(
                     { success: false, message: 'Curriculum not found' },
                     HttpStatus.NOT_FOUND
-                );
+                )
             }
 
             // Extract all course IDs from all categories
             const curriculumCourseIds = curriculum.categories.reduce((acc, category) => {
                 return [...acc, ...category.courses.map(id => new mongoose.Types.ObjectId(id))];
-            }, []);
+            }, [])
 
             // Now find all courses that are not in the curriculum
             const response = await this.CourseModel.find({
                 _id: { $nin: curriculumCourseIds }
-            });
+            }).sort({ _id: -1 })
 
             return { success: true, message: 'Courses fetched successfully', data: response }
         } catch (error) {
@@ -62,7 +52,7 @@ export class CoursesService {
         try {
             const activeCurriculum = await this.CurriculumModel.findOne({ isActive: true })
 
-            // if (!activeCurriculum) return { success: false, message: 'No active curriculum found', data: [] }
+            if (!activeCurriculum) return { success: false, message: 'No active curriculum found', data: [] }
 
             // Extract all course IDs from all categories
             const courseIds = activeCurriculum.categories.reduce((acc, category) => {
@@ -75,43 +65,20 @@ export class CoursesService {
             // Fetch all courses that match these IDs
             const courses = await this.CourseModel.find({
                 _id: { $in: uniqueCourseIds }
-            }).populate('prerequisites')
+            })
+            
+            // const courses = await this.CourseModel.find({
+            //     _id: { $in: uniqueCourseIds }
+            // }).populate('prerequisites')
 
             return { success: true, message: 'Courses from active curriculum fetched successfully', data: courses }
 
         } catch (error) {
-            throw new HttpException(
-                {
-                    success: false,
-                    message: 'Failed to fetch courses from active curriculum',
-                    error
-                },
-                HttpStatus.INTERNAL_SERVER_ERROR
-            )
+            throw new HttpException({ success: false, message: 'Failed to fetch courses from active curriculum', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
-    // async findAllStudentsEnrolled(): Promise<IPromiseCourse> {
-    //     try {
-    //         const response = await this.CourseModel.aggregate([
-    //             {}
-    //         ])
-    //     } catch (error) {
-    //         throw new HttpException({ success: false, message: 'Students enrolled in course failed to fetch.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
-    //     }
-    // }
-
-    // async findOne({ courseno }: ICourses)
-    //     : Promise<IPromiseCourse> {
-    //     try {
-    //         const response = await this.CourseModel.findOne({ courseno })
-    //         return { success: true, message: 'Course fetched successfully', data: response }
-    //     } catch (error) {
-    //         throw new HttpException({ success: false, message: 'Course failed to fetch.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
-    //     }
-    // }
-
-    async create({ code, courseno, descriptiveTitle, units, prerequisites }: ICourses)
+    async create({ code, courseno, descriptiveTitle, units }: ICourses)
         : Promise<IPromiseCourse> {
         try {
             // Validate and convert code to number
@@ -152,22 +119,12 @@ export class CoursesService {
             // Validate units
             if (typeof numericUnits !== 'number' || numericUnits <= 0) return { success: false, message: 'Units must be a positive number.' }
 
-            // Validate prerequisites if provided
-            if (prerequisites && prerequisites.length > 0) {
-                const prerequisitesCourses = await this.CourseModel.find({
-                    _id: { $in: prerequisites }
-                })
-
-                if (prerequisitesCourses.length !== prerequisites.length) return { success: false, message: 'One or more prerequisites courses do not exist.' }
-            }
-
             // Create new course with numeric code
             await this.CourseModel.create({
                 code: numericCode,
                 courseno: normalizedCourseNo,
                 descriptiveTitle: normalizedTitle,
                 units: numericUnits,
-                prerequisites: prerequisites || []
             })
 
             return { success: true, message: 'Course successfully created.' }
@@ -176,42 +133,17 @@ export class CoursesService {
         }
     }
 
-    async updateToCourseOffered({ id }: IRequestCourses)
-        : Promise<IPromiseCourse> {
-        try {
-            await this.CourseModel.updateMany({ isoffered: true }, { isoffered: false })
-            const coursesOffered = await Promise.all(id.map(async (item) => {
-                const newCourses = await this.CourseModel.findByIdAndUpdate(item, { isoffered: true }, { new: true })
-                return { success: true, message: `Course successfully added in the courses offered.`, data: newCourses }
-            }))
-            return { success: true, message: 'Courses offered updated successfully.', data: coursesOffered }
-        } catch (error) {
-            throw new HttpException({ success: false, message: 'Failed to create new curriculum.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
-        }
-    }
-
-    // async findByIdAndUpdate({ cid, courseno, descriptiveTitle, programs, units }: ICourses)
+    // async updateToCourseOffered({ id }: IRequestCourses)
     //     : Promise<IPromiseCourse> {
     //     try {
-    //         await this.CourseModel.findByIdAndUpdate(
-    //             cid,
-    //             { courseno, descriptiveTitle, programs, units },
-    //             { new: true }
-    //         )
-
-    //         return { success: true, message: 'Course updated successfully.' }
+    //         await this.CourseModel.updateMany({ isoffered: true }, { isoffered: false })
+    //         const coursesOffered = await Promise.all(id.map(async (item) => {
+    //             const newCourses = await this.CourseModel.findByIdAndUpdate(item, { isoffered: true }, { new: true })
+    //             return { success: true, message: `Course successfully added in the courses offered.`, data: newCourses }
+    //         }))
+    //         return { success: true, message: 'Courses offered updated successfully.', data: coursesOffered }
     //     } catch (error) {
-    //         throw new HttpException({ success: false, message: 'Course failed to update.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
-    //     }
-    // }
-
-    // async delete({ cid }: ICourses)
-    //     : Promise<IPromiseCourse> {
-    //     try {
-    //         await this.CourseModel.findByIdAndDelete(cid)
-    //         return { success: true, message: 'Course deleted successfully.' }
-    //     } catch (error) {
-    //         throw new HttpException({ success: false, message: 'Course failed to delete.' }, HttpStatus.INTERNAL_SERVER_ERROR)
+    //         throw new HttpException({ success: false, message: 'Failed to create new curriculum.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
     //     }
     // }
 }
