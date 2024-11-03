@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom"
 import { ROUTES } from "@/constants"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
+import { Plus } from "lucide-react"
 interface DataTableToolbarProps<TData> {
     table: Table<TData>
     isenroll: boolean
@@ -46,6 +47,13 @@ export function DataTableToolbarCoursesOfferedInEnrollment<TData>({
                         <Cross2Icon className="ml-2 h-4 w-4" />
                     </Button>
                 )}
+                {/* {(table.getColumn("program") && programFetched) && (
+                    <DataTableFacetedFilter
+                        column={table.getColumn("program")}
+                        title="Program"
+                        options={filteredPrograms}
+                    />
+                )} */}
             </div>
             <div className="flex gap-2 items-center">
                 <div className="flex items-center space-x-2">
@@ -54,8 +62,10 @@ export function DataTableToolbarCoursesOfferedInEnrollment<TData>({
                     <Label htmlFor="airplane-mode">Enroll Mode</Label>
                 </div>
                 <AlertDialogConfirmation
+                    className="flex items-center gap-2"
                     type={`default`}
                     variant={'outline'}
+                    btnIcon={<Plus color="#000000" size={18} />}
                     btnTitle="New Courses Offered"
                     title="Are you sure?"
                     description={`You will be redirect to a page for creating new courses offered.`}
