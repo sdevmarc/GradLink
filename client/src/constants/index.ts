@@ -17,16 +17,13 @@ export const ROUTES = {
 
     //STUDENT
     LIST_OF_STUDENTS: '/student',
-    ALUMNI_GRADUATES: '/student/alumni',
     CREATE_STUDENT: '/student/create',
 
     //PROGRAM
-    AVAILABLE_PROGRAMS: '/program',
-    AVAILABLE_COURSES: '/program/courses',
-    CREATE_PROGRAM: '/program/program/create',
-    CREATE_COURSE: '/program/courses/create',
-    CURRICULUM: '/program/curriculum',
-    CREATE_CURRICULUM: '/program/curriculum/create',
+    PROGRAMS: '/program',
+    CREATE_PROGRAM: '/program/create-program',
+    CREATE_COURSE: '/program/create-course',
+    CREATE_CURRICULUM: '/program/create-curriculum',
 
     GOOGLE_FORM: '/form'
 }
