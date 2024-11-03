@@ -4,7 +4,6 @@ import {
     ColumnDef,
 } from "@tanstack/react-table"
 
-import { IAPICourse } from '@/interface/course.interface'
 import { DataTableColumnHeader } from "@/components/data-table-components/data-table-column-header"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -13,8 +12,9 @@ import { useState } from "react"
 import { Bookmark, TableOfContents } from "lucide-react"
 import { BookOpen, Clock, GraduationCap } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { ICurriculum } from "@/interface/curriculum.interface"
 
-export const CurriculumColumns: ColumnDef<IAPICourse>[] = [
+export const CurriculumColumns: ColumnDef<ICurriculum>[] = [
     {
         id: "icon",
         cell: () => {
@@ -87,6 +87,8 @@ export const CurriculumColumns: ColumnDef<IAPICourse>[] = [
         cell: ({ row }) => {
             const [isOpen, setIsOpen] = useState<boolean>(false)
 
+            const { name, major, categories, isActive, program, department, totalOfUnits, residency } = row.original
+
             const handleViewDetails = () => {
                 setIsOpen(true)
             }
@@ -114,15 +116,20 @@ export const CurriculumColumns: ColumnDef<IAPICourse>[] = [
                                                 <CardHeader>
                                                     <div className="flex justify-between items-start">
                                                         <div>
-                                                            <CardTitle className="capitalize text-3xl font-bold">
-                                                                Master of Information Technology
+                                                            <CardTitle className="capitalize flex flex-col text-3xl font-bold">
+                                                                {name || 'No Name Available'}
+                                                                <span className="font-normal text-md">
+                                                                    {major || null}
+                                                                </span>
                                                             </CardTitle>
                                                             <CardDescription className="mt-2">
-                                                                <Badge variant="default" className="mr-2">
-                                                                    MIT
+                                                                <Badge variant={isActive ? 'default' : 'destructive'} className="mr-2">
+                                                                    {
+                                                                        isActive ? 'Active' : 'Legacy'
+                                                                    }
                                                                 </Badge>
                                                                 <span className="text-muted-foreground">
-                                                                    New Curriculum 2024
+                                                                    {department || 'No Department Available'} | {program || 'No Program Available'}
                                                                 </span>
                                                             </CardDescription>
                                                         </div>
@@ -134,26 +141,41 @@ export const CurriculumColumns: ColumnDef<IAPICourse>[] = [
                                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                             <div className="flex items-center">
                                                                 <Clock className="h-5 w-5 mr-2 text-muted-foreground" />
-                                                                <span>Residency: 3 years</span>
+                                                                <span>Residency: {residency} years</span>
                                                             </div>
                                                             <div className="flex items-center">
                                                                 <BookOpen className="h-5 w-5 mr-2 text-muted-foreground" />
-                                                                <span>Credits: 26</span>
+                                                                <span>Credits: {totalOfUnits || 0}</span>
                                                             </div>
                                                         </div>
                                                     </section>
 
                                                     <section className="space-y-4">
-                                                        <div>
-                                                            <h3 className="font-semibold text-lg">Courses</h3>
-                                                            <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
-                                                                <li className="flex items-center">
-                                                                    <GraduationCap className="h-5 w-5 mr-2 text-muted-foreground" />
-                                                                    Data Analytics
-                                                                </li>
+                                                        {
+                                                            categories?.map((item, i) => (
+                                                                <div key={i} className="flex flex-col">
+                                                                    <h3 className="font-medium text-md">
+                                                                        {item.categoryName}
+                                                                    </h3>
+                                                                    {
+                                                                        item?.courses?.map((course, l) => (
+                                                                            <ul key={l} className="flex items-center gap-4 mt-2">
+                                                                                <li className="w-full flex items-center justify-between text-sm">
+                                                                                    <div className="flex items-center gap-2">
+                                                                                        <GraduationCap size={18} className="h-5 w-5 mr-2 text-muted-foreground" />
+                                                                                        {(course as any)?.descriptiveTitle || 'No Title'}
+                                                                                    </div>
+                                                                                    <h1 className="flex items-center gap-2">
+                                                                                        {(course as any)?.units || 0}<span>Units</span>
+                                                                                    </h1>
+                                                                                </li>
+                                                                            </ul>
+                                                                        ))
+                                                                    }
 
-                                                            </ul>
-                                                        </div>
+                                                                </div>
+                                                            ))
+                                                        }
                                                     </section>
                                                 </CardContent>
                                             </Card>
