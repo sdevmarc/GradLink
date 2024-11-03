@@ -1,15 +1,10 @@
 import HeadSection, { BackHeadSection, SubHeadSectionDetails } from '@/components/head-section'
-import { Sidebar, SidebarNavs } from '@/components/sidebar'
 import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { API_COURSE_CREATE, API_COURSE_FINDALL } from '@/api/courses'
-import { DataTableCreateCourse } from './program-data-table-components/courses/create-course/data-table-courses-create'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { API_COURSE_CREATE } from '@/api/courses'
 import { IAPICourse } from '@/interface/course.interface'
 import React, { useState } from 'react'
-import { ROUTES } from '@/constants'
-import { CircleCheck, CircleX, Plus } from 'lucide-react'
-import { CreateCourseColumns } from './program-data-table-components/courses/create-course/columns'
+import { CircleCheck, CircleX } from 'lucide-react'
 import { AlertDialogConfirmation } from '@/components/alert-dialog'
 import Loading from '@/components/loading'
 import { useNavigate } from 'react-router-dom'
@@ -28,12 +23,7 @@ export default function CreateCourse() {
                             />
                         </HeadSection>
                     </aside>
-                    <main className="flex">
-                        <Sidebar>
-                            <SidebarNavs title="Programs" link={ROUTES.AVAILABLE_PROGRAMS} />
-                            <SidebarNavs bg='bg-muted' title="Courses" link={ROUTES.AVAILABLE_COURSES} />
-                            <SidebarNavs title="Curriculums" link={ROUTES.CURRICULUM} />
-                        </Sidebar>
+                    <main className="flex justify-end">
                         <CreateForm />
                     </main>
                 </div>
@@ -45,27 +35,19 @@ export default function CreateCourse() {
 const CreateForm = () => {
     const queryClient = useQueryClient()
     const navigate = useNavigate()
-    const [resetSelection, setResetSelection] = React.useState(false)
     const [dialogsubmit, setDialogSubmit] = React.useState<boolean>(false)
-    const [isPre, setPre] = React.useState<boolean>(false)
     const [isValid, setValid] = useState<boolean>(false)
     const [course, setCourse] = React.useState<IAPICourse>({
         code: '',
         courseno: '',
         descriptiveTitle: '',
         units: 0,
-        prerequisites: [],
     })
     const [alertdialogstate, setAlertDialogState] = React.useState({
         show: false,
         title: '',
         description: '',
         success: false
-    })
-
-    const { data: dataCourse, isLoading: courseLoading, isFetched: courseFetched } = useQuery({
-        queryFn: () => API_COURSE_FINDALL(),
-        queryKey: ['courses']
     })
 
     const { mutateAsync: insertCourse, isPending: insertcoursePending } = useMutation({
@@ -85,9 +67,7 @@ const CreateForm = () => {
                 setValid(true)
                 setAlertDialogState({ success: true, show: true, title: "Yay, success! 🎉", description: data.message })
                 setDialogSubmit(false)
-                setResetSelection(true)
-                setPre(false)
-                setCourse(({ code: '', courseno: '', descriptiveTitle: '', prerequisites: [], units: 0 }))
+                setCourse(({ code: '', courseno: '', descriptiveTitle: '', units: 0 }))
                 return
             }
         },
@@ -98,7 +78,7 @@ const CreateForm = () => {
     })
 
     const handleSubmit = async () => {
-        const { code, courseno, descriptiveTitle, units, prerequisites } = course
+        const { code, courseno, descriptiveTitle, units } = course
 
         const nospaceCode = (code ?? '').replace(/\s+/g, '')
         const nospaceUnits = String(units ?? '').replace(/\s+/g, '')
@@ -125,7 +105,7 @@ const CreateForm = () => {
             setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Units must be a number.' })
             return
         }
-        await insertCourse({ code: nospaceCode, courseno: upperCourseno, descriptiveTitle: trimmedDescriptiveTitle, units: Number(nospaceUnits), prerequisites })
+        await insertCourse({ code: nospaceCode, courseno: upperCourseno, descriptiveTitle: trimmedDescriptiveTitle, units: Number(nospaceUnits) })
     }
 
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -136,14 +116,7 @@ const CreateForm = () => {
         }))
     }
 
-    const handleCourseChange = (selectedCourses: IAPICourse[]) => {
-        setCourse((prev) => ({
-            ...prev,
-            prerequisites: selectedCourses.map(({ _id }) => ({ _id: _id || '' }))
-        }))
-    }
-
-    const isLoading = courseLoading || insertcoursePending
+    const isLoading = insertcoursePending
 
     return (
         <>
@@ -172,7 +145,9 @@ const CreateForm = () => {
                 <div className="w-full py-2 flex flex-col justify-between">
                     <div className="w-full flex flex-col gap-4">
                         <div className="flex flex-col px-4 gap-1">
-                            <h1 className='text-[.83rem]'>Code</h1>
+                            <h1 className="text-md font-medium">
+                                Code
+                            </h1>
                             <Input
                                 disabled={isLoading}
                                 value={course.code}
@@ -184,7 +159,7 @@ const CreateForm = () => {
                             />
                         </div>
                         <div className="flex flex-col px-4 gap-1">
-                            <h1 className='text-[.83rem]'>Course Number</h1>
+                            <h1 className="text-md font-medium">Course Number</h1>
                             <Input
                                 disabled={isLoading}
                                 value={course.courseno}
@@ -196,7 +171,7 @@ const CreateForm = () => {
                             />
                         </div>
                         <div className="flex flex-col px-4 gap-1">
-                            <h1 className='text-[.83rem]'>Descriptive Title</h1>
+                            <h1 className="text-md font-medium">Descriptive Title</h1>
                             <Input
                                 disabled={isLoading}
                                 value={course.descriptiveTitle}
@@ -208,7 +183,7 @@ const CreateForm = () => {
                             />
                         </div>
                         <div className="flex flex-col px-4 gap-1">
-                            <h1 className='text-[.83rem]'>Units</h1>
+                            <h1 className="text-md font-medium">Units</h1>
                             <Input
                                 disabled={isLoading}
                                 value={course.units}
@@ -219,55 +194,20 @@ const CreateForm = () => {
                                 required
                             />
                         </div>
-                        {
-                            !isPre &&
-                            <div className="flex px-4">
-                                <Button disabled={isLoading} variant={`outline`} size={`sm`} className="flex items-center gap-4" type="button" onClick={() => setPre(true)}>
-                                    <Plus color="#000000" size={18} /> Add Prerequisite
-                                </Button>
-                            </div>
-                        }
-
-                        {
-                            isPre &&
-                            <div className="flex flex-col px-4 gap-2">
-                                <div className="flex flex-col gap-1">
-                                    <h1 className='text-[1.1rem] font-medium'>
-                                        Add Prerequisite
-                                    </h1>
-                                    <p className="text-sm">
-                                        Please check the course(s) that is a prerequisite for this course.
-                                    </p>
-                                </div>
-                                <div className="w-full flex flex-col gap-2 justify-center items-start">
-                                    {courseLoading && <div>Loading...</div>}
-                                    {
-                                        courseFetched &&
-                                        <DataTableCreateCourse
-                                            data={dataCourse?.data || []} columns={CreateCourseColumns}
-                                            fetchCheck={handleCourseChange}
-                                            onCancel={(e) => setPre(e)}
-                                            resetSelection={resetSelection}
-                                            onResetComplete={() => setResetSelection(false)}
-                                        />
-                                    }
-                                </div>
-                            </div>
-                        }
-
-
-                        <AlertDialogConfirmation
-                            isDialog={dialogsubmit}
-                            setDialog={(open) => setDialogSubmit(open)}
-                            type={`default`}
-                            disabled={isLoading}
-                            className='w-full my-3 py-5'
-                            variant={'default'}
-                            btnTitle="Create course"
-                            title="Are you sure?"
-                            description={`This will permanently add a new course to the system, and cannot be modified.`}
-                            btnContinue={handleSubmit}
-                        />
+                        <div className="px-4">
+                            <AlertDialogConfirmation
+                                isDialog={dialogsubmit}
+                                setDialog={(open) => setDialogSubmit(open)}
+                                type={`default`}
+                                disabled={isLoading}
+                                className='w-full my-3 py-5'
+                                variant={'default'}
+                                btnTitle="Create course"
+                                title="Are you sure?"
+                                description={`This will permanently add a new course to the system, and cannot be modified.`}
+                                btnContinue={handleSubmit}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
