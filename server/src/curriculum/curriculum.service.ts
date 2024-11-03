@@ -31,9 +31,10 @@ export class CurriculumService {
                         _id: 1,
                         name: 1,
                         program: '$programdetails.descriptiveTitle',
-                        createdAt: 1,
+                        createdAt: { $dateToString: { format: "%d-%m-%Y", date: "$createdAt" } },
                         updatedAt: 1,
                         major: 1,
+                        department: '$programdetails.department',
                         categories: 1,
                         isActive: 1
                     }
@@ -95,30 +96,6 @@ export class CurriculumService {
             throw new HttpException({ success: false, message: 'Failed to retrieve curriculums.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
-
-    // async findAllLegacy()
-    //     : Promise<IPromiseCurriculum> {
-    //     try {
-    //         const response = await this.CurriculumModel.aggregate([
-    //             { $match: { isActive: false } },
-    //             {
-    //                 $project: {
-    //                     _id: 1,
-    //                     name: 1,
-    //                     major: 1,
-    //                     programCode: 1,
-    //                     isActive: 1,
-    //                     createdAt: 1,
-    //                     updatedAt: 1
-    //                 }
-    //             },
-    //             { $sort: { createdAt: -1 } }
-    //         ])
-    //         return { success: true, message: 'Inactive Curriculumns fetched successfully.', data: response }
-    //     } catch (error) {
-    //         throw new HttpException({ success: false, message: 'Failed to retrieve curriculums.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
-    //     }
-    // }
 
     async insertNew({ name, programid, major, categories }: ICurriculum) {
         try {
