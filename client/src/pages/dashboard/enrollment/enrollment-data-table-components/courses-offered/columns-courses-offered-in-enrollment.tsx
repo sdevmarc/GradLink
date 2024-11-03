@@ -4,20 +4,38 @@ import {
     ColumnDef,
 } from "@tanstack/react-table"
 
-import { IAPICourse } from '@/interface/course.interface'
 import { DataTableColumnHeader } from "@/components/data-table-components/data-table-column-header"
 import { useNavigate } from "react-router-dom"
 import { AlertDialogConfirmation } from "@/components/alert-dialog"
+import { IAPIOffered } from "@/interface/offered.interface"
+import { HandHelping } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
 
-export const CoursesOfferedInEnrollmentColumns = (isenroll: boolean): ColumnDef<IAPICourse>[] => [
+export const CoursesOfferedInEnrollmentColumns = (isenroll: boolean): ColumnDef<IAPIOffered>[] => [
+    {
+        id: "icon",
+        cell: () => {
+            return (
+                <div className="w-0">
+                    <HandHelping color="#000000" size={18} />
+                </div>
+            )
+
+        }
+    },
     {
         accessorKey: "code",
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="Code" className="text-text" />
         ),
         cell: ({ row }) => (
-            <div className="w-[100px] capitalize">{row.getValue("code")}</div>
-        )
+            <div className="flex justify-start items-center capitalize gap-4 ">
+                <Badge variant={`default`}>
+                    {row.getValue("code")}
+                </Badge>
+            </div>
+        ),
+        enableHiding: false
     },
     {
         accessorKey: "courseno",
@@ -26,7 +44,8 @@ export const CoursesOfferedInEnrollmentColumns = (isenroll: boolean): ColumnDef<
         ),
         cell: ({ row }) => (
             <div className="w-[100px] capitalize">{row.getValue("courseno")}</div>
-        )
+        ),
+        enableHiding: false
     },
     {
         accessorKey: "descriptiveTitle",
@@ -57,7 +76,8 @@ export const CoursesOfferedInEnrollmentColumns = (isenroll: boolean): ColumnDef<
         },
         filterFn: (row, id, value) => {
             return value.includes(row.getValue(id));
-        }
+        },
+        enableColumnFilter: true
     },
     {
         id: "actions",
@@ -75,7 +95,7 @@ export const CoursesOfferedInEnrollmentColumns = (isenroll: boolean): ColumnDef<
             return (
                 <AlertDialogConfirmation
                     type="default"
-                    variant={isenroll ? 'default' : 'outline'}
+                    variant={isenroll ? 'default' : 'destructive'}
                     btnTitle={isenroll ? "Enroll Student" : "Evaluate Student"}
                     title="Are you sure?"
                     description={isenroll
