@@ -6,22 +6,19 @@ import { StudentSchema } from './student.schema'
 import { FormsService } from 'src/forms/forms.service'
 import { FormSchema } from 'src/forms/forms.schema'
 import { ConstantsService } from 'src/constants/constants.service'
-import { CurriculumSchema } from 'src/curriculum/curriculum.schema'
-import { CurriculumService } from 'src/curriculum/curriculum.service'
 import { CoursesSchema } from 'src/courses/courses.schema'
-import { ProgramSchema } from 'src/programs/programs.schema'
+import { OfferedSchema } from 'src/offered/offered.schema'
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: 'Student', schema: StudentSchema },
       { name: 'Form', schema: FormSchema },
-      { name: 'Curriculum', schema: CurriculumSchema },
       { name: 'Course', schema: CoursesSchema },
-      { name: 'Program', schema: ProgramSchema },
+      { name: 'Offered', schema: OfferedSchema },
     ])
   ],
-  providers: [StudentService, FormsService, ConstantsService, CurriculumService],
+  providers: [StudentService, FormsService, ConstantsService],
   controllers: [StudentController]
 })
 export class StudentModule { }
