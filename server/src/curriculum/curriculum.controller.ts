@@ -18,11 +18,6 @@ export class CurriculumController {
         return await this.CurriculumService.findAllActive()
     }
 
-    // @Get('legacy')
-    // async findAllInactiveCurriculum() {
-    //     return await this.CurriculumService.findAllLegacy()
-    // }
-
     @Post('create')
     async insertCurriculum(@Body() { name, programid, major, categories }: ICurriculum) {
         return this.CurriculumService.insertNew({ name, programid, major, categories })
