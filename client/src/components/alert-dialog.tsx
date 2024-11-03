@@ -27,6 +27,7 @@ interface IComponents {
     icon?: React.ReactNode
     combovalue?: string
     setCombobox?: (e: string) => void
+    btnIcon?: React.ReactNode
 }
 
 export function AlertDialogConfirmation({
@@ -42,7 +43,8 @@ export function AlertDialogConfirmation({
     setDialog,
     icon,
     combovalue,
-    setCombobox
+    setCombobox,
+    btnIcon
 }: IComponents) {
     const navigate = useNavigate()
     const semester = [
@@ -160,7 +162,7 @@ export function AlertDialogConfirmation({
                     <AlertDialog open={isDialog} onOpenChange={(open) => setDialog && setDialog(open)}>
                         <AlertDialogTrigger asChild>
                             <Button disabled={disabled} variant={variant} size="sm" className={cn(className)}>
-                                {btnTitle}
+                                {btnIcon}   {btnTitle}
                             </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
