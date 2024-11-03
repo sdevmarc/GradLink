@@ -32,7 +32,7 @@ export function DataTableToolbarAvailableCourses<TData>({
         <div className="flex flex-wrap items-center justify-between">
             <div className="flex flex-1 flex-wrap items-center gap-2">
                 <Input
-                    placeholder="Search courses..."
+                    placeholder="Search course number..."
                     value={(table.getColumn("courseno")?.getFilterValue() as string) ?? ""}
                     onChange={(event) => {
                         table.getColumn("courseno")?.setFilterValue(event.target.value)
