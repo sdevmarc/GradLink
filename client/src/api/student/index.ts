@@ -17,6 +17,11 @@ export const API_STUDENT_FINDALL_ENROLLEES_IN_COURSE = async (id: string) => {
     return response.data
 }
 
+export const API_STUDENT_FINDALL_EVALUATEES_IN_COURSE = async (id: string) => {
+    const response = await axios.get(`${HOST}/student/evaluation/${id}`)
+    return response.data
+}
+
 export const API_STUDENT_FINDALL_CURRENTLY_ENROLLED = async () => {
     const response = await axios.get(`${HOST}/student/currently-enrolled`)
     return response.data
@@ -32,6 +37,13 @@ export const API_STUDENT_NEW_STUDENT = async ({ idNumber, lastname, firstname, m
 export const API_STUDENT_ENROLL_STUDENT = async ({ course, id }: IRequestStudents) => {
     const response = await axios.post(`${HOST}/student/enroll-student`, {
         course, id
+    })
+    return response.data
+}
+
+export const API_STUDENT_EVALUATE_STUDENT = async ({ course, id, ispass }: IRequestStudents) => {
+    const response = await axios.post(`${HOST}/student/evaluate-student`, {
+        course, id, ispass
     })
     return response.data
 }
