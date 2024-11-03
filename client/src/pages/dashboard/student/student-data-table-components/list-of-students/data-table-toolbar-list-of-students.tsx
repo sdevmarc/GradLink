@@ -7,23 +7,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AlertDialogConfirmation } from "@/components/alert-dialog";
 import { useNavigate } from "react-router-dom";
-import { API_PROGRAM_FINDALL } from "@/api/program";
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { IAPIPrograms } from "@/interface/program.interface";
-import { DataTableFacetedFilter } from "@/components/data-table-components/data-table-faceted-filter";
+import { useState } from "react";
 import { CalendarDatePicker } from "@/components/calendar-date-picker";
 import { ROUTES } from "@/constants";
+import { DataTableFacetedFilter } from "@/components/data-table-components/data-table-faceted-filter";
+import { Plus } from "lucide-react";
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>;
 }
 
-interface ProgramOption {
-    value: string;
-    label: string;
-    department: string;
-}
+// interface ProgramOption {
+//     value: string;
+//     label: string;
+//     department: string;
+// }
 
 export function DataTableToolbarListOfStudent<TData>({
     table
@@ -48,59 +46,59 @@ export function DataTableToolbarListOfStudent<TData>({
         }
     }
     const navigate = useNavigate()
-    const [formattedprogram, setFormattedProgram] = useState<ProgramOption[]>([]);
-    const [filteredPrograms, setFilteredPrograms] = useState<ProgramOption[]>([]);
-    const department_options = [
-        { value: 'SEAIT', label: 'SEAIT' },
-        { value: 'SHANS', label: 'SHANS' },
-        { value: 'SAB', label: 'SAB' },
-        { value: 'STEH', label: 'STEH' },
-        { value: 'CL', label: 'CL' },
-    ]
+    // const [formattedprogram, setFormattedProgram] = useState<ProgramOption[]>([]);
+    // const [filteredPrograms, setFilteredPrograms] = useState<ProgramOption[]>([]);
+    // const department_options = [
+    //     { value: 'SEAIT', label: 'SEAIT' },
+    //     { value: 'SHANS', label: 'SHANS' },
+    //     { value: 'SAB', label: 'SAB' },
+    //     { value: 'STEH', label: 'STEH' },
+    //     { value: 'CL', label: 'CL' },
+    // ]
 
-    const { data: program, isLoading: programLoading, isFetched: programFetched } = useQuery({
-        queryFn: () => API_PROGRAM_FINDALL(),
-        queryKey: ['programs']
-    })
+    // const { data: program, isLoading: programLoading, isFetched: programFetched } = useQuery({
+    //     queryFn: () => API_PROGRAM_FINDALL(),
+    //     queryKey: ['programs']
+    // })
 
-    useEffect(() => {
-        if (!programLoading && programFetched) {
-            const formatprogram = program.data.map((item: IAPIPrograms) => {
-                const { _id, code, department } = item
-                return {
-                    value: _id, label: code, department: department // Make sure your API returns this
-                }
-            })
+    // useEffect(() => {
+    //     if (!programLoading && programFetched) {
+    //         const formatprogram = program.data.map((item: IAPIPrograms) => {
+    //             const { _id, code, department } = item
+    //             return {
+    //                 value: _id, label: code, department: department // Make sure your API returns this
+    //             }
+    //         })
 
-            setFormattedProgram(formatprogram)
-            setFilteredPrograms(formatprogram)
-        }
-    }, [program])
+    //         setFormattedProgram(formatprogram)
+    //         setFilteredPrograms(formatprogram)
+    //     }
+    // }, [program])
 
-    useEffect(() => {
-        const selectedDepartment = table.getColumn("department")?.getFilterValue() as string[];
+    // useEffect(() => {
+    //     const selectedDepartment = table.getColumn("department")?.getFilterValue() as string[];
 
-        if (selectedDepartment && selectedDepartment.length > 0) {
-            const filtered = formattedprogram.filter((prog: any) =>
-                selectedDepartment.includes(prog.department)
-            );
-            setFilteredPrograms(filtered);
+    //     if (selectedDepartment && selectedDepartment.length > 0) {
+    //         const filtered = formattedprogram.filter((prog: any) =>
+    //             selectedDepartment.includes(prog.department)
+    //         );
+    //         setFilteredPrograms(filtered);
 
-            // Clear program filter if selected program is not in filtered list
-            const currentProgramFilter = table.getColumn("program")?.getFilterValue() as string[];
-            if (currentProgramFilter && currentProgramFilter.length > 0) {
-                const validPrograms = filtered.map(p => p.value);
-                const newProgramFilter = currentProgramFilter.filter(p =>
-                    validPrograms.includes(p)
-                );
-                if (newProgramFilter.length !== currentProgramFilter.length) {
-                    table.getColumn("program")?.setFilterValue(newProgramFilter);
-                }
-            }
-        } else {
-            setFilteredPrograms(formattedprogram);
-        }
-    }, [table.getColumn("department")?.getFilterValue()]);
+    //         // Clear program filter if selected program is not in filtered list
+    //         const currentProgramFilter = table.getColumn("program")?.getFilterValue() as string[];
+    //         if (currentProgramFilter && currentProgramFilter.length > 0) {
+    //             const validPrograms = filtered.map(p => p.value);
+    //             const newProgramFilter = currentProgramFilter.filter(p =>
+    //                 validPrograms.includes(p)
+    //             );
+    //             if (newProgramFilter.length !== currentProgramFilter.length) {
+    //                 table.getColumn("program")?.setFilterValue(newProgramFilter);
+    //             }
+    //         }
+    //     } else {
+    //         setFilteredPrograms(formattedprogram);
+    //     }
+    // }, [table.getColumn("department")?.getFilterValue()]);
 
     return (
         <div className="flex flex-wrap items-center justify-between">
@@ -113,7 +111,17 @@ export function DataTableToolbarListOfStudent<TData>({
                     }}
                     className="h-8 w-[250px] lg:w-[300px]"
                 />
-                {table.getColumn("department") && (
+                <DataTableFacetedFilter
+                    column={table.getColumn("department")}
+                    title="Department"
+                    options={[]}
+                />
+                <DataTableFacetedFilter
+                    column={table.getColumn("department")}
+                    title="Program"
+                    options={[]}
+                />
+                {/* {table.getColumn("department") && (
                     <DataTableFacetedFilter
                         column={table.getColumn("department")}
                         title="Department"
@@ -126,8 +134,8 @@ export function DataTableToolbarListOfStudent<TData>({
                         title="Program"
                         options={filteredPrograms}
                     />
-                )}
-                <CalendarDatePicker
+                )} */}
+                {/* <CalendarDatePicker
                     date={dateRange || {
                         from: new Date(new Date().getFullYear(), 0, 1),
                         to: new Date()
@@ -135,7 +143,7 @@ export function DataTableToolbarListOfStudent<TData>({
                     onDateSelect={handleDateSelect}
                     className="w-[200px] h-8"
                     variant={`outline`}
-                />
+                /> */}
                 {isFiltered && (
                     <Button
                         variant="ghost"
@@ -150,8 +158,10 @@ export function DataTableToolbarListOfStudent<TData>({
             </div>
             <div className="flex gap-2 items-center">
                 <AlertDialogConfirmation
+                    className="flex items-center gap-2"
                     type={`default`}
                     variant={'outline'}
+                    btnIcon={<Plus color="#000000" size={18} />}
                     btnTitle="New Student"
                     title="Are you sure?"
                     description={`You will be redirect to page for creating new student.`}
