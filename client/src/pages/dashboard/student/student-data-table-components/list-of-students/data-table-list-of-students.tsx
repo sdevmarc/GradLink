@@ -40,7 +40,11 @@ export function DataTableStudentListOfStudent<TData, TValue>({
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
         program: false,
         department: false,
-        createdAt: false
+        createdAt: false,
+        lastname: false,
+        firstname: false,
+        middlename: false,
+        email: false
     })
     const [rowSelection, setRowSelection] = React.useState({})
 
@@ -67,7 +71,7 @@ export function DataTableStudentListOfStudent<TData, TValue>({
         <div className="w-full flex flex-col gap-4">
             <DataTableToolbarListOfStudent table={table} />
             <div className="rounded-md border">
-                <Table>
+                <Table className=''>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
