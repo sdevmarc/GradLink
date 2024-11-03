@@ -9,15 +9,32 @@ import { IAPIPrograms } from "@/interface/program.interface"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { RightSheetModal } from "@/components/right-sheet-modal"
+import { Badge } from "@/components/ui/badge"
+import { BookCopy, TableOfContents } from "lucide-react"
 
 export const AvailableProgramsColumns: ColumnDef<IAPIPrograms>[] = [
     {
+        id: "icon",
+        cell: () => {
+            return (
+                <div className="w-0">
+                    <BookCopy color="#000000" size={18} />
+                </div>
+            )
+
+        }
+    },
+    {
         accessorKey: "code",
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Code" className="text-text" />
+            <DataTableColumnHeader column={column} title="Code" className="text-primary" />
         ),
         cell: ({ row }) => (
-            <div className="w-[2rem] capitalize">{row.getValue("code")}</div>
+            <div className="flex justify-start items-center capitalize gap-4 ">
+                <Badge variant={`default`}>
+                    {row.getValue("code")}
+                </Badge>
+            </div>
         ),
         // enableSorting: false,
         enableHiding: false
@@ -25,7 +42,7 @@ export const AvailableProgramsColumns: ColumnDef<IAPIPrograms>[] = [
     {
         accessorKey: "descriptiveTitle",
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Descriptive Title" className="text-text" />
+            <DataTableColumnHeader column={column} title="Descriptive Title" className="text-primary" />
         ),
         cell: ({ row }) => {
             return (
@@ -40,12 +57,12 @@ export const AvailableProgramsColumns: ColumnDef<IAPIPrograms>[] = [
     {
         accessorKey: "residency",
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Residency" className="text-text" />
+            <DataTableColumnHeader column={column} title="Residency" className="text-primary" />
         ),
         cell: ({ row }) => {
             return (
                 <div className="flex w-[100px] items-center">
-                    <span className="capitalize"> {row.getValue("residency")}</span>
+                    <span className="capitalize">{row.getValue("residency")}</span>
                 </div>
             )
         },
@@ -67,9 +84,9 @@ export const AvailableProgramsColumns: ColumnDef<IAPIPrograms>[] = [
                 setIsOpen(open)
             }
             return (
-                <>
-                    <Button onClick={handleViewDetails} variant={`outline`} size={`sm`}>
-                        View Details
+                <div className="flex justify-end">
+                    <Button onClick={handleViewDetails} variant={`outline`} size={`sm`} className="flex items-center gap-4">
+                        <TableOfContents color="#000000" size={18} /> View Details
                     </Button>
                     <RightSheetModal
                         className="w-[60%]"
@@ -79,8 +96,7 @@ export const AvailableProgramsColumns: ColumnDef<IAPIPrograms>[] = [
                         description="View details of the selected program."
                         content={''}
                     />
-                </>
-
+                </div>
             )
         }
     }
