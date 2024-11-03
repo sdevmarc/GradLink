@@ -1,7 +1,4 @@
 
-interface IPrerequisite {
-    courseno: string
-}
 
 export interface ICourses {
     _id?: string
@@ -9,7 +6,6 @@ export interface ICourses {
     courseno?: string
     descriptiveTitle?: string
     units?: number
-    prerequisites?: IPrerequisite[]
     isoffered?: boolean
     curriculumid?: string
 }
