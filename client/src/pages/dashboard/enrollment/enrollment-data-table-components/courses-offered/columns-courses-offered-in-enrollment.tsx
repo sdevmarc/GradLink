@@ -70,7 +70,7 @@ export const CoursesOfferedInEnrollmentColumns = (isenroll: boolean): ColumnDef<
         cell: ({ row }) => {
             return (
                 <div className="flex w-[60px] items-center">
-                    <span className="capitalize"> {row.getValue("units")}</span>
+                    <span className="capitalize">{row.getValue("units")}</span>
                 </div>
             );
         },
@@ -78,6 +78,24 @@ export const CoursesOfferedInEnrollmentColumns = (isenroll: boolean): ColumnDef<
             return value.includes(row.getValue(id));
         },
         enableColumnFilter: true
+    },
+    {
+        accessorKey: "program",
+        enableColumnFilter: true,
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id))
+        },
+        enableHiding: true,
+        enableSorting: false,
+    },
+    {
+        accessorKey: "department",
+        enableColumnFilter: true,
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id))
+        },
+        enableHiding: true,
+        enableSorting: false,
     },
     {
         id: "actions",
