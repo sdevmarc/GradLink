@@ -1,6 +1,3 @@
-interface IPrerequisite {
-    _id: string
-}
 
 interface IPrograms {
     _id: string
@@ -13,7 +10,6 @@ export interface IAPICourse {
     descriptiveTitle?: string
     programs?: IPrograms[]
     units?: number
-    prerequisites?: IPrerequisite[]
     curriculumid?: string
 }
 
