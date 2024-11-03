@@ -1,6 +1,4 @@
 import HeadSection, { BackHeadSection, SubHeadSectionDetails } from '@/components/head-section'
-import { Sidebar, SidebarNavs } from '@/components/sidebar'
-import { ROUTES } from '@/constants'
 import MainTable from '@/components/main-table'
 import { useEffect, useState } from 'react'
 import { CircleCheck, CircleX } from 'lucide-react'
