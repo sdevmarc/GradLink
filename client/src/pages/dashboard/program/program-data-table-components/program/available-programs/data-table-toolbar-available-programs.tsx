@@ -20,12 +20,12 @@ export function DataTableToolbarAvailablePrograms<TData>({
 }: DataTableToolbarProps<TData>) {
     const isFiltered = table.getState().columnFilters.length > 0;
     const navigate = useNavigate()
-    const options = [
-        { label: "1 Year", value: 1 },
-        { label: "2 Years", value: 2 },
-        { label: "3 Years", value: 3 },
-        { label: "4 Years", value: 4 },
-        { label: "5 Years", value: 5 },
+    const department_options = [
+        { value: 'SEAIT', label: 'SEAIT' },
+        { value: 'SHANS', label: 'SHANS' },
+        { value: 'SAB', label: 'SAB' },
+        { value: 'STEH', label: 'STEH' },
+        { value: 'CL', label: 'CL' },
     ]
 
     return (
@@ -39,11 +39,11 @@ export function DataTableToolbarAvailablePrograms<TData>({
                     }}
                     className="h-8 w-[20rem] lg:w-[25rem]"
                 />
-                {table.getColumn("residency") && (
+                {table.getColumn("department") && (
                     <DataTableFacetedFilter
-                        column={table.getColumn("residency")}
-                        title="Residency"
-                        options={options}
+                        column={table.getColumn("department")}
+                        title="Department"
+                        options={department_options}
                     />
                 )}
                 {/* {table.getColumn("type") && (
