@@ -11,15 +11,6 @@ export const API_COURSE_FINDALL = async () => {
     }
 }
 
-export const API_COURSE_FINDALL_COURSES_OFFERED = async () => {
-    try {
-        const response = await axios.get(`${HOST}/courses/courses-offered`)
-        return response.data
-    } catch (error) {
-        console.error(error)
-    }
-}
-
 export const API_COURSE_FINDALL_COURSES_IN_NEW_STUDENT = async ({ curriculumid }: IAPICourse) => {
     try {
         const response = await axios.get(`${HOST}/courses/courses-additional/${curriculumid}`)
@@ -47,10 +38,10 @@ export const API_COURSE_FINDONE = async ({ courseno }: IAPICourse) => {
     }
 }
 
-export const API_COURSE_CREATE = async ({ code, courseno, descriptiveTitle, units, prerequisites }: IAPICourse) => {
+export const API_COURSE_CREATE = async ({ code, courseno, descriptiveTitle, units }: IAPICourse) => {
     try {
         const response = await axios.post(`${HOST}/courses/create`, {
-            code, courseno, descriptiveTitle, units, prerequisites
+            code, courseno, descriptiveTitle, units
         })
 
         return response.data
