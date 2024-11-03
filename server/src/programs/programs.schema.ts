@@ -11,14 +11,14 @@ export const ProgramSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    department: {
-        type: String,
-        enum: ['SEAIT', 'SHANS', 'SAB', 'STEH', 'CL'],
-        required: true
-    },
     residency: {
         type: Number,
         required: true,
         default: 0
+    },
+    department: {
+        type: String,
+        enum: ['SEAIT', 'SHANS', 'SAB', 'STEH', 'CL'],
+        required: true
     }
 }, { timestamps: true })
