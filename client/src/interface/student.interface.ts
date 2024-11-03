@@ -50,5 +50,6 @@ export interface IAPIStudents {
 
 export interface IRequestStudents {
     course: string
-    id: string[]
+    id: string[],
+    ispass?: string
 }
