@@ -20,4 +20,8 @@ export interface ICurriculum {
     program?: string
     programcode?: string
     programDescriptiveTitle?: string
+    isActive?: boolean
+    department?: string
+    totalOfUnits?: number
+    residency?: number
 }
