@@ -310,11 +310,11 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                         {
                                                                             item?.courses?.map(course => (
                                                                                 <div className="flex items-center justify-between">
-                                                                                    <h1 className="capitalize text-md font-normal flex items-center gap-2">
+                                                                                    <h1 className="capitalize text-sm font-normal flex items-center gap-2">
                                                                                         <GraduationCap size={18} className="h-5 w-5 mr-2 text-muted-foreground" />
                                                                                         {course.courseno}
                                                                                     </h1>
-                                                                                    <h1 className="text-md font-normal flex items-center gap-2 capitalize">
+                                                                                    <h1 className="text-sm font-normal flex items-center gap-2 capitalize">
                                                                                         <CircleDashed color="#000000" size={18} />
                                                                                         {course.status}
                                                                                     </h1>
