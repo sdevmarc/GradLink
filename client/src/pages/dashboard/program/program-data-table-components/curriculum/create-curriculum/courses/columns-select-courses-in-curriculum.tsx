@@ -37,7 +37,9 @@ export const SelectCoursesInCurriculumColumns: ColumnDef<IAPICourse>[] = [
             <DataTableColumnHeader column={column} title="Code" className="text-text" />
         ),
         cell: ({ row }) => (
-            <div className="w-[2rem] capitalize">{row.getValue("code")}</div>
+            <div className="flex flex-col">
+                {row.getValue("code")}
+            </div>
         ),
         enableSorting: false,
         enableHiding: false
