@@ -110,6 +110,14 @@ export const CoursesOfferedInEnrollmentColumns = (isenroll: boolean): ColumnDef<
 
                 navigate(`/enrollment/enroll-student/${base64ID}`)
             }
+
+            const handleNavigateEvaluateStudent = () => {
+                const combinedString = JSON.stringify({ id, descriptiveTitle });
+                const base64ID = btoa(combinedString)
+
+                navigate(`/enrollment/evaluate-student/${base64ID}`)
+            }
+
             return (
                 <AlertDialogConfirmation
                     type="default"
@@ -120,7 +128,11 @@ export const CoursesOfferedInEnrollmentColumns = (isenroll: boolean): ColumnDef<
                         ? `You will be redirected to a page for enrolling students in ${descriptiveTitle}`
                         : `You will be redirected to a page for evaluating students in ${descriptiveTitle}`
                     }
-                    btnContinue={handleNavigateEnrollStudent}
+                    btnContinue={
+                        isenroll
+                            ? handleNavigateEnrollStudent
+                            : handleNavigateEvaluateStudent
+                    }
                 />
             )
         }
