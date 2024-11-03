@@ -1,6 +1,4 @@
 import HeadSection, { BackHeadSection, SubHeadSectionDetails } from '@/components/head-section'
-import { Sidebar, SidebarNavs } from '@/components/sidebar'
-import { ROUTES } from '@/constants'
 import MainTable from '@/components/main-table'
 import { useState } from 'react'
 import { CircleCheck, CircleX } from 'lucide-react'
@@ -97,10 +95,7 @@ export default function CreateCoursesOffered() {
                             />
                         </HeadSection>
                     </aside>
-                    <main className="flex">
-                        <Sidebar>
-                            <SidebarNavs bg='bg-muted' title="Courses Offered" link={ROUTES.ENROLLMENT} />
-                        </Sidebar>
+                    <main className="flex justify-end">
                         <MainTable>
                             <div className="flex flex-col border gap-4 rounded-md">
                                 <div className="w-full px-4 py-3 border-b">
