@@ -16,6 +16,7 @@ import CreateCoursesOffered from "./dashboard/enrollment/create-course-offered"
 import NewStudent from "./dashboard/student/new-student"
 import EnrollStudent from "./dashboard/enrollment/enroll-student"
 import ListOfStudents from "./dashboard/student/list-of-students"
+import EvaluateStudent from "./dashboard/enrollment/evaluate-student"
 
 const Routes = createBrowserRouter([
     {
@@ -30,6 +31,7 @@ const Routes = createBrowserRouter([
             { path: '/enrollment/create-course-offered', element: <CreateCoursesOffered /> },
             { path: '/enrollment/new-student', element: <NewStudent /> },
             { path: '/enrollment/enroll-student/:id', element: <EnrollStudent /> },
+            { path: '/enrollment/evaluate-student/:id', element: <EvaluateStudent /> },
 
             //Student
             { path: '/student', element: <ListOfStudents /> },
