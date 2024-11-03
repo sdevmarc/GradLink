@@ -116,10 +116,7 @@ export default function EnrollStudent() {
                             />
                         </HeadSection>
                     </aside>
-                    <main className="flex">
-                        <Sidebar>
-                            <SidebarNavs bg='bg-muted' title="Courses Offered" link={ROUTES.ENROLLMENT} />
-                        </Sidebar>
+                    <main className="flex justify-end">
                         <MainTable>
                             <div className="flex flex-col border gap-4 rounded-md">
                                 <div className="w-full px-4 py-3 border-b">
