@@ -17,6 +17,9 @@ import NewStudent from "./dashboard/student/new-student"
 import EnrollStudent from "./dashboard/enrollment/enroll-student"
 import ListOfStudents from "./dashboard/student/list-of-students"
 import EvaluateStudent from "./dashboard/enrollment/evaluate-student"
+import Alumni from "./dashboard/alumni/alumni"
+import AttritionRateCourses from "./dashboard/enrollment/attrition-rate-courses"
+import AttritionRatePrograms from "./dashboard/enrollment/attrition-rate-programs"
 
 const Routes = createBrowserRouter([
     {
@@ -28,6 +31,8 @@ const Routes = createBrowserRouter([
 
             //Enrollment
             { path: '/enrollment', element: <Enrollment /> },
+            { path: '/enrollment/attrition-rate-courses', element: <AttritionRateCourses /> },
+            { path: '/enrollment/attrition-rate-programs', element: <AttritionRatePrograms /> },
             { path: '/enrollment/create-course-offered', element: <CreateCoursesOffered /> },
             { path: '/enrollment/new-student', element: <NewStudent /> },
             { path: '/enrollment/enroll-student/:id', element: <EnrollStudent /> },
@@ -36,6 +41,9 @@ const Routes = createBrowserRouter([
             //Student
             { path: '/student', element: <ListOfStudents /> },
             { path: '/student/details/:sid', element: <ViewDetails /> },
+
+            //Alumni
+            { path: '/alumni', element: <Alumni /> },
 
             //Program
             { path: '/program', element: <Program /> },
