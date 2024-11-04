@@ -12,12 +12,17 @@ export const ROUTES = {
 
     //ENROLLMENT
     ENROLLMENT: '/enrollment',
+    ENROLLMENT_ATTRITION_RATE_COURSES: '/enrollment/attrition-rate-courses',
+    ENROLLMENT_ATTRITION_RATE_PROGRAMS: '/enrollment/attrition-rate-programs',
     CREATE_COURSE_OFFERED: '/enrollment/create-course-offered',
     NEW_STUDENT: '/enrollment/new-student',
 
     //STUDENT
     LIST_OF_STUDENTS: '/student',
     CREATE_STUDENT: '/student/create',
+
+    //ALUMNI
+    ALUMNI: '/alumni',
 
     //PROGRAM
     PROGRAMS: '/program',
