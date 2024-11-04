@@ -3,19 +3,10 @@ import { useQuery } from "@tanstack/react-query"
 import { API_STUDENT_FINDALL } from "@/api/student"
 import { StudentListOfStudentsColumns } from "./student-data-table-components/list-of-students/columns-student-list-of-students"
 import { DataTableStudentListOfStudent } from "./student-data-table-components/list-of-students/data-table-list-of-students"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { DataTableStudentAlumni } from "./student-data-table-components/alumni/data-table-alumni"
-import { StudentAlumniColumns } from "./student-data-table-components/alumni/columns-student-alumni"
-import { API_STUDENT_FINDALL_ALUMNI } from "@/api/alumni"
 
 export default function ListOfStudents() {
     const { data: students, isLoading: studentLoading, isFetched: studentFetched } = useQuery({
         queryFn: () => API_STUDENT_FINDALL(),
-        queryKey: ['students']
-    })
-
-    const { data: dataAlumni, isLoading: alumniLoading, isFetched: alumniFetched } = useQuery({
-        queryFn: () => API_STUDENT_FINDALL_ALUMNI(),
         queryKey: ['students']
     })
 
@@ -31,34 +22,15 @@ export default function ListOfStudents() {
                             />
                         </HeadSection>
                     </aside>
-                    <main className="flex flex-col px-8">
-                        <Tabs defaultValue="students" className="w-full">
-                            <TabsList className="bg-background">
-                                <TabsTrigger value="students">Students</TabsTrigger>
-                                <TabsTrigger value="alumni">Alumni</TabsTrigger>
-                            </TabsList>
-                            <TabsContent value="students">
-                                {studentLoading && <div>Loading...</div>}
-                                {
-                                    (!studentLoading && studentFetched) &&
-                                    <DataTableStudentListOfStudent
-                                        columns={StudentListOfStudentsColumns}
-                                        data={students?.data || []}
-                                    />
-                                }
-                            </TabsContent>
-                            <TabsContent value="alumni">
-                                {alumniLoading && <div>Loading...</div>}
-                                {
-                                    (!alumniLoading && alumniFetched) &&
-                                    <DataTableStudentAlumni
-                                        columns={StudentAlumniColumns}
-                                        data={[]}
-                                    />
-                                }
-                            </TabsContent>
-                        </Tabs>
-
+                    <main className="flex px-8">
+                        {studentLoading && <div>Loading...</div>}
+                        {
+                            (!studentLoading && studentFetched) &&
+                            <DataTableStudentListOfStudent
+                                columns={StudentListOfStudentsColumns}
+                                data={students?.data || []}
+                            />
+                        }
                     </main>
                 </div>
             </div>
