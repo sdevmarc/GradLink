@@ -4,6 +4,9 @@ import { CoursesOfferedInEnrollmentColumns } from "./enrollment-data-table-compo
 import { useQuery } from "@tanstack/react-query"
 import { useState } from "react"
 import { API_FINDALL_COURSES_OFFERED } from "@/api/offered"
+import { Sidebar, SidebarNavs } from "@/components/sidebar"
+import { ROUTES } from "@/constants"
+import MainTable from "@/components/main-table"
 
 export default function Enrollment() {
     const [isenroll, setEnroll] = useState<boolean>(true);
@@ -25,26 +28,32 @@ export default function Enrollment() {
                     <HeadSection>
                         <SubHeadSectionDetails
                             title="COURSES OFFERED"
-                            description={`Here's a list of offered courses ${
-                                courses?.data[0]?.semester === 1 ? 'for the First semester.' :
+                            description={`Here's a list of offered courses ${courses?.data[0]?.semester === 1 ? 'for the First semester.' :
                                 courses?.data[0]?.semester === 2 ? 'for the Second semester.' :
-                                courses?.data[0]?.semester === 3 ? 'for the Third semester.' :
-                                ''
-                            }.`}
+                                    courses?.data[0]?.semester === 3 ? 'for the Third semester.' :
+                                        ''
+                                }.`}
                         />
                     </HeadSection>
                 </aside>
-                <main className="flex px-8">
-                    {coursesLoading && <div>Loading...</div>}
-                    {
-                        (!coursesLoading && coursesFetched) &&
-                        <DataTableCoursesOfferedInEnrollment
-                            columns={CoursesOfferedInEnrollmentColumns(isenroll)}
-                            data={courses?.data || []}
-                            isenroll={isenroll}
-                            setEnroll={toggleEnroll}
-                        />
-                    }
+                <main className="flex">
+                    <Sidebar>
+                        <SidebarNavs bg='bg-muted' title="Courses Offered" link={ROUTES.ENROLLMENT} />
+                        <SidebarNavs title="Attrition Rate of Courses" link={ROUTES.ENROLLMENT_ATTRITION_RATE_COURSES} />
+                        <SidebarNavs title="Attrition Rate of Programs" link={ROUTES.ENROLLMENT_ATTRITION_RATE_PROGRAMS} />
+                    </Sidebar>
+                    <MainTable>
+                        {coursesLoading && <div>Loading...</div>}
+                        {
+                            (!coursesLoading && coursesFetched) &&
+                            <DataTableCoursesOfferedInEnrollment
+                                columns={CoursesOfferedInEnrollmentColumns(isenroll)}
+                                data={courses?.data || []}
+                                isenroll={isenroll}
+                                setEnroll={toggleEnroll}
+                            />
+                        }
+                    </MainTable>
                 </main>
             </div>
         </div>
