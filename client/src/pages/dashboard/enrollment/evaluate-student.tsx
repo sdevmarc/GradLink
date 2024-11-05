@@ -5,20 +5,24 @@ import { CircleCheck, CircleX } from 'lucide-react'
 import { AlertDialogConfirmation } from '@/components/alert-dialog'
 import Loading from '@/components/loading'
 import { useNavigate, useParams } from 'react-router-dom'
-import { IAPICourse } from '@/interface/course.interface'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { API_STUDENT_EVALUATE_STUDENT, API_STUDENT_FINDALL_EVALUATEES_IN_COURSE } from '@/api/student'
-import { DataTableEnrollStudent } from './enrollment-data-table-components/enroll-student/data-table-enroll-student'
-import { EnrollStudentColumns } from './enrollment-data-table-components/enroll-student/columns-enroll-student'
-import { Combobox } from '@/components/combobox'
+import { DataTableEvaluateStudent } from './enrollment-data-table-components/evaluate-student/data-table-evaluate-student'
+import { EvaluateStudentColumns } from './enrollment-data-table-components/evaluate-student/columns-evaluate-student'
+
+interface Evaluation {
+    id: string;
+    status: string;
+    file?: File | null;
+    preview?: string | null; // URL for preview
+}
 
 export default function EvaluateStudent() {
     const queryClient = useQueryClient()
     const { id } = useParams()
-
+    const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
     const navigate = useNavigate()
     const [courseid, setCourseId] = useState<string>('')
-    const [checkstudents, setCheckStudents] = useState<IAPICourse[]>([])
     const [dialogsubmit, setDialogSubmit] = useState<boolean>(false)
     const [alertdialogstate, setAlertDialogState] = useState({
         show: false,
@@ -26,13 +30,6 @@ export default function EvaluateStudent() {
         description: '',
         success: false
     })
-    const [isPass, setPass] = useState<string>('')
-    const options = [
-        { label: 'PASS', value: 'pass' },
-        { label: 'FAIL', value: 'fail' },
-        { label: 'INC', value: 'inc' },
-        { label: 'DROP', value: 'drop' }
-    ]
 
     useEffect(() => {
         if (id) {
@@ -78,19 +75,53 @@ export default function EvaluateStudent() {
         }
     })
 
+    const handleEvaluationChange = (id: string, evaluationStatus: string) => {
+        setEvaluations(prevEvaluations => {
+            const existingIndex = prevEvaluations.findIndex(evaluation => evaluation.id === id);
+            const updatedEvaluations = [...prevEvaluations];
+            if (existingIndex >= 0) {
+                updatedEvaluations[existingIndex] = { ...updatedEvaluations[existingIndex], status: evaluationStatus };
+            } else {
+                updatedEvaluations.push({ id, status: evaluationStatus });
+            }
+            return updatedEvaluations;
+        });
+    };
+
+    const handleFileChange = (id: string, file: File | null) => {
+        setEvaluations(prevEvaluations => {
+            const existingIndex = prevEvaluations.findIndex(evaluation => evaluation.id === id);
+            const updatedEvaluations = [...prevEvaluations];
+            const preview = file ? URL.createObjectURL(file) : null; // Generate or clear preview URL
+
+            if (existingIndex >= 0) {
+                updatedEvaluations[existingIndex] = { ...updatedEvaluations[existingIndex], file, preview };
+            } else {
+                updatedEvaluations.push({ id, status: '', file, preview });
+            }
+            return updatedEvaluations;
+        });
+    };
+
+    useEffect(() => {
+        console.log('Tite: ', evaluations)
+    }, [evaluations])
+
     const handleSubmit = async () => {
-        if (checkstudents.length === 0) {
-            setDialogSubmit(false)
-            setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Please add at least one program to submit.' })
-            return
-        }
+        // if (evaluations.length === 0) {
+        //     setDialogSubmit(false)
+        //     setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Please add at least one program to submit.' })
+        //     return
+        // }
         if (id) {
-            const jsonString = atob(id);
-            const parsedObject = JSON.parse(jsonString);
-            const courseid = parsedObject.id
-            const studentid = checkstudents.map(item => item._id).filter((id): id is string => id !== undefined)
+            // const jsonString = atob(id);
+            // const parsedObject = JSON.parse(jsonString);
+            // const courseid = parsedObject.id
             setDialogSubmit(false)
-            await evaluatestudent({ id: studentid, course: courseid, ispass: isPass })
+            console.log('Tite: ', evaluations)
+
+            // const studentid = checkstudents.map(item => item._id).filter((id): id is string => id !== undefined)
+            // await evaluatestudent({ id: studentid, course: courseid, ispass: isPass })
         }
     }
 
@@ -134,24 +165,11 @@ export default function EvaluateStudent() {
                                     <h1 className='text-text font-semibold text-lg'>Configuration</h1>
                                 </div>
                                 <div className="px-4 gap-4 flex flex-col">
-                                    <div className="overflow-hidden max-w-[500px] flex flex-col gap-1">
-                                        <h1 className="text-md font-medium">
-                                            Status
-                                        </h1>
-                                        <Combobox
-                                            className='w-[400px]'
-                                            lists={options || []}
-                                            placeholder={`None`}
-                                            setValue={(item) => setPass(item)}
-                                            value={isPass || ''}
-                                        />
-                                    </div>
                                     {
                                         studentFetched &&
-                                        <DataTableEnrollStudent
-                                            columns={EnrollStudentColumns}
+                                        <DataTableEvaluateStudent
+                                        columns={EvaluateStudentColumns(handleEvaluationChange, evaluations, handleFileChange)}
                                             data={students?.data || []}
-                                            fetchCourses={(e) => setCheckStudents(e)}
                                         />
                                     }
 
