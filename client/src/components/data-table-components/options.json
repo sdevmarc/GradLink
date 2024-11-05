@@ -1,0 +1,24 @@
+{
+    "department": [
+        {
+            "label": "SEAIT",
+            "value": "SEAIT"
+        },
+        {
+            "label": "SAB",
+            "value": "SAB"
+        },
+        {
+            "label": "STEH",
+            "value": "STEH"
+        },
+        {
+            "label": "SHANS",
+            "value": "SHANS"
+        },
+        {
+            "label": "CL",
+            "value": "CL"
+        }
+    ]
+}
