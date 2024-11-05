@@ -25,6 +25,7 @@ export const ROUTES = {
     //ALUMNI
     ALUMNI: '/alumni',
     TRACER_MAP: '/alumni/tracer',
+    GOOGLE_FORM: '/alumni/google-form',
 
 
     //PROGRAM
@@ -38,5 +39,5 @@ export const ROUTES = {
     AUDIT_LOG: '/audit-log',
     SECURITY: '/account/security',
 
-    GOOGLE_FORM: '/form'
+    // GOOGLE_FORM: '/form'
 }
