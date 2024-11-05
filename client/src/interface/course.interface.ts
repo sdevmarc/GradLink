@@ -12,7 +12,3 @@ export interface IAPICourse {
     units?: number
     curriculumid?: string
 }
-
-export interface IRequestUpdateCourse {
-    id: string[]
-}
