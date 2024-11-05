@@ -83,14 +83,6 @@ export default function GeneralSettings() {
                                                 value={profile.email}
                                             />
                                         </div>
-
-                                        <div className="flex items-center space-x-2">
-                                            <Switch
-                                                id="notifications"
-                                                checked={profile.notifications}
-                                            />
-                                            <Label htmlFor="notifications">Enable Enroll Mode</Label>
-                                        </div>
                                         <div className="flex items-center space-x-2">
                                             <Switch
                                                 id="notifications"
