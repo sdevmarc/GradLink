@@ -23,6 +23,7 @@ import TracerMap from "./dashboard/alumni/tracer-map"
 import GeneralSettings from "./dashboard/settings/general"
 import AuditLog from "./dashboard/settings/audit-log"
 import Security from "./dashboard/settings/security"
+import GoogleForm from "./dashboard/alumni/google-form"
 
 const Routes = createBrowserRouter([
     {
@@ -48,6 +49,7 @@ const Routes = createBrowserRouter([
             //Alumni
             { path: '/alumni', element: <Alumni /> },
             { path: '/alumni/tracer', element: <TracerMap /> },
+            { path: '/alumni/google-form', element: <GoogleForm /> },
 
             //Program
             { path: '/program', element: <Program /> },
