@@ -38,7 +38,7 @@ export default function GeneralSettings() {
                             <SidebarNavs bg='bg-muted' title="General" link={ROUTES.GENERAL_SETTINGS} />
                             <SidebarNavs title="Security" link={ROUTES.SECURITY} />
                         </Sidebar>
-                        <MainTable>
+                        <MainTable className="pb-[12rem]">
                             <Card>
                                 <CardHeader>
                                     <CardTitle>My Profile</CardTitle>
