@@ -110,6 +110,7 @@ const HeaderDashboard = () => {
                                     case ROUTES.ENROLLMENT_ATTRITION_RATE_COURSES:
                                     case ROUTES.ENROLLMENT_ATTRITION_RATE_PROGRAMS:
                                     case ROUTES.ALUMNI:
+                                    case ROUTES.TRACER_MAP:
                                     case `/student/details/${sid}`:
                                     case `/student/evaluation/${sid}`:
                                         return (
