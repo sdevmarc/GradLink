@@ -7,7 +7,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { AlertDialogConfirmation } from "@/components/alert-dialog"
 import { useNavigate } from "react-router-dom"
-import { ROUTES } from "@/constants"
+import { Combobox } from "@/components/combobox"
+import { useState } from "react"
+import { DataTableFacetedFilter } from "@/components/data-table-components/data-table-faceted-filter"
+import { department } from '@/components/data-table-components/options.json'
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>
@@ -28,6 +31,15 @@ export function DataTableToolbarAlumni<TData>({
     //     table.getColumn("date")?.setFilterValue([from, to])
     // }
     const navigate = useNavigate()
+    const [yearGraduated, setYearGraduated] = useState<string>('')
+
+    const graduation_date = [
+        { label: '2024 - 2025', value: '2024 - 2025' },
+        { label: '2023 - 2024', value: '2023 - 2024' },
+        { label: '2022 - 2023', value: '2022 - 2023' },
+        { label: '2021 - 2022', value: '2021 - 2022' },
+        { label: '2020 - 2021', value: '2020 - 2021' }
+    ]
 
     return (
         <div className="flex flex-wrap items-center justify-between">
@@ -38,17 +50,33 @@ export function DataTableToolbarAlumni<TData>({
                     onChange={(event) => {
                         table.getColumn("idNumber")?.setFilterValue(event.target.value)
                     }}
-                    className="h-8 w-[20rem] lg:w-[25rem]"
+                    className="h-8 w-[17rem] lg:w-[20rem]"
                 />
 
-                {/* {table.getColumn("category") && (
+                <div className="flex items-center gap-2">
+                    <DataTableFacetedFilter
+                        column={table.getColumn("name")}
+                        title="Program"
+                        options={department}
+                    />
+                    {/* {table.getColumn("category") && (
                     <DataTableFacetedFilter
                         column={table.getColumn("category")}
                         title="Category"
                         options={categories}
                     />
-                )}
-                {table.getColumn("type") && (
+                )} */}
+                    <Combobox
+                        className='w-[150px]'
+                        lists={graduation_date || []}
+                        placeholder={`Year Graduated`}
+                        setValue={(item) => setYearGraduated(item)}
+                        value={yearGraduated || ''}
+                    />
+                </div>
+
+
+                {/*} {table.getColumn("type") && (
                     <DataTableFacetedFilter
                         column={table.getColumn("type")}
                         title="Type"
