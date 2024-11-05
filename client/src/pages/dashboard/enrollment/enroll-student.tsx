@@ -47,6 +47,10 @@ export default function EnrollStudent() {
             if (!data.success) {
                 setDialogSubmit(false)
                 setAlertDialogState({ success: false, show: true, title: "Uh, oh. Something went wrong!", description: data.message })
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                })
                 return
             } else {
                 await queryClient.invalidateQueries({ queryKey: ['student-enrollees'] })
@@ -77,6 +81,7 @@ export default function EnrollStudent() {
             const parsedObject = JSON.parse(jsonString);
             const courseid = parsedObject.id
             const studentid = checkstudents.map(item => item._id).filter((id): id is string => id !== undefined)
+            setDialogSubmit(false)
             await enrollstudent({ id: studentid, course: courseid })
         }
     }
