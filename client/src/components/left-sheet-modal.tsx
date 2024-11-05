@@ -8,7 +8,7 @@ import {
 import { cn } from "@/lib/utils"
 import { useEffect, useState } from "react"
 
-interface RightModalProps {
+interface LeftModalProps {
     isOpen: boolean
     onOpenChange: (e: boolean) => void
     title: string
@@ -17,7 +17,7 @@ interface RightModalProps {
     className?: string
 }
 
-export function LeftSheetModal({ isOpen, onOpenChange, title, description, content, className }: RightModalProps) {
+export function LeftSheetModal({ isOpen, onOpenChange, title, description, content, className }: LeftModalProps) {
     const [open, setOpen] = useState<boolean>(isOpen)
 
     useEffect(() => {
