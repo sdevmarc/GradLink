@@ -1,5 +1,5 @@
 import { HOST } from '@/constants'
-import { IAPICourse, IRequestUpdateCourse } from '@/interface/course.interface'
+import { IAPICourse } from '@/interface/course.interface'
 import axios from 'axios'
 
 export const API_COURSE_FINDALL = async () => {
@@ -42,18 +42,6 @@ export const API_COURSE_CREATE = async ({ code, courseno, descriptiveTitle, unit
     try {
         const response = await axios.post(`${HOST}/courses/create`, {
             code, courseno, descriptiveTitle, units
-        })
-
-        return response.data
-    } catch (error) {
-        console.error(error)
-    }
-}
-
-export const API_COURSE_UPDATE_COURSES_OFFERED = async ({ id }: IRequestUpdateCourse) => {
-    try {
-        const response = await axios.post(`${HOST}/courses/update-courses-offered`, {
-            id
         })
 
         return response.data
