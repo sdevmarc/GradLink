@@ -1,16 +1,16 @@
 import HeadSection, { SubHeadSectionDetails } from "@/components/head-section"
 import { useQuery } from "@tanstack/react-query"
-import { API_FINDALL_COURSES_OFFERED } from "@/api/offered"
 import { Sidebar, SidebarNavs } from "@/components/sidebar"
 import { ROUTES } from "@/constants"
 import MainTable from "@/components/main-table"
 import { DataTableAttritionRatePrograms } from "./enrollment-data-table-components/attrition-rate-programs/data-table-attrition-rate-programs."
-import { AttritionRateCoursestColumns } from "./enrollment-data-table-components/attrition-rate-courses/columns-attrition-rate-courses"
+import { AttritionRateProgramsColumns } from "./enrollment-data-table-components/attrition-rate-programs/columns-attrition-rate-programs"
+import { API_PROGRAM_FINDALL } from "@/api/program"
 
 export default function AttritionRatePrograms() {
-    const { data: courses, isLoading: coursesLoading, isFetched: coursesFetched } = useQuery({
-        queryFn: () => API_FINDALL_COURSES_OFFERED(),
-        queryKey: ['courses-offered']
+    const { data: program, isLoading: programLoading, isFetched: programFetched } = useQuery({
+        queryFn: () => API_PROGRAM_FINDALL(),
+        queryKey: ['programs']
     })
 
     return (
@@ -31,12 +31,12 @@ export default function AttritionRatePrograms() {
                         <SidebarNavs bg='bg-muted' title="Attrition Rate of Programs" link={ROUTES.ENROLLMENT_ATTRITION_RATE_PROGRAMS} />
                     </Sidebar>
                     <MainTable>
-                        {coursesLoading && <div>Loading...</div>}
+                        {programLoading && <div>Loading...</div>}
                         {
-                            (!coursesLoading && coursesFetched) &&
+                            (!programLoading && programFetched) &&
                             <DataTableAttritionRatePrograms
-                                columns={AttritionRateCoursestColumns}
-                                data={courses?.data || []}
+                                columns={AttritionRateProgramsColumns}
+                                data={program?.data || []}
                             />
                         }
                     </MainTable>
