@@ -24,19 +24,16 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { IAPICourse } from '@/interface/course.interface'
 import { DataTableToolbarEvaluateStudent } from './data-table-toolbar-evaluate-student'
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
-    data: TData[],
-    fetchCourses: (e: IAPICourse[]) => void
+    data: TData[]
 }
 
 export function DataTableEvaluateStudent<TData, TValue>({
     columns,
-    data,
-    fetchCourses,
+    data
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -61,18 +58,6 @@ export function DataTableEvaluateStudent<TData, TValue>({
             rowSelection,
         },
     })
-
-    React.useEffect(() => {
-        const selectedRows = table.getFilteredSelectedRowModel().rows
-        const course_checks = selectedRows.map(row => {
-            const original = row.original as IAPICourse
-            const { _id, code, courseno, descriptiveTitle, units } = original
-            return { _id, code, courseno, descriptiveTitle, units }
-        })
-
-        fetchCourses(course_checks)
-
-    }, [rowSelection, table])
 
     return (
         <div className="w-full flex flex-col gap-4">
