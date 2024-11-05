@@ -1,7 +1,7 @@
 import { NavLink, Outlet, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { UserAvatar } from '@/components/user-avatar'
 import './index.css'
-import { GraduationCap, House, Slash } from "lucide-react"
+import { CircleUser, GraduationCap, House, Slash } from "lucide-react"
 
 import {
     Breadcrumb,
@@ -69,6 +69,15 @@ export const HomeHeaderLayout = () => {
     )
 }
 
+export const SettingsLayout = () => {
+    return (
+        <>
+            <HeaderSettings />
+            <Outlet />
+        </>
+    )
+}
+
 const BreadCrumbs = ({ children }: { children: React.ReactNode }) => {
     return (
         <Breadcrumb>
@@ -76,6 +85,65 @@ const BreadCrumbs = ({ children }: { children: React.ReactNode }) => {
                 {children}
             </BreadcrumbList>
         </Breadcrumb>
+    )
+}
+
+const HeaderSettings = () => {
+    return (
+        <header className="hdashboard z-[1] backdrop-blur-[1rem] backdrop-saturate-50 fixed top-0 left-0 w-full h-[6rem] border-b-[0.7px] border-black/20 flex justify-center items-center">
+            <div className="w-full h-full max-w-[90rem] px-4 flex flex-col justify-center items-center">
+                <div className="w-full h-[50%] flex justify-between items-center pl-4">
+                    {
+                        (() => {
+                            const key = location.pathname;
+
+                            switch (key) {
+                                case ROUTES.OVERVIEW:
+                                case ROUTES.AUDIT_LOG:
+                                case ROUTES.GENERAL_SETTINGS:
+                                    return (
+                                        <BreadCrumbs>
+                                            <BreadcrumbItem>
+                                                <BreadcrumbPage className='text-md'>
+                                                    <GraduationCap color="#000000" />
+                                                </BreadcrumbPage>
+                                            </BreadcrumbItem>
+                                            <BreadcrumbSeparator>
+                                                <Slash />
+                                            </BreadcrumbSeparator>
+                                            <BreadcrumbItem>
+                                                <BreadcrumbPage className='text-md font-medium flex items-center gap-2'>
+                                                    <CircleUser color="#000000" size={18} />   My Account
+                                                </BreadcrumbPage>
+                                            </BreadcrumbItem>
+                                        </BreadCrumbs>
+                                    );
+                                default:
+                                    return null;
+                            }
+                        })()}
+                    <div className="flex items-center gap-4">
+                        <h1 className='text-text font-normal rounded-full px-3 py-1 text-[.8rem]'>
+                            Welcome, John Doe
+                        </h1>
+                        <UserAvatar image='https://github.com/shadcn.png' initials='CN' />
+                    </div>
+                </div>
+                <div className="w-full h-[30%] flex justify-start items-center">
+                    <nav className="flex items-center gap-1">
+                        <NavLink to={ROUTES.OVERVIEW} className='text-[.8rem] text-text font-normal px-3 py-2'>
+                            Overview
+                        </NavLink>
+                        <NavLink to={ROUTES.AUDIT_LOG} className='text-[.8rem] text-text font-normal px-3 py-2'>
+                            Audit Log
+                        </NavLink>
+                        <NavLink to={ROUTES.GENERAL_SETTINGS} className='text-[.8rem] text-text font-normal px-3 py-2'>
+                            Settings
+                        </NavLink>
+                    </nav>
+                </div>
+            </div>
+        </header>
     )
 }
 
