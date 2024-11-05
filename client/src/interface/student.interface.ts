@@ -19,12 +19,6 @@ interface ICourses {
     academicYear?: IAcademicYear
 }
 
-
-interface IEnrolledCourses {
-    courses?: ICourses[]
-    academicYear?: IAcademicYear
-}
-
 export interface IAPIStudents {
     _id?: string
     idNumber?: string
@@ -40,7 +34,7 @@ export interface IAPIStudents {
     units?: string
     totalOfUnitsEarned?: number
     totalOfUnitsEnrolled?: number
-    enrolledCourses?: IEnrolledCourses[]
+    enrolledCourses?: ICourses[]
     progress?: string
     programCode?: string
     programName?: string
