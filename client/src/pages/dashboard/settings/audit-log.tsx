@@ -39,7 +39,7 @@ export default function AuditLog() {
                         </HeadSection>
                     </aside>
                     <main className="flex px-8">
-                        <MainTable className="w-full">
+                        <MainTable className="w-full pb-[12rem]">
                             <Card>
                                 <CardHeader>
                                     <CardTitle>Audit Log</CardTitle>
