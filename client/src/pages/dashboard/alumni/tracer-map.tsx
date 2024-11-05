@@ -15,17 +15,8 @@ import { BookOpen, Clock, Filter, GraduationCap, Search } from "lucide-react"
 import { RightSheetModal } from "@/components/right-sheet-modal"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { LeftSheetModal } from "@/components/left-sheet-modal"
-
-// interface Answer {
-//     index: number
-//     question: string
-//     answer: string
-// }
-
-// interface AlumniDetailsProps {
-//     idNumber: string
-//     onClose: () => void
-// }
+import { createPortal } from 'react-dom';
+import AlumniCap from '@/assets/alumnicap.svg';
 
 interface MapProps {
     setSelectedMarker: (id: string | null) => void
@@ -37,27 +28,6 @@ interface Marker {
     title: string
     idNumber: string
 }
-
-const IconTablerMapPinFilled = ({
-    height = "1em",
-    fill = "currentColor",
-    focusable = "false",
-    ...props
-}: Omit<React.SVGProps<SVGSVGElement>, "children">) => (
-    <svg
-        role="img"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        height={height}
-        focusable={focusable}
-        {...props}
-    >
-        <path
-            fill={fill}
-            d="M18.364 4.636a9 9 0 0 1 .203 12.519l-.203.21l-4.243 4.242a3 3 0 0 1-4.097.135l-.144-.135l-4.244-4.243A9 9 0 0 1 18.364 4.636M12 8a3 3 0 1 0 0 6a3 3 0 0 0 0-6"
-        />
-    </svg>
-)
 
 export default function TracerMap() {
     const [isSearch, setSearch] = useState<boolean>(false)
@@ -115,7 +85,7 @@ export default function TracerMap() {
                             <SidebarNavs bg='bg-muted' title="Tracer Map" link={ROUTES.TRACER_MAP} />
                         </Sidebar>
                         <MainTable>
-                            <div className="w-full h-[33rem] flex flex-col gap-4 pb-4 rounded-md">
+                            <div className="w-full h-screen flex flex-col gap-4 pb-4 rounded-md">
                                 <div className="flex items-center justify-between gap-4">
                                     <div className="flex items-center gap-2">
                                         <Input
@@ -149,7 +119,7 @@ export default function TracerMap() {
                                     </div>
                                 </div>
 
-                                <div className="w-full h-full rounded-md overflow-hidden">
+                                <div className="w-full min-h-[65%] rounded-md overflow-hidden">
                                     <Map setSelectedMarker={(e) => setSelectedMarker(e)} />
                                     <LeftSheetModal
                                         className="w-[30%]"
@@ -306,7 +276,52 @@ export default function TracerMap() {
 //     )
 // }
 
+const HoverCard = ({
+    isVisible,
+    position,
+    markerData
+}: {
+    isVisible: boolean;
+    position: { x: number; y: number };
+    markerData: Marker;
+}) => {
+    if (!isVisible) return null;
+
+    return createPortal(
+        <div
+            className="fixed z-[1000] bg-white rounded-lg shadow-lg p-3 min-w-[200px]"
+            style={{
+                left: position.x - 100,
+                top: position.y - 100,
+            }}
+        >
+            <div className="space-y-2">
+                <div className="flex items-center gap-2 border-b pb-2">
+                    <img src={AlumniCap} alt="Alumni" className="w-6 h-6" />
+                    <div>
+                        <h3 className="font-medium text-sm">{markerData.title}</h3>
+                        <p className="text-xs text-gray-500">{markerData.idNumber}</p>
+                    </div>
+                </div>
+                <div className="text-xs space-y-1 pt-1">
+                    <p>Location: {markerData.lat.toFixed(4)}, {markerData.lng.toFixed(4)}</p>
+                </div>
+            </div>
+        </div>,
+        document.body
+    );
+};
+
 const Map = ({ setSelectedMarker }: MapProps) => {
+    const [hoverInfo, setHoverInfo] = useState<{
+        visible: boolean;
+        position: { x: number; y: number };
+        marker: Marker | null;
+    }>({
+        visible: false,
+        position: { x: 0, y: 0 },
+        marker: null
+    });
     const mapContainer = useRef<HTMLDivElement>(null)
     const map = useRef<mapboxgl.Map | null>(null)
     const [lng, setLng] = useState(121.15340385396442)
@@ -339,41 +354,26 @@ const Map = ({ setSelectedMarker }: MapProps) => {
                     el.className = 'marker'
 
                     const root = createRoot(el)
-                    root.render(<IconTablerMapPinFilled width="35px" height="35px" style={{ color: "#222222" }} />)
-
-                    const tooltip = document.createElement('div')
-                    tooltip.className = 'tooltip'
-                    tooltip.innerHTML = `<h3>${marker.title}</h3>`
-                    tooltip.style.position = 'absolute'
-                    tooltip.style.display = 'none'
-                    tooltip.style.background = '#ffffff'
-                    tooltip.style.padding = '5px 10px'
-                    tooltip.style.borderRadius = '4px'
-                    tooltip.style.boxShadow = '0 2px 5px rgba(0,0,0,0.3)'
-                    tooltip.style.fontSize = '12px'
-                    tooltip.style.pointerEvents = 'none'
-
-                    document.body.appendChild(tooltip) // Append tooltip directly to body
-
-                    const showTooltip = (e: MouseEvent) => {
-                        tooltip.style.display = 'block'
-                        tooltip.style.left = `${e.pageX}px`
-                        tooltip.style.top = `${e.pageY - 30}px` // Adjust to position tooltip above marker
-                    }
-
-                    const hideTooltip = () => {
-                        tooltip.style.display = 'none'
-                    }
+                    root.render(<img src={AlumniCap} alt="icon" className="w-8 h-8" />)
 
                     el.addEventListener('mouseenter', (e) => {
-                        showTooltip(e as MouseEvent)
-                    })
+                        setHoverInfo({
+                            visible: true,
+                            position: { x: e.pageX, y: e.pageY },
+                            marker: marker
+                        });
+                    });
 
-                    el.addEventListener('mouseleave', hideTooltip)
+                    el.addEventListener('mouseleave', () => {
+                        setHoverInfo(prev => ({ ...prev, visible: false }));
+                    });
 
                     el.addEventListener('mousemove', (e) => {
-                        showTooltip(e as MouseEvent) // Update position while hovering
-                    })
+                        setHoverInfo(prev => ({
+                            ...prev,
+                            position: { x: e.pageX, y: e.pageY }
+                        }));
+                    });
 
                     new mapboxgl.Marker(el)
                         .setLngLat([marker.lng, marker.lat])
@@ -396,8 +396,14 @@ const Map = ({ setSelectedMarker }: MapProps) => {
 
         <div className="w-full h-full relative">
             {isMapLoading && <div>Map is loading...</div>}
-            {/* <div className="w-[20rem] h-[20rem] bg-black"></div> */}
             <div ref={mapContainer} className={`w-full h-full`} />
+            {hoverInfo.marker && (
+                <HoverCard
+                    isVisible={hoverInfo.visible}
+                    position={hoverInfo.position}
+                    markerData={hoverInfo.marker}
+                />
+            )}
         </div>
     )
 }
