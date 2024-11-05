@@ -20,6 +20,7 @@ import EvaluateStudent from "./dashboard/enrollment/evaluate-student"
 import Alumni from "./dashboard/alumni/alumni"
 import AttritionRateCourses from "./dashboard/enrollment/attrition-rate-courses"
 import AttritionRatePrograms from "./dashboard/enrollment/attrition-rate-programs"
+import TracerMap from "./dashboard/alumni/tracer-map"
 
 const Routes = createBrowserRouter([
     {
@@ -44,6 +45,7 @@ const Routes = createBrowserRouter([
 
             //Alumni
             { path: '/alumni', element: <Alumni /> },
+            { path: '/alumni/tracer', element: <TracerMap /> },
 
             //Program
             { path: '/program', element: <Program /> },
