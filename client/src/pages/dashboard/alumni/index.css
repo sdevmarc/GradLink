@@ -1,5 +1,5 @@
 .tooltip {
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(0, 0, 0, 0.8);
     border: 1px solid #ccc;
     border-radius: 4px;
     padding: 5px;
@@ -7,4 +7,19 @@
     z-index: 10; /* Ensure it appears above other elements */
     white-space: nowrap;
     transition: opacity 0.2s ease;
+}
+
+.tooltip-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.tooltip-header {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+.tooltip-description {
+    color: #666;
+    line-height: 1.4;
+    overflow-wrap: break-word;
 }
