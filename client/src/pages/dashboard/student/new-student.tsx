@@ -89,10 +89,14 @@ const CreateForm = () => {
                 setDialogSubmit(false)
                 setInsertSuccess(false)
                 setAlertDialogState({ success: false, show: true, title: "Uh, oh. Something went wrong!", description: data.message })
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                })
                 return
             } else {
-                await queryClient.invalidateQueries({ queryKey: ['student-enrollees'] })
-                await queryClient.refetchQueries({ queryKey: ['student-enrollees'] })
+                await queryClient.invalidateQueries({ queryKey: ['students'] })
+                await queryClient.refetchQueries({ queryKey: ['students'] })
                 window.scrollTo({
                     top: 0,
                     behavior: 'smooth'
