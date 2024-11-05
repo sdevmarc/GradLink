@@ -102,18 +102,13 @@ export default function LoginPage() {
 }
 
 const Header = () => {
-    const navigate = useNavigate()
-
-    const handleGoBack = () => {
-        navigate(-1)
-    }
     return (
         <div className="fixed top-0 w-full h-[4rem] flex justify-center items-center">
-            <div className="w-full max-w-[90rem] h-full px-4 flex justify-between items-center">
-                <h1>LOGO</h1>
-                <Button onClick={handleGoBack} variant={`ghost`} size={`sm`}>
-                    Go Back
-                </Button>
+            <div className="w-full max-w-[90rem] h-full px-4 flex items-center gap-4">
+                <GraduationCap color="#000000" /> 
+                <h1 className="text-md font-medium">
+                    GradLink
+                </h1>
             </div>
         </div>
     )
