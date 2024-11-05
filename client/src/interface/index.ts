@@ -17,6 +17,7 @@ export interface IFCChildren {
     lists?: IComboBox[]
     type?: (e: string | undefined) => void
     value?: string | number
+    className?: string
 }
 
 export interface IEventTarget {
