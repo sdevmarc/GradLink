@@ -1,6 +1,7 @@
-const { VITE_API_HOST } = import.meta.env
+const { VITE_API_HOST, VITE_API_MAP_DEV } = import.meta.env
 
 export const HOST = VITE_API_HOST
+export const MAPKEY = VITE_API_MAP_DEV
 
 export const ROUTES = {
     HOME: '/',
@@ -23,6 +24,8 @@ export const ROUTES = {
 
     //ALUMNI
     ALUMNI: '/alumni',
+    TRACER_MAP: '/alumni/tracer',
+
 
     //PROGRAM
     PROGRAMS: '/program',
