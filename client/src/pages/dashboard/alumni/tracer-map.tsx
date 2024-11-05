@@ -17,6 +17,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { LeftSheetModal } from "@/components/left-sheet-modal"
 import { createPortal } from 'react-dom';
 import AlumniCap from '@/assets/alumnicap.svg';
+import { department } from '@/components/data-table-components/options.json'
 
 interface MapProps {
     setSelectedMarker: (id: string | null) => void
@@ -50,14 +51,6 @@ export default function TracerMap() {
         setSearch(open)
     }
 
-    const department = [
-        { label: 'SEAIT', value: 'SEAIT' },
-        { label: 'SAB', value: 'SAB' },
-        { label: 'STEH', value: 'STEH' },
-        { label: 'SHANS', value: 'SHANS' },
-        { label: 'CL', value: 'CL' }
-    ]
-
     const graduation_date = [
         { label: '2024 - 2025', value: '2024 - 2025' },
         { label: '2023 - 2024', value: '2023 - 2024' },
@@ -65,7 +58,6 @@ export default function TracerMap() {
         { label: '2021 - 2022', value: '2021 - 2022' },
         { label: '2020 - 2021', value: '2020 - 2021' }
     ]
-
 
     return (
         <>
