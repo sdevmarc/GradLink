@@ -3,6 +3,9 @@ import { useQuery } from "@tanstack/react-query"
 import { API_STUDENT_FINDALL_ALUMNI } from "@/api/alumni"
 import { DataTableStudentAlumni } from "./alumni-data-table-components/alumni/data-table-alumni"
 import { StudentAlumniColumns } from "./alumni-data-table-components/alumni/columns-student-alumni"
+import { Sidebar, SidebarNavs } from "@/components/sidebar"
+import MainTable from "@/components/main-table"
+import { ROUTES } from "@/constants"
 
 export default function Alumni() {
     const { data: dataAlumni, isLoading: alumniLoading, isFetched: alumniFetched } = useQuery({
@@ -17,20 +20,26 @@ export default function Alumni() {
                     <aside className="px-4 pb-4 pt-[8rem]">
                         <HeadSection>
                             <SubHeadSectionDetails
-                                title="ALUMNI"
+                                title="ALUMNI INFORMATION"
                                 description="View and manage alumni."
                             />
                         </HeadSection>
                     </aside>
-                    <main className="flex px-8">
-                        {alumniLoading && <div>Loading...</div>}
-                        {
-                            (!alumniLoading && alumniFetched) &&
-                            <DataTableStudentAlumni
-                                columns={StudentAlumniColumns}
-                                data={[]}
-                            />
-                        }
+                    <main className="flex">
+                        <Sidebar>
+                            <SidebarNavs bg='bg-muted' title="Alumni Information" link={ROUTES.ALUMNI} />
+                            <SidebarNavs title="Tracer Map" link={ROUTES.TRACER_MAP} />
+                        </Sidebar>
+                        <MainTable>
+                            {alumniLoading && <div>Loading...</div>}
+                            {
+                                (!alumniLoading && alumniFetched) &&
+                                <DataTableStudentAlumni
+                                    columns={StudentAlumniColumns}
+                                    data={[]}
+                                />
+                            }
+                        </MainTable>
                     </main>
                 </div>
             </div>
