@@ -33,5 +33,10 @@ export const ROUTES = {
     CREATE_COURSE: '/program/create-course',
     CREATE_CURRICULUM: '/program/create-curriculum',
 
+    //SETTINGS
+    GENERAL_SETTINGS: '/account',
+    AUDIT_LOG: '/audit-log',
+    SECURITY: '/account/security',
+
     GOOGLE_FORM: '/form'
 }
