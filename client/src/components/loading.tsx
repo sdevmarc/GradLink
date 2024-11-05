@@ -16,7 +16,7 @@ export default function Loading() {
                         speed="1"
                         color="black"
                     ></l-waveform>
-                    <h1 className='text-lg'>Wait a moment, I am loading...</h1>
+                    <h1 className='text-md'>Wait a moment, I am loading...</h1>
                 </div>
             </div > :
                 <div className="fixed top-0 left-0 w-full h-screen bg-background flex justify-center items-center z-[1]">
@@ -24,7 +24,7 @@ export default function Loading() {
                         <div className="w-[20%] flex justify-center items-center">
                             <img src={Person} alt="Image Background" className="object-contain w-full h-full" loading='lazy' onLoad={() => setLoading(false)} onError={() => setLoading(false)} />
                         </div>
-                        <h1 className='text-md font-medium'>Wait, I'm loading the map...</h1>
+                        <h1 className='text-md'>Wait a moment, I am loading...</h1>
                         <l-waveform
                             size="20"
                             stroke="2.5"
