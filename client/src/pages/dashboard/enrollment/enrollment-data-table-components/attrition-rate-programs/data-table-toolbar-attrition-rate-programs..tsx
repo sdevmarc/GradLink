@@ -92,7 +92,7 @@ export function DataTableToolbarAttritionRatePrograms<TData>({
                     onChange={(event) => {
                         table.getColumn("courseno")?.setFilterValue(event.target.value);
                     }}
-                    className="h-8 w-[250px] lg:w-[300px]"
+                    className="h-8 w-[17rem] lg:w-[20rem]"
                 />
                 {isFiltered && (
                     <Button
