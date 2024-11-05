@@ -56,6 +56,10 @@ const CreateForm = () => {
             if (!data.success) {
                 setDialogSubmit(false)
                 setAlertDialogState({ success: false, show: true, title: "Uh, oh. Something went wrong!", description: data.message })
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                })
                 return
             } else {
                 await queryClient.invalidateQueries({ queryKey: ['courses'] })
