@@ -29,6 +29,7 @@ export default function Alumni() {
                         <Sidebar>
                             <SidebarNavs bg='bg-muted' title="Alumni Information" link={ROUTES.ALUMNI} />
                             <SidebarNavs title="Tracer Map" link={ROUTES.TRACER_MAP} />
+                            <SidebarNavs title="Google Form" link={ROUTES.GOOGLE_FORM} />
                         </Sidebar>
                         <MainTable>
                             {alumniLoading && <div>Loading...</div>}
