@@ -75,6 +75,7 @@ export default function TracerMap() {
                         <Sidebar>
                             <SidebarNavs title="Alumni Information" link={ROUTES.ALUMNI} />
                             <SidebarNavs bg='bg-muted' title="Tracer Map" link={ROUTES.TRACER_MAP} />
+                            <SidebarNavs title="Google Form" link={ROUTES.GOOGLE_FORM} />
                         </Sidebar>
                         <MainTable>
                             <div className="w-full h-screen flex flex-col gap-4 pb-4 rounded-md">
