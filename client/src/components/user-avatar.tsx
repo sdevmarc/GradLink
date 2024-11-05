@@ -12,13 +12,13 @@ import {
 import { ROUTES } from "@/constants"
 
 import { IAvatar } from "@/interface/index"
-import { Link, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 export const UserAvatar = ({ image, initials }: IAvatar) => {
     const navigate = useNavigate()
 
     const handleAccountSettings = () => {
-        navigate(ROUTES.OVERVIEW)
+        navigate(ROUTES.GENERAL_SETTINGS)
     }
 
     const handleLogout = () => {
@@ -40,9 +40,7 @@ export const UserAvatar = ({ image, initials }: IAvatar) => {
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
                     <DropdownMenuItem onClick={handleAccountSettings}>
-                        <Link to={`/overview`}>
-                            Account Settings
-                        </Link>
+                        Account Settings
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuItem asChild>
