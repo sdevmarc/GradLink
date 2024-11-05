@@ -11,4 +11,5 @@ export interface IAPICourse {
     programs?: IPrograms[]
     units?: number
     curriculumid?: string
+    evaluation?: string;
 }
