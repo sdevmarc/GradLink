@@ -1,9 +1,8 @@
 import { createBrowserRouter } from "react-router-dom"
 import Tracer from "./dashboard/tracer/tracer"
 import Program from "./dashboard/program/available-programs"
-import Profile from "./dashboard/settings/profile"
 import LoginPage from "./home/login"
-import { HeaderLayout, HomeHeaderLayout, TracerHeaderLayout } from "@/components/header"
+import { HeaderLayout, HomeHeaderLayout, SettingsLayout, TracerHeaderLayout } from "@/components/header"
 import Overview from "./dashboard/overview/overview"
 import CreateCourse from "./dashboard/program/create-course"
 import Form from "./dashboard/form/form"
@@ -21,6 +20,9 @@ import Alumni from "./dashboard/alumni/alumni"
 import AttritionRateCourses from "./dashboard/enrollment/attrition-rate-courses"
 import AttritionRatePrograms from "./dashboard/enrollment/attrition-rate-programs"
 import TracerMap from "./dashboard/alumni/tracer-map"
+import GeneralSettings from "./dashboard/settings/general"
+import AuditLog from "./dashboard/settings/audit-log"
+import Security from "./dashboard/settings/security"
 
 const Routes = createBrowserRouter([
     {
@@ -58,8 +60,7 @@ const Routes = createBrowserRouter([
             { path: '/form', element: <Form /> },
             // { path: '/form/create-form', element: <PostForm /> },
 
-            //Settings
-            { path: '/profile', element: <Profile /> },
+
         ]
     },
     {
@@ -73,6 +74,15 @@ const Routes = createBrowserRouter([
         children: [
             // { path: '/', element: <Home /> },
             { path: '/', element: <LoginPage /> },
+        ]
+    },
+    {
+        element: <SettingsLayout />,
+        children: [
+            //Settings
+            { path: '/account', element: <GeneralSettings /> },
+            { path: '/audit-log', element: <AuditLog /> },
+            { path: '/account/security', element: <Security /> },
         ]
     }
 ])
