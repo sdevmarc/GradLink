@@ -10,8 +10,7 @@ import { Button } from "@/components/ui/button"
 import { RightSheetModal } from "@/components/right-sheet-modal"
 import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
-import { CircleDashed, CircleUserRound, TableOfContents } from "lucide-react"
-import { Checkbox } from "@/components/ui/checkbox"
+import { CircleCheck, CircleDashed, CircleUserRound, CircleX, Loader, TableOfContents } from "lucide-react"
 import { BookOpen, Clock, GraduationCap } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
@@ -27,28 +26,6 @@ const dateRangeFilter = (row: any, columnId: string, filterValue: [Date, Date]) 
 };
 
 export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
-    {
-        id: "select",
-        header: ({ table }) => (
-            <Checkbox
-                checked={
-                    table.getIsAllPageRowsSelected() ||
-                    (table.getIsSomePageRowsSelected() && "indeterminate")
-                }
-                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                aria-label="Select all"
-            />
-        ),
-        cell: ({ row }) => (
-            <Checkbox
-                checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label="Select row"
-            />
-        ),
-        enableSorting: false,
-        enableHiding: false,
-    },
     {
         id: "icon",
         cell: () => {
@@ -252,7 +229,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                         <TableOfContents color="#000000" size={18} />   View Profile
                     </Button>
                     <RightSheetModal
-                        className="w-[60%]"
+                        className="w-[60%] overflow-auto"
                         isOpen={isOpen}
                         onOpenChange={handleOpenChange}
                         title="Student Details"
@@ -261,7 +238,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                             <div className="flex flex-col min-h-screen items-center">
                                 <div className="w-full max-w-[90rem] flex flex-col">
                                     <main className="flex justify-center items-center py-4">
-                                        <div className="min-h-screen w-full max-w-[70rem]">
+                                        <div className="min-h-screen w-full max-w-[70rem] flex flex-col gap-4">
                                             <Card className="w-full mx-auto">
                                                 <CardHeader>
                                                     <div className="flex justify-between items-start">
@@ -297,35 +274,82 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                             </div>
                                                         </div>
                                                     </section>
+                                                </CardContent>
+                                            </Card>
+                                            <Card className="w-full mx-auto">
+                                                <CardHeader>
+                                                    <div className="flex flex-col items-start">
+                                                        <CardTitle className="uppercase text-3xl font-bold flex flex-col">
+                                                            {programName}
+                                                        </CardTitle>
+                                                    </div>
+                                                </CardHeader>
+                                                <CardContent className="space-y-4">
+                                                        <div className="flex flex-col">
+                                                            <h1 className="text-lg font-semibold mb-4">
+                                                                Remedial Course Requirements
+                                                            </h1>
+                                                            <table className="w-full ">
+                                                                <thead>
+                                                                    <tr className="border-b">
+                                                                        <th className="text-left pb-2">Course No.</th>
+                                                                        <th className="text-left pb-2">Descriptive Title</th>
+                                                                        <th className="text-left pb-2">Status</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    {enrolledCourses?.map((item, i) => (
+                                                                        <tr key={i} className="border-b last:border-0">
+                                                                            <td className="py-2">
+                                                                                <span className="capitalize text-sm font-normal flex items-center gap-2">
+                                                                                    <GraduationCap size={18} className="h-5 w-5 text-muted-foreground" />
+                                                                                    {item.courseno}
+                                                                                </span>
+                                                                            </td>
+                                                                            <td className="py-2">
+                                                                                <span className="capitalize text-sm font-normal flex items-center gap-2">
+                                                                                    <GraduationCap size={18} className="h-5 w-5 text-muted-foreground" />
+                                                                                    {item.descriptiveTitle}
+                                                                                </span>
+                                                                            </td>
+                                                                            <td className="py-2 text-left">
+                                                                                <span className="text-sm font-normal flex items-center gap-2 capitalize ">
+                                                                                    {
+                                                                                        item.status === 'ongoing' &&
+                                                                                        <div className="flex items-center gap-2">
+                                                                                            <Loader color="#000000" size={18} />
+                                                                                            Ongoing
+                                                                                        </div>
+                                                                                    }
+                                                                                    {
+                                                                                        item.status === 'pass' &&
+                                                                                        <div className="flex items-center gap-2">
+                                                                                            <CircleCheck color="#000000" size={18} />
+                                                                                            PASSED
+                                                                                        </div>
+                                                                                    }
+                                                                                    {
+                                                                                        item.status === 'fail' &&
+                                                                                        <div className="flex items-center gap-2">
+                                                                                            <CircleX color="#000000" size={18} />
+                                                                                            Failed
+                                                                                        </div>
+                                                                                    }
+                                                                                    {
+                                                                                        item.status === 'not_taken' &&
+                                                                                        <div className="flex items-center gap-2">
+                                                                                            <CircleDashed color="#000000" size={18} />
+                                                                                            Not taken yet
+                                                                                        </div>
+                                                                                    }
 
-                                                    <section className="space-y-4">
-                                                        {
-                                                            enrolledCourses?.map((item, i) => (
-                                                                <div key={i} className="flex flex-col">
-                                                                    <div className="flex flex-col gap-2">
-                                                                        <h1 className="text-lg font-semibold uppercase">Enrollments</h1>
-                                                                        <h3 className="font-medium text-md">
-                                                                            Academic Year: {item?.academicYear?.startDate} - {item.academicYear?.endDate}
-                                                                        </h3>
-                                                                        {
-                                                                            item?.courses?.map(course => (
-                                                                                <div className="flex items-center justify-between">
-                                                                                    <h1 className="capitalize text-sm font-normal flex items-center gap-2">
-                                                                                        <GraduationCap size={18} className="h-5 w-5 mr-2 text-muted-foreground" />
-                                                                                        {course.courseno}
-                                                                                    </h1>
-                                                                                    <h1 className="text-sm font-normal flex items-center gap-2 capitalize">
-                                                                                        <CircleDashed color="#000000" size={18} />
-                                                                                        {course.status}
-                                                                                    </h1>
-                                                                                </div>
-                                                                            ))
-                                                                        }
-                                                                    </div>
-                                                                </div>
-                                                            ))
-                                                        }
-                                                    </section>
+                                                                                </span>
+                                                                            </td>
+                                                                        </tr>
+                                                                    ))}
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
                                                 </CardContent>
                                             </Card>
                                         </div>
