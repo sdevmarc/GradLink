@@ -89,6 +89,7 @@ export default function EvaluateStudent() {
             const parsedObject = JSON.parse(jsonString);
             const courseid = parsedObject.id
             const studentid = checkstudents.map(item => item._id).filter((id): id is string => id !== undefined)
+            setDialogSubmit(false)
             await evaluatestudent({ id: studentid, course: courseid, ispass: isPass })
         }
     }
