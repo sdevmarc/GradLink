@@ -7,11 +7,13 @@ import {
 import { DataTableColumnHeader } from "@/components/data-table-components/data-table-column-header"
 import { IAPIOffered } from "@/interface/offered.interface"
 import { Badge } from "@/components/ui/badge"
-import { BookOpen, ChartColumnBig, Clock, GraduationCap, TableOfContents } from "lucide-react"
+import { ChartColumnBig, TableOfContents } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { RightSheetModal } from "@/components/right-sheet-modal"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useState } from "react"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Label } from "@/components/ui/label"
 
 export const AttritionRateCoursestColumns: ColumnDef<IAPIOffered>[] = [
     {
@@ -128,50 +130,77 @@ export const AttritionRateCoursestColumns: ColumnDef<IAPIOffered>[] = [
                                     <main className="flex justify-center items-center py-4">
                                         <div className="min-h-screen w-full max-w-[70rem]">
                                             <Card className="w-full mx-auto">
-                                                <CardHeader>
-                                                    <div className="flex justify-between items-start">
-                                                        <div>
-                                                            <CardTitle className="capitalize text-3xl font-bold">
-                                                                MASTER OF INFORMATION TECHNOLOGY
-                                                            </CardTitle>
-                                                            <CardDescription className="mt-2">
-                                                                <Badge variant="default" className="mr-2">
-                                                                    MIT
-                                                                </Badge>
-                                                                <span className="text-muted-foreground">
-                                                                    CURRICULUM 2024
-                                                                </span>
-                                                            </CardDescription>
-                                                        </div>
-                                                        {/* <Button>Apply Now</Button> */}
-                                                    </div>
+                                                <CardHeader className="space-y-4">
+                                                    <CardTitle className="text-4xl font-bold">GRADLINK</CardTitle>
                                                 </CardHeader>
-                                                <CardContent className="space-y-4">
-                                                    <section className="space-y-4">
-                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                            <div className="flex items-center">
-                                                                <Clock className="h-5 w-5 mr-2 text-muted-foreground" />
-                                                                <span>Residency: 3 years</span>
-                                                            </div>
-                                                            <div className="flex items-center">
-                                                                <BookOpen className="h-5 w-5 mr-2 text-muted-foreground" />
-                                                                <span>Credits: 2-</span>
+                                                <CardContent className="space-y-8">
+                                                    <RadioGroup
+                                                        defaultValue="latest"
+                                                        // onValueChange={setSemester}
+                                                        className="flex flex-wrap gap-4"
+                                                    >
+                                                        <div className="flex items-center space-x-2">
+                                                            <RadioGroupItem value="latest" id="latest" />
+                                                            <Label htmlFor="latest">Latest Semester</Label>
+                                                        </div>
+                                                        <div className="flex items-center space-x-2">
+                                                            <RadioGroupItem value="past3" id="past3" />
+                                                            <Label htmlFor="past3">Past 3 Semesters</Label>
+                                                        </div>
+                                                        <div className="flex items-center space-x-2">
+                                                            <RadioGroupItem value="all" id="all" />
+                                                            <Label htmlFor="all">All Semester</Label>
+                                                        </div>
+                                                    </RadioGroup>
+
+                                                    <div className="space-y-4">
+                                                        <div className="grid grid-cols-2 items-center gap-4 text-lg">
+                                                            <div className="font-medium">Total Student Enrolled</div>
+                                                            <div className="border rounded-lg p-3 text-right">
+                                                                34
                                                             </div>
                                                         </div>
-                                                    </section>
 
-                                                    <section className="space-y-4">
-                                                        <div>
-                                                            <h3 className="font-semibold text-lg">Courses</h3>
-                                                            <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
-                                                                <li className="flex items-center">
-                                                                    <GraduationCap className="h-5 w-5 mr-2 text-muted-foreground" />
-                                                                    Data Analytics
-                                                                </li>
-
-                                                            </ul>
+                                                        <div className="grid grid-cols-2 items-center gap-4 text-lg">
+                                                            <div className="font-medium">Passed</div>
+                                                            <div className="border rounded-lg p-3 text-right">
+                                                                34
+                                                            </div>
                                                         </div>
-                                                    </section>
+
+                                                        <div className="grid grid-cols-2 items-center gap-4 text-lg">
+                                                            <div className="font-medium">Failed</div>
+                                                            <div className="border rounded-lg p-3 text-right">
+                                                                4
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="grid grid-cols-2 items-center gap-4 text-lg">
+                                                            <div className="font-medium">Dropped/Retake</div>
+                                                            <div className="border rounded-lg p-3 text-right">
+                                                                7
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="grid grid-cols-2 items-center gap-4 text-lg">
+                                                            <div className="font-medium">Dropped/Leave</div>
+                                                            <div className="border rounded-lg p-3 text-right">
+                                                                10
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="pt-4 border-t">
+                                                        <div className="grid grid-cols-2 items-center gap-4 text-lg">
+                                                            <div className="font-medium">Attrition Rate for [Course]</div>
+                                                            <div className="border rounded-lg p-3 text-right font-semibold">
+                                                                20 %
+                                                            </div>
+                                                        </div>
+                                                        <p className="text-sm text-muted-foreground mt-4 italic">
+                                                            *Attrition rate = (Number of students who left / Total enrolled) x 100
+                                                        </p>
+                                                    </div>
                                                 </CardContent>
                                             </Card>
                                         </div>
