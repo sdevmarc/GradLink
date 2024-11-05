@@ -37,7 +37,7 @@ export default function EnrollStudent() {
 
     const { data: students, isLoading: studentLoading, isFetched: studentFetched } = useQuery({
         queryFn: () => API_STUDENT_FINDALL_ENROLLEES_IN_COURSE(courseid),
-        queryKey: ['student-enrollees', courseid],
+        queryKey: ['students', courseid],
         enabled: !!courseid
     })
 
