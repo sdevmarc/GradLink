@@ -6,6 +6,6 @@ interface academicYear {
 export interface IAPIOffered {
     semester?: number
     academicYear?: academicYear
-    courses: string[]
+    courses?: string[]
     isActive?: boolean
 }
