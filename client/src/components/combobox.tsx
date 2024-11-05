@@ -30,9 +30,11 @@ interface IComboBox {
     value: string
     setValue: (e: string) => void
     className?: string
+    icon?: React.ReactNode
+    btnTitleclassName?: string
 }
 
-export function Combobox({ lists, placeholder, value, setValue, className }: IComboBox) {
+export function Combobox({ lists, placeholder, value, setValue, className, icon, btnTitleclassName }: IComboBox) {
     const [open, setOpen] = React.useState(false)
     const [searchQuery, setSearchQuery] = React.useState("")
 
@@ -51,8 +53,9 @@ export function Combobox({ lists, placeholder, value, setValue, className }: ICo
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    className="w-full h-8 px-2 lg:px-3 justify-between capitalize"
+                    className={cn(btnTitleclassName, `w-full h-8 px-2 lg:px-3 justify-between capitalize`)}
                 >
+                    {icon}
                     {value
                         ? lists.find((item) => item.value === value)?.label
                         : placeholder}
