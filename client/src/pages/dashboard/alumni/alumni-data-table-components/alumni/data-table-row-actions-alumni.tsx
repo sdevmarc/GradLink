@@ -10,8 +10,8 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { RightSheetModal } from "@/components/right-sheet-modal";
 import { useState } from "react";
+import { SheetModal } from "@/components/sheet-modal";
 
 interface DataTableRowActionsProps<TData> {
     row: Row<TData>;
@@ -46,7 +46,7 @@ export function DataTableRowActionsAlumni<TData>({ row }: DataTableRowActionsPro
                 </DropdownMenuContent>
             </DropdownMenu>
 
-            <RightSheetModal
+            <SheetModal
                 className="w-[60%]"
                 isOpen={isOpen}
                 onOpenChange={handleOpenChange}
