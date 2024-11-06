@@ -216,7 +216,8 @@ export default function CreateCurriculum() {
     const handleRemoveCategorizedCourse = (index: number) => {
         setValues(prev => ({
             ...prev,
-            showcategories: (prev.showcategories || []).filter((_, i) => i !== index)
+            showcategories: (prev.showcategories || []).filter((_, i) => i !== index),
+            categories:  (prev.categories || []).filter((_, i) => i !== index)
         }));
     };
 
@@ -368,10 +369,10 @@ export default function CreateCurriculum() {
                                             Progress
                                         </span>
                                         <span className='text-md font-medium'>
-                                            {step} / 3 Done
+                                            {step + 1} / 3 Done
                                         </span>
                                     </div>
-                                    <Progress value={(step / 3) * 100} className="w-full bg-muted" />
+                                    <Progress value={(step + 1 / 3) * 100} className="w-full bg-muted" />
                                 </div>
 
                                 <div className="flex flex-col border gap-4 rounded-md px-4 pb-4">
