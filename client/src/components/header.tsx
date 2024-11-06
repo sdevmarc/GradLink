@@ -124,9 +124,9 @@ const HeaderSettings = () => {
                         })()}
                     <div className="flex items-center gap-4">
                         <h1 className='text-text font-normal rounded-full px-3 py-1 text-[.8rem]'>
-                            Welcome, John Doe
+                            Welcome, Juan Dela Cruz
                         </h1>
-                        <UserAvatar image='https://github.com/shadcn.png' initials='CN' />
+                        <UserAvatar image='https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg' initials='CN' />
                     </div>
                 </div>
                 <div className="w-full h-[30%] flex justify-start items-center">
@@ -443,9 +443,9 @@ const HeaderDashboard = () => {
                         </h1> */}
                         <div className="flex items-center gap-4">
                             <h1 className='text-text font-normal rounded-full px-3 py-1 text-[.8rem]'>
-                                Welcome, John Doe
+                                Welcome, Juan Dela Cruz
                             </h1>
-                            <UserAvatar image='https://github.com/shadcn.png' initials='CN' />
+                            <UserAvatar image='https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg' initials='CN' />
                         </div>
                     </div>
                     {/* <div className="w-full h-[30%] flex justify-start items-center">
@@ -488,7 +488,7 @@ const HeaderDashboard = () => {
                                 Enrollment And Attrition Rate
                             </NavLink>
                             <NavLink to={`/program`} className='text-[.8rem] text-text font-normal px-3 py-2'>
-                                Academic Programs And Curriculum
+                                Programs And Curriculum
                             </NavLink>
                         </nav>
                     </div>
@@ -579,9 +579,9 @@ export const HeaderTracer = () => {
                     </form>
                     <div className="flex items-center gap-4 bg-primary-foreground px-4 py-1 rounded-md">
                         <h1 className='text-text font-normal rounded-full text-[.8rem]'>
-                            Welcome, John Doe
+                            Welcome, Juan Dela Cruz
                         </h1>
-                        <UserAvatar image='https://github.com/shadcn.png' initials='CN' />
+                        <UserAvatar image='https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg' initials='CN' />
                     </div>
                 </header>
             </div>
