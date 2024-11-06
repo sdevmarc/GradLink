@@ -164,7 +164,9 @@ const CreateForm = () => {
 
                         <form className="w-[80%] flex flex-col justify-start gap-4 rounded-lg border">
                             <div className="w-full px-4 py-3 border-b">
-                                <h1 className='text-text font-semibold text-lg'>Configuration</h1>
+                                <h1 className='text-text font-semibold text-lg'>
+                                    Student Information
+                                </h1>
                             </div>
                             <div className="w-full py-2 flex flex-col">
                                 <div className="w-full flex flex-col gap-4">
@@ -179,7 +181,7 @@ const CreateForm = () => {
                                             name='idNumber'
                                             className='w-[400px]'
                                             type='text'
-                                            placeholder='eg. 123'
+                                            placeholder='eg. 12345678'
                                             required
                                         />
                                     </div>
@@ -208,7 +210,7 @@ const CreateForm = () => {
                                                 name='lastname'
                                                 type='text'
                                                 className='w-[400px]'
-                                                placeholder='eg. Nueva'
+                                                placeholder='eg. Dela Cruz'
                                                 required
                                             />
                                         </div>
@@ -223,7 +225,7 @@ const CreateForm = () => {
                                                 name='firstname'
                                                 className='w-[400px]'
                                                 type='text'
-                                                placeholder='eg. Jericho'
+                                                placeholder='eg. Juan'
                                                 required
                                             />
                                         </div>
@@ -240,7 +242,7 @@ const CreateForm = () => {
                                                 name='middlename'
                                                 className='w-[400px]'
                                                 type='text'
-                                                placeholder='eg. Arman'
+                                                placeholder='eg. Rizal'
                                                 required
                                             />
                                         </div>
@@ -255,7 +257,7 @@ const CreateForm = () => {
                                                 name='email'
                                                 className='w-[400px]'
                                                 type='text'
-                                                placeholder='eg. m@example.com'
+                                                placeholder='eg. juandelacruz@example.com'
                                                 required
                                             />
                                         </div>
@@ -312,7 +314,118 @@ const CreateForm = () => {
 
                                         </div>
                                     }
+                                    <div className="flex flex-col px-4 border gap-4 p-4 m-4">
+                                        <h1 className="text-xl font-semibold">
+                                            Undergraduate Information
+                                        </h1>
+                                        <div className="flex items-center justify-start">
+                                            <div className="flex flex-col mx-4 gap-1">
+                                                <h1 className="text-md font-medium">
+                                                    College/University
+                                                </h1>
+                                                <Input
+                                                    disabled={isLoading}
+                                                    className='w-[400px]'
+                                                    type='text'
+                                                    placeholder='eg. College/University'
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="flex flex-col mr-4 gap-1">
+                                                <h1 className="text-md font-medium">
+                                                    School
+                                                </h1>
+                                                <Input
+                                                    disabled={isLoading}
+                                                    className='w-[400px]'
+                                                    type='text'
+                                                    placeholder='eg. School'
+                                                    required
+                                                />
+                                            </div>
 
+                                        </div>
+                                        <div className="flex items-center justify-start">
+                                            <div className="flex flex-col mx-4 gap-1">
+                                                <h1 className="text-mr font-medium">
+                                                    Program
+                                                </h1>
+                                                <Input
+                                                    disabled={isLoading}
+                                                    className='w-[400px]'
+                                                    type='text'
+                                                    placeholder="eg. Bachelor's Degree"
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="flex flex-col mr-4 gap-1">
+                                                <h1 className="text-md font-medium">
+                                                    Year Graduated
+                                                </h1>
+                                                <Input
+                                                    disabled={isLoading}
+                                                    className='w-[400px]'
+                                                    type='text'
+                                                    placeholder='eg. YYYY'
+                                                    required
+                                                />
+                                            </div>
+
+                                        </div>
+                                        <div className="flex items-center justify-start">
+                                            <div className="flex flex-col mx-4 gap-1">
+                                                <h1 className="text-mr font-medium">
+                                                    Honors/Awards Received
+                                                </h1>
+                                                <Input
+                                                    disabled={isLoading}
+                                                    className='w-[400px]'
+                                                    type='text'
+                                                    placeholder='eg. Academic Award'
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="flex flex-col mr-4 gap-1">
+                                                <h1 className="text-md font-medium">
+                                                    Professional Exam Passed
+                                                </h1>
+                                                <Input
+                                                    disabled={isLoading}
+                                                    className='w-[400px]'
+                                                    type='text'
+                                                    placeholder='eg. CSE/LEPT/CPALE'
+                                                    required
+                                                />
+                                            </div>
+
+                                        </div>
+                                        <div className="flex items-center justify-start">
+                                            <div className="flex flex-col mx-4 gap-1">
+                                                <h1 className="text-mr font-medium">
+                                                    Professional Exam Date
+                                                </h1>
+                                                <Input
+                                                    disabled={isLoading}
+                                                    className='w-[400px]'
+                                                    type='text'
+                                                    placeholder='eg. MM-DD-YYYY'
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="flex flex-col mr-4 gap-1">
+                                                <h1 className="text-md font-medium">
+                                                    Professional Exam Rating
+                                                </h1>
+                                                <Input
+                                                    disabled={isLoading}
+                                                    className='w-[400px]'
+                                                    type='text'
+                                                    placeholder='eg. 90%'
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
 
                                     <AlertDialogConfirmation
                                         isDialog={dialogsubmit}
