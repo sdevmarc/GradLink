@@ -54,7 +54,7 @@ export default function CreateCoursesOffered() {
         { label: 'Third Semester', value: '3' }
     ]
 
-    const count = 6; // Current year + 5 future years
+    const count = 1; // Current year + 5 future years
     const academicYear = generateAcademicYears(count);
 
     const { data: courses, isLoading: coursesLoading, isFetched: coursesFetched } = useQuery({
@@ -162,36 +162,31 @@ export default function CreateCoursesOffered() {
                     </aside>
                     <main className="flex justify-end">
                         <MainTable>
-
                             <div className="flex flex-col border gap-4 rounded-md">
-                                <div className="w-full px-4 py-3 border-b">
-                                    <h1 className='text-text font-semibold text-lg'>Configuration</h1>
-                                </div>
-                                <div className="flex flex-col gap-4 px-4">
+                                <div className="w-full px-4 py-3 border-b flex items-center gap-4">
+                                    {/* <h1 className='text-text font-semibold text-lg'>Configuration</h1> */}
                                     <div className="overflow-hidden max-w-[200px] flex flex-col gap-1">
-                                        <h1 className="text-md font-medium">
-                                            Semester
-                                        </h1>
                                         <Combobox
                                             className='w-[200px]'
                                             lists={semester || []}
-                                            placeholder={`None`}
+                                            placeholder={`Select Semester`}
                                             setValue={(item) => setSemester(item)}
                                             value={hassemester || ''}
                                         />
                                     </div>
                                     <div className="overflow-hidden max-w-[200px] flex flex-col gap-1">
-                                        <h1 className="text-md font-medium">
-                                            Academic Year
-                                        </h1>
                                         <Combobox
                                             className='w-[150px]'
                                             lists={academicYear || []}
-                                            placeholder={`None`}
+                                            placeholder={`Select Academic Year`}
                                             setValue={(item) => setAcademicYear(item)}
                                             value={hasacademicYear || ''}
                                         />
                                     </div>
+                                </div>
+                                <div className="flex flex-col gap-4 px-4">
+
+
                                     <div className="flex flex-col gap-1">
                                         <h1 className="text-md font-medium">
                                             Choose courses
