@@ -78,14 +78,14 @@ export function DataTableToolbarCurriculum<TData>({
                     description={`You will be redirect to a page for creating a curriculum.`}
                     btnContinue={() => navigate(ROUTES.CREATE_CURRICULUM)}
                 />
-                <AlertDialogConfirmation
+                {/* <AlertDialogConfirmation
                     type={`default`}
                     variant={'outline'}
                     btnTitle="Export"
                     title="Are you sure?"
                     description={`This will export the current data you are viewing.`}
                     btnContinue={() => navigate('/program')}
-                />
+                /> */}
             </div>
         </div>
     )
