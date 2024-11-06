@@ -9,7 +9,7 @@ import { IAPIOffered } from "@/interface/offered.interface"
 import { Badge } from "@/components/ui/badge"
 import { ChartColumnBig, TableOfContents } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { RightSheetModal } from "@/components/right-sheet-modal"
+import {  SheetModal } from "@/components/sheet-modal"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useState } from "react"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
@@ -118,7 +118,7 @@ export const AttritionRateCoursestColumns: ColumnDef<IAPIOffered>[] = [
                     <Button onClick={handleViewDetails} variant={`outline`} size={`sm`} className="flex items-center gap-4">
                         <TableOfContents color="#000000" size={18} /> View Attrition
                     </Button>
-                    <RightSheetModal
+                    <SheetModal
                         className="w-[60%]"
                         isOpen={isOpen}
                         onOpenChange={handleOpenChange}
