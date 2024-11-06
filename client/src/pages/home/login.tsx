@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { GraduationCap, EyeOff, Eye } from 'lucide-react'
+import SMU from '@/assets/SMU Main Emblem - For dark color backgrounds.png'
+import SOGS from '@/assets/SMU Unit Emblem - SoGS 1by1.png'
 
 export default function LoginPage() {
     const [email, setEmail] = useState('')
@@ -21,10 +23,21 @@ export default function LoginPage() {
     return (
         <div className="w-full flex flex-col">
             <Header />
-            <div className="min-h-screen flex flex-col items-center justify-center p-4">
+            <div className="min-h-screen flex flex-col items-center justify-evenly p-4">
+                <div className="flex items-center gap-8">
+                    <img src={SMU}
+                        alt="SMY Logo"
+                        className="w-[10rem] h-[10rem]"
+                    />
+                    <img src={SOGS}
+                        alt="SMY Logo"
+                        className="w-[10rem] h-[10rem]"
+                    />
+                </div>
+
                 <Card className="w-full max-w-md">
                     <CardHeader>
-                        <CardTitle className="text-2xl font-bold">Login</CardTitle>
+                        <CardTitle className="text-2xl font-bold">GradLink</CardTitle>
                         <CardDescription>Enter your credentials to access your account</CardDescription>
                     </CardHeader>
                     <form onSubmit={handleLogin}>
