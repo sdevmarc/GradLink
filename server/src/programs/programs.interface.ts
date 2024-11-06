@@ -6,6 +6,7 @@ export interface IPrograms {
     descriptiveTitle?: string
     residency?: number
     department?: string
+    createdAt?: string
 }
 
 export interface IPromisePrograms {
