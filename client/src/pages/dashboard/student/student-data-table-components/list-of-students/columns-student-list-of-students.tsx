@@ -138,16 +138,16 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
         enableSorting: false,
     },
     {
-        accessorKey: "progress",
+        accessorKey: "programCode",
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="Program" className="text-text" />
         ),
         cell: ({ row }) => {
+            console.log(row.original)
             return (
                 <div className="flex items-center">
                     <span className="capitalize">
-                        {/* {row.getValue("progress")} */}
-                        MIT
+                        {row.getValue("programCode")}
                     </span>
                 </div>
             )

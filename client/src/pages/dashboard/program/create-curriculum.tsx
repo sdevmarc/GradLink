@@ -217,7 +217,7 @@ export default function CreateCurriculum() {
         setValues(prev => ({
             ...prev,
             showcategories: (prev.showcategories || []).filter((_, i) => i !== index),
-            categories:  (prev.categories || []).filter((_, i) => i !== index)
+            categories: (prev.categories || []).filter((_, i) => i !== index)
         }));
     };
 
@@ -497,9 +497,7 @@ export default function CreateCurriculum() {
                                                             className='h-8 max-w-[400px]'
                                                             required
                                                         />
-                                                        <Button disabled={isLoading} onClick={handleAddCoursesToCategories} variant={`outline`} size={`sm`} className="flex items-center gap-4" type="button">
-                                                            <Plus color="#000000" size={18} /> Add Categorized Course
-                                                        </Button>
+
                                                     </div>
                                                 </div>
 
@@ -531,6 +529,11 @@ export default function CreateCurriculum() {
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div className="flex">
+                                                    <Button disabled={isLoading} onClick={handleAddCoursesToCategories} variant={`outline`} size={`sm`} className="w-full flex items-center py-6 gap-4 text-lg font-semibold" type="button">
+                                                        <Plus color="#000000" size={18} /> Add Course(s) to Category
+                                                    </Button>
+                                                </div>
                                             {
                                                 values.showcategories?.map((item, i) => (
                                                     <div key={i} className='flex flex-col gap-2 border p-4 rounded-md'>
