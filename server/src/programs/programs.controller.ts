@@ -15,6 +15,11 @@ export class ProgramsController {
         return await this.programService.findAll()
     }
 
+    @Get(':id')
+    async findOneProgram(@Param('id') id: string) {
+        return await this.programService.findOne(id)
+    }
+
     @Post('create')
     async createProgram(
         @Body() { code, descriptiveTitle, residency, department }: IPrograms
