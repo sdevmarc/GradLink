@@ -18,7 +18,7 @@ export const ProgramSchema = new mongoose.Schema({
     },
     department: {
         type: String,
-        enum: ['SEAIT', 'SHANS', 'SAB', 'STEH', 'CL'],
+        enum: ['SEAIT', 'SHANS', 'SAB', 'STEH'],
         required: true
     }
 }, { timestamps: true })
