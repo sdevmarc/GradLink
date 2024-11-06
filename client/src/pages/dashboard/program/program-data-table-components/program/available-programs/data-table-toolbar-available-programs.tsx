@@ -21,18 +21,17 @@ export function DataTableToolbarAvailablePrograms<TData>({
     const isFiltered = table.getState().columnFilters.length > 0;
     const navigate = useNavigate()
     const department_options = [
-        { value: 'SEAIT', label: 'SEAIT' },
-        { value: 'SHANS', label: 'SHANS' },
-        { value: 'SAB', label: 'SAB' },
-        { value: 'STEH', label: 'STEH' },
-        { value: 'CL', label: 'CL' },
+        { value: 'SEAIT', label: "Eng'g, Dev't. Arts & Design, Library Science & IT" },
+        { value: 'SHANS', label: "Science and Mathematics" },
+        { value: 'SAB', label: "Business and Accountancy" },
+        { value: 'STEH', label: "Teacher Education and Humanities"}
     ]
 
     return (
         <div className="flex flex-wrap items-center justify-between">
             <div className="flex flex-1 flex-wrap items-center gap-2">
                 <Input
-                    placeholder="Search program code..."
+                    placeholder="Search Program..."
                     value={(table.getColumn("code")?.getFilterValue() as string) ?? ""}
                     onChange={(event) => {
                         table.getColumn("code")?.setFilterValue(event.target.value);
@@ -81,14 +80,14 @@ export function DataTableToolbarAvailablePrograms<TData>({
                     description={`You will be redirect to a page for creating a program.`}
                     btnContinue={() => navigate(ROUTES.CREATE_PROGRAM)}
                 />
-                <AlertDialogConfirmation
+                {/* <AlertDialogConfirmation
                     type={`default`}
                     variant={'outline'}
                     btnTitle="Export"
                     title="Are you sure?"
                     description={`This will export the current data you are viewing.`}
                     btnContinue={() => navigate('/program')}
-                />
+                /> */}
             </div>
         </div>
     )
