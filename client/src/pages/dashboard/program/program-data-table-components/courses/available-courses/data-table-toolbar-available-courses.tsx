@@ -32,7 +32,7 @@ export function DataTableToolbarAvailableCourses<TData>({
         <div className="flex flex-wrap items-center justify-between">
             <div className="flex flex-1 flex-wrap items-center gap-2">
                 <Input
-                    placeholder="Search course number..."
+                    placeholder="Search course..."
                     value={(table.getColumn("courseno")?.getFilterValue() as string) ?? ""}
                     onChange={(event) => {
                         table.getColumn("courseno")?.setFilterValue(event.target.value)
@@ -81,14 +81,14 @@ export function DataTableToolbarAvailableCourses<TData>({
                     description={`You will be redirect to a page for creating a course.`}
                     btnContinue={() => navigate(ROUTES.CREATE_COURSE)}
                 />
-                <AlertDialogConfirmation
+                {/* <AlertDialogConfirmation
                     type={`default`}
                     variant={'outline'}
                     btnTitle="Export"
                     title="Are you sure?"
                     description={`This will export the current data you are viewing.`}
                     btnContinue={() => navigate('/program')}
-                />
+                /> */}
             </div>
         </div>
     )
