@@ -7,7 +7,7 @@ import {
 import { DataTableColumnHeader } from "@/components/data-table-components/data-table-column-header"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { RightSheetModal } from "@/components/right-sheet-modal"
+import {  SheetModal } from "@/components/sheet-modal"
 import { useState } from "react"
 import { Bookmark, TableOfContents } from "lucide-react"
 import { BookOpen, Clock, GraduationCap } from "lucide-react"
@@ -101,7 +101,7 @@ export const CurriculumColumns: ColumnDef<ICurriculum>[] = [
                     <Button onClick={handleViewDetails} variant={`outline`} size={`sm`} className="flex items-center gap-4">
                         <TableOfContents color="#000000" size={18} />  View Details
                     </Button>
-                    <RightSheetModal
+                    <SheetModal
                         className="w-[60%]"
                         isOpen={isOpen}
                         onOpenChange={handleOpenChange}
