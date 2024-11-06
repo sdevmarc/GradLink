@@ -8,7 +8,7 @@ import { DataTableColumnHeader } from "@/components/data-table-components/data-t
 import { IAPIPrograms } from "@/interface/program.interface"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { RightSheetModal } from "@/components/right-sheet-modal"
+import { SheetModal } from "@/components/sheet-modal"
 import { Badge } from "@/components/ui/badge"
 import { BookCopy, BookOpen, Clock, GraduationCap, TableOfContents } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -105,7 +105,7 @@ export const AvailableProgramsColumns: ColumnDef<IAPIPrograms>[] = [
                     <Button onClick={handleViewDetails} variant={`outline`} size={`sm`} className="flex items-center gap-4">
                         <TableOfContents color="#000000" size={18} /> View Details
                     </Button>
-                    <RightSheetModal
+                    <SheetModal
                         className="w-[60%]"
                         isOpen={isOpen}
                         onOpenChange={handleOpenChange}
