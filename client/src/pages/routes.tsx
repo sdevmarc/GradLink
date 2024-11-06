@@ -38,12 +38,12 @@ const Routes = createBrowserRouter([
             { path: '/enrollment/attrition-rate-courses', element: <AttritionRateCourses /> },
             { path: '/enrollment/attrition-rate-programs', element: <AttritionRatePrograms /> },
             { path: '/enrollment/create-course-offered', element: <CreateCoursesOffered /> },
-            { path: '/enrollment/new-student', element: <NewStudent /> },
             { path: '/enrollment/enroll-student/:id', element: <EnrollStudent /> },
             { path: '/enrollment/evaluate-student/:id', element: <EvaluateStudent /> },
 
             //Student
             { path: '/student', element: <ListOfStudents /> },
+            { path: '/student/new-student', element: <NewStudent /> },
             { path: '/student/details/:sid', element: <ViewDetails /> },
 
             //Alumni
