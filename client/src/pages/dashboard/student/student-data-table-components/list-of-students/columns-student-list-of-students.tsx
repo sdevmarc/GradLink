@@ -7,11 +7,11 @@ import {
 import { DataTableColumnHeader } from "@/components/data-table-components/data-table-column-header"
 import { IAPIStudents } from "@/interface/student.interface"
 import { Button } from "@/components/ui/button"
-import { RightSheetModal } from "@/components/right-sheet-modal"
+import { SheetModal } from "@/components/sheet-modal"
 import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { CircleCheck, CircleDashed, CircleUserRound, CircleX, Loader, TableOfContents } from "lucide-react"
-import { BookOpen, Clock, GraduationCap } from "lucide-react"
+import { BookOpen, GraduationCap } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 const dateRangeFilter = (row: any, columnId: string, filterValue: [Date, Date]) => {
@@ -140,12 +140,15 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
     {
         accessorKey: "progress",
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Progress" className="text-text" />
+            <DataTableColumnHeader column={column} title="Program" className="text-text" />
         ),
         cell: ({ row }) => {
             return (
                 <div className="flex items-center">
-                    <span className="capitalize">{row.getValue("progress")}</span>
+                    <span className="capitalize">
+                        {/* {row.getValue("progress")} */}
+                        MIT
+                    </span>
                 </div>
             )
         },
@@ -228,7 +231,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                     <Button onClick={handleViewDetails} variant={`outline`} size={`sm`} className="flex items-center gap-4">
                         <TableOfContents color="#000000" size={18} />   View Profile
                     </Button>
-                    <RightSheetModal
+                    <SheetModal
                         className="w-[60%] overflow-auto"
                         isOpen={isOpen}
                         onOpenChange={handleOpenChange}
@@ -262,94 +265,160 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                     </div>
                                                 </CardHeader>
                                                 <CardContent className="space-y-4">
-                                                    <section className="space-y-4">
-                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                            <div className="flex items-center">
-                                                                <Clock className="h-5 w-5 mr-2 text-muted-foreground" />
-                                                                <span className="capitalize">Status: {progress}</span>
+                                                    <div className="w-full mx-auto">
+                                                        <CardHeader>
+                                                            <CardTitle>Bachelor's Degree Information</CardTitle>
+                                                        </CardHeader>
+                                                        <CardContent className="flex flex-wrap gap-4">
+                                                            <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                                <span className="text-md font-semibold">
+                                                                    College/University
+                                                                </span>
+                                                                <span className="text-md font-normal">
+                                                                    Saint Mary's University
+                                                                </span>
                                                             </div>
+                                                            <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                                <span className="text-md font-semibold">
+                                                                    School
+                                                                </span>
+                                                                <span className="text-md font-normal">
+                                                                    College of Science
+                                                                </span>
+                                                            </div>
+                                                            <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                                <span className="text-md font-semibold">
+                                                                    Program
+                                                                </span>
+                                                                <span className="text-md font-normal">
+                                                                    BS in Biology
+                                                                </span>
+                                                            </div>
+                                                            <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                                <span className="text-md font-semibold">
+                                                                    Year Graduated
+                                                                </span>
+                                                                <span className="text-md font-normal">
+                                                                    2021
+                                                                </span>
+                                                            </div>
+                                                            <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                                <span className="text-md font-semibold">
+                                                                    Honors/Awards Received
+                                                                </span>
+                                                                <span className="text-md font-normal">
+                                                                    Cum Laude
+                                                                </span>
+                                                            </div>
+                                                            <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                                <span className="text-md font-semibold">
+                                                                    Professional Exam Passed
+                                                                </span>
+                                                                <span className="text-md font-normal">
+                                                                    LET
+                                                                </span>
+                                                            </div>
+                                                            <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                                <span className="text-md font-semibold">
+                                                                    Professional Exam Date
+                                                                </span>
+                                                                <span className="text-md font-normal">
+                                                                    03-04-2022
+                                                                </span>
+                                                            </div>
+                                                            <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                                <span className="text-md font-semibold">
+                                                                    Professional Exam Rating
+                                                                </span>
+                                                                <span className="text-md font-normal">
+                                                                    92%
+                                                                </span>
+                                                            </div>
+
+                                                        </CardContent>
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
+                                            <Card className="w-full mx-auto">
+                                                <CardHeader>
+                                                    <div className="w-full flex flex-col items-start">
+                                                        <h1 className="text-lg font-semibold">
+                                                            {programName}
+                                                        </h1>
+                                                        <div className="w-full flex items-center justify-between">
+                                                            <h1 className="text-lg font-medium">
+                                                                Major Courses
+                                                            </h1>
                                                             <div className="flex items-center">
                                                                 <BookOpen className="h-5 w-5 mr-2 text-muted-foreground" />
                                                                 <span>Credits: {totalOfUnitsEarned} / {totalOfUnitsEnrolled}</span>
                                                             </div>
                                                         </div>
-                                                    </section>
-                                                </CardContent>
-                                            </Card>
-                                            <Card className="w-full mx-auto">
-                                                <CardHeader>
-                                                    <div className="flex flex-col items-start">
-                                                        <CardTitle className="uppercase text-3xl font-bold flex flex-col">
-                                                            {programName}
-                                                        </CardTitle>
+
                                                     </div>
                                                 </CardHeader>
                                                 <CardContent className="space-y-4">
-                                                        <div className="flex flex-col">
-                                                            <h1 className="text-lg font-semibold mb-4">
-                                                                Remedial Course Requirements
-                                                            </h1>
-                                                            <table className="w-full ">
-                                                                <thead>
-                                                                    <tr className="border-b">
-                                                                        <th className="text-left pb-2">Course No.</th>
-                                                                        <th className="text-left pb-2">Descriptive Title</th>
-                                                                        <th className="text-left pb-2">Status</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    {enrolledCourses?.map((item, i) => (
-                                                                        <tr key={i} className="border-b last:border-0">
-                                                                            <td className="py-2">
-                                                                                <span className="capitalize text-sm font-normal flex items-center gap-2">
-                                                                                    <GraduationCap size={18} className="h-5 w-5 text-muted-foreground" />
-                                                                                    {item.courseno}
-                                                                                </span>
-                                                                            </td>
-                                                                            <td className="py-2">
-                                                                                <span className="capitalize text-sm font-normal flex items-center gap-2">
-                                                                                    <GraduationCap size={18} className="h-5 w-5 text-muted-foreground" />
-                                                                                    {item.descriptiveTitle}
-                                                                                </span>
-                                                                            </td>
-                                                                            <td className="py-2 text-left">
-                                                                                <span className="text-sm font-normal flex items-center gap-2 capitalize ">
-                                                                                    {
-                                                                                        item.status === 'ongoing' &&
-                                                                                        <div className="flex items-center gap-2">
-                                                                                            <Loader color="#000000" size={18} />
-                                                                                            Ongoing
-                                                                                        </div>
-                                                                                    }
-                                                                                    {
-                                                                                        item.status === 'pass' &&
-                                                                                        <div className="flex items-center gap-2">
-                                                                                            <CircleCheck color="#000000" size={18} />
-                                                                                            PASSED
-                                                                                        </div>
-                                                                                    }
-                                                                                    {
-                                                                                        item.status === 'fail' &&
-                                                                                        <div className="flex items-center gap-2">
-                                                                                            <CircleX color="#000000" size={18} />
-                                                                                            Failed
-                                                                                        </div>
-                                                                                    }
-                                                                                    {
-                                                                                        item.status === 'not_taken' &&
-                                                                                        <div className="flex items-center gap-2">
-                                                                                            <CircleDashed color="#000000" size={18} />
-                                                                                            Not taken yet
-                                                                                        </div>
-                                                                                    }
+                                                    <div className="flex flex-col">
+                                                        <table className="w-full ">
+                                                            <thead>
+                                                                <tr className="border-b">
+                                                                    <th className="text-left font-normal pb-2">Course No.</th>
+                                                                    <th className="text-left font-medium pb-2">Descriptive Title</th>
+                                                                    <th className="text-left font-medium pb-2">Status</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {enrolledCourses?.map((item, i) => (
+                                                                    <tr key={i} className="border-b last:border-0">
+                                                                        <td className="py-2">
+                                                                            <span className="capitalize text-sm font-normal flex items-center gap-2">
+                                                                                <GraduationCap size={18} className="h-5 w-5 text-muted-foreground" />
+                                                                                {item.courseno}
+                                                                            </span>
+                                                                        </td>
+                                                                        <td className="py-2">
+                                                                            <span className="capitalize text-sm font-normal flex items-center gap-2">
+                                                                                {item.descriptiveTitle}
+                                                                            </span>
+                                                                        </td>
+                                                                        <td className="py-2 text-left text-medium">
+                                                                            <span className="text-sm font-normal flex items-center gap-2 capitalize ">
+                                                                                {
+                                                                                    item.status === 'ongoing' &&
+                                                                                    <div className="flex items-center gap-2">
+                                                                                        <Loader color="#000000" size={18} />
+                                                                                        Ongoing
+                                                                                    </div>
+                                                                                }
+                                                                                {
+                                                                                    item.status === 'pass' &&
+                                                                                    <div className="flex items-center gap-2">
+                                                                                        <CircleCheck color="#000000" size={18} />
+                                                                                        PASSED
+                                                                                    </div>
+                                                                                }
+                                                                                {
+                                                                                    item.status === 'fail' &&
+                                                                                    <div className="flex items-center gap-2">
+                                                                                        <CircleX color="#000000" size={18} />
+                                                                                        Failed
+                                                                                    </div>
+                                                                                }
+                                                                                {
+                                                                                    item.status === 'not_taken' &&
+                                                                                    <div className="flex items-center gap-2">
+                                                                                        <CircleDashed color="#000000" size={18} />
+                                                                                        Not taken yet
+                                                                                    </div>
+                                                                                }
 
-                                                                                </span>
-                                                                            </td>
-                                                                        </tr>
-                                                                    ))}
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
+                                                                            </span>
+                                                                        </td>
+                                                                    </tr>
+                                                                ))}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </CardContent>
                                             </Card>
                                         </div>
