@@ -10,7 +10,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
-import { RightSheetModal } from "@/components/right-sheet-modal"
+import { SheetModal } from "@/components/sheet-modal"
 import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { BookOpen, Clock, GraduationCap } from "lucide-react"
@@ -51,7 +51,7 @@ export function DataTableRowActionsAvailablePrograms<TData>({ row }: DataTableRo
                 </DropdownMenuContent>
             </DropdownMenu>
 
-            <RightSheetModal
+            <SheetModal
                 className="w-[60%]"
                 isOpen={isOpen}
                 onOpenChange={handleOpenChange}
