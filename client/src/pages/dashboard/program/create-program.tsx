@@ -30,11 +30,10 @@ export default function CreateProgram() {
     })
 
     const department = [
-        { label: 'School of Engineering, Architecture and Information Technology', value: 'SEAIT' },
-        { label: 'School of Accountancy and Business', value: 'SAB' },
-        { label: 'School of of Teacher Education and Humanities', value: 'STEH' },
-        { label: 'School of of Health and Natural Sciences', value: 'SHANS' },
-        { label: 'College of Law', value: 'CL' }
+        { label: "Eng'g, Dev't. Arts & Design, Library Science & IT", value: 'SEAIT' },
+        { label: "Business and Accountancy", value: 'SAB' },
+        { label: "Teacher Education and Humanities", value: 'STEH' },
+        { label: "Science and Mathematics", value: 'SHANS' }
     ]
 
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
