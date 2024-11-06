@@ -8,10 +8,10 @@ import { IAPICourse } from '@/interface/course.interface'
 import { DataTableColumnHeader } from "@/components/data-table-components/data-table-column-header"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { RightSheetModal } from "@/components/right-sheet-modal"
 import { BookOpen, TableOfContents } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { DrawerModal } from "@/components/drawer-modal"
 
 export const AvailableCoursesColumns: ColumnDef<IAPICourse>[] = [
     {
@@ -100,18 +100,16 @@ export const AvailableCoursesColumns: ColumnDef<IAPICourse>[] = [
                     <Button onClick={handleViewDetails} variant={`outline`} size={`sm`} className="flex items-center gap-4">
                         <TableOfContents color="#000000" size={18} />   View Details
                     </Button>
-                    <RightSheetModal
-                        className="w-[60%]"
+                    <DrawerModal
                         isOpen={isOpen}
                         onOpenChange={handleOpenChange}
                         title="Course Details"
-                        description="View details of the selected course."
                         content={
                             <div className="flex flex-col min-h-screen items-center">
                                 <div className="w-full max-w-[90rem] flex flex-col">
                                     <main className="flex justify-center items-center py-4">
                                         <div className="min-h-screen w-full max-w-[70rem]">
-                                            <Card className="w-full mx-auto">
+                                            <div className="w-full mx-auto">
                                                 <CardHeader>
                                                     <div className="flex justify-between items-start">
                                                         <div>
@@ -157,7 +155,7 @@ export const AvailableCoursesColumns: ColumnDef<IAPICourse>[] = [
                                                         </div>
                                                     </section> */}
                                                 </CardContent>
-                                            </Card>
+                                            </div>
                                         </div>
                                     </main>
                                 </div>
