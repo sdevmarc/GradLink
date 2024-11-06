@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input"
 import { Combobox } from "@/components/combobox"
 import { Badge } from "@/components/ui/badge"
 import { BookOpen, Clock, Filter, GraduationCap, Search } from "lucide-react"
-import { RightSheetModal } from "@/components/right-sheet-modal"
+import { SheetModal } from "@/components/sheet-modal"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { LeftSheetModal } from "@/components/left-sheet-modal"
 import { createPortal } from 'react-dom';
@@ -122,7 +122,7 @@ export default function TracerMap() {
                                         description="View searched results."
                                         content={''}
                                     />
-                                    <RightSheetModal
+                                    <SheetModal
                                         className="w-[60%]"
                                         isOpen={isDetailsOpen}
                                         onOpenChange={handleDetailsOpenChange}
