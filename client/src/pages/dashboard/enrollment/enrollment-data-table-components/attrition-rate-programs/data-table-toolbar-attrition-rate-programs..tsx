@@ -20,18 +20,17 @@ export function DataTableToolbarAttritionRatePrograms<TData>({
     const navigate = useNavigate()
 
     const department_options = [
-        { value: 'SEAIT', label: 'SEAIT' },
-        { value: 'SHANS', label: 'SHANS' },
-        { value: 'SAB', label: 'SAB' },
-        { value: 'STEH', label: 'STEH' },
-        { value: 'CL', label: 'CL' },
+        { value: 'SEAIT', label: "Eng'g, Dev't. Arts & Design, Library Science & IT" },
+        { value: 'SHANS', label: "Science and Mathematics" },
+        { value: 'SAB', label: "Business and Accountancy" },
+        { value: 'STEH', label: "Teacher Education and Humanities"}
     ]
 
     return (
         <div className="flex flex-wrap items-center justify-between">
             <div className="flex items-center gap-2">
                 <Input
-                    placeholder="Search course number..."
+                    placeholder="Search Course..."
                     value={(table.getColumn("courseno")?.getFilterValue() as string) ?? ""}
                     onChange={(event) => {
                         table.getColumn("courseno")?.setFilterValue(event.target.value);
@@ -68,14 +67,14 @@ export function DataTableToolbarAttritionRatePrograms<TData>({
 
             </div>
             <div className="flex gap-2 items-center">
-                <AlertDialogConfirmation
+                {/* <AlertDialogConfirmation
                     type={`default`}
                     variant={'outline'}
                     btnTitle="Export"
                     title="Are you sure?"
                     description={`This will export the current data you are viewing.`}
                     btnContinue={() => navigate('/program')}
-                />
+                /> */}
             </div>
         </div>
     )
