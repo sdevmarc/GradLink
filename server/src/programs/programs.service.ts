@@ -28,10 +28,24 @@ export class ProgramsService {
                 {
                     $lookup: {
                         from: 'curriculums',
-                        localField: '_id',
-                        foreignField: 'programid',
+                        let: { programId: '$_id' },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [
+                                            { $eq: ['$programid', '$$programId'] },
+                                            { $eq: ['$isActive', true] } // Only include active curricula
+                                        ]
+                                    }
+                                }
+                            }
+                        ],
                         as: 'curricula'
                     }
+                },
+                {
+                    $match: { 'curricula.isActive': true }
                 },
                 // Unwind the curricula array
                 {
