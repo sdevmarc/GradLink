@@ -447,7 +447,6 @@ export class StudentService {
                         programCode: '$programDetails.code',
                         programName: '$programDetails.descriptiveTitle',
                         isenrolled: 1,
-                        // notTakenCourses: '$notTakenCourses',
                         department: '$programDetails.department',
                         totalOfUnitsEnrolled: 1,
                         totalOfUnitsEarned: 1,
