@@ -27,6 +27,46 @@ export const StudentSchema = new mongoose.Schema({
         ref: 'Curriculum',
         required: true
     },
+    undergraduateInformation: {
+        college: {
+            type: String,
+            required: true
+        },
+        school: {
+            type: String,
+            required: true
+        },
+        programGraduated: {
+            type: String,
+            required: true
+        },
+        yearGraduated: {
+            type: String,
+            required: true
+        }
+    },
+    achievements: {
+        awards: {
+            type: String,
+            required: true,
+            default: 'None'
+        },
+        examPassed: {
+            type: String,
+            required: true,
+            default: 'None'
+        },
+        examDate: {
+            type: String,
+            required: true,
+            default: 'None'
+        },
+        examRating: {
+            type: String,
+            required: true,
+            default: 'None'
+        }
+    },
     generalInformation: {},
     educationalBackground: {},
     trainingAdvanceStudies: {},
