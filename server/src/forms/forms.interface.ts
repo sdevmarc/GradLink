@@ -20,7 +20,7 @@ export interface IForms {
     title?: string;
     generalInformation?: IFormValues[];
     educationalBackground?: IFormValues[];
-    trainingAdvanceStudies?: IFormValues[];
+    employmentData?: IFormValues[];
 }
 
 export interface IPromiseForms {
@@ -61,7 +61,7 @@ interface FormSection {
 export interface FormStructure {
     generalInformation: FormSection;
     educationalBackground: FormSection;
-    trainingAdvanceStudies: FormSection;
+    employmentData: FormSection;
 }
 
 interface MappedAnswer {
@@ -82,5 +82,5 @@ export interface MappedResponse {
     createTime: string;
     generalInformation: MappedSection;
     educationalBackground: MappedSection;
-    trainingAdvanceStudies: MappedSection;
+    employmentData: MappedSection;
 }
