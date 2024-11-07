@@ -58,7 +58,19 @@ const CreateForm = () => {
         middlename: '',
         email: '',
         program: '',
-        courses: []
+        courses: [],
+        undergraduateInformation: {
+            college: '',
+            school: '',
+            programGraduated: '',
+            yearGraduated: ''
+        },
+        achievements: {
+            awards: '',
+            examPassed: '',
+            examDate: '',
+            examRating: ''
+        }
     })
 
     const { data: curriculum, isLoading: curriculumLoading, isFetched: curriculumFetched } = useQuery({
@@ -116,10 +128,45 @@ const CreateForm = () => {
         }
     })
 
+    const handleOnChangeUndegraduateInformation = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target
+        setStudent(prev => ({
+            ...prev,
+            undergraduateInformation: {
+                ...prev.undergraduateInformation,
+                [name]: value
+            }
+        }))
+    }
+
+    const handleOnChangeAchievements = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target
+        setStudent(prev => ({
+            ...prev,
+            achievements: {
+                ...prev.achievements,
+                [name]: value
+            }
+        }))
+    }
+
     const handleSubmit = async () => {
-        const { idNumber, lastname, firstname, middlename, email, program, courses } = student
+        const { idNumber, lastname, firstname, middlename, email, program, courses, undergraduateInformation, achievements } = student
+        const { college, school, programGraduated, yearGraduated } = undergraduateInformation || {}
+        const { awards, examPassed, examDate, examRating } = achievements || {}
+
         const nospaceIdNumber = (idNumber ?? '').replace(/\s+/g, '')
         const nospaceEmail = (email ?? '').replace(/\s+/g, '').toLowerCase()
+
+        const nospaceCollege = (college ?? '').replace(/\s+/g, '')
+        const nospaceSchool = (school ?? '').replace(/\s+/g, '')
+        const nospaceProgramGraduated = (programGraduated ?? '').replace(/\s+/g, '')
+        const nospaceYearGraduated = (yearGraduated ?? '').replace(/\s+/g, '')
+
+        const nospaceAwards = (awards ?? '').replace(/\s+/g, '')
+        const nospaceExamPassed = (examPassed ?? '').replace(/\s+/g, '')
+        const nospaceExamDate = (examDate ?? '').replace(/\s+/g, '')
+        const nospaceExamRating = (examRating ?? '').replace(/\s+/g, '')
 
         if (nospaceIdNumber === '' || lastname === '' || firstname === '' || nospaceEmail === '' || !program) {
             setDialogSubmit(false)
@@ -127,7 +174,30 @@ const CreateForm = () => {
             return
         }
 
-        await insertStudent({ idNumber: nospaceIdNumber, lastname, firstname, middlename, email: nospaceEmail, program, courses })
+        if (nospaceCollege === '' || nospaceSchool === '' || nospaceProgramGraduated === '' || nospaceYearGraduated === '') {
+            setDialogSubmit(false)
+            setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Please fill-up the required fields.' })
+            return
+        }
+
+        if (nospaceAwards === '' || nospaceExamPassed === '' || nospaceExamDate === '' || nospaceExamRating === '') {
+            setDialogSubmit(false)
+            setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Please fill-up the required fields.' })
+            return
+        }
+
+        setDialogSubmit(false)
+        await insertStudent({
+            idNumber: nospaceIdNumber,
+            lastname,
+            firstname,
+            middlename,
+            email: nospaceEmail,
+            program,
+            courses,
+            undergraduateInformation,
+            achievements
+        })
     }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -325,6 +395,9 @@ const CreateForm = () => {
                                                 </h1>
                                                 <Input
                                                     disabled={isLoading}
+                                                    name='college'
+                                                    onChange={handleOnChangeUndegraduateInformation}
+                                                    value={student.undergraduateInformation?.college}
                                                     className='w-[400px]'
                                                     type='text'
                                                     placeholder='eg. College/University'
@@ -337,6 +410,9 @@ const CreateForm = () => {
                                                 </h1>
                                                 <Input
                                                     disabled={isLoading}
+                                                    name='school'
+                                                    onChange={handleOnChangeUndegraduateInformation}
+                                                    value={student.undergraduateInformation?.school}
                                                     className='w-[400px]'
                                                     type='text'
                                                     placeholder='eg. School'
@@ -352,6 +428,9 @@ const CreateForm = () => {
                                                 </h1>
                                                 <Input
                                                     disabled={isLoading}
+                                                    name='programGraduated'
+                                                    onChange={handleOnChangeUndegraduateInformation}
+                                                    value={student.undergraduateInformation?.programGraduated}
                                                     className='w-[400px]'
                                                     type='text'
                                                     placeholder="eg. Bachelor's Degree"
@@ -364,6 +443,9 @@ const CreateForm = () => {
                                                 </h1>
                                                 <Input
                                                     disabled={isLoading}
+                                                    name='yearGraduated'
+                                                    onChange={handleOnChangeUndegraduateInformation}
+                                                    value={student.undergraduateInformation?.yearGraduated}
                                                     className='w-[400px]'
                                                     type='text'
                                                     placeholder='eg. YYYY'
@@ -379,6 +461,9 @@ const CreateForm = () => {
                                                 </h1>
                                                 <Input
                                                     disabled={isLoading}
+                                                    name='awards'
+                                                    onChange={handleOnChangeAchievements}
+                                                    value={student.achievements?.awards}
                                                     className='w-[400px]'
                                                     type='text'
                                                     placeholder='eg. Academic Award'
@@ -391,6 +476,9 @@ const CreateForm = () => {
                                                 </h1>
                                                 <Input
                                                     disabled={isLoading}
+                                                    name='examPassed'
+                                                    onChange={handleOnChangeAchievements}
+                                                    value={student.achievements?.examPassed}
                                                     className='w-[400px]'
                                                     type='text'
                                                     placeholder='eg. CSE/LEPT/CPALE'
@@ -406,6 +494,9 @@ const CreateForm = () => {
                                                 </h1>
                                                 <Input
                                                     disabled={isLoading}
+                                                    name='examDate'
+                                                    onChange={handleOnChangeAchievements}
+                                                    value={student.achievements?.examDate}
                                                     className='w-[400px]'
                                                     type='text'
                                                     placeholder='eg. MM-DD-YYYY'
@@ -418,6 +509,9 @@ const CreateForm = () => {
                                                 </h1>
                                                 <Input
                                                     disabled={isLoading}
+                                                    name='examRating'
+                                                    onChange={handleOnChangeAchievements}
+                                                    value={student.achievements?.examRating}
                                                     className='w-[400px]'
                                                     type='text'
                                                     placeholder='eg. 90%'
