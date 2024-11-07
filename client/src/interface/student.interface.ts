@@ -19,6 +19,20 @@ interface ICourses {
     academicYear?: IAcademicYear
 }
 
+interface IUndergraduateInformation {
+    college?: string
+    school?: string
+    programGraduated?: string
+    yearGraduated?: string
+}
+
+interface IAchievements {
+    awards?: string
+    examPassed?: string
+    examDate?: string
+    examRating?: string
+}
+
 export interface IAPIStudents {
     _id?: string
     idNumber?: string
@@ -40,6 +54,8 @@ export interface IAPIStudents {
     programName?: string
     department?: string
     isenrolled?: string
+    undergraduateInformation?: IUndergraduateInformation
+    achievements?: IAchievements
 }
 
 export interface IRequestStudents {
