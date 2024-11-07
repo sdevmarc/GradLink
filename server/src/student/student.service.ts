@@ -458,14 +458,14 @@ export class StudentService {
                         _id: -1
                     }
                 }
-            ]);
+            ])
 
-            return { success: true, message: 'Students fetched successfully', data: response };
+            return { success: true, message: 'Students fetched successfully', data: response }
         } catch (error) {
             throw new HttpException(
                 { success: false, message: 'Enrollees failed to fetch.', error },
                 HttpStatus.INTERNAL_SERVER_ERROR
-            );
+            )
         }
     }
 
@@ -477,7 +477,7 @@ export class StudentService {
                     $match: {
                         $and: [{
                             status: { $in: ['student', 'enrollee'] },
-                            isenrolled: true //Dinagdag ko
+                            // isenrolled: true //Dinagdag ko
                         }]
                     }
                 },
@@ -534,7 +534,7 @@ export class StudentService {
                         department: '$curriculumdetails.department'
                     }
                 }
-            ]);
+            ])
 
             return { success: true, message: 'Enrollees fetched successfully', data: response }
         } catch (error) {
@@ -597,7 +597,7 @@ export class StudentService {
                         department: '$curriculumdetails.department'
                     }
                 }
-            ]);
+            ])
 
             return { success: true, message: 'Enrollees fetched successfully', data: response }
         } catch (error) {
@@ -613,9 +613,9 @@ export class StudentService {
                 .sort({
                     'academicYear.endDate': -1,
                     'semester': -1
-                });
+                })
 
-            console.log('Found offerings:', JSON.stringify(allOfferings, null, 2));
+            console.log('Found offerings:', JSON.stringify(allOfferings, null, 2))
 
             if (!allOfferings.length) {
                 return {
@@ -626,7 +626,7 @@ export class StudentService {
                         pastThreeSemesters: null,
                         allSemesters: null
                     }
-                };
+                }
             }
 
             // Helper function to calculate statistics for a specific set of offerings
@@ -634,12 +634,12 @@ export class StudentService {
                 // First, let's find all students with this course
                 const studentsWithCourse = await this.studentModel.find({
                     'enrollments.course': new mongoose.Types.ObjectId(courseid)
-                });
+                })
 
                 console.log('Found students:', JSON.stringify(studentsWithCourse.map(s => ({
                     _id: s._id,
                     enrollments: s.enrollments.filter(e => e.course.toString() === courseid)
-                })), null, 2));
+                })), null, 2))
 
                 // Perform the aggregation in steps for debugging
                 const initialMatch = await this.studentModel.aggregate([
@@ -648,8 +648,8 @@ export class StudentService {
                             'enrollments.course': new mongoose.Types.ObjectId(courseid)
                         }
                     }
-                ]);
-                console.log('After initial $match:', initialMatch.length);
+                ])
+                console.log('After initial $match:', initialMatch.length)
 
                 const afterUnwind = await this.studentModel.aggregate([
                     {
@@ -660,8 +660,8 @@ export class StudentService {
                     {
                         $unwind: '$enrollments'
                     }
-                ]);
-                console.log('After $unwind:', afterUnwind.length);
+                ])
+                console.log('After $unwind:', afterUnwind.length)
 
                 // Final aggregation pipeline
                 const pipeline = [
@@ -708,23 +708,23 @@ export class StudentService {
                             }
                         }
                     }
-                ];
+                ]
 
-                const results = await this.studentModel.aggregate(pipeline);
-                console.log('Final aggregation results:', JSON.stringify(results, null, 2));
+                const results = await this.studentModel.aggregate(pipeline)
+                console.log('Final aggregation results:', JSON.stringify(results, null, 2))
 
                 // If no results from aggregation, calculate manually from found students
                 if (!results.length) {
-                    console.log('No aggregation results, calculating manually');
+                    console.log('No aggregation results, calculating manually')
                     const stats: {
-                        totalStudentsEnrolled: number;
-                        totalStudentsPassed: number;
-                        totalStudentsFailed: number;
-                        totalStudentsDropped: number;
-                        totalStudentsDiscontinued: number;
-                        totalStudentsOngoing: number;
-                        totalStudentsIncomplete: number;
-                        attritionRate?: string;
+                        totalStudentsEnrolled: number
+                        totalStudentsPassed: number
+                        totalStudentsFailed: number
+                        totalStudentsDropped: number
+                        totalStudentsDiscontinued: number
+                        totalStudentsOngoing: number
+                        totalStudentsIncomplete: number
+                        attritionRate?: string
                     } = {
                         totalStudentsEnrolled: 0,
                         totalStudentsPassed: 0,
@@ -733,76 +733,76 @@ export class StudentService {
                         totalStudentsDiscontinued: 0,
                         totalStudentsOngoing: 0,
                         totalStudentsIncomplete: 0
-                    };
+                    }
 
                     // Count statistics manually
                     studentsWithCourse.forEach(student => {
                         const relevantEnrollments = student.enrollments.filter(
                             e => e.course.toString() === courseid
-                        );
+                        )
 
                         relevantEnrollments.forEach(enrollment => {
-                            stats.totalStudentsEnrolled++;
+                            stats.totalStudentsEnrolled++
                             switch (enrollment.ispass) {
                                 case 'pass':
-                                    stats.totalStudentsPassed++;
-                                    break;
+                                    stats.totalStudentsPassed++
+                                    break
                                 case 'fail':
-                                    stats.totalStudentsFailed++;
-                                    break;
+                                    stats.totalStudentsFailed++
+                                    break
                                 case 'drop':
-                                    stats.totalStudentsDropped++;
-                                    break;
+                                    stats.totalStudentsDropped++
+                                    break
                                 case 'discontinue':
-                                    stats.totalStudentsDiscontinued++;
-                                    break;
+                                    stats.totalStudentsDiscontinued++
+                                    break
                                 case 'ongoing':
-                                    stats.totalStudentsOngoing++;
-                                    break;
+                                    stats.totalStudentsOngoing++
+                                    break
                                 case 'inc':
-                                    stats.totalStudentsIncomplete++;
-                                    break;
+                                    stats.totalStudentsIncomplete++
+                                    break
                             }
-                        });
-                    });
+                        })
+                    })
 
                     // Calculate attrition rate
                     const completedStudents = stats.totalStudentsEnrolled -
-                        (stats.totalStudentsOngoing + stats.totalStudentsIncomplete);
+                        (stats.totalStudentsOngoing + stats.totalStudentsIncomplete)
 
                     stats.attritionRate = completedStudents > 0
                         ? ((stats.totalStudentsFailed + stats.totalStudentsDropped +
                             stats.totalStudentsDiscontinued) / completedStudents * 100).toFixed(2)
-                        : "0.00";
+                        : "0.00"
 
-                    return stats;
+                    return stats
                 }
 
-                const stats = results[0];
-                delete stats.studentRecords;
+                const stats = results[0]
+                delete stats.studentRecords
 
                 // Calculate attrition rate
                 const completedStudents = stats.totalStudentsEnrolled -
-                    (stats.totalStudentsOngoing + stats.totalStudentsIncomplete);
+                    (stats.totalStudentsOngoing + stats.totalStudentsIncomplete)
 
                 stats.attritionRate = completedStudents > 0
                     ? ((stats.totalStudentsFailed + stats.totalStudentsDropped +
                         stats.totalStudentsDiscontinued) / completedStudents * 100).toFixed(2)
-                    : "0.00";
+                    : "0.00"
 
-                return stats;
-            };
+                return stats
+            }
 
             // Get relevant offering sets
-            const latestOffering = [allOfferings[0]];
-            const pastThreeOfferings = allOfferings.slice(0, 3);
+            const latestOffering = [allOfferings[0]]
+            const pastThreeOfferings = allOfferings.slice(0, 3)
 
             // Calculate statistics for each time period
             const [latestStats, pastThreeStats, allStats] = await Promise.all([
                 calculateStatistics(latestOffering),
                 calculateStatistics(pastThreeOfferings),
                 calculateStatistics(allOfferings)
-            ]);
+            ])
 
             return {
                 success: true,
@@ -812,7 +812,7 @@ export class StudentService {
                     pastThreeSemesters: pastThreeStats,
                     allSemesters: allStats
                 }
-            };
+            }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Enrollees failed to fetch.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
@@ -989,7 +989,7 @@ export class StudentService {
         return str
             .split(' ')
             .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-            .join(' ');
+            .join(' ')
     }
 
     async createEnrollee(
@@ -1004,7 +1004,7 @@ export class StudentService {
                 return {
                     success: false,
                     message: 'A program must be selected.'
-                };
+                }
             }
 
             // Normalize inputs
@@ -1018,23 +1018,23 @@ export class StudentService {
             }
 
             // Email format validation
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
             if (!emailRegex.test(normalizedData.email)) {
                 return {
                     success: false,
                     message: 'Please provide a valid email address.'
-                };
+                }
             }
 
             // Name validation (prevent numbers and special characters)
-            const nameRegex = /^[a-zA-ZÀ-ÿ\s'-]+$/;
+            const nameRegex = /^[a-zA-ZÀ-ÿ\s'-]+$/
             if (!nameRegex.test(normalizedData.lastname) ||
                 !nameRegex.test(normalizedData.firstname) ||
                 (normalizedData.middlename && !nameRegex.test(normalizedData.middlename))) {
                 return {
                     success: false,
                     message: 'Names should only contain letters, hyphens, and apostrophes.'
-                };
+                }
             }
 
             // ID Number validation and duplicate check
@@ -1090,7 +1090,7 @@ export class StudentService {
                 program: new mongoose.Types.ObjectId(normalizedData.program),
                 isenrolled: true,
                 status: 'enrollee'
-            };
+            }
 
             // Add enrollments only if courses are provided
             if (courses && Array.isArray(courses) && courses.length > 0) {
@@ -1098,12 +1098,12 @@ export class StudentService {
                     course: new mongoose.Types.ObjectId(courseId),
                     enrollmentDate: new Date(),
                     ispass: 'ongoing'
-                }));
-                Object.assign(studentData, { enrollments });
+                }))
+                Object.assign(studentData, { enrollments })
             }
 
             // Create new student with normalized data
-            await this.studentModel.create(studentData);
+            await this.studentModel.create(studentData)
 
             return { success: true, message: 'Student successfully created.', }
 
@@ -1117,31 +1117,31 @@ export class StudentService {
     ): Promise<IPromiseStudent> {
         try {
             // Check if course exists
-            const iscourse = await this.courseModel.findById(course);
+            const iscourse = await this.courseModel.findById(course)
             if (!iscourse) {
                 return {
                     success: false,
                     message: 'Course does not exist.'
-                };
+                }
             }
 
             // Process each student enrollment with validation
             const enrollmentResults = await Promise.all(
                 id.map(async (studentId) => {
                     // Find student and their existing enrollments
-                    const student = await this.studentModel.findById(studentId);
+                    const student = await this.studentModel.findById(studentId)
                     if (!student) {
                         return {
                             success: false,
                             studentId,
                             message: 'Student not found'
-                        };
+                        }
                     }
 
                     // Find if the course is already in student's enrollments
                     const existingEnrollment = student.enrollments.find(
                         enrollment => enrollment.course.toString() === course.toString()
-                    );
+                    )
 
                     if (existingEnrollment) {
                         // Check various conditions based on existing enrollment status
@@ -1150,7 +1150,7 @@ export class StudentService {
                                 success: false,
                                 studentId,
                                 message: `Student has already passed this course`
-                            };
+                            }
                         }
 
                         if (existingEnrollment.ispass === 'ongoing' || existingEnrollment.ispass === 'inc') {
@@ -1158,7 +1158,7 @@ export class StudentService {
                                 success: false,
                                 studentId,
                                 message: `Student is currently enrolled or has incomplete status in this course`
-                            };
+                            }
                         }
 
                         if (['fail', 'drop', 'discontinue'].includes(existingEnrollment.ispass)) {
@@ -1170,7 +1170,7 @@ export class StudentService {
                                     status: 'student',
                                     $pull: { enrollments: { course: course } },
                                 }
-                            );
+                            )
 
                             await this.studentModel.findByIdAndUpdate(
                                 studentId,
@@ -1183,13 +1183,13 @@ export class StudentService {
                                         }
                                     }
                                 }
-                            );
+                            )
 
                             return {
                                 success: true,
                                 studentId,
                                 message: `Re-enrolled in the course after previous ${existingEnrollment.ispass} status`
-                            };
+                            }
                         }
                     }
 
@@ -1207,31 +1207,31 @@ export class StudentService {
                                 }
                             }
                         }
-                    );
+                    )
 
                     return {
                         success: true,
                         studentId,
                         message: 'Successfully enrolled'
-                    };
+                    }
                 })
-            );
+            )
 
             // Check if any enrollments failed
-            const failedEnrollments = enrollmentResults.filter(result => !result.success);
+            const failedEnrollments = enrollmentResults.filter(result => !result.success)
             if (failedEnrollments.length > 0) {
                 return {
                     success: false,
                     message: 'Some enrollments failed',
                     data: failedEnrollments
-                };
+                }
             }
 
             return {
                 success: true,
                 message: `Students successfully enrolled in the course ${iscourse.descriptiveTitle}`,
                 data: enrollmentResults
-            };
+            }
         } catch (error) {
             throw new HttpException(
                 {
@@ -1240,78 +1240,106 @@ export class StudentService {
                     error
                 },
                 HttpStatus.INTERNAL_SERVER_ERROR
-            );
+            )
         }
     }
 
-    async evaluateStudent(
-        { ispass, course, id }: IRequestStudent
-    ): Promise<IPromiseStudent> {
+    async evaluateStudent(request: IRequestStudent): Promise<IPromiseStudent> {
         try {
-            if (!course || !id || !Array.isArray(id) || id.length === 0) {
+            const { course, evaluation } = request
+
+            // Validate basic input
+            if (!course || !evaluation || !Array.isArray(evaluation) || evaluation.length === 0) {
                 return {
                     success: false,
-                    message: 'Invalid input parameters. Course and student IDs are required.'
-                };
-            }
-
-            // Validate ispass value against enum
-            if (ispass && !['pass', 'fail', 'inc', 'ongoing', 'drop', 'discontinue'].includes(ispass)) {
-                return {
-                    success: false,
-                    message: 'Invalid ispass value.'
-                };
-            }
-
-            const iscourse = await this.courseModel.findById(course)
-            if (!iscourse) return { success: false, message: 'Course do not exists.' }
-
-            const updateResults = await Promise.all(
-                id.map(async (studentId) => {
-                    try {
-                        const student = await this.studentModel.findById(studentId);
-                        if (!student) return { success: false, studentId, message: 'Student not found' }
-
-                        const enrollmentIndex = student.enrollments.findIndex(
-                            enrollment => enrollment.course.toString() === course
-                        )
-
-                        if (enrollmentIndex === -1) return { success: false, studentId, message: 'Student not enrolled in this course' }
-
-                        // Update the enrollment status
-                        student.isenrolled = false //Dinagdag ko
-                        student.enrollments[enrollmentIndex].ispass = ispass;
-                        await student.save();
-
-                        return { success: true, studentId, message: 'Successfully updated' }
-                    } catch (error) {
-                        return {
-                            success: false,
-                            studentId,
-                            message: 'Failed to update student',
-                            error: error.message
-                        }
-                    }
-                })
-            )
-
-            // Analyze results
-            const failedUpdates = updateResults.filter(result => !result.success);
-            if (failedUpdates.length > 0) {
-                return {
-                    success: false,
-                    message: 'Some students could not be evaluated',
-                    data: {
-                        successCount: updateResults.length - failedUpdates.length,
-                        failureCount: failedUpdates.length,
-                        failures: failedUpdates
-                    }
+                    message: 'Invalid input parameters. Course and evaluation array are required.'
                 }
             }
 
-            return { success: true, message: `Successfully evaluated ${updateResults.length} student(s) in ${iscourse.descriptiveTitle}`, }
+            // Check if course exists
+            const iscourse = await this.courseModel.findById(course)
+            if (!iscourse) return { success: false, message: 'Course does not exist.' }
+
+
+            // Extract evaluation data
+            const studentId = evaluation.find(item => item.id)?.id
+            const evaluationData = evaluation.find(item => item.ispass)
+
+            if (!studentId || !evaluationData) {
+                return {
+                    success: false,
+                    message: 'Invalid evaluation data. Both student ID and evaluation status are required.'
+                }
+            }
+
+            // Validate ispass value
+            const validStatus = ['pass', 'fail', 'inc', 'ongoing', 'drop', 'discontinue']
+            if (!validStatus.includes(evaluationData.ispass)) {
+                return {
+                    success: false,
+                    message: 'Invalid evaluation status.'
+                }
+            }
+
+            // Check if file is required for discontinue status
+            if (evaluationData.ispass === 'discontinue' && !evaluation.find(item => item.file)) {
+                return {
+                    success: false,
+                    message: 'File is required for discontinue status.'
+                }
+            }
+
+            try {
+                const student = await this.studentModel.findById(studentId)
+                if (!student) return { success: false, data: studentId, message: 'Student not found' }
+
+                const enrollmentIndex = student.enrollments.findIndex(
+                    enrollment => enrollment.course.toString() === course
+                )
+
+                if (enrollmentIndex === -1) return { success: false, data: studentId, message: 'Student not enrolled in this course' }
+
+                // Update enrollment status
+                student.enrollments[enrollmentIndex].ispass = evaluationData.ispass
+
+                // If status is discontinue, update isenrolled to false
+                if (evaluationData.ispass === 'discontinue') {
+                    student.isenrolled = false
+
+                    // If there's a file, store the file reference
+                    const fileData = evaluation.find(item => item.file)
+                    if (fileData) { student.enrollments[enrollmentIndex].assessmentForm = fileData.file }
+                }
+
+                await student.save()
+
+                return {
+                    success: true,
+                    message: `Successfully evaluated student in ${iscourse.descriptiveTitle}`,
+                    data: {
+                        studentId,
+                        status: evaluationData.ispass,
+                        course: iscourse.descriptiveTitle
+                    }
+                }
+
+            } catch (error) {
+                return {
+                    success: false,
+                    data: studentId,
+                    message: `Failed to update student: ${error.message}`,
+                }
+            }
+
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Failed to evaluate student.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+            throw new HttpException(
+                {
+                    success: false,
+                    message: 'Failed to evaluate student.',
+                    error
+                },
+                HttpStatus.INTERNAL_SERVER_ERROR
+            )
         }
     }
 
