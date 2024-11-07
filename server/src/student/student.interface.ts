@@ -3,6 +3,7 @@ interface IStudentEnrollments {
     course?: string[]
     enrollmentDate?: string
     ispass?: 'pass' | 'fail' | 'inc' | 'ongoing' | 'drop' | 'discontinue'
+    assessmentForm?: string
 }
 
 export interface IStudent {
@@ -22,10 +23,16 @@ export interface IStudent {
     courses?: string[]
 }
 
+export interface IEvaluationItem {
+    id?: string;
+    ispass?: 'pass' | 'fail' | 'inc' | 'ongoing' | 'drop' | 'discontinue';
+    file?: string;
+}
+
 export interface IRequestStudent {
-    course: string
-    id: string[]
-    ispass?: 'pass' | 'fail' | 'inc' | 'ongoing' | 'drop' | 'discontinue'
+    id?: string[]
+    course: string;
+    evaluation: IEvaluationItem[];
 }
 
 export interface IPromiseStudent {
