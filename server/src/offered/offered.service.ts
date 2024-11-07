@@ -14,9 +14,7 @@ export class OfferedService {
     async findAllActive(): Promise<any> {
         try {
             const response = await this.offeredModel.aggregate([
-                {
-                    $match: { isActive: true }
-                },
+                // Remove the isActive match to include all courses
                 {
                     $lookup: {
                         from: 'courses',
@@ -51,37 +49,56 @@ export class OfferedService {
                     $unwind: '$program'
                 },
                 {
-                    $match: {
-                        'curriculum.isActive': true
+                    $group: {
+                        _id: '$course._id',
+                        createdAt: { $first: '$createdAt' },
+                        updatedAt: { $first: '$updatedAt' },
+                        // Store all academic years and semesters in arrays
+                        academicYears:  { $first: '$academicYear' },
+                        
+                 
+                        semesters:  { $first: '$semester' },
+                        program: { $first: '$curriculum.programid' },
+                        department: { $first: '$program.department' },
+                        code: { $first: '$course.code' },
+                        courseno: { $first: '$course.courseno' },
+                        descriptiveTitle: { $first: '$course.descriptiveTitle' },
+                        units: { $first: '$course.units' },
+                        isActive: { $first: '$isActive' }
                     }
                 },
                 {
                     $project: {
                         createdAt: 1,
                         updatedAt: 1,
-                        academicYear: 1,
-                        semester: 1,
-                        program: '$curriculum.programid',
-                        department: '$program.department',  // Changed to get department from program
-                        _id: '$course._id',
-                        code: '$course.code',
-                        courseno: '$course.courseno',
-                        descriptiveTitle: '$course.descriptiveTitle',
-                        units: '$course.units'
+                        academicYears: 1,
+                        semesters: 1,
+                        program: 1,
+                        department: 1,
+                        code: 1,
+                        courseno: 1,
+                        descriptiveTitle: 1,
+                        units: 1,
+                        isActive: 1
+                    }
+                },
+                {
+                    $sort: {
+                        code: -1  // Sort by course number
                     }
                 }
             ]);
 
             return {
                 success: true,
-                message: 'Courses offered fetched successfully.',
+                message: 'All courses fetched successfully.',
                 data: response
             };
         } catch (error) {
             throw new HttpException(
                 {
                     success: false,
-                    message: 'Failed to fetch all programs.',
+                    message: 'Failed to fetch all courses.',
                     error
                 },
                 HttpStatus.INTERNAL_SERVER_ERROR
