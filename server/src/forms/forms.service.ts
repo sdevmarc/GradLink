@@ -93,7 +93,7 @@ export class FormsService {
             const structure: FormStructure = {
                 generalInformation: { questions: [] },
                 educationalBackground: { questions: [] },
-                trainingAdvanceStudies: { questions: [] }
+                employmentData: { questions: [] }
             };
 
             formItems.forEach((item) => {
@@ -103,8 +103,8 @@ export class FormsService {
                             currentSection = 'educationalBackground';
                             structure[currentSection].description = item.description || '';
                             break;
-                        case 'TRAINING(S) ADVANCE STUDIES ATTENDED AFTER COLLEGE':
-                            currentSection = 'trainingAdvanceStudies';
+                        case 'EMPLOYMENT DATA':
+                            currentSection = 'employmentData';
                             structure[currentSection].description = item.description || '';
                             break;
                     }
@@ -186,7 +186,7 @@ export class FormsService {
                     createTime: response.createTime,
                     generalInformation: { title: 'GENERAL INFORMATION', answers: [] },
                     educationalBackground: { title: 'EDUCATIONAL BACKGROUND', answers: [] },
-                    trainingAdvanceStudies: { title: 'TRAINING(S) ADVANCE STUDIES ATTENDED AFTER COLLEGE', answers: [] },
+                    employmentData: { title: 'EMPLOYMENT DATA', answers: [] },
                 };
 
                 for (const [sectionKey, section] of Object.entries(formStructure)) {
@@ -259,7 +259,7 @@ export class FormsService {
         }
     }
 
-    async createFormWithQuestions({ title, generalInformation, educationalBackground, trainingAdvanceStudies }: IForms)
+    async createFormWithQuestions({ title, generalInformation, educationalBackground, employmentData }: IForms)
         : Promise<{ success: boolean, message: string, data: {} }> {
         try {
             // Step 1: Create the form with only the title
@@ -328,11 +328,11 @@ Thank you for your time!`,
             }
 
             // Add training and advance studies section and questions
-            if (trainingAdvanceStudies && trainingAdvanceStudies.length > 0) {
+            if (employmentData && employmentData.length > 0) {
                 requests.push({
                     createItem: {
                         item: {
-                            title: 'TRAINING(S) ADVANCE STUDIES ATTENDED AFTER COLLEGE',
+                            title: 'EMPLOYMENT DATA',
                             description: `If applicable, please list any further studies, training, or certifications you have completed after your undergraduate degree. This will help us evaluate the role of additional qualifications in enhancing employability.`,
                             pageBreakItem: {}
                         },
@@ -341,8 +341,8 @@ Thank you for your time!`,
                         }
                     }
                 });
-                requests.push(...this.createQuestionRequests(trainingAdvanceStudies, currentIndex));
-                currentIndex += trainingAdvanceStudies.length;
+                requests.push(...this.createQuestionRequests(employmentData, currentIndex));
+                currentIndex += employmentData.length;
             }
 
             await this.forms.forms.batchUpdate({
