@@ -35,10 +35,10 @@ export class FormsController {
 
             const updatePromises = response.map(async (item) => {
                 const idNumber = String(item.generalInformation.answers[0].answer);
-                const { createTime, generalInformation, educationalBackground, trainingAdvanceStudies } = item;
+                const { createTime, generalInformation, educationalBackground, employmentData } = item;
 
                 const is_idnumber_in_student = await this.studentModel.findOne({ idNumber })
-                if (is_idnumber_in_student) return await this.studentService.formUpdateStudent({ idNumber, generalInformation, educationalBackground, trainingAdvanceStudies, })
+                if (is_idnumber_in_student) return await this.studentService.formUpdateStudent({ idNumber, generalInformation, educationalBackground, employmentData, })
 
                 const is_idnumber_in_form = await this.formModel.findOne({ idNumber })
 
@@ -75,9 +75,9 @@ export class FormsController {
 
     @Post('create-form')
     async createForm(
-        @Body() { title, generalInformation, educationalBackground, trainingAdvanceStudies }: IForms
+        @Body() { title, generalInformation, educationalBackground, employmentData }: IForms
     ) {
-        return await this.formsService.createFormWithQuestions({ title, generalInformation, educationalBackground, trainingAdvanceStudies });
+        return await this.formsService.createFormWithQuestions({ title, generalInformation, educationalBackground, employmentData });
     }
 
     @Post(':formId/add-short-answer-question')
