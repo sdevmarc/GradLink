@@ -39,9 +39,9 @@ export class StudentController {
 
     @Post('new-student')
     async createStudentEnrollee(
-        @Body() { idNumber, lastname, firstname, middlename, email, program, courses }: IStudent
+        @Body() { idNumber, lastname, firstname, middlename, email, program, courses, undergraduateInformation, achievements }: IStudent
     ) {
-        return await this.studentService.createEnrollee({ idNumber, lastname, firstname, middlename, email, program, courses })
+        return await this.studentService.createEnrollee({ idNumber, lastname, firstname, middlename, email, program, courses, undergraduateInformation, achievements })
     }
 
     @Post('enroll-student')
@@ -53,9 +53,9 @@ export class StudentController {
 
     @Post('evaluate-student')
     async evaluateStudentEnrollee(
-        @Body() { ispass, course, id }: IRequestStudent
+        @Body() { evaluation, course }: IRequestStudent
     ) {
-        return await this.studentService.evaluateStudent({ ispass, course, id })
+        return await this.studentService.evaluateStudent({ evaluation, course })
     }
 
     @Post('activate-student')
@@ -71,12 +71,12 @@ export class StudentController {
 
         const updatePromises = response.map(async (item) => {
             const idNumber = String(item.generalInformation.answers[0].answer)
-            const { generalInformation, educationalBackground, trainingAdvanceStudies } = item
+            const { generalInformation, educationalBackground, employmentData } = item
             return await this.studentService.formUpdateStudent({
                 idNumber,
                 generalInformation,
                 educationalBackground,
-                trainingAdvanceStudies,
+                employmentData,
             })
         })
 
