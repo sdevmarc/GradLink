@@ -993,9 +993,13 @@ export class StudentService {
     }
 
     async createEnrollee(
-        { idNumber, lastname, firstname, middlename, email, program, courses }: IStudent
+        { idNumber, lastname, firstname, middlename, email, program, courses, undergraduateInformation, achievements }: IStudent
     ): Promise<IPromiseStudent> {
         try {
+            const { college, school, programGraduated, yearGraduated } = undergraduateInformation
+
+            if (!college || !school || !programGraduated || !yearGraduated) return { success: false, message: 'Required fields (College, School, Program Graduated, Year Graduated) cannot be empty.' }
+
             // Input validation
             if (!idNumber || !lastname || !firstname || !email) return { success: false, message: 'Required fields (ID number, last name, first name, email) cannot be empty.' }
 
@@ -1089,7 +1093,9 @@ export class StudentService {
                 email: normalizedData.email,
                 program: new mongoose.Types.ObjectId(normalizedData.program),
                 isenrolled: true,
-                status: 'enrollee'
+                status: 'enrollee',
+                undergraduateInformation,
+                achievements
             }
 
             // Add enrollments only if courses are provided
@@ -1367,7 +1373,7 @@ export class StudentService {
     }
 
     async formUpdateStudent(
-        { idNumber, generalInformation, educationalBackground, trainingAdvanceStudies }: IStudent
+        { idNumber, generalInformation, educationalBackground, employmentData }: IStudent
     )
         : Promise<IPromiseStudent> {
         try {
@@ -1379,7 +1385,7 @@ export class StudentService {
                 {
                     generalInformation,
                     educationalBackground,
-                    trainingAdvanceStudies,
+                    employmentData,
                     status: 'alumni',
                     isenrolled: false,
                     graduation_date: Date.now()
