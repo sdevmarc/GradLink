@@ -6,6 +6,20 @@ interface IStudentEnrollments {
     assessmentForm?: string
 }
 
+interface IUndergraduateInformation {
+    college?: string
+    school?: string
+    programGraduated?: string
+    yearGraduated?: string
+}
+
+interface IAchievements {
+    awards?: string
+    examPassed?: string
+    examDate?: string
+    examRating?: string
+}
+
 export interface IStudent {
     _id?: string | string[]
     idNumber?: string
@@ -15,12 +29,14 @@ export interface IStudent {
     email?: string
     generalInformation?: {}
     educationalBackground?: {}
-    trainingAdvanceStudies?: {}
+    employmentData?: {}
     enrollments?: IStudentEnrollments[]
     status?: string
     isenrolled?: boolean
     program?: string
     courses?: string[]
+    undergraduateInformation?: IUndergraduateInformation
+    achievements?: IAchievements
 }
 
 export interface IEvaluationItem {
@@ -31,8 +47,8 @@ export interface IEvaluationItem {
 
 export interface IRequestStudent {
     id?: string[]
-    course: string;
-    evaluation: IEvaluationItem[];
+    course?: string;
+    evaluation?: IEvaluationItem[];
 }
 
 export interface IPromiseStudent {
