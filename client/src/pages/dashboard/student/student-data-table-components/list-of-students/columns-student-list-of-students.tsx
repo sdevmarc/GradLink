@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button"
 import { SheetModal } from "@/components/sheet-modal"
 import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
-import { CircleCheck, CircleDashed, CircleUserRound, CircleX, Loader, TableOfContents, UserPen } from "lucide-react"
+import { CircleCheck, CircleDashed, CircleUserRound, CircleX, Loader, Mail, ShieldCheck, TableOfContents, UserPen } from "lucide-react"
 import { BookOpen, GraduationCap } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { AlertDialogConfirmation } from "@/components/alert-dialog"
@@ -245,13 +245,26 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                             <Card className="w-full mx-auto">
                                                 <CardHeader>
                                                     <div className="flex justify-between items-start">
-                                                        <div>
-                                                            <CardTitle className="uppercase text-3xl font-bold flex flex-col">
-                                                                {lastname}, {firstname} {middlename}
-                                                                <span className="font-normal text-md lowercase">
-                                                                    {email || 'No valid Email'}
-                                                                </span>
-                                                            </CardTitle>
+                                                        <div className="w-full flex flex-col">
+                                                            <div className="w-full flex items-center justify-between">
+                                                                <CardTitle className="uppercase text-3xl font-bold flex flex-col">
+                                                                    {lastname}, {firstname} {middlename}
+                                                                    <span className="font-normal text-md lowercase flex items-center gap-2">
+                                                                        <Mail className="text-muted-foreground" size={18} /> {email || 'No valid Email'}
+                                                                    </span>
+                                                                </CardTitle>
+                                                                <AlertDialogConfirmation
+                                                                    className="flex items-center gap-2"
+                                                                    type={`default`}
+                                                                    variant={'outline'}
+                                                                    btnIcon={<ShieldCheck className="text-primary" size={18} />}
+                                                                    btnTitle="Re-Activate Student"
+                                                                    title="Are you sure?"
+                                                                    description={`${lastname}, ${firstname} ${middlename} will be mark as a dicontinuing student, and its courses this semester will be mark as drop.`}
+                                                                    btnContinue={handleViewDetails}
+                                                                />
+                                                            </div>
+
                                                             <CardDescription className="mt-2 flex items-center justify-between">
                                                                 <div className="flex items-center">
                                                                     <Badge variant="default" className="mr-2">
@@ -358,11 +371,11 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                             <AlertDialogConfirmation
                                                                 className="flex items-center gap-2"
                                                                 type={`default`}
-                                                                variant={'outline'}
-                                                                btnIcon={<UserPen className="text-primary" size={18} />}
-                                                                btnTitle="New Student"
+                                                                variant={'destructive'}
+                                                                btnIcon={<UserPen className="text-primary-foreground" size={18} />}
+                                                                btnTitle="Mark as Discontinue"
                                                                 title="Are you sure?"
-                                                                description={`You will be redirect to page for creating new student.`}
+                                                                description={`${lastname}, ${firstname} ${middlename} will be mark as a dicontinuing student, and its courses this semester will be mark as drop.`}
                                                                 btnContinue={handleViewDetails}
                                                             />
                                                         </div>
