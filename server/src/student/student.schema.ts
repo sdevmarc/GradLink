@@ -71,6 +71,11 @@ export const StudentSchema = new mongoose.Schema({
         required: true,
         default: false
     },
+    //Will be implemented later
+    assessmentForm: {
+        type: String,
+        default: null
+    },
     enrollments: [{
         course: {
             type: mongoose.Schema.Types.ObjectId,
@@ -88,11 +93,6 @@ export const StudentSchema = new mongoose.Schema({
             enum: ['pass', 'fail', 'inc', 'ongoing', 'drop', 'discontinue'],
             default: 'ongoing'
         },
-        //Will be implemented later
-        assessmentForm: {
-            type: String,
-            default: null
-        }
     }],
     status: {
         type: String,
