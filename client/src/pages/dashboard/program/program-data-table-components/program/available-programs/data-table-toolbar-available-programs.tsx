@@ -32,9 +32,9 @@ export function DataTableToolbarAvailablePrograms<TData>({
             <div className="flex flex-1 flex-wrap items-center gap-2">
                 <Input
                     placeholder="Search program..."
-                    value={(table.getColumn("code")?.getFilterValue() as string) ?? ""}
+                    value={(table.getColumn("descriptiveTitle")?.getFilterValue() as string) ?? ""}
                     onChange={(event) => {
-                        table.getColumn("code")?.setFilterValue(event.target.value);
+                        table.getColumn("descriptiveTitle")?.setFilterValue(event.target.value);
                     }}
                     className="h-8 w-[20rem] lg:w-[25rem]"
                 />
