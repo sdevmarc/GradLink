@@ -4,6 +4,6 @@ export const SettingsSchema = new mongoose.Schema({
     isenroll: {
         type: Boolean,
         required: true,
-        default: false
+        default: true
     }
 }, { timestamps: true })
