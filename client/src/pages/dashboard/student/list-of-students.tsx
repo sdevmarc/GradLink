@@ -17,7 +17,7 @@ export default function ListOfStudents() {
                     <aside className="px-4 pb-4 pt-[8rem]">
                         <HeadSection>
                             <SubHeadSectionDetails
-                                title="STUDENTS"
+                                title="Student Information"
                                 description="View and manage students."
                             />
                         </HeadSection>

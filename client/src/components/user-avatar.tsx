@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar } from "@/components/ui/avatar"
 
 import {
     DropdownMenu,
@@ -10,11 +10,11 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { ROUTES } from "@/constants"
+import { ChevronDown } from 'lucide-react';
 
-import { IAvatar } from "@/interface/index"
 import { useNavigate } from "react-router-dom"
 
-export const UserAvatar = ({ image, initials }: IAvatar) => {
+export const UserAvatar = () => {
     const navigate = useNavigate()
 
     const handleAccountSettings = () => {
@@ -28,14 +28,11 @@ export const UserAvatar = ({ image, initials }: IAvatar) => {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger>
-                <Avatar>
-                    <AvatarImage src={image} />
-                    <AvatarFallback>
-                        {initials}
-                    </AvatarFallback>
+                <Avatar className="flex items-center justify-center bg-muted hover:opacity-[.6]">
+                    <ChevronDown className="text-primary" strokeWidth={3} size={20} />
                 </Avatar>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-[13rem]">
+            <DropdownMenuContent className="w-[150px]">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>

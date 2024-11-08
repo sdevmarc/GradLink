@@ -10,8 +10,10 @@ import { AlertDialogConfirmation } from "@/components/alert-dialog"
 import { IAPIOffered } from "@/interface/offered.interface"
 import { HandHelping } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import { useQuery } from "@tanstack/react-query"
+import { API_FINDONE_SETTINGS } from "@/api/settings"
 
-export const CoursesOfferedInEnrollmentColumns = (isenroll: boolean): ColumnDef<IAPIOffered>[] => [
+export const CoursesOfferedInEnrollmentColumns: ColumnDef<IAPIOffered>[] = [
     {
         id: "icon",
         cell: () => {
@@ -104,6 +106,11 @@ export const CoursesOfferedInEnrollmentColumns = (isenroll: boolean): ColumnDef<
             const id = (row.original as any)._id
             const descriptiveTitle = (row.original as any).descriptiveTitle
 
+            const { data: settings, isLoading: settingsLoading, isFetched: settingsFetched } = useQuery({
+                queryFn: () => API_FINDONE_SETTINGS(),
+                queryKey: ['settings']
+            })
+
             const handleNavigateEnrollStudent = () => {
                 const combinedString = JSON.stringify({ id, descriptiveTitle });
                 const base64ID = btoa(combinedString)
@@ -119,17 +126,18 @@ export const CoursesOfferedInEnrollmentColumns = (isenroll: boolean): ColumnDef<
             }
 
             return (
+                (!settingsLoading && settingsFetched) && 
                 <AlertDialogConfirmation
                     type="default"
-                    variant={isenroll ? 'default' : 'destructive'}
-                    btnTitle={isenroll ? "Enroll Student" : "Evaluate Student"}
+                    variant={settings?.data?.isenroll ? 'default' : 'destructive'}
+                    btnTitle={settings?.data?.isenroll ? "Enroll Student" : "Evaluate Student"}
                     title="Are you sure?"
-                    description={isenroll
+                    description={settings?.data?.isenroll
                         ? `You will be redirected to a page for enrolling students in ${descriptiveTitle}`
                         : `You will be redirected to a page for evaluating students in ${descriptiveTitle}`
                     }
                     btnContinue={
-                        isenroll
+                        settings?.data?.isenroll
                             ? handleNavigateEnrollStudent
                             : handleNavigateEvaluateStudent
                     }

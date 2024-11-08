@@ -33,14 +33,12 @@ export function DataTableRowActionsEvaluateStudent<TData>({
     };
 
     return (
-        <>
-            <Combobox
-                className="w-[150px]"
-                lists={options}
-                placeholder="None"
-                setValue={handleSetEvaluation}
-                value={status}
-            />
-        </>
+        <Combobox
+            className="w-[150px]"
+            lists={options}
+            placeholder="None"
+            setValue={handleSetEvaluation}
+            value={status}
+        />
     )
 }

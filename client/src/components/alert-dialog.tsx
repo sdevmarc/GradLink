@@ -10,8 +10,6 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { Combobox } from "./combobox"
-import { useNavigate } from "react-router-dom"
 
 interface IComponents {
     btnTitle?: string
@@ -25,9 +23,8 @@ interface IComponents {
     isDialog?: boolean
     setDialog?: (e: boolean) => void
     icon?: React.ReactNode
-    combovalue?: string
-    setCombobox?: (e: string) => void
     btnIcon?: React.ReactNode
+    content?: React.ReactNode
 }
 
 export function AlertDialogConfirmation({
@@ -42,17 +39,9 @@ export function AlertDialogConfirmation({
     isDialog,
     setDialog,
     icon,
-    combovalue,
-    setCombobox,
-    btnIcon
+    btnIcon,
+    content
 }: IComponents) {
-    const navigate = useNavigate()
-    const semester = [
-        { label: 'First', value: '1' },
-        { label: 'Second', value: '2' },
-        { label: 'Third', value: '3' }
-    ]
-
     const renderContent = () => {
         switch (type) {
             case "alert":
@@ -137,19 +126,19 @@ export function AlertDialogConfirmation({
                                         </p>
                                     </div>
 
-                                    <Combobox
-                                        className="w-[300px]"
-                                        lists={semester}
-                                        placeholder={`Select semester...`}
-                                        setValue={(item) => setCombobox && setCombobox(item)}
-                                        value={combovalue ?? ''}
-                                    />
+                                    {content}
                                 </div>
-                                <div className="w-full flex items-center justify-between gap-4">
-                                    <Button onClick={() => navigate(-1)} disabled={disabled} variant={`ghost`} size="sm" className={cn(className)}>
+                                <div className="w-full flex items-center gap-4">
+                                    <Button
+                                        onClick={() => setDialog && setDialog(false)}
+                                        disabled={disabled}
+                                        variant={`outline`}
+                                        className={`w-full`}
+                                        size="sm"
+                                    >
                                         Cancel
                                     </Button>
-                                    <Button onClick={btnContinue} disabled={disabled} variant={variant} size="sm" className={cn(className)}>
+                                    <Button onClick={btnContinue} disabled={disabled} variant={variant} size="sm" className={`w-full`}>
                                         {btnTitle}
                                     </Button>
                                 </div>

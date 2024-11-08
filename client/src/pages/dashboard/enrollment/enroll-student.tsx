@@ -114,7 +114,7 @@ export default function EnrollStudent() {
                         <HeadSection>
                             <BackHeadSection />
                             <SubHeadSectionDetails
-                                title="ENROLL STUDENT"
+                                title="Enroll Student"
                                 description="A tool for enrolling student to the selected course."
                             />
                         </HeadSection>

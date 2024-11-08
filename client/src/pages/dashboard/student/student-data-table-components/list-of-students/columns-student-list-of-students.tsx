@@ -10,10 +10,15 @@ import { Button } from "@/components/ui/button"
 import { SheetModal } from "@/components/sheet-modal"
 import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
-import { CircleCheck, CircleDashed, CircleUserRound, CircleX, Loader, Mail, ShieldCheck, TableOfContents, UserPen } from "lucide-react"
+import { CircleCheck, CircleDashed, CircleUserRound, CircleX, Loader, Mail, ShieldCheck, TableOfContents, Upload, UserPen, X } from "lucide-react"
 import { BookOpen, GraduationCap } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { AlertDialogConfirmation } from "@/components/alert-dialog"
+import { API_FINDONE_SETTINGS } from "@/api/settings"
+import { useQuery } from "@tanstack/react-query"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
+import { Avatar, AvatarImage } from "@/components/ui/avatar"
 
 const dateRangeFilter = (row: any, columnId: string, filterValue: [Date, Date]) => {
     const cellDate = new Date(row.getValue(columnId));
@@ -202,8 +207,11 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
     {
         id: "actions",
         cell: ({ row }) => {
+            const [dialogsubmit, setDialogSubmit] = useState<boolean>(false)
+            const [isDiscontinue, setDiscontinue] = useState<boolean>(false)
             const [isOpen, setIsOpen] = useState<boolean>(false)
             const {
+                _id,
                 idNumber,
                 lastname,
                 firstname,
@@ -218,6 +226,16 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                 undergraduateInformation,
                 achievements
             } = row.original
+            const [values, setValues] = useState({
+                id: _id || '',
+                previewAssessment: '',
+                assessmentFile: null as File | null,
+            })
+
+            const { data: settings, isLoading: settingsLoading, isFetched: settingsFetched } = useQuery({
+                queryFn: () => API_FINDONE_SETTINGS(),
+                queryKey: ['settings']
+            })
 
             const handleViewDetails = () => {
                 setIsOpen(true)
@@ -226,7 +244,26 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
             const handleOpenChange = (open: boolean) => {
                 setIsOpen(open)
             }
+
+            const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+                const file = e.target.files?.[0] || null;
+                setValues(prev => ({
+                    ...prev,
+                    previewAssessment: file ? URL.createObjectURL(file) : '',
+                    assessmentFile: file
+                }));
+            };
+
+            const handleSubmit = () => {
+                console.log(values)
+                setDialogSubmit(false)
+
+                setDiscontinue(false)
+                setValues(prev => ({ ...prev, assessmentFile: null, previewAssessment: '' }))
+            }
+
             return (
+                (!settingsLoading && settingsFetched) &&
                 <div className="flex justify-end">
                     <Button onClick={handleViewDetails} variant={`outline`} size={`sm`} className="flex items-center gap-4">
                         <TableOfContents className="text-primary" size={18} />   View Profile
@@ -274,13 +311,6 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                         {department} | {programCode} | {programName}
                                                                     </span>
                                                                 </div>
-                                                                {/* <h1>
-                                                                    Status:
-                                                                    <span>
-                                                                        {status === '' &&}
-                                                                    </span>
-                                                                </h1> */}
-
                                                             </CardDescription>
                                                         </div>
                                                         {/* <Button>Apply Now</Button> */}
@@ -368,16 +398,78 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                             <h1 className="text-xl font-semibold">
                                                                 {programName}
                                                             </h1>
-                                                            <AlertDialogConfirmation
-                                                                className="flex items-center gap-2"
-                                                                type={`default`}
-                                                                variant={'destructive'}
-                                                                btnIcon={<UserPen className="text-primary-foreground" size={18} />}
-                                                                btnTitle="Mark as Discontinue"
-                                                                title="Are you sure?"
-                                                                description={`${lastname}, ${firstname} ${middlename} will be mark as a dicontinuing student, and its courses this semester will be mark as drop.`}
-                                                                btnContinue={handleViewDetails}
-                                                            />
+                                                            {
+                                                                !settings?.data?.isenroll &&
+                                                                <div className="flex items-center gap-4">
+                                                                    {
+                                                                        isDiscontinue &&
+                                                                        <div className="flex flex-col items-center gap-2">
+                                                                            <h1 className="w-2/3 text-sm text-center">Please input the assessment form to proceed.</h1>
+                                                                            {
+                                                                                values?.previewAssessment &&
+                                                                                <Avatar className="w-20 h-20">
+                                                                                    <AvatarImage src={values.previewAssessment} alt='Assessment Form' />
+                                                                                </Avatar>
+                                                                            }
+
+                                                                            <div>
+                                                                                <Label htmlFor="avatar" className="cursor-pointer">
+                                                                                    <div className="flex items-center space-x-2">
+                                                                                        <Upload className="w-4 h-4" />
+                                                                                        <span>Choose File</span>
+                                                                                    </div>
+                                                                                </Label>
+                                                                                <Input
+                                                                                    id="avatar"
+                                                                                    type="file"
+                                                                                    accept="image/*"
+                                                                                    className="hidden"
+                                                                                    onChange={handleFileChange}
+                                                                                />
+                                                                            </div>
+                                                                        </div>
+                                                                    }
+
+                                                                    <div className="flex items-center gap-2">
+                                                                        {
+                                                                            isDiscontinue &&
+                                                                            <Button onClick={() => {
+                                                                                setDiscontinue(false)
+                                                                                setValues(prev => ({ ...prev, previewAssessment: '', assessmentFile: null }))
+                                                                            }}
+                                                                                variant={`ghost`}
+                                                                                size={`sm`}
+                                                                                className="flex items-center gap-2"
+                                                                            >
+                                                                                <X className="text-primary" size={18} /> Cancel
+                                                                            </Button>
+                                                                        }
+
+                                                                        <AlertDialogConfirmation
+                                                                            isDialog={dialogsubmit}
+                                                                            setDialog={(e) => setDialogSubmit(e)}
+                                                                            className="flex items-center gap-2"
+                                                                            type={`default`}
+                                                                            variant={`${!isDiscontinue ? 'destructive' : 'default'}`}
+                                                                            btnIcon={<UserPen className="text-primary-foreground" size={18} />}
+                                                                            btnTitle={`${!isDiscontinue ? 'Mark as Discontinue' : 'Submit Assessment'}`}
+                                                                            title="Are you sure?"
+                                                                            description={`${lastname}, ${firstname} ${middlename} will be mark as a dicontinuing student, and its courses this semester will be mark as drop.`}
+                                                                            btnContinue={() => {
+                                                                                !isDiscontinue
+                                                                                    ? (
+                                                                                        setDialogSubmit(false),
+                                                                                        setDiscontinue(true)
+                                                                                    )
+                                                                                    : handleSubmit()
+
+                                                                            }}
+                                                                        />
+                                                                    </div>
+
+                                                                </div>
+                                                            }
+
                                                         </div>
 
                                                         <div className="w-full flex items-center justify-between">

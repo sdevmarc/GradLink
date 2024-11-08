@@ -5,15 +5,12 @@ import { Table } from "@tanstack/react-table"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { AlertDialogConfirmation } from "@/components/alert-dialog"
-import { useNavigate } from "react-router-dom"
-import { ROUTES } from "@/constants"
-import { Plus } from "lucide-react"
 import { useEffect, useState } from "react"
 import { API_PROGRAM_FINDALL } from "@/api/program"
 import { useQuery } from "@tanstack/react-query"
 import { IAPIPrograms } from "@/interface/program.interface"
 import { DataTableFacetedFilter } from "@/components/data-table-components/data-table-faceted-filter"
+import { Combobox } from "@/components/combobox"
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>
@@ -25,19 +22,27 @@ interface ProgramOption {
     department: string;
 }
 
-export function DataTableToolbarCoursesOfferedInEnrollment<TData>({
+export function DataTableToolbarArchivedOfferedCourses<TData>({
     table,
 }: DataTableToolbarProps<TData>) {
     const isFiltered = table.getState().columnFilters.length > 0
-    const navigate = useNavigate()
     const [formattedprogram, setFormattedProgram] = useState<ProgramOption[]>([]);
     const [filteredPrograms, setFilteredPrograms] = useState<ProgramOption[]>([]);
+    const [yearGraduated, setYearGraduated] = useState<string>('')
 
     const department_options = [
         { value: 'SEAIT', label: "Eng'g, Dev't. Arts & Design, Library Science & IT" },
         { value: 'SHANS', label: "Science and Mathematics" },
         { value: 'SAB', label: "Business and Accountancy" },
         { value: 'STEH', label: "Teacher Education and Humanities" }
+    ]
+
+    const sample_academicyear = [
+        { label: '2024 - 2025', value: '2024 - 2025' },
+        { label: '2023 - 2024', value: '2023 - 2024' },
+        { label: '2022 - 2023', value: '2022 - 2023' },
+        { label: '2021 - 2022', value: '2021 - 2022' },
+        { label: '2020 - 2021', value: '2020 - 2021' }
     ]
 
     const { data: program, isLoading: programLoading, isFetched: programFetched } = useQuery({
@@ -88,10 +93,10 @@ export function DataTableToolbarCoursesOfferedInEnrollment<TData>({
         <div className="flex flex-wrap items-center justify-between">
             <div className="flex flex-1 flex-wrap items-center gap-2">
                 <Input
-                    placeholder="Search course..."
-                    value={(table.getColumn("descriptiveTitle")?.getFilterValue() as string) ?? ""}
+                    placeholder="Search Course..."
+                    value={(table.getColumn("courseno")?.getFilterValue() as string) ?? ""}
                     onChange={(event) => {
-                        table.getColumn("descriptiveTitle")?.setFilterValue(event.target.value);
+                        table.getColumn("courseno")?.setFilterValue(event.target.value);
                     }}
                     className="h-8 w-[17rem] lg:w-[20rem]"
                 />
@@ -120,18 +125,16 @@ export function DataTableToolbarCoursesOfferedInEnrollment<TData>({
                         options={filteredPrograms}
                     />
                 )}
-            </div>
-            <div className="flex gap-2 items-center">
-                <AlertDialogConfirmation
-                    className="flex items-center gap-2"
-                    type={`default`}
-                    variant={'outline'}
-                    btnIcon={<Plus className="text-primary" size={18} />}
-                    btnTitle="New Offered Courses"
-                    title="Are you sure?"
-                    description={`You will be redirect to a page for creating new offered courses.`}
-                    btnContinue={() => navigate(ROUTES.CREATE_COURSE_OFFERED)}
-                />
+                <div className="w-[150px]">
+                    <Combobox
+                        className='w-[150px]'
+                        lists={sample_academicyear || []}
+                        placeholder={`Academic Year`}
+                        setValue={(item) => setYearGraduated(item)}
+                        value={yearGraduated || ''}
+                    />
+                </div>
+
             </div>
         </div>
     )

@@ -19,14 +19,15 @@ export default function AttritionRatePrograms() {
                 <aside className="px-4 pb-4 pt-[8rem]">
                     <HeadSection>
                         <SubHeadSectionDetails
-                            title="ATTRTION RATE OF PROGRAMS"
-                            description={`View attrion rate for programs.`}
+                            title="Attrition Rate for Programs"
+                            description={`View attrition rate for programs.`}
                         />
                     </HeadSection>
                 </aside>
                 <main className="flex">
                     <Sidebar>
-                        <SidebarNavs title="Courses Offered" link={ROUTES.ENROLLMENT} />
+                        <SidebarNavs title="Offered Courses" link={ROUTES.ENROLLMENT} />
+                        <SidebarNavs title="Archived Offered Courses" link={ROUTES.ENROLLMENT_ARCHIVED_OFFERED_COURSES} />
                         <SidebarNavs title="Attrition Rate of Courses" link={ROUTES.ENROLLMENT_ATTRITION_RATE_COURSES} />
                         <SidebarNavs bg='bg-muted' title="Attrition Rate of Programs" link={ROUTES.ENROLLMENT_ATTRITION_RATE_PROGRAMS} />
                     </Sidebar>
