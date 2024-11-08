@@ -8,8 +8,6 @@ import { Input } from "@/components/ui/input"
 import { AlertDialogConfirmation } from "@/components/alert-dialog"
 import { useNavigate } from "react-router-dom"
 import { ROUTES } from "@/constants"
-import { Switch } from "@/components/ui/switch"
-import { Label } from "@/components/ui/label"
 import { Plus } from "lucide-react"
 import { useEffect, useState } from "react"
 import { API_PROGRAM_FINDALL } from "@/api/program"
@@ -19,8 +17,6 @@ import { DataTableFacetedFilter } from "@/components/data-table-components/data-
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>
-    isenroll: boolean
-    setEnroll: (e: boolean) => void
 }
 
 interface ProgramOption {
@@ -31,8 +27,6 @@ interface ProgramOption {
 
 export function DataTableToolbarCoursesOfferedInEnrollment<TData>({
     table,
-    isenroll,
-    setEnroll
 }: DataTableToolbarProps<TData>) {
     const isFiltered = table.getState().columnFilters.length > 0
     const navigate = useNavigate()
@@ -43,7 +37,7 @@ export function DataTableToolbarCoursesOfferedInEnrollment<TData>({
         { value: 'SEAIT', label: "Eng'g, Dev't. Arts & Design, Library Science & IT" },
         { value: 'SHANS', label: "Science and Mathematics" },
         { value: 'SAB', label: "Business and Accountancy" },
-        { value: 'STEH', label: "Teacher Education and Humanities"}
+        { value: 'STEH', label: "Teacher Education and Humanities" }
     ]
 
     const { data: program, isLoading: programLoading, isFetched: programFetched } = useQuery({
@@ -128,29 +122,15 @@ export function DataTableToolbarCoursesOfferedInEnrollment<TData>({
                 )}
             </div>
             <div className="flex gap-2 items-center">
-                <div className="flex items-center space-x-2">
-                    {/* <Switch checked={true} id="airplane-mode" /> */}
-                    <Switch id="airplane-mode" checked={isenroll} onCheckedChange={setEnroll} />
-                    <Label htmlFor="airplane-mode">Enroll Mode</Label>
-                </div>
                 <AlertDialogConfirmation
                     className="flex items-center gap-2"
                     type={`default`}
                     variant={'outline'}
                     btnIcon={<Plus className="text-primary" size={18} />}
-                    btnTitle="New Courses Offered"
+                    btnTitle="New Offered Courses"
                     title="Are you sure?"
-                    description={`You will be redirect to a page for creating new courses offered.`}
+                    description={`You will be redirect to a page for creating new offered courses.`}
                     btnContinue={() => navigate(ROUTES.CREATE_COURSE_OFFERED)}
-                />
-
-                <AlertDialogConfirmation
-                    type={`default`}
-                    variant={'outline'}
-                    btnTitle="Previous Courses"
-                    title="Are you sure?"
-                    description={`This will export the current data you are viewing.`}
-                    btnContinue={() => navigate('/program')}
                 />
             </div>
         </div>
