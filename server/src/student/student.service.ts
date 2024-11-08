@@ -335,74 +335,6 @@ export class StudentService {
                         }
                     }
                 },
-                // Rest of the pipeline remains the same
-                // {
-                //     $addFields: {
-                //         enrolledCourses: {
-                //             $concatArrays: [
-                //                 {
-                //                     $reduce: {
-                //                         input: '$detailedEnrollments',
-                //                         initialValue: [],
-                //                         in: {
-                //                             $cond: {
-                //                                 if: {
-                //                                     $gt: [
-                //                                         {
-                //                                             $size: {
-                //                                                 $filter: {
-                //                                                     input: '$$value',
-                //                                                     as: 'year',
-                //                                                     cond: {
-                //                                                         $and: [
-                //                                                             { $eq: ['$$year.academicYear.startDate', '$$this.academicYear.startDate'] },
-                //                                                             { $eq: ['$$year.academicYear.endDate', '$$this.academicYear.endDate'] }
-                //                                                         ]
-                //                                                     }
-                //                                                 }
-                //                                             }
-                //                                         },
-                //                                         0
-                //                                     ]
-                //                                 },
-                //                                 then: {
-                //                                     $map: {
-                //                                         input: '$$value',
-                //                                         as: 'year',
-                //                                         in: {
-                //                                             $cond: {
-                //                                                 if: {
-                //                                                     $and: [
-                //                                                         { $eq: ['$$year.academicYear.startDate', '$$this.academicYear.startDate'] },
-                //                                                         { $eq: ['$$year.academicYear.endDate', '$$this.academicYear.endDate'] }
-                //                                                     ]
-                //                                                 },
-                //                                                 then: {
-                //                                                     academicYear: '$$year.academicYear',
-                //                                                     courses: { $concatArrays: ['$$year.courses', ['$$this']] }
-                //                                                 },
-                //                                                 else: '$$year'
-                //                                             }
-                //                                         }
-                //                                     }
-                //                                 },
-                //                                 else: {
-                //                                     $concatArrays: [
-                //                                         '$$value',
-                //                                         [{
-                //                                             // academicYear: '$$this.academicYear',
-                //                                             courses: ['$$this']
-                //                                         }]
-                //                                     ]
-                //                                 }
-                //                             }
-                //                         }
-                //                     }
-                //                 },
-                //             ]
-                //         }
-                //     }
-                // },
                 {
                     $addFields: {
                         enrolledCourses: {
@@ -443,6 +375,8 @@ export class StudentService {
                         firstname: 1,
                         middlename: 1,
                         email: 1,
+                        undergraduateInformation: 1,
+                        achievements: 1,
                         program: '$programDetails._id',
                         programCode: '$programDetails.code',
                         programName: '$programDetails.descriptiveTitle',
@@ -450,7 +384,8 @@ export class StudentService {
                         department: '$programDetails.department',
                         totalOfUnitsEnrolled: 1,
                         totalOfUnitsEarned: 1,
-                        enrolledCourses: 1
+                        enrolledCourses: 1,
+                        status: 1
                     }
                 },
                 {
