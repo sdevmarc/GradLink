@@ -54,10 +54,8 @@ export class OfferedService {
                         createdAt: { $first: '$createdAt' },
                         updatedAt: { $first: '$updatedAt' },
                         // Store all academic years and semesters in arrays
-                        academicYears:  { $first: '$academicYear' },
-                        
-                 
-                        semesters:  { $first: '$semester' },
+                        academicYears: { $first: '$academicYear' },
+                        semesters: { $first: '$semester' },
                         program: { $first: '$curriculum.programid' },
                         department: { $first: '$program.department' },
                         code: { $first: '$course.code' },
