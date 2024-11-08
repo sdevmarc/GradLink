@@ -13,63 +13,7 @@ export class CoursesService {
 
     async findAll(): Promise<IPromiseCourse> {
         try {
-            const courses = await this.CurriculumModel.aggregate([
-                // Unwind the categories array
-                { $unwind: "$categories" },
-
-                // Unwind the courses array within categories
-                { $unwind: "$categories.courses" },
-
-                // Lookup to get course details
-                {
-                    $lookup: {
-                        from: "courses",
-                        localField: "categories.courses",
-                        foreignField: "_id",
-                        as: "courseDetails"
-                    }
-                },
-
-                // Unwind the courseDetails array
-                { $unwind: "$courseDetails" },
-
-                // Lookup to get program details
-                {
-                    $lookup: {
-                        from: "programs",
-                        localField: "programid",
-                        foreignField: "_id",
-                        as: "programDetails"
-                    }
-                },
-
-                // Unwind the programDetails array
-                { $unwind: "$programDetails" },
-
-                // Group by course to eliminate duplicates and shape the output
-                {
-                    $group: {
-                        _id: "$courseDetails._id",
-                        code: { $first: "$courseDetails.code" },
-                        courseno: { $first: "$courseDetails.courseno" },
-                        descriptiveTitle: { $first: "$courseDetails.descriptiveTitle" },
-                        program: { $first: "$programDetails._id" },
-                        units: { $first: "$courseDetails.units" },
-                        // program: {
-                        //     $first: {
-                        //         code: "$programDetails._id",
-                        //         descriptiveTitle: "$programDetails.descriptiveTitle"
-                        //     }
-                        // },
-                        department: { $first: "$programDetails.department" },
-                        createdAt: { $first: "$courseDetails.createdAt" },
-                        updatedAt: { $first: "$courseDetails.updatedAt" }
-                    }
-                },
-
-                // Sort by _id in descending order
-                { $sort: { code: 1 } }
-            ]);
+            const courses = await this.CourseModel.find().sort({ code: -1 })
 
             return {
                 success: true,

@@ -3,11 +3,13 @@ import mongoose from "mongoose";
 export const UsersSchema = new mongoose.Schema({
     email: {
         type: String,
-        required: true
+        required: true,
+        default: 'admin'
     },
     password: {
         type: String,
-        required: true
+        required: true,
+        default: 'admin'
     },
     role: {
         type: String,
