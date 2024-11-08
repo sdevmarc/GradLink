@@ -24,6 +24,7 @@ import GeneralSettings from "./dashboard/settings/general"
 import AuditLog from "./dashboard/settings/audit-log"
 import Security from "./dashboard/settings/security"
 import GoogleForm from "./dashboard/alumni/google-form"
+import ArchivedOfferedCourses from "./dashboard/enrollment/archive-offered-courses"
 
 const Routes = createBrowserRouter([
     {
@@ -35,6 +36,7 @@ const Routes = createBrowserRouter([
 
             //Enrollment
             { path: '/enrollment', element: <Enrollment /> },
+            { path: '/enrollment/archived-courses-offered', element: <ArchivedOfferedCourses /> },
             { path: '/enrollment/attrition-rate-courses', element: <AttritionRateCourses /> },
             { path: '/enrollment/attrition-rate-programs', element: <AttritionRatePrograms /> },
             { path: '/enrollment/create-course-offered', element: <CreateCoursesOffered /> },
