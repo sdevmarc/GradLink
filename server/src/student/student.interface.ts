@@ -3,7 +3,6 @@ interface IStudentEnrollments {
     course?: string[]
     enrollmentDate?: string
     ispass?: 'pass' | 'fail' | 'inc' | 'ongoing' | 'drop' | 'discontinue'
-    assessmentForm?: string
 }
 
 interface IUndergraduateInformation {
@@ -21,6 +20,7 @@ interface IAchievements {
 }
 
 export interface IStudent {
+    id?: string
     _id?: string | string[]
     idNumber?: string
     lastname?: string
@@ -33,6 +33,7 @@ export interface IStudent {
     enrollments?: IStudentEnrollments[]
     status?: string
     isenrolled?: boolean
+    assessmentForm?: string
     program?: string
     courses?: string[]
     undergraduateInformation?: IUndergraduateInformation
