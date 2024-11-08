@@ -10,9 +10,10 @@ import { Button } from "@/components/ui/button"
 import { SheetModal } from "@/components/sheet-modal"
 import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
-import { CircleCheck, CircleDashed, CircleUserRound, CircleX, Loader, TableOfContents } from "lucide-react"
+import { CircleCheck, CircleDashed, CircleUserRound, CircleX, Loader, TableOfContents, UserPen } from "lucide-react"
 import { BookOpen, GraduationCap } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { AlertDialogConfirmation } from "@/components/alert-dialog"
 
 const dateRangeFilter = (row: any, columnId: string, filterValue: [Date, Date]) => {
     const cellDate = new Date(row.getValue(columnId));
@@ -31,7 +32,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
         cell: () => {
             return (
                 <div className="w-0">
-                    <CircleUserRound color="#000000" />
+                    <CircleUserRound className="text-primary" />
                 </div>
             )
 
@@ -228,7 +229,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
             return (
                 <div className="flex justify-end">
                     <Button onClick={handleViewDetails} variant={`outline`} size={`sm`} className="flex items-center gap-4">
-                        <TableOfContents color="#000000" size={18} />   View Profile
+                        <TableOfContents className="text-primary" size={18} />   View Profile
                     </Button>
                     <SheetModal
                         className="w-[60%] overflow-auto"
@@ -349,10 +350,23 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                             </Card>
                                             <Card className="w-full mx-auto">
                                                 <CardHeader>
-                                                    <div className="w-full flex flex-col items-start">
-                                                        <h1 className="text-xl font-semibold flex items-center gap-2">
-                                                            {programName}
-                                                        </h1>
+                                                    <div className="w-full flex flex-col items-start gap-2">
+                                                        <div className="w-full flex items-center justify-between">
+                                                            <h1 className="text-xl font-semibold">
+                                                                {programName}
+                                                            </h1>
+                                                            <AlertDialogConfirmation
+                                                                className="flex items-center gap-2"
+                                                                type={`default`}
+                                                                variant={'outline'}
+                                                                btnIcon={<UserPen className="text-primary" size={18} />}
+                                                                btnTitle="New Student"
+                                                                title="Are you sure?"
+                                                                description={`You will be redirect to page for creating new student.`}
+                                                                btnContinue={handleViewDetails}
+                                                            />
+                                                        </div>
+
                                                         <div className="w-full flex items-center justify-between">
                                                             <h1 className="text-lg font-medium flex items-center gap-2">
                                                                 Courses:
@@ -394,32 +408,31 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                                 {
                                                                                     item.status === 'ongoing' &&
                                                                                     <div className="flex items-center gap-2">
-                                                                                        <Loader color="#000000" size={18} />
+                                                                                        <Loader className="text-primary" size={18} />
                                                                                         Ongoing
                                                                                     </div>
                                                                                 }
                                                                                 {
                                                                                     item.status === 'pass' &&
                                                                                     <div className="flex items-center gap-2">
-                                                                                        <CircleCheck color="#000000" size={18} />
+                                                                                        <CircleCheck className="text-primary" size={18} />
                                                                                         PASSED
                                                                                     </div>
                                                                                 }
                                                                                 {
                                                                                     item.status === 'fail' &&
                                                                                     <div className="flex items-center gap-2">
-                                                                                        <CircleX color="#000000" size={18} />
+                                                                                        <CircleX className="text-primary" size={18} />
                                                                                         Failed
                                                                                     </div>
                                                                                 }
                                                                                 {
                                                                                     item.status === 'not_taken' &&
                                                                                     <div className="flex items-center gap-2">
-                                                                                        <CircleDashed color="#000000" size={18} />
+                                                                                        <CircleDashed className="text-primary" size={18} />
                                                                                         Not taken yet
                                                                                     </div>
                                                                                 }
-
                                                                             </span>
                                                                         </td>
                                                                     </tr>
