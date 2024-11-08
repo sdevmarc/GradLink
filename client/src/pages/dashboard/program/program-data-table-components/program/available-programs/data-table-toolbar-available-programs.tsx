@@ -74,7 +74,7 @@ export function DataTableToolbarAvailablePrograms<TData>({
                     className="flex items-center gap-2"
                     type={`default`}
                     variant={'outline'}
-                    btnIcon={<Plus color="#000000" size={18} />}
+                    btnIcon={<Plus className="text-primary" size={18} />}
                     btnTitle="New Program"
                     title="Are you sure?"
                     description={`You will be redirect to a page for creating a program.`}
