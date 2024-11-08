@@ -21,7 +21,7 @@ export const AttritionRateProgramsColumns: ColumnDef<IAPIOffered>[] = [
         cell: () => {
             return (
                 <div className="w-0">
-                    <ChartColumnBig color="#000000" size={18} />
+                    <ChartColumnBig className="text-primary" size={18} />
                 </div>
             )
 
@@ -100,7 +100,7 @@ export const AttritionRateProgramsColumns: ColumnDef<IAPIOffered>[] = [
             return (
                 <div className="flex justify-end">
                     <Button onClick={handleViewDetails} variant={`outline`} size={`sm`} className="flex items-center gap-4">
-                        <TableOfContents color="#000000" size={18} /> View Attrition
+                        <TableOfContents className="text-primary" size={18} /> View Attrition
                     </Button>
                     <SheetModal
                         className="w-[60%]"

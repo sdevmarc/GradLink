@@ -5,8 +5,6 @@ import { Table } from "@tanstack/react-table"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { AlertDialogConfirmation } from "@/components/alert-dialog"
-import { useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { API_PROGRAM_FINDALL } from "@/api/program"
 import { useQuery } from "@tanstack/react-query"
@@ -27,7 +25,6 @@ export function DataTableToolbarAttritionRateCourses<TData>({
     table,
 }: DataTableToolbarProps<TData>) {
     const isFiltered = table.getState().columnFilters.length > 0
-    const navigate = useNavigate()
     const [formattedprogram, setFormattedProgram] = useState<ProgramOption[]>([]);
     const [filteredPrograms, setFilteredPrograms] = useState<ProgramOption[]>([]);
 

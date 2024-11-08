@@ -86,14 +86,14 @@ export default function TracerMap() {
                                             className="h-8 w-[17rem] lg:w-[20rem]"
                                         />
                                         <Button onClick={() => setSearch(true)} variant={`outline`} size={`sm`} className="flex items-center gap-2">
-                                            <Search color="#000000" size={18} />    Search
+                                            <Search className="text-primary" size={18} />    Search
                                         </Button>
                                     </div>
 
                                     <div className="flex items-center gap-4">
                                         <Combobox
                                             btnTitleclassName="gap-2"
-                                            icon={<Filter color="#000000" size={15} />}
+                                            icon={<Filter className="text-primary" size={15} />}
                                             className='w-[200px]'
                                             lists={department || []}
                                             placeholder={`Program`}
@@ -102,7 +102,7 @@ export default function TracerMap() {
                                         />
                                         <Combobox
                                             btnTitleclassName="gap-2"
-                                            icon={<Filter color="#000000" size={15} />}
+                                            icon={<Filter className="text-primary" size={15} />}
                                             className='w-[150px]'
                                             lists={graduation_date || []}
                                             placeholder={`Year Graduated`}

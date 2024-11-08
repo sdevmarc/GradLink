@@ -68,7 +68,7 @@ export function AlertDialogConfirmation({
                                         <h1 className="text-lg text-center font-semibold">
                                             {title}
                                         </h1>
-                                        <p className="text-md text-center font-normal">
+                                        <p className="text-md text-label text-center font-normal">
                                             {description}
                                         </p>
                                     </div>
@@ -96,7 +96,7 @@ export function AlertDialogConfirmation({
                                         <h1 className="text-lg text-center font-semibold">
                                             {title}
                                         </h1>
-                                        <p className="text-md text-center font-normal">
+                                        <p className="text-md text-label text-center font-normal">
                                             {description}
                                         </p>
                                     </div>
@@ -132,7 +132,7 @@ export function AlertDialogConfirmation({
                                         <h1 className="text-lg text-center font-semibold">
                                             {title}
                                         </h1>
-                                        <p className="text-md text-center font-normal">
+                                        <p className="text-md text-label text-center font-normal">
                                             {description}
                                         </p>
                                     </div>
@@ -168,7 +168,9 @@ export function AlertDialogConfirmation({
                         <AlertDialogContent>
                             <AlertDialogHeader>
                                 <AlertDialogTitle>{title}</AlertDialogTitle>
-                                <AlertDialogDescription className="text-black/80">{description}</AlertDialogDescription>
+                                <AlertDialogDescription className="text-label">
+                                    {description}
+                                </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                                 <AlertDialogCancel>Cancel</AlertDialogCancel>

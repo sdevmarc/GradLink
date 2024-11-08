@@ -20,7 +20,7 @@ export const CurriculumColumns: ColumnDef<ICurriculum>[] = [
         cell: () => {
             return (
                 <div className="w-0">
-                    <Bookmark color="#000000" size={18} />
+                    <Bookmark className="text-primary" size={18} />
                 </div>
             )
 
@@ -117,7 +117,7 @@ export const CurriculumColumns: ColumnDef<ICurriculum>[] = [
             return (
                 <div className="flex justify-end">
                     <Button onClick={handleViewDetails} variant={`outline`} size={`sm`} className="flex items-center gap-4">
-                        <TableOfContents color="#000000" size={18} />  View Details
+                        <TableOfContents className="text-primary" size={18} />  View Details
                     </Button>
                     <SheetModal
                         className="w-[60%]"

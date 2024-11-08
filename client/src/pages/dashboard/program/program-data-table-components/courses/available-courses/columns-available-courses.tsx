@@ -19,7 +19,7 @@ export const AvailableCoursesColumns: ColumnDef<IAPICourse>[] = [
         cell: () => {
             return (
                 <div className="w-0">
-                    <BookOpen color="#000000" size={18} />
+                    <BookOpen className="text-primary" size={18} />
                 </div>
             )
 
@@ -82,24 +82,6 @@ export const AvailableCoursesColumns: ColumnDef<IAPICourse>[] = [
         enableColumnFilter: true
     },
     {
-        accessorKey: "department",
-        enableColumnFilter: true,
-        filterFn: (row, id, value) => {
-            return value.includes(row.getValue(id))
-        },
-        enableHiding: true,
-        enableSorting: false,
-    },
-    {
-        accessorKey: "program",
-        enableColumnFilter: true,
-        filterFn: (row, id, value) => {
-            return value.includes(row.getValue(id))
-        },
-        enableHiding: true,
-        enableSorting: false,
-    },
-    {
         id: "actions",
         cell: ({ row }) => {
             const [isOpen, setIsOpen] = useState<boolean>(false)
@@ -116,7 +98,7 @@ export const AvailableCoursesColumns: ColumnDef<IAPICourse>[] = [
             return (
                 <div className="flex justify-end">
                     <Button onClick={handleViewDetails} variant={`outline`} size={`sm`} className="flex items-center gap-4">
-                        <TableOfContents color="#000000" size={18} />   View Details
+                        <TableOfContents className="text-primary" size={18} />   View Details
                     </Button>
                     <DrawerModal
                         isOpen={isOpen}

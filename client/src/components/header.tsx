@@ -105,7 +105,7 @@ const HeaderSettings = () => {
                                         <BreadCrumbs>
                                             <BreadcrumbItem>
                                                 <BreadcrumbPage className='text-md'>
-                                                    <GraduationCap color="#000000" />
+                                                    <GraduationCap className='text-primary' />
                                                 </BreadcrumbPage>
                                             </BreadcrumbItem>
                                             <BreadcrumbSeparator>
@@ -113,7 +113,7 @@ const HeaderSettings = () => {
                                             </BreadcrumbSeparator>
                                             <BreadcrumbItem>
                                                 <BreadcrumbPage className='text-md font-medium flex items-center gap-2'>
-                                                    <CircleUser color="#000000" size={18} />   My Account
+                                                    <CircleUser className='text-primary' size={18} />   My Account
                                                 </BreadcrumbPage>
                                             </BreadcrumbItem>
                                         </BreadCrumbs>
@@ -185,7 +185,7 @@ const HeaderDashboard = () => {
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
                                                     <BreadcrumbPage className='text-md'>
-                                                        <GraduationCap color="#000000" />
+                                                        <GraduationCap className='text-primary' />
                                                     </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                                 <BreadcrumbSeparator>
@@ -201,7 +201,7 @@ const HeaderDashboard = () => {
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
                                                     <BreadcrumbPage className='text-md'>
-                                                        <GraduationCap color="#000000" />
+                                                        <GraduationCap className='text-primary' />
                                                     </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                                 <BreadcrumbSeparator>
@@ -225,7 +225,7 @@ const HeaderDashboard = () => {
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
                                                     <BreadcrumbPage className='text-md'>
-                                                        <GraduationCap color="#000000" />
+                                                        <GraduationCap className='text-primary' />
                                                     </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                                 <BreadcrumbSeparator>
@@ -249,7 +249,7 @@ const HeaderDashboard = () => {
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
                                                     <BreadcrumbPage className='text-md'>
-                                                        <GraduationCap color="#000000" />
+                                                        <GraduationCap className='text-primary' />
                                                     </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                                 <BreadcrumbSeparator>
@@ -273,7 +273,7 @@ const HeaderDashboard = () => {
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
                                                     <BreadcrumbPage className='text-md'>
-                                                        <GraduationCap color="#000000" />
+                                                        <GraduationCap className='text-primary' />
                                                     </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                                 <BreadcrumbSeparator>
@@ -319,7 +319,7 @@ const HeaderDashboard = () => {
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
                                                     <BreadcrumbPage className='text-md'>
-                                                        <GraduationCap color="#000000" />
+                                                        <GraduationCap className='text-primary' />
                                                     </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                                 <BreadcrumbSeparator>
@@ -343,7 +343,7 @@ const HeaderDashboard = () => {
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
                                                     <BreadcrumbPage className='text-md'>
-                                                        <GraduationCap color="#000000" />
+                                                        <GraduationCap className='text-primary' />
                                                     </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                                 <BreadcrumbSeparator>
@@ -367,7 +367,7 @@ const HeaderDashboard = () => {
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
                                                     <BreadcrumbPage className='text-md'>
-                                                        <GraduationCap color="#000000" />
+                                                        <GraduationCap className='text-primary' />
                                                     </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                                 <BreadcrumbSeparator>
@@ -391,7 +391,7 @@ const HeaderDashboard = () => {
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
                                                     <BreadcrumbPage className='text-md'>
-                                                        <GraduationCap color="#000000" />
+                                                        <GraduationCap className='text-primary' />
                                                     </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                                 <BreadcrumbSeparator>

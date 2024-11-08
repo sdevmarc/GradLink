@@ -353,7 +353,7 @@ const CreateForm = () => {
                                                 setAdditional(true)
                                             }
                                             } variant={`outline`} size={`sm`} type='button' className='flex gap-2'>
-                                                <Plus color="#000000" size={18} /> Add Additional Course
+                                                <Plus className='text-primary' size={18} /> Add Additional Course
                                             </Button>
                                         </div>
                                     }
@@ -372,7 +372,7 @@ const CreateForm = () => {
                                                         courses: []
                                                     }))
                                                 }} variant={`ghost`} size={`sm`} type='button'>
-                                                    <X color="#000000" size={18} /> Cancel
+                                                    <X className='text-primary' size={18} /> Cancel
                                                 </Button>
                                             </div>
                                             {
