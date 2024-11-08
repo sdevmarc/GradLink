@@ -4,9 +4,9 @@ import { CoursesOfferedInEnrollmentColumns } from "./enrollment-data-table-compo
 import { useQuery } from "@tanstack/react-query"
 import { useState } from "react"
 import { API_FINDALL_COURSES_OFFERED } from "@/api/offered"
+import MainTable from "@/components/main-table"
 import { Sidebar, SidebarNavs } from "@/components/sidebar"
 import { ROUTES } from "@/constants"
-import MainTable from "@/components/main-table"
 
 export default function Enrollment() {
     const [isenroll, setEnroll] = useState<boolean>(true);
@@ -27,10 +27,10 @@ export default function Enrollment() {
                 <aside className="px-4 pb-4 pt-[8rem]">
                     <HeadSection>
                         <SubHeadSectionDetails
-                            title="COURSES OFFERED"
-                            description={`Here's a list of offered courses ${courses?.data[0]?.semester === 1 ? 'for the First semester.' :
-                                courses?.data[0]?.semester === 2 ? 'for the Second semester.' :
-                                    courses?.data[0]?.semester === 3 ? 'for the Third semester.' :
+                            title="Offered Courses"
+                            description={`Here's a list of offered courses ${courses?.data[0]?.semesters === 1 ? 'for the First semester.' :
+                                courses?.data[0]?.semesters === 2 ? 'for the Second semester.' :
+                                    courses?.data[0]?.semesters === 3 ? 'for the Third semester.' :
                                         ''
                                 }.`}
                         />
@@ -38,7 +38,8 @@ export default function Enrollment() {
                 </aside>
                 <main className="flex">
                     <Sidebar>
-                        <SidebarNavs bg='bg-muted' title="Courses Offered" link={ROUTES.ENROLLMENT} />
+                        <SidebarNavs bg='bg-muted' title="Offered Courses" link={ROUTES.ENROLLMENT} />
+                        <SidebarNavs title="Archived Offered Courses" link={ROUTES.ENROLLMENT_ARCHIVED_OFFERED_COURSES} />
                         <SidebarNavs title="Attrition Rate of Courses" link={ROUTES.ENROLLMENT_ATTRITION_RATE_COURSES} />
                         <SidebarNavs title="Attrition Rate of Programs" link={ROUTES.ENROLLMENT_ATTRITION_RATE_PROGRAMS} />
                     </Sidebar>
@@ -46,12 +47,14 @@ export default function Enrollment() {
                         {coursesLoading && <div>Loading...</div>}
                         {
                             (!coursesLoading && coursesFetched) &&
-                            <DataTableCoursesOfferedInEnrollment
-                                columns={CoursesOfferedInEnrollmentColumns(isenroll)}
-                                data={courses?.data || []}
-                                isenroll={isenroll}
-                                setEnroll={toggleEnroll}
-                            />
+                            <div className="flex flex-col gap-4">
+                                <DataTableCoursesOfferedInEnrollment
+                                    columns={CoursesOfferedInEnrollmentColumns}
+                                    data={courses?.data || []}
+                                    isenroll={isenroll}
+                                    setEnroll={toggleEnroll}
+                                />
+                            </div>
                         }
                     </MainTable>
                 </main>
