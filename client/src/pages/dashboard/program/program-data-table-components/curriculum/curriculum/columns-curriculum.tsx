@@ -83,6 +83,24 @@ export const CurriculumColumns: ColumnDef<ICurriculum>[] = [
         enableColumnFilter: true,
     },
     {
+        accessorKey: "department",
+        enableColumnFilter: true,
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id))
+        },
+        enableHiding: true,
+        enableSorting: false,
+    },
+    {
+        accessorKey: "programid",
+        enableColumnFilter: true,
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id))
+        },
+        enableHiding: true,
+        enableSorting: false,
+    },
+    {
         id: "actions",
         cell: ({ row }) => {
             const [isOpen, setIsOpen] = useState<boolean>(false)

@@ -31,7 +31,7 @@ export function DataTableToolbarAvailablePrograms<TData>({
         <div className="flex flex-wrap items-center justify-between">
             <div className="flex flex-1 flex-wrap items-center gap-2">
                 <Input
-                    placeholder="Search Program..."
+                    placeholder="Search program..."
                     value={(table.getColumn("code")?.getFilterValue() as string) ?? ""}
                     onChange={(event) => {
                         table.getColumn("code")?.setFilterValue(event.target.value);

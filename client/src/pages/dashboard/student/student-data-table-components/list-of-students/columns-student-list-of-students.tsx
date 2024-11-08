@@ -143,7 +143,6 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
             <DataTableColumnHeader column={column} title="Program" className="text-text" />
         ),
         cell: ({ row }) => {
-            console.log(row.original)
             return (
                 <div className="flex items-center">
                     <span className="capitalize">
@@ -209,14 +208,14 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                 firstname,
                 middlename,
                 email,
-                isenrolled,
                 totalOfUnitsEnrolled,
                 totalOfUnitsEarned,
                 enrolledCourses,
                 programName,
                 programCode,
                 department,
-                progress
+                undergraduateInformation,
+                achievements
             } = row.original
 
             const handleViewDetails = () => {
@@ -252,13 +251,22 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                     {email || 'No valid Email'}
                                                                 </span>
                                                             </CardTitle>
-                                                            <CardDescription className="mt-2">
-                                                                <Badge variant="default" className="mr-2">
-                                                                    {idNumber || 'No valid ID Number'}
-                                                                </Badge>
-                                                                <span className="text-muted-foreground">
-                                                                    {department} | {programCode} | {programName}
-                                                                </span>
+                                                            <CardDescription className="mt-2 flex items-center justify-between">
+                                                                <div className="flex items-center">
+                                                                    <Badge variant="default" className="mr-2">
+                                                                        {idNumber || 'No valid ID Number'}
+                                                                    </Badge>
+                                                                    <span className="text-muted-foreground">
+                                                                        {department} | {programCode} | {programName}
+                                                                    </span>
+                                                                </div>
+                                                                {/* <h1>
+                                                                    Status:
+                                                                    <span>
+                                                                        {status === '' &&}
+                                                                    </span>
+                                                                </h1> */}
+
                                                             </CardDescription>
                                                         </div>
                                                         {/* <Button>Apply Now</Button> */}
@@ -267,7 +275,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                 <CardContent className="space-y-4">
                                                     <div className="w-full mx-auto">
                                                         <CardHeader>
-                                                            <CardTitle>Bachelor's Degree Information</CardTitle>
+                                                            <CardTitle className="text-xl">Bachelor's Degree Information</CardTitle>
                                                         </CardHeader>
                                                         <CardContent className="flex flex-wrap gap-4">
                                                             <div className="flex flex-col basis-[calc(50%-0.5rem)]">
@@ -275,7 +283,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                     College/University
                                                                 </span>
                                                                 <span className="text-md font-normal">
-                                                                    Saint Mary's University
+                                                                    {undergraduateInformation?.college || 'None'}
                                                                 </span>
                                                             </div>
                                                             <div className="flex flex-col basis-[calc(50%-0.5rem)]">
@@ -283,7 +291,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                     School
                                                                 </span>
                                                                 <span className="text-md font-normal">
-                                                                    College of Science
+                                                                    {undergraduateInformation?.school || 'None'}
                                                                 </span>
                                                             </div>
                                                             <div className="flex flex-col basis-[calc(50%-0.5rem)]">
@@ -291,7 +299,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                     Program
                                                                 </span>
                                                                 <span className="text-md font-normal">
-                                                                    BS in Biology
+                                                                    {undergraduateInformation?.programGraduated || 'None'}
                                                                 </span>
                                                             </div>
                                                             <div className="flex flex-col basis-[calc(50%-0.5rem)]">
@@ -299,7 +307,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                     Year Graduated
                                                                 </span>
                                                                 <span className="text-md font-normal">
-                                                                    2021
+                                                                    {undergraduateInformation?.yearGraduated || 'None'}
                                                                 </span>
                                                             </div>
                                                             <div className="flex flex-col basis-[calc(50%-0.5rem)]">
@@ -307,7 +315,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                     Honors/Awards Received
                                                                 </span>
                                                                 <span className="text-md font-normal">
-                                                                    Cum Laude
+                                                                    {achievements?.awards || 'None'}
                                                                 </span>
                                                             </div>
                                                             <div className="flex flex-col basis-[calc(50%-0.5rem)]">
@@ -315,7 +323,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                     Professional Exam Passed
                                                                 </span>
                                                                 <span className="text-md font-normal">
-                                                                    LET
+                                                                    {achievements?.examPassed || 'None'}
                                                                 </span>
                                                             </div>
                                                             <div className="flex flex-col basis-[calc(50%-0.5rem)]">
@@ -323,7 +331,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                     Professional Exam Date
                                                                 </span>
                                                                 <span className="text-md font-normal">
-                                                                    03-04-2022
+                                                                    {achievements?.examDate || 'None'}
                                                                 </span>
                                                             </div>
                                                             <div className="flex flex-col basis-[calc(50%-0.5rem)]">
@@ -331,7 +339,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                     Professional Exam Rating
                                                                 </span>
                                                                 <span className="text-md font-normal">
-                                                                    92%
+                                                                    {achievements?.examRating ? `${achievements?.examRating}%` : 'None'}
                                                                 </span>
                                                             </div>
 
@@ -342,12 +350,12 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                             <Card className="w-full mx-auto">
                                                 <CardHeader>
                                                     <div className="w-full flex flex-col items-start">
-                                                        <h1 className="text-lg font-semibold">
+                                                        <h1 className="text-xl font-semibold flex items-center gap-2">
                                                             {programName}
                                                         </h1>
                                                         <div className="w-full flex items-center justify-between">
-                                                            <h1 className="text-lg font-medium">
-                                                                Major Courses
+                                                            <h1 className="text-lg font-medium flex items-center gap-2">
+                                                                Courses:
                                                             </h1>
                                                             <div className="flex items-center">
                                                                 <BookOpen className="h-5 w-5 mr-2 text-muted-foreground" />

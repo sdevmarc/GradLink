@@ -10,7 +10,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { BookOpen, TableOfContents } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { DrawerModal } from "@/components/drawer-modal"
 
 export const AvailableCoursesColumns: ColumnDef<IAPICourse>[] = [
@@ -80,6 +80,24 @@ export const AvailableCoursesColumns: ColumnDef<IAPICourse>[] = [
             return value.includes(row.getValue(id));
         },
         enableColumnFilter: true
+    },
+    {
+        accessorKey: "department",
+        enableColumnFilter: true,
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id))
+        },
+        enableHiding: true,
+        enableSorting: false,
+    },
+    {
+        accessorKey: "program",
+        enableColumnFilter: true,
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id))
+        },
+        enableHiding: true,
+        enableSorting: false,
     },
     {
         id: "actions",

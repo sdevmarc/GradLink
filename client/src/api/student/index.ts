@@ -7,6 +7,11 @@ export const API_STUDENT_FINDALL = async () => {
     return response.data
 }
 
+export const API_STUDENT_FINDALL_ATTRITION_RATE_COURSES = async (id: string) => {
+    const response = await axios.get(`${HOST}/student/attrition/${id}`)
+    return response.data
+}
+
 export const API_STUDENT_FINDALL_ENROLLEES = async () => {
     const response = await axios.get(`${HOST}/student/enrollees`)
     return response.data

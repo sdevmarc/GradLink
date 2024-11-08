@@ -181,9 +181,22 @@ const CreateForm = () => {
         }
 
         if (nospaceAwards === '' || nospaceExamPassed === '' || nospaceExamDate === '' || nospaceExamRating === '') {
+            if (isNaN(Number(nospaceExamRating))) {
+                setDialogSubmit(false)
+                setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Exam rating must be a number.' })
+                return
+            }
             setDialogSubmit(false)
-            setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Please fill-up the required fields.' })
-            return
+            await insertStudent({
+                idNumber: nospaceIdNumber,
+                lastname,
+                firstname,
+                middlename,
+                email: nospaceEmail,
+                program,
+                courses,
+                undergraduateInformation
+            })
         }
 
         setDialogSubmit(false)

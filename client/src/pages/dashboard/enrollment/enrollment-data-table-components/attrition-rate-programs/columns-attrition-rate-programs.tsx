@@ -113,7 +113,7 @@ export const AttritionRateProgramsColumns: ColumnDef<IAPIOffered>[] = [
                                         <div className="min-h-screen w-full max-w-[70rem]">
                                             <Card className="w-full mx-auto">
                                                 <CardHeader className="space-y-4">
-                                                    <CardTitle className="text-4xl font-bold">GRADLINK</CardTitle>
+                                                    <CardTitle className="text-4xl font-bold">Program</CardTitle>
                                                 </CardHeader>
                                                 <CardContent className="space-y-8">
                                                     <RadioGroup

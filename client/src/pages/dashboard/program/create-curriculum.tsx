@@ -372,7 +372,7 @@ export default function CreateCurriculum() {
                                             {step + 1} / 3 Done
                                         </span>
                                     </div>
-                                    <Progress value={(step + 1 / 3) * 100} className="w-full bg-muted" />
+                                    <Progress value={(step / 3) * 100} className="w-full bg-muted" />
                                 </div>
 
                                 <div className="flex flex-col border gap-4 rounded-md px-4 pb-4">
@@ -534,9 +534,14 @@ export default function CreateCurriculum() {
                                                         <Plus color="#000000" size={18} /> Add Course(s) to Category
                                                     </Button>
                                                 </div>
+                                                {
+                                                      (values.showcategories?.length ?? 0) > 0 &&  <h1 className='text-lg font-medium'>Courses Added</h1>
+                                                }
+                                              
                                             {
                                                 values.showcategories?.map((item, i) => (
                                                     <div key={i} className='flex flex-col gap-2 border p-4 rounded-md'>
+                                                    
                                                         <div className="flex items-center justify-between">
                                                             <h1 className='font-medium'>
                                                                 {i + 1}. {item.categoryName}

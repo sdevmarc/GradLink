@@ -37,7 +37,10 @@ export function DataTableCurriculum<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
+    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
+        programid: false,
+        department: false
+    })
     const [rowSelection, setRowSelection] = React.useState({})
 
     const table = useReactTable({
