@@ -138,7 +138,7 @@ export default function StudentEvaluation() {
                                 {
                                     !isdropout &&
                                     <Button onClick={() => setDropout(true)} variant={`outline`} size={`sm`} className="flex items-center gap-4" type="button">
-                                        <Plus color="#000000" size={18} /> Add Dropout Form
+                                        <Plus className='text-primary' size={18} /> Add Dropout Form
                                     </Button>
                                 }
                                 <Separator />
@@ -235,7 +235,7 @@ const DragDropImage = ({ isdropout }: { isdropout: (e: boolean) => void }) => {
                     isdropout(false)
                 }
             } variant={`outline`} size={`sm`} className="flex items-center gap-4" type="button">
-                <X color="#000000" size={18} /> Cancel Dropout Form
+                <X className='text-primary' size={18} /> Cancel Dropout Form
             </Button>
         </div>
     )
