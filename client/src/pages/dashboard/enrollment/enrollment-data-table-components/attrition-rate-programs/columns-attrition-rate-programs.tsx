@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { ChartColumnBig, TableOfContents } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { SheetModal } from "@/components/sheet-modal"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useState } from "react"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
@@ -87,6 +87,8 @@ export const AttritionRateProgramsColumns: ColumnDef<IAPIOffered>[] = [
         id: "actions",
         cell: ({ row }) => {
             const [isOpen, setIsOpen] = useState<boolean>(false)
+            const { code, descriptiveTitle, curriculum } = row.original || {}
+            const { name } = curriculum || {}
 
             const handleViewDetails = () => {
                 setIsOpen(true)
@@ -104,7 +106,7 @@ export const AttritionRateProgramsColumns: ColumnDef<IAPIOffered>[] = [
                         className="w-[60%]"
                         isOpen={isOpen}
                         onOpenChange={handleOpenChange}
-                        title="Course Details"
+                        title="Program Details"
                         description="View details of the selected course."
                         content={
                             <div className="flex flex-col min-h-screen items-center">
@@ -113,7 +115,17 @@ export const AttritionRateProgramsColumns: ColumnDef<IAPIOffered>[] = [
                                         <div className="min-h-screen w-full max-w-[70rem]">
                                             <Card className="w-full mx-auto">
                                                 <CardHeader className="space-y-4">
-                                                    <CardTitle className="text-4xl font-bold">Program</CardTitle>
+                                                    <CardTitle className="capitalize text-3xl font-bold">
+                                                        {descriptiveTitle || 'Invalid Descriptive Title'}
+                                                    </CardTitle>
+                                                    <CardDescription className="mt-2">
+                                                        <Badge variant="default" className="mr-2">
+                                                            {code || 'Inavlid Code'}
+                                                        </Badge>
+                                                        <span className="text-muted-foreground">
+                                                            {name || 'Invalid Curriculum Name'}
+                                                        </span>
+                                                    </CardDescription>
                                                 </CardHeader>
                                                 <CardContent className="space-y-8">
                                                     <RadioGroup
