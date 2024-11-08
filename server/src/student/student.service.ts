@@ -550,7 +550,7 @@ export class StudentService {
                     'semester': -1
                 })
 
-            console.log('Found offerings:', JSON.stringify(allOfferings, null, 2))
+            // console.log('Found offerings:', JSON.stringify(allOfferings, null, 2))
 
             if (!allOfferings.length) {
                 return {
@@ -571,10 +571,10 @@ export class StudentService {
                     'enrollments.course': new mongoose.Types.ObjectId(courseid)
                 })
 
-                console.log('Found students:', JSON.stringify(studentsWithCourse.map(s => ({
-                    _id: s._id,
-                    enrollments: s.enrollments.filter(e => e.course.toString() === courseid)
-                })), null, 2))
+                // console.log('Found students:', JSON.stringify(studentsWithCourse.map(s => ({
+                //     _id: s._id,
+                //     enrollments: s.enrollments.filter(e => e.course.toString() === courseid)
+                // })), null, 2))
 
                 // Perform the aggregation in steps for debugging
                 const initialMatch = await this.studentModel.aggregate([
@@ -584,7 +584,7 @@ export class StudentService {
                         }
                     }
                 ])
-                console.log('After initial $match:', initialMatch.length)
+                // console.log('After initial $match:', initialMatch.length)
 
                 const afterUnwind = await this.studentModel.aggregate([
                     {
@@ -596,7 +596,7 @@ export class StudentService {
                         $unwind: '$enrollments'
                     }
                 ])
-                console.log('After $unwind:', afterUnwind.length)
+                // console.log('After $unwind:', afterUnwind.length)
 
                 // Final aggregation pipeline
                 const pipeline = [
@@ -646,11 +646,11 @@ export class StudentService {
                 ]
 
                 const results = await this.studentModel.aggregate(pipeline)
-                console.log('Final aggregation results:', JSON.stringify(results, null, 2))
+                // console.log('Final aggregation results:', JSON.stringify(results, null, 2))
 
                 // If no results from aggregation, calculate manually from found students
                 if (!results.length) {
-                    console.log('No aggregation results, calculating manually')
+                    // console.log('No aggregation results, calculating manually')
                     const stats: {
                         totalStudentsEnrolled: number
                         totalStudentsPassed: number
