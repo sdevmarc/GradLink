@@ -126,7 +126,7 @@ const HeaderSettings = () => {
                         <h1 className='text-text font-normal rounded-full px-3 py-1 text-[.8rem]'>
                             Welcome, Juan Dela Cruz
                         </h1>
-                        <UserAvatar image='https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg' initials='CN' />
+                        <UserAvatar />
                     </div>
                 </div>
                 <div className="w-full h-[30%] flex justify-start items-center">
@@ -177,6 +177,7 @@ const HeaderDashboard = () => {
                                     case ROUTES.ENROLLMENT:
                                     case ROUTES.ENROLLMENT_ATTRITION_RATE_COURSES:
                                     case ROUTES.ENROLLMENT_ATTRITION_RATE_PROGRAMS:
+                                    case ROUTES.ENROLLMENT_ARCHIVED_OFFERED_COURSES:
                                     case ROUTES.ALUMNI:
                                     case ROUTES.TRACER_MAP:
                                     case `/student/details/${sid}`:
@@ -445,7 +446,7 @@ const HeaderDashboard = () => {
                             <h1 className='text-text font-normal rounded-full px-3 py-1 text-[.8rem]'>
                                 Welcome, Juan Dela Cruz
                             </h1>
-                            <UserAvatar image='https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg' initials='CN' />
+                            <UserAvatar />
                         </div>
                     </div>
                     {/* <div className="w-full h-[30%] flex justify-start items-center">
@@ -528,7 +529,7 @@ export const HeaderTracer = () => {
     })
 
     useEffect(() => {
-        if (programFetched) {
+        if (!programLoading && programFetched) {
             const formatprogram = program.data.map((item: IAPIPrograms) => {
                 const { _id, code } = item
                 return { value: _id, label: code }
@@ -581,7 +582,7 @@ export const HeaderTracer = () => {
                         <h1 className='text-text font-normal rounded-full text-[.8rem]'>
                             Welcome, Juan Dela Cruz
                         </h1>
-                        <UserAvatar image='https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg' initials='CN' />
+                        <UserAvatar />
                     </div>
                 </header>
             </div>
