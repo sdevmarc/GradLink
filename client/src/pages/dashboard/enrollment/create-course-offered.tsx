@@ -155,7 +155,7 @@ export default function CreateCoursesOffered() {
                         <HeadSection>
                             <BackHeadSection />
                             <SubHeadSectionDetails
-                                title="CREATE COURSES OFFERED"
+                                title="Create Offered Courses"
                                 description="A tool for creating courses offered."
                             />
                         </HeadSection>
