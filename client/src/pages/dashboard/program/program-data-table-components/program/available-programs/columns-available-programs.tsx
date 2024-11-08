@@ -19,7 +19,7 @@ export const AvailableProgramsColumns: ColumnDef<IAPIPrograms>[] = [
         cell: () => {
             return (
                 <div className="w-0">
-                    <BookCopy color="#000000" size={18} />
+                    <BookCopy className="text-primary" size={18} />
                 </div>
             )
 
@@ -103,7 +103,7 @@ export const AvailableProgramsColumns: ColumnDef<IAPIPrograms>[] = [
             return (
                 <div className="flex justify-end">
                     <Button onClick={handleViewDetails} variant={`outline`} size={`sm`} className="flex items-center gap-4">
-                        <TableOfContents color="#000000" size={18} /> View Details
+                        <TableOfContents className="text-primary" size={18} /> View Details
                     </Button>
                     <SheetModal
                         className="w-[60%]"
