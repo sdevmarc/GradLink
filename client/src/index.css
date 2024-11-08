@@ -31,7 +31,7 @@
 
 @layer base {
   :root {
-    --label: 210 40% 98%;
+    --label: #303030;
     --background: #f6f5f5;
     --foreground: #0a0a0a;
     --card: 222.2 84% 4.9%;
@@ -60,7 +60,7 @@
   }
 
   .dark {
-    --label: 210 40% 98%;
+    --label: #8f8f8f;
     --background: #0a0a0a;
     --foreground: #f4f9f4;
     --card: 222.2 84% 4.9%;
