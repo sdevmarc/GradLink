@@ -1249,7 +1249,7 @@ export class StudentService {
 
                     // If there's a file, store the file reference
                     const fileData = evaluation.find(item => item.file)
-                    if (fileData) { student.enrollments[enrollmentIndex].assessmentForm = fileData.file }
+                    if (fileData) { student.assessmentForm = fileData.file }
                 }
 
                 await student.save()
@@ -1281,6 +1281,84 @@ export class StudentService {
                 },
                 HttpStatus.INTERNAL_SERVER_ERROR
             )
+        }
+    }
+
+    async discontinueStudent({ id, assessmentForm }: IStudent) {
+        try {
+            // First, get the student with populated enrollments and course references
+            const student = await this.studentModel.findById(id)
+                .populate({
+                    path: 'enrollments.course',
+                    model: 'Course'
+                });
+
+            if (!student) {
+                throw new HttpException(
+                    {
+                        success: false,
+                        message: 'Student not found.',
+                    },
+                    HttpStatus.NOT_FOUND
+                );
+            }
+
+            // Find the latest academic year by looking up the courses in the offered collection
+            const latestOffered = await this.offeredModel.findOne({
+                courses: {
+                    $in: student.enrollments.map(enrollment => enrollment.course)
+                }
+            }).sort({ 'academicYear.startDate': -1 });
+
+            if (!latestOffered) {
+                throw new HttpException(
+                    {
+                        success: false,
+                        message: 'No academic year found for student enrollments.',
+                    },
+                    HttpStatus.NOT_FOUND
+                );
+            }
+
+            // Get all course IDs from the latest academic year
+            const latestYearCourseIds = latestOffered.courses.map(course => course.toString());
+
+            // Update the student document
+            await this.studentModel.findByIdAndUpdate(
+                id,
+                {
+                    $set: {
+                        isenrolled: false,
+                        assessmentForm: assessmentForm,
+                        // Update all enrollments where the course is in the latest academic year
+                        'enrollments.$[elem].ispass': 'discontinue'
+                    }
+                },
+                {
+                    arrayFilters: [
+                        {
+                            'elem.course': { $in: latestYearCourseIds },
+                            'elem.ispass': 'ongoing' // Only update ongoing courses
+                        }
+                    ],
+                    new: true
+                }
+            );
+
+            return {
+                success: true,
+                message: 'Student has been discontinued successfully.'
+            };
+
+        } catch (error) {
+            throw new HttpException(
+                {
+                    success: false,
+                    message: 'Failed to discontinue student.',
+                    error: error.message
+                },
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
         }
     }
 
