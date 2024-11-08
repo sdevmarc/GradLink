@@ -17,7 +17,7 @@ export const CoursesOfferedInEnrollmentColumns = (isenroll: boolean): ColumnDef<
         cell: () => {
             return (
                 <div className="w-0">
-                    <HandHelping color="#000000" size={18} />
+                    <HandHelping className="text-primary" size={18} />
                 </div>
             )
 
