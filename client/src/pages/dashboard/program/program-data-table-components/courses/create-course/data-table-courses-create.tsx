@@ -125,7 +125,7 @@ export function DataTableCreateCourse<TData, TValue>({
                         </DropdownMenuContent>
                     </DropdownMenu> */}
                     <Button onClick={() => onCancel(false)} variant={`ghost`} size={`sm`} type="button" className=" flex items-center gap-4">
-                        <X color="#000000" size={18} />   Cancel
+                        <X className="text-primary" size={18} />   Cancel
                     </Button>
                 </div>
             </div>
