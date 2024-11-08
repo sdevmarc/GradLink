@@ -18,7 +18,7 @@ export default function CreateCourse() {
                         <HeadSection>
                             <BackHeadSection />
                             <SubHeadSectionDetails
-                                title="CREATE A COURSE"
+                                title="Create a Course"
                                 description="A tool for creating and managing course offerings, including course details and structure."
                             />
                         </HeadSection>
