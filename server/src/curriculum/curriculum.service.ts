@@ -60,6 +60,7 @@ export class CurriculumService {
                         _id: 1,
                         name: 1,
                         residency: '$programdetails.residency',
+                        programid: 1,
                         program: '$programdetails.descriptiveTitle',
                         createdAt: { $dateToString: { format: "%d-%m-%Y", date: "$createdAt" } },
                         updatedAt: 1,
@@ -94,7 +95,7 @@ export class CurriculumService {
                 },
                 {
                     $sort: {
-                        createdAt: -1
+                        _id: -1
                     }
                 }
             ]);

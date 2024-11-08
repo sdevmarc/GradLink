@@ -48,22 +48,18 @@ export const StudentSchema = new mongoose.Schema({
     achievements: {
         awards: {
             type: String,
-            required: true,
             default: 'None'
         },
         examPassed: {
             type: String,
-            required: true,
             default: 'None'
         },
         examDate: {
             type: String,
-            required: true,
             default: 'None'
         },
         examRating: {
             type: String,
-            required: true,
             default: 'None'
         }
     },
