@@ -430,7 +430,7 @@ export default function CreateCurriculum() {
                                                 !ismajor &&
                                                 <div className="flex">
                                                     <Button disabled={isLoading} variant={`outline`} size={`sm`} className="flex items-center gap-4" type="button" onClick={() => setMajor(true)}>
-                                                        <Plus color="#000000" size={18} /> Add Major
+                                                        <Plus className='text-primary' size={18} /> Add Major
                                                     </Button>
                                                 </div>
                                             }
@@ -441,7 +441,7 @@ export default function CreateCurriculum() {
                                                     <div className="flex items-center justify-between py-2">
                                                         <h1 className='text-md font-medium'>Major (Optional)</h1>
                                                         <Button disabled={isLoading} onClick={() => setMajor(false)} variant={`ghost`} size={`sm`}>
-                                                            <X color="#000000" size={18} /> Cancel
+                                                            <X className='text-primary' size={18} /> Cancel
                                                         </Button>
                                                     </div>
                                                     <Input
@@ -531,7 +531,7 @@ export default function CreateCurriculum() {
                                             </div>
                                             <div className="flex">
                                                 <Button disabled={isLoading} onClick={handleAddCoursesToCategories} variant={`outline`} size={`sm`} className="w-full flex items-center py-6 gap-4 text-lg font-semibold" type="button">
-                                                    <Plus color="#000000" size={18} /> Add Course(s) to Category
+                                                    <Plus className='text-primary' size={18} /> Add Course(s) to Category
                                                 </Button>
                                             </div>
                                             {
@@ -547,7 +547,7 @@ export default function CreateCurriculum() {
                                                                 {i + 1}. {item.categoryName}
                                                             </h1>
                                                             <Button onClick={() => handleRemoveCategorizedCourse(i)} variant={`outline`} size={`sm`} className="flex items-center gap-4" type="button">
-                                                                <X color="#000000" size={18} /> Remove
+                                                                <X className='text-primary' size={18} /> Remove
                                                             </Button>
                                                         </div>
                                                         <NormalTable courses={item.courses || []} />
