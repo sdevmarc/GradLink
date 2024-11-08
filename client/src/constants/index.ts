@@ -13,6 +13,7 @@ export const ROUTES = {
 
     //ENROLLMENT
     ENROLLMENT: '/enrollment',
+    ENROLLMENT_ARCHIVED_OFFERED_COURSES:'/enrollment/archived-courses-offered',
     ENROLLMENT_ATTRITION_RATE_COURSES: '/enrollment/attrition-rate-courses',
     ENROLLMENT_ATTRITION_RATE_PROGRAMS: '/enrollment/attrition-rate-programs',
     CREATE_COURSE_OFFERED: '/enrollment/create-course-offered',
