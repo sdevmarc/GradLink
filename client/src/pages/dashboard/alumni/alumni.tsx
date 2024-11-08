@@ -20,7 +20,7 @@ export default function Alumni() {
                     <aside className="px-4 pb-4 pt-[8rem]">
                         <HeadSection>
                             <SubHeadSectionDetails
-                                title="ALUMNI INFORMATION"
+                                title="Alumni Information"
                                 description="View and manage alumni."
                             />
                         </HeadSection>
