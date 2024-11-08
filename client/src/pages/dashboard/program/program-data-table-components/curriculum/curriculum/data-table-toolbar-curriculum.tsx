@@ -143,7 +143,7 @@ export function DataTableToolbarCurriculum<TData>({
                     className="flex items-center gap-2"
                     type={`default`}
                     variant={'outline'}
-                    btnIcon={<Plus color="#000000" size={18} />}
+                    btnIcon={<Plus className="text-primary" size={18} />}
                     btnTitle="New Curriculum"
                     title="Are you sure?"
                     description={`You will be redirect to a page for creating a curriculum.`}
