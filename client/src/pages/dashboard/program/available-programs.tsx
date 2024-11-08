@@ -33,8 +33,8 @@ export default function Program() {
                     <aside className="px-4 pb-4 pt-[8rem]">
                         <HeadSection>
                             <SubHeadSectionDetails
-                                title="PROGRAMS, COURSES, AND CURRICULUM"
-                                description="View and manage programs."
+                                title="Programs And Curriculum"
+                                description="View and manage programs, courses, and curriculum."
                             />
                         </HeadSection>
                     </aside>
