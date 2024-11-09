@@ -46,9 +46,9 @@ export const API_STUDENT_ENROLL_STUDENT = async ({ course, id }: IRequestStudent
     return response.data
 }
 
-export const API_STUDENT_EVALUATE_STUDENT = async ({ course, id, ispass }: IRequestStudents) => {
+export const API_STUDENT_EVALUATE_STUDENT = async ({ course, evaluations }: IRequestStudents) => {
     const response = await axios.post(`${HOST}/student/evaluate-student`, {
-        course, id, ispass
+        course, evaluations
     })
     return response.data
 }
