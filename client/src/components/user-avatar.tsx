@@ -32,7 +32,7 @@ export const UserAvatar = () => {
                     <ChevronDown className="text-primary" strokeWidth={3} size={20} />
                 </Avatar>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-[150px]">
+            <DropdownMenuContent className="w-[150px] bg-primary-foreground">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
