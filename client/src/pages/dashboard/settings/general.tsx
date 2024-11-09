@@ -60,8 +60,8 @@ export default function GeneralSettings() {
                 })
                 return
             } else {
-                await queryClient.invalidateQueries({ queryKey: ['students'] })
-                await queryClient.refetchQueries({ queryKey: ['students'] })
+                await queryClient.invalidateQueries({ queryKey: ['settings'] })
+                await queryClient.refetchQueries({ queryKey: ['settings'] })
                 window.scrollTo({
                     top: 0,
                     behavior: 'smooth'
