@@ -53,9 +53,9 @@ export class StudentController {
 
     @Post('evaluate-student')
     async evaluateStudentEnrollee(
-        @Body() { evaluation, course }: IRequestStudent
+        @Body() { evaluations, course }: IRequestStudent
     ) {
-        return await this.studentService.evaluateStudent({ evaluation, course })
+        return await this.studentService.evaluateStudent({ evaluations, course })
     }
 
     @Post('activate-student')
