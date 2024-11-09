@@ -5,8 +5,6 @@ import { Table } from "@tanstack/react-table"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { AlertDialogConfirmation } from "@/components/alert-dialog"
-import { useNavigate } from "react-router-dom"
 import { Combobox } from "@/components/combobox"
 import { useState } from "react"
 import { DataTableFacetedFilter } from "@/components/data-table-components/data-table-faceted-filter"
@@ -30,7 +28,6 @@ export function DataTableToolbarAlumni<TData>({
     //     // Filter table data based on selected date range
     //     table.getColumn("date")?.setFilterValue([from, to])
     // }
-    const navigate = useNavigate()
     const [yearGraduated, setYearGraduated] = useState<string>('')
 
     const graduation_date = [
@@ -100,17 +97,6 @@ export function DataTableToolbarAlumni<TData>({
                     className="w-[250px] h-8"
                     variant="outline"
                 /> */}
-            </div>
-            <div className="flex gap-2 items-center">
-                <AlertDialogConfirmation
-                    type={`default`}
-                    variant={'outline'}
-                    btnTitle="Export"
-                    title="Are you sure?"
-                    description={`This will export the current data you are viewing.`}
-                    btnContinue={() => navigate('/program')}
-                />
-                {/* <DataTableViewOptions table={table} /> */}
             </div>
         </div>
     )
