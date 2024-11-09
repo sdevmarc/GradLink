@@ -49,7 +49,7 @@ export interface IEvaluationItem {
 export interface IRequestStudent {
     id?: string[]
     course?: string;
-    evaluation?: IEvaluationItem[];
+    evaluations?: IEvaluationItem[];
 }
 
 export interface IPromiseStudent {
