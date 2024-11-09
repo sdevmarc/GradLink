@@ -39,7 +39,6 @@ export default function Enrollment() {
                 <main className="flex">
                     <Sidebar>
                         <SidebarNavs bg='bg-muted' title="Offered Courses" link={ROUTES.ENROLLMENT} />
-                        <SidebarNavs title="Archived Offered Courses" link={ROUTES.ENROLLMENT_ARCHIVED_OFFERED_COURSES} />
                         <SidebarNavs title="Attrition Rate of Courses" link={ROUTES.ENROLLMENT_ATTRITION_RATE_COURSES} />
                         <SidebarNavs title="Attrition Rate of Programs" link={ROUTES.ENROLLMENT_ATTRITION_RATE_PROGRAMS} />
                     </Sidebar>
