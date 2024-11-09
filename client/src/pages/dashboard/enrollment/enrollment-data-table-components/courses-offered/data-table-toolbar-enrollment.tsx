@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { AlertDialogConfirmation } from "@/components/alert-dialog"
 import { useNavigate } from "react-router-dom"
 import { ROUTES } from "@/constants"
-import { Plus } from "lucide-react"
+import { LibraryBig, Plus } from "lucide-react"
 import { useEffect, useState } from "react"
 import { API_PROGRAM_FINDALL } from "@/api/program"
 import { useQuery } from "@tanstack/react-query"
@@ -131,6 +131,16 @@ export function DataTableToolbarCoursesOfferedInEnrollment<TData>({
                     title="Are you sure?"
                     description={`You will be redirect to a page for creating new offered courses.`}
                     btnContinue={() => navigate(ROUTES.CREATE_COURSE_OFFERED)}
+                />
+                <AlertDialogConfirmation
+                    className="flex items-center gap-2"
+                    type={`default`}
+                    variant={'outline'}
+                    btnIcon={<LibraryBig className="text-primary" size={18} />}
+                    btnTitle="Previous Courses"
+                    title="Are you sure?"
+                    description={`You will be redirect to a page viewing the past offered courses.`}
+                    btnContinue={() => navigate(ROUTES.ENROLLMENT_ARCHIVED_ACADEMIC_YEAR_OFFERED_COURSES)}
                 />
             </div>
         </div>
