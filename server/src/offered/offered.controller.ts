@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, ParseIntPipe, Param } from '@nestjs/common';
 import { OfferedService } from './offered.service';
 import { IOffered } from './offered.interface';
 
@@ -10,11 +10,21 @@ export class OfferedController {
 
     @Get()
     async findAllActiveCoursesOffered() {
-        return this.offeredService.findAllActive()
+        return await this.offeredService.findAllActive()
+    }
+
+    @Get('academic-years')
+    async findAllAcdemicYearsInCoursesOffered() {
+        return await this.offeredService.findAllAcademicYears()
+    }
+
+    @Get('academic-year/:year')
+    async findSemestersInAcademicYear(@Param('year') year: string) {
+        return await this.offeredService.findSemestersInAcademicYear({ academicYear: year })
     }
 
     @Post('create')
     async createOfferedCourses(@Body() { semester, academicYear, courses }: IOffered) {
-        return this.offeredService.createOffered({ semester, academicYear, courses })
+        return await this.offeredService.createOffered({ semester, academicYear, courses })
     }
 }
