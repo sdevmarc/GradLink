@@ -497,16 +497,19 @@ export class StudentService {
                     }
                 },
 
-                // // Unwind curriculum array (since lookup returns an array)
+                // Unwind curriculum array
                 {
                     $unwind: '$curriculumdetails'
                 },
+
+                // Match courses in curriculum
                 {
                     $match: {
                         'curriculumdetails.categories.courses': new mongoose.Types.ObjectId(courseid)
                     }
                 },
 
+                // Match enrollments
                 {
                     $match: {
                         enrollments: {
@@ -518,6 +521,22 @@ export class StudentService {
                     }
                 },
 
+                // Add field to get specific enrollment for the course
+                {
+                    $addFields: {
+                        specificEnrollment: {
+                            $filter: {
+                                input: '$enrollments',
+                                as: 'enrollment',
+                                cond: {
+                                    $eq: ['$$enrollment.course', new mongoose.Types.ObjectId(courseid)]
+                                }
+                            }
+                        }
+                    }
+                },
+
+                // Project final fields
                 {
                     $project: {
                         _id: 1,
@@ -529,14 +548,27 @@ export class StudentService {
                         middlename: 1,
                         email: 1,
                         program: '$curriculumdetails.programid',
-                        department: '$curriculumdetails.department'
+                        ispass: {
+                            $let: {
+                                vars: {
+                                    enrollmentStatus: { $arrayElemAt: ['$specificEnrollment.ispass', 0] }
+                                },
+                                in: {
+                                    $cond: {
+                                        if: { $eq: ['$$enrollmentStatus', 'ongoing'] },
+                                        then: '$$REMOVE',
+                                        else: '$$enrollmentStatus'
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
-            ])
+            ]);
 
-            return { success: true, message: 'Enrollees fetched successfully', data: response }
+            return { success: true, message: 'Enrollees fetched successfully', data: response };
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Enrollees failed to fetch.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+            throw new HttpException({ success: false, message: 'Enrollees failed to fetch.', error }, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -1187,10 +1219,10 @@ export class StudentService {
 
     async evaluateStudent(request: IRequestStudent): Promise<IPromiseStudent> {
         try {
-            const { course, evaluation } = request
+            const { course, evaluations } = request
 
             // Validate basic input
-            if (!course || !evaluation || !Array.isArray(evaluation) || evaluation.length === 0) {
+            if (!course || !evaluations || !Array.isArray(evaluations) || evaluations.length === 0) {
                 return {
                     success: false,
                     message: 'Invalid input parameters. Course and evaluation array are required.'
@@ -1201,77 +1233,89 @@ export class StudentService {
             const iscourse = await this.courseModel.findById(course)
             if (!iscourse) return { success: false, message: 'Course does not exist.' }
 
+            // Validate evaluation data structure
+            const validStatus = ['pass', 'fail', 'inc', 'ongoing', 'drop']
+            const invalidEvaluations = evaluations.filter(
+                item => !item.id || !item.ispass || !validStatus.includes(item.ispass)
+            )
 
-            // Extract evaluation data
-            const studentId = evaluation.find(item => item.id)?.id
-            const evaluationData = evaluation.find(item => item.ispass)
-
-            if (!studentId || !evaluationData) {
+            if (invalidEvaluations.length > 0) {
                 return {
                     success: false,
-                    message: 'Invalid evaluation data. Both student ID and evaluation status are required.'
+                    message: 'Invalid evaluation data. Each evaluation must contain valid student ID and status.',
+                    data: invalidEvaluations
                 }
             }
 
-            // Validate ispass value
-            const validStatus = ['pass', 'fail', 'inc', 'ongoing', 'drop', 'discontinue']
-            if (!validStatus.includes(evaluationData.ispass)) {
-                return {
-                    success: false,
-                    message: 'Invalid evaluation status.'
-                }
-            }
+            // Process all evaluations
+            const results = await Promise.all(
+                evaluations.map(async (item) => {
+                    try {
+                        const student = await this.studentModel.findById(item.id)
 
-            // Check if file is required for discontinue status
-            if (evaluationData.ispass === 'discontinue' && !evaluation.find(item => item.file)) {
-                return {
-                    success: false,
-                    message: 'File is required for discontinue status.'
-                }
-            }
+                        if (!student) {
+                            return {
+                                success: false,
+                                studentId: item.id,
+                                message: 'Student not found'
+                            }
+                        }
 
-            try {
-                const student = await this.studentModel.findById(studentId)
-                if (!student) return { success: false, data: studentId, message: 'Student not found' }
+                        const enrollmentIndex = student.enrollments.findIndex(
+                            enrollment => enrollment.course.toString() === course
+                        )
 
-                const enrollmentIndex = student.enrollments.findIndex(
-                    enrollment => enrollment.course.toString() === course
-                )
+                        if (enrollmentIndex === -1) {
+                            return {
+                                success: false,
+                                studentId: item.id,
+                                message: 'Student not enrolled in this course'
+                            }
+                        }
 
-                if (enrollmentIndex === -1) return { success: false, data: studentId, message: 'Student not enrolled in this course' }
+                        // Update enrollment status
+                        student.enrollments[enrollmentIndex].ispass = item.ispass
 
-                // Update enrollment status
-                student.enrollments[enrollmentIndex].ispass = evaluationData.ispass
+                        // Handle discontinue status
+                        if (item.ispass === 'discontinue') {
+                            student.isenrolled = false
+                            if (item.file) {
+                                student.assessmentForm = item.file
+                            }
+                        }
 
-                // If status is discontinue, update isenrolled to false
-                if (evaluationData.ispass === 'discontinue') {
-                    student.isenrolled = false
+                        await student.save()
 
-                    // If there's a file, store the file reference
-                    const fileData = evaluation.find(item => item.file)
-                    if (fileData) { student.assessmentForm = fileData.file }
-                }
+                        return {
+                            success: true,
+                            studentId: item.id,
+                            status: item.ispass,
+                            message: `Successfully evaluated student in ${iscourse.descriptiveTitle}`
+                        }
 
-                await student.save()
-
-                return {
-                    success: true,
-                    message: `Successfully evaluated student in ${iscourse.descriptiveTitle}`,
-                    data: {
-                        studentId,
-                        status: evaluationData.ispass,
-                        course: iscourse.descriptiveTitle
+                    } catch (error) {
+                        return {
+                            success: false,
+                            studentId: item.id,
+                            message: `Failed to update student: ${error.message}`
+                        }
                     }
-                }
+                })
+            )
 
-            } catch (error) {
-                return {
-                    success: false,
-                    data: studentId,
-                    message: `Failed to update student: ${error.message}`,
+            // Analyze results
+            const successfulEvaluations = results.filter(result => result.success)
+            const failedEvaluations = results.filter(result => !result.success)
+
+            return {
+                success: true,
+                message: `Processed ${results.length} evaluations: ${successfulEvaluations.length} successful, ${failedEvaluations.length} failed`,
+                data: {
+                    successful: successfulEvaluations,
+                    failed: failedEvaluations,
+                    course: iscourse.descriptiveTitle
                 }
             }
-
         } catch (error) {
             throw new HttpException(
                 {
