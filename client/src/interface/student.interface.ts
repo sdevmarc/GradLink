@@ -58,8 +58,15 @@ export interface IAPIStudents {
     achievements?: IAchievements
 }
 
+export interface IEvaluation {
+    id: string;
+    ispass: string;
+    file?: File | null;
+    preview?: string | null; // URL for preview
+}
+
 export interface IRequestStudents {
-    course: string
-    id: string[],
-    ispass?: string
+    id?: string
+    course?: string
+    evaluations?: IEvaluation[]
 }
