@@ -149,6 +149,7 @@ const HeaderSettings = () => {
 
 const HeaderDashboard = () => {
     const [coursename, setCoursesName] = useState<string>('')
+    const [academicYear, setAcademicYear] = useState<string>('')
     const location = useLocation()
     const { sid, id } = useParams()
 
@@ -156,7 +157,8 @@ const HeaderDashboard = () => {
         if (id) {
             const jsonString = atob(id);
             const parsedObject = JSON.parse(jsonString);
-            setCoursesName(parsedObject.descriptiveTitle)
+            setCoursesName(parsedObject?.descriptiveTitle)
+            setAcademicYear(parsedObject?.academicYear)
         }
     }, [id])
 
@@ -177,7 +179,7 @@ const HeaderDashboard = () => {
                                     case ROUTES.ENROLLMENT:
                                     case ROUTES.ENROLLMENT_ATTRITION_RATE_COURSES:
                                     case ROUTES.ENROLLMENT_ATTRITION_RATE_PROGRAMS:
-                                    case ROUTES.ENROLLMENT_ARCHIVED_OFFERED_COURSES:
+                                    case ROUTES.ENROLLMENT_ARCHIVED_ACADEMIC_YEAR_OFFERED_COURSES:
                                     case ROUTES.ALUMNI:
                                     case ROUTES.TRACER_MAP:
                                     case `/student/details/${sid}`:
@@ -241,6 +243,30 @@ const HeaderDashboard = () => {
                                                 <BreadcrumbItem>
                                                     <BreadcrumbPage className='text-md font-medium'>
                                                         Create a student
+                                                    </BreadcrumbPage>
+                                                </BreadcrumbItem>
+                                            </BreadCrumbs>
+                                        )
+                                    case `/enrollment/archived-semesters-in-academic-year/${id}`:
+                                        return (
+                                            <BreadCrumbs>
+                                                <BreadcrumbItem>
+                                                    <BreadcrumbPage className='text-md'>
+                                                        <GraduationCap className='text-primary' />
+                                                    </BreadcrumbPage>
+                                                </BreadcrumbItem>
+                                                <BreadcrumbSeparator>
+                                                    <Slash />
+                                                </BreadcrumbSeparator>
+                                                <BreadcrumbItem>
+                                                    <BreadcrumbItem className='text-md font-light'>Gradlink</BreadcrumbItem>
+                                                </BreadcrumbItem>
+                                                <BreadcrumbSeparator>
+                                                    <Slash />
+                                                </BreadcrumbSeparator>
+                                                <BreadcrumbItem>
+                                                    <BreadcrumbPage className='text-md font-medium capitalize'>
+                                                        {academicYear}
                                                     </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                             </BreadCrumbs>
