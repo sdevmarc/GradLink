@@ -9,19 +9,14 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { API_STUDENT_EVALUATE_STUDENT, API_STUDENT_FINDALL_EVALUATEES_IN_COURSE } from '@/api/student'
 import { DataTableEvaluateStudent } from './enrollment-data-table-components/evaluate-student/data-table-evaluate-student'
 import { EvaluateStudentColumns } from './enrollment-data-table-components/evaluate-student/columns-evaluate-student'
-
-interface Evaluation {
-    id: string;
-    status: string;
-    file?: File | null;
-    preview?: string | null; // URL for preview
-}
+import { IEvaluation } from '@/interface/student.interface'
 
 export default function EvaluateStudent() {
     const queryClient = useQueryClient()
     const { id } = useParams()
-    const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
+    const [evaluations, setEvaluations] = useState<IEvaluation[]>([]);
     const navigate = useNavigate()
+    const [issuccess, setSuccess] = useState<boolean>(false)
     const [courseid, setCourseId] = useState<string>('')
     const [dialogsubmit, setDialogSubmit] = useState<boolean>(false)
     const [alertdialogstate, setAlertDialogState] = useState({
@@ -42,7 +37,7 @@ export default function EvaluateStudent() {
 
     const { data: students, isLoading: studentLoading, isFetched: studentFetched } = useQuery({
         queryFn: () => API_STUDENT_FINDALL_EVALUATEES_IN_COURSE(courseid),
-        queryKey: ['student-evaluatees', courseid],
+        queryKey: ['students', courseid],
         enabled: !!courseid
     })
 
@@ -58,12 +53,13 @@ export default function EvaluateStudent() {
                 })
                 return
             } else {
-                await queryClient.invalidateQueries({ queryKey: ['student-evaluatees'] })
-                await queryClient.refetchQueries({ queryKey: ['student-evaluatees'] })
+                await queryClient.invalidateQueries({ queryKey: ['students'] })
+                await queryClient.refetchQueries({ queryKey: ['students'] })
                 window.scrollTo({
                     top: 0,
                     behavior: 'smooth'
                 })
+                setSuccess(true)
                 setAlertDialogState({ success: true, show: true, title: "Yay, success! 🎉", description: data.message })
                 setDialogSubmit(false)
                 return
@@ -71,6 +67,7 @@ export default function EvaluateStudent() {
         },
         onError: (data) => {
             setDialogSubmit(false)
+            setSuccess(false)
             setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: data.message })
         }
     })
@@ -78,51 +75,33 @@ export default function EvaluateStudent() {
     const handleEvaluationChange = (id: string, evaluationStatus: string) => {
         setEvaluations(prevEvaluations => {
             const existingIndex = prevEvaluations.findIndex(evaluation => evaluation.id === id);
+
+            if (!evaluationStatus) {
+                // If status is empty, remove the evaluation
+                return prevEvaluations.filter(evaluation => evaluation.id !== id);
+            }
+
             const updatedEvaluations = [...prevEvaluations];
+
             if (existingIndex >= 0) {
-                updatedEvaluations[existingIndex] = { ...updatedEvaluations[existingIndex], status: evaluationStatus };
+                updatedEvaluations[existingIndex] = { ...updatedEvaluations[existingIndex], ispass: evaluationStatus };
             } else {
-                updatedEvaluations.push({ id, status: evaluationStatus });
+                updatedEvaluations.push({ id, ispass: evaluationStatus });
             }
             return updatedEvaluations;
         });
     };
-
-    const handleFileChange = (id: string, file: File | null) => {
-        setEvaluations(prevEvaluations => {
-            const existingIndex = prevEvaluations.findIndex(evaluation => evaluation.id === id);
-            const updatedEvaluations = [...prevEvaluations];
-            const preview = file ? URL.createObjectURL(file) : null; // Generate or clear preview URL
-
-            if (existingIndex >= 0) {
-                updatedEvaluations[existingIndex] = { ...updatedEvaluations[existingIndex], file, preview };
-            } else {
-                updatedEvaluations.push({ id, status: '', file, preview });
-            }
-            return updatedEvaluations;
-        });
-    };
-
-    useEffect(() => {
-        console.log('Tite: ', evaluations)
-    }, [evaluations])
 
     const handleSubmit = async () => {
-        // if (evaluations.length === 0) {
-        //     setDialogSubmit(false)
-        //     setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Please add at least one program to submit.' })
-        //     return
-        // }
-        if (id) {
-            // const jsonString = atob(id);
-            // const parsedObject = JSON.parse(jsonString);
-            // const courseid = parsedObject.id
+        if (evaluations.length === 0) {
             setDialogSubmit(false)
-            console.log('Tite: ', evaluations)
-
-            // const studentid = checkstudents.map(item => item._id).filter((id): id is string => id !== undefined)
-            // await evaluatestudent({ id: studentid, course: courseid, ispass: isPass })
+            setSuccess(false)
+            setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Please evaluate at least one student.' })
+            return
         }
+
+        setDialogSubmit(false)
+        await evaluatestudent({ course: courseid, evaluations })
     }
 
     const isLoading = studentLoading || evaluatestudentLoading
@@ -141,7 +120,7 @@ export default function EvaluateStudent() {
                 variant={`default`}
                 btnContinue={() => {
                     setAlertDialogState(prev => ({ ...prev, show: false }))
-                    navigate(-1)
+                    if (issuccess) return navigate(-1)
                 }}
             />
 
@@ -168,7 +147,7 @@ export default function EvaluateStudent() {
                                     {
                                         studentFetched &&
                                         <DataTableEvaluateStudent
-                                        columns={EvaluateStudentColumns(handleEvaluationChange, evaluations, handleFileChange)}
+                                            columns={EvaluateStudentColumns(handleEvaluationChange, evaluations)}
                                             data={students?.data || []}
                                         />
                                     }
