@@ -80,14 +80,6 @@ export function DataTableToolbarAvailablePrograms<TData>({
                     description={`You will be redirect to a page for creating a program.`}
                     btnContinue={() => navigate(ROUTES.CREATE_PROGRAM)}
                 />
-                {/* <AlertDialogConfirmation
-                    type={`default`}
-                    variant={'outline'}
-                    btnTitle="Export"
-                    title="Are you sure?"
-                    description={`This will export the current data you are viewing.`}
-                    btnContinue={() => navigate('/program')}
-                /> */}
             </div>
         </div>
     )
