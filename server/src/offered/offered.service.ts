@@ -11,6 +11,173 @@ export class OfferedService {
         @InjectModel('Course') private readonly courseModel: Model<ICourses>,
     ) { }
 
+    async findAllAcademicYears(): Promise<IPromiseOffered> {
+        try {
+            const response = await this.offeredModel.aggregate([
+                // Project the academic year as a concatenated string
+                {
+                    $project: {
+                        _id: 1,
+                        academicYear: {
+                            $concat: [
+                                { $toString: "$academicYear.startDate" },
+                                " - ",
+                                { $toString: "$academicYear.endDate" }
+                            ]
+                        }
+                    }
+                },
+                // Group by the academic year to remove duplicates
+                {
+                    $group: {
+                        _id: null,
+                        academicYear: { $first: "$academicYear" },
+                        offeredId: { $first: "$_id" }
+                    }
+                },
+                // Sort by academic year (optional)
+                {
+                    $sort: {
+                        academicYear: -1
+                    }
+                }
+            ]);
+
+            return {
+                success: true,
+                message: 'Academic years fetched successfully.',
+                data: response
+            }
+
+        } catch (error) {
+            throw new HttpException(
+                {
+                    success: false,
+                    message: 'Failed to fetch all academic years.',
+                    error
+                },
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    async findSemestersInAcademicYear({ academicYear }: { academicYear: string }): Promise<IPromiseOffered> {
+        try {
+            // Parse the academic year string (e.g., "2024-2025")
+            const [startYear, endYear] = academicYear.split('-').map(year => parseInt(year.trim()));
+
+            const response = await this.offeredModel.aggregate([
+                {
+                    $match: {
+                        'academicYear.startDate': startYear,
+                        'academicYear.endDate': endYear
+                    }
+                },
+                {
+                    $unwind: '$courses'
+                },
+                {
+                    $lookup: {
+                        from: 'courses',
+                        localField: 'courses',
+                        foreignField: '_id',
+                        as: 'courseDetails'
+                    }
+                },
+                {
+                    $unwind: '$courseDetails'
+                },
+                {
+                    $lookup: {
+                        from: 'curriculums',
+                        let: { courseId: '$courses' },
+                        pipeline: [
+                            {
+                                $match: {
+                                    isActive: true
+                                }
+                            },
+                            {
+                                $unwind: '$categories'
+                            },
+                            {
+                                $unwind: '$categories.courses'
+                            },
+                            {
+                                $match: {
+                                    $expr: {
+                                        $eq: ['$categories.courses', '$$courseId']
+                                    }
+                                }
+                            }
+                        ],
+                        as: 'curriculumInfo'
+                    }
+                },
+                {
+                    $unwind: '$curriculumInfo'
+                },
+                {
+                    $lookup: {
+                        from: 'programs',
+                        localField: 'curriculumInfo.programid',
+                        foreignField: '_id',
+                        as: 'programInfo'
+                    }
+                },
+                {
+                    $unwind: '$programInfo'
+                },
+                {
+                    $project: {
+                        _id: '$courseDetails._id',
+                        createdAt: '$courseDetails.createdAt',
+                        updatedAt: '$courseDetails.updatedAt',
+                        academicYears: {
+                            $concat: [
+                                { $toString: '$academicYear.startDate' },
+                                ' - ',
+                                { $toString: '$academicYear.endDate' }
+                            ]
+                        },
+                        semesters: '$semester',
+                        program: '$curriculumInfo.programid',
+                        department: '$programInfo.department',
+                        code: '$courseDetails.code',
+                        courseno: '$courseDetails.courseno',
+                        descriptiveTitle: '$courseDetails.descriptiveTitle',
+                        units: '$courseDetails.units',
+                        isActive: true
+                    }
+                }
+            ]);
+
+            if (!response || response.length === 0) {
+                return {
+                    success: false,
+                    message: `No courses found for academic year ${academicYear}.`,
+                    data: []
+                };
+            }
+
+            return {
+                success: true,
+                message: `Courses for academic year ${academicYear} fetched successfully.`,
+                data: response
+            };
+
+        } catch (error) {
+            throw new HttpException(
+                {
+                    success: false,
+                    message: `Failed to fetch all courses for academic year ${academicYear}`,
+                    error
+                },
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
     async findAllActive(): Promise<any> {
         try {
             const response = await this.offeredModel.aggregate([
@@ -96,7 +263,7 @@ export class OfferedService {
             throw new HttpException(
                 {
                     success: false,
-                    message: 'Failed to fetch all courses.',
+                    message: 'Failed to fetch active offered courses..',
                     error
                 },
                 HttpStatus.INTERNAL_SERVER_ERROR
