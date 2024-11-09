@@ -24,14 +24,14 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { DataTableToolbarArchivedOfferedCourses } from './data-table-toolbar-archived-offered-courses.'
+import { DataTableToolbarArchivedSemesterInAcademicYear } from './data-table-toolbar-archived-semesters-in-academic-year'
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
 }
 
-export function DataTableArchivedOfferedCourses<TData, TValue>({
+export function DataTableArchivedSemesterInAcademicYear<TData, TValue>({
     columns,
     data
 }: DataTableProps<TData, TValue>) {
@@ -39,7 +39,8 @@ export function DataTableArchivedOfferedCourses<TData, TValue>({
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
         department: false,
-        program: false
+        program: false,
+        semesters: false
     })
     const [rowSelection, setRowSelection] = React.useState({})
 
@@ -64,7 +65,7 @@ export function DataTableArchivedOfferedCourses<TData, TValue>({
 
     return (
         <div className="w-full flex flex-col gap-4">
-            <DataTableToolbarArchivedOfferedCourses table={table} />
+            <DataTableToolbarArchivedSemesterInAcademicYear table={table} />
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>

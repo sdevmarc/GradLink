@@ -5,7 +5,6 @@ import { Table } from "@tanstack/react-table"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { DataTableFacetedFilter } from "@/components/data-table-components/data-table-faceted-filter"
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>
@@ -15,13 +14,6 @@ export function DataTableToolbarEnrollStudent<TData>({
     table,
 }: DataTableToolbarProps<TData>) {
     const isFiltered = table.getState().columnFilters.length > 0
-    const options = [
-        { label: "1 Unit", value: 1 },
-        { label: "2 Units", value: 2 },
-        { label: "3 Units", value: 3 },
-        { label: "4 Units", value: 4 },
-        { label: "5 Units", value: 5 },
-    ]
 
     return (
         <div className="flex flex-wrap items-center justify-between">

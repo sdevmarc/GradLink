@@ -160,15 +160,6 @@ export function DataTableToolbarListOfStudent<TData>({
                     description={`You will be redirect to page for creating new student.`}
                     btnContinue={() => navigate(ROUTES.NEW_STUDENT)}
                 />
-
-                <AlertDialogConfirmation
-                    type={`default`}
-                    variant={'outline'}
-                    btnTitle="Export"
-                    title="Are you sure?"
-                    description={`This will export the current data you are viewing.`}
-                    btnContinue={() => navigate('/program')}
-                />
             </div>
         </div>
     );

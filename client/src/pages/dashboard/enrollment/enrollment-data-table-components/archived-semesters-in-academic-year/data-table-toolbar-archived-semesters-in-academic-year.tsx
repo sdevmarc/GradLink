@@ -10,7 +10,6 @@ import { API_PROGRAM_FINDALL } from "@/api/program"
 import { useQuery } from "@tanstack/react-query"
 import { IAPIPrograms } from "@/interface/program.interface"
 import { DataTableFacetedFilter } from "@/components/data-table-components/data-table-faceted-filter"
-import { Combobox } from "@/components/combobox"
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>
@@ -22,13 +21,12 @@ interface ProgramOption {
     department: string;
 }
 
-export function DataTableToolbarArchivedOfferedCourses<TData>({
+export function DataTableToolbarArchivedSemesterInAcademicYear<TData>({
     table,
 }: DataTableToolbarProps<TData>) {
     const isFiltered = table.getState().columnFilters.length > 0
     const [formattedprogram, setFormattedProgram] = useState<ProgramOption[]>([]);
     const [filteredPrograms, setFilteredPrograms] = useState<ProgramOption[]>([]);
-    const [yearGraduated, setYearGraduated] = useState<string>('')
 
     const department_options = [
         { value: 'SEAIT', label: "Eng'g, Dev't. Arts & Design, Library Science & IT" },
@@ -37,12 +35,10 @@ export function DataTableToolbarArchivedOfferedCourses<TData>({
         { value: 'STEH', label: "Teacher Education and Humanities" }
     ]
 
-    const sample_academicyear = [
-        { label: '2024 - 2025', value: '2024 - 2025' },
-        { label: '2023 - 2024', value: '2023 - 2024' },
-        { label: '2022 - 2023', value: '2022 - 2023' },
-        { label: '2021 - 2022', value: '2021 - 2022' },
-        { label: '2020 - 2021', value: '2020 - 2021' }
+    const semester_options = [
+        { value: 1, label: "First" },
+        { value: 2, label: "Second" },
+        { value: 3, label: "MidYear" }
     ]
 
     const { data: program, isLoading: programLoading, isFetched: programFetched } = useQuery({
@@ -125,16 +121,13 @@ export function DataTableToolbarArchivedOfferedCourses<TData>({
                         options={filteredPrograms}
                     />
                 )}
-                <div className="w-[150px]">
-                    <Combobox
-                        className='w-[150px]'
-                        lists={sample_academicyear || []}
-                        placeholder={`Academic Year`}
-                        setValue={(item) => setYearGraduated(item)}
-                        value={yearGraduated || ''}
+                {(table.getColumn("semesters") && programFetched) && (
+                    <DataTableFacetedFilter
+                        column={table.getColumn("semesters")}
+                        title="Semester"
+                        options={semester_options}
                     />
-                </div>
-
+                )}
             </div>
         </div>
     )

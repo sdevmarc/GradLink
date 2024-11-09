@@ -16,7 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useQuery } from "@tanstack/react-query"
 import { API_STUDENT_FINDALL_ATTRITION_RATE_COURSES } from "@/api/student"
 
-export const ArchivedOfferedCoursestColumns: ColumnDef<IAPIOffered>[] = [
+export const ArchivedSemesterInAcademicYearColumns: ColumnDef<IAPIOffered>[] = [
     {
         id: "icon",
         cell: () => {
@@ -103,6 +103,15 @@ export const ArchivedOfferedCoursestColumns: ColumnDef<IAPIOffered>[] = [
         enableSorting: false,
     },
     {
+        accessorKey: "semesters",
+        enableColumnFilter: true,
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id))
+        },
+        enableHiding: true,
+        enableSorting: false,
+    },
+    {
         id: "actions",
         cell: ({ row }) => {
             const [isOpen, setIsOpen] = useState<boolean>(false)
@@ -116,8 +125,6 @@ export const ArchivedOfferedCoursestColumns: ColumnDef<IAPIOffered>[] = [
                 queryKey: ['students', id],
                 enabled: !!id
             })
-
-            if (coursesFetched) { console.log(courses.data) }
 
             const handleViewDetails = () => {
                 setIsOpen(true)
