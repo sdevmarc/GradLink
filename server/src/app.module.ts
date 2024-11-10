@@ -60,6 +60,6 @@ import { SettingsModule } from './settings/settings.module';
         SettingsModule,
     ],
     controllers: [AppController],
-    providers: [AppService, AuditlogService, OtpService, ConstantsService],
+    providers: [AppService, OtpService, ConstantsService],
 })
 export class AppModule { }
