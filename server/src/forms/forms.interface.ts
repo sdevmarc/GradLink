@@ -19,7 +19,7 @@ export interface IFormValues {
 export interface IForms {
     title?: string;
     generalInformation?: IFormValues[];
-    educationalBackground?: IFormValues[];
+    // educationalBackground?: IFormValues[];
     employmentData?: IFormValues[];
 }
 
@@ -60,7 +60,7 @@ interface FormSection {
 
 export interface FormStructure {
     generalInformation: FormSection;
-    educationalBackground: FormSection;
+    // educationalBackground: FormSection;
     employmentData: FormSection;
 }
 
@@ -81,6 +81,6 @@ export interface MappedResponse {
     responseId: string;
     createTime: string;
     generalInformation: MappedSection;
-    educationalBackground?: MappedSection;
+    // educationalBackground?: MappedSection;
     employmentData: MappedSection;
 }
