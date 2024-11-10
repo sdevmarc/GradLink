@@ -6,7 +6,7 @@ import { Model } from 'mongoose';
 @Injectable()
 export class AuditlogService {
     constructor(
-        @InjectModel('Auditlog') private readonly AuditlogModel: Model<IAuditlog>
+        @InjectModel('Auditlog') private readonly AuditlogModel: Model<IAuditlog> //Check mo audit log interface, dun ka maglagay ng types niya. Pagbasehan mo yung sa schema, make your own schema kapag.
     ) { }
 
     async sample() {
