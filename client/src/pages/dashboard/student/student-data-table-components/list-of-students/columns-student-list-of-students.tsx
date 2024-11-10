@@ -307,7 +307,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                     <Badge variant="default" className="mr-2">
                                                                         {idNumber || 'No valid ID Number'}
                                                                     </Badge>
-                                                                    <span className="text-muted-foreground">
+                                                                    <span className="text-muted-foreground uppercase">
                                                                         {department} | {programCode} | {programName}
                                                                     </span>
                                                                 </div>
