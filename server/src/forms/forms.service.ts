@@ -92,17 +92,17 @@ export class FormsService {
 
             const structure: FormStructure = {
                 generalInformation: { questions: [] },
-                educationalBackground: { questions: [] },
+                // educationalBackground: { questions: [] },
                 employmentData: { questions: [] }
             };
 
             formItems.forEach((item) => {
                 if (item.pageBreakItem) {
                     switch (item.title) {
-                        case 'EDUCATIONAL BACKGROUND':
-                            currentSection = 'educationalBackground';
-                            structure[currentSection].description = item.description || '';
-                            break;
+                        // case 'EDUCATIONAL BACKGROUND':
+                        //     currentSection = 'educationalBackground';
+                        //     structure[currentSection].description = item.description || '';
+                        //     break;
                         case 'EMPLOYMENT DATA':
                             currentSection = 'employmentData';
                             structure[currentSection].description = item.description || '';

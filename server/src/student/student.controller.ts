@@ -72,7 +72,7 @@ export class StudentController {
             );
         }
 
-        //return await this.studentService.createEnrollee({ idNumber, lastname, firstname, middlename, email, program, courses, undergraduateInformation, achievements })
+        // return await this.studentService.createEnrollee({ idNumber, lastname, firstname, middlename, email, program, courses, undergraduateInformation, achievements })
     }
 
     @Post('enroll-student')
@@ -84,10 +84,7 @@ export class StudentController {
             const issuccess = await this.studentService.enrollStudent({course, id})
             if(issuccess.success){
                 await this.auditlogService.createLog({userId, action: "Enroll", description: `${id.length} student/s was enrolled in ${SelectedCourse.data.descriptiveTitle}`})
-                return { success: true, message: issuccess.message }
             }
-            await this.auditlogService.createLog({ userId, action: "Enroll", description: 'Error Enrollment' })
-            return { success: false, message: issuccess.message }
 
         } catch (error) {
                         throw new HttpException(
@@ -120,12 +117,16 @@ export class StudentController {
         const response = await this.formService.mapQuestionsToAnswers(this.constantsService.getFormId())
 
         const updatePromises = response.map(async (item) => {
-            const idNumber = String(item.generalInformation.answers[0].answer)
-            const { generalInformation, educationalBackground, employmentData } = item
-            return await this.studentService.formUpdateStudent({
-                idNumber,
+            const formemail = String(item.generalInformation.answers[6].answer)
+            const {
                 generalInformation,
-                educationalBackground,
+                // educationalBackground, 
+                employmentData
+            } = item
+            return await this.studentService.formUpdateStudent({
+                email: formemail,
+                generalInformation,
+                // educationalBackground,
                 employmentData,
             })
         })
@@ -133,14 +134,22 @@ export class StudentController {
         const updateResults = await Promise.all(updatePromises)
 
         const resultsPromises = updateResults.map(async (item) => {
-            const { success, message, idNumber } = item
-            if (!success) return await this.studentService.insertFormPending({ idNumber })
+            const {
+                success,
+                message,
+                // email 
+            } = item
+            if (!success) {
+                // return await this.studentService.insertFormPending({ idNumber })
+                return { success: false, message }
+            }
 
             //Testing
             return { success, message }
         })
 
-        const pendingResults = await Promise.all(resultsPromises)
-        return pendingResults
+        // const pendingResults = await Promise.all(resultsPromises)
+        // return pendingResults
+        return resultsPromises
     }
 }

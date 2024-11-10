@@ -1,4 +1,5 @@
 import mongoose, { Mongoose } from "mongoose"
+import { MappedSection } from "src/forms/forms.interface"
 
 interface IStudentEnrollments {
     course?: { _id: string } 
@@ -29,9 +30,9 @@ export interface IStudent {
     firstname?: string
     middlename?: string
     email?: string
-    generalInformation?: {}
-    educationalBackground?: {}
-    employmentData?: {}
+    generalInformation?: MappedSection
+    // educationalBackground?: {}
+    employmentData?: MappedSection
     enrollments?: IStudentEnrollments[]
     status?: string
     isenrolled?: boolean
@@ -60,5 +61,5 @@ export interface IPromiseStudent {
     success: boolean
     message: string
     data?: IStudent[] | {}
-    idNumber?: string
+    email?: string
 }

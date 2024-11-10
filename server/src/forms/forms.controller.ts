@@ -34,30 +34,30 @@ export class FormsController {
             const response = await this.formsService.mapQuestionsToAnswers(this.constantsService.getFormId())
 
             const updatePromises = response.map(async (item) => {
-                const idNumber = String(item.generalInformation.answers[6].answer);
+                const formemail = String(item.generalInformation.answers[6].answer);
                 const {
-                    createTime,
+                    // createTime,
                     generalInformation,
                     //  educationalBackground,
                     employmentData
                 } = item;
 
-                const is_idnumber_in_student = await this.studentModel.findOne({ idNumber })
-                if (is_idnumber_in_student) {
+                const isEmailInStudent = await this.studentModel.findOne({ email: formemail })
+                if (isEmailInStudent) {
                     return await this.studentService.formUpdateStudent({
-                        idNumber,
+                        email: formemail,
                         generalInformation,
                         //  educationalBackground, 
                         employmentData,
                     })
                 }
 
-                const is_idnumber_in_form = await this.formModel.findOne({ idNumber })
+                // const is_idnumber_in_form = await this.formModel.findOne({ idNumber })
 
-                if (is_idnumber_in_form) return { idNumber, message: 'ID Number exists in form model.' }
-                const notes = 'Unknown respondent'
-                await this.formModel.create({ idNumber, date_sent: createTime, notes })
-                return { idNumber, status: 'Created' }
+                // if (is_idnumber_in_form) return { email: formemail, message: 'ID Number exists in form model.' }
+                // const notes = 'Unknown respondent'
+                // await this.formModel.create({ idNumber, date_sent: createTime, notes })
+                return { email: formemail, status: 'Email does not exists in the Gradlink.' }
 
             })
 
@@ -87,9 +87,19 @@ export class FormsController {
 
     @Post('create-form')
     async createForm(
-        @Body() { title, generalInformation, educationalBackground, employmentData }: IForms
+        @Body() {
+             title,
+              generalInformation,
+            //  educationalBackground,
+              employmentData 
+            }: IForms
     ) {
-        return await this.formsService.createFormWithQuestions({ title, generalInformation, educationalBackground, employmentData });
+        return await this.formsService.createFormWithQuestions({
+             title,
+              generalInformation,
+            //    educationalBackground,
+                employmentData 
+            });
     }
 
     @Post(':formId/add-short-answer-question')

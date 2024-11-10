@@ -7,6 +7,18 @@ export const API_STUDENT_FINDALL = async () => {
     return response.data
 }
 
+export const API_STUDENT_FINDALL_FILTERED_ALUMNI = async ({ search, program, yeargraduated }: { search: string, program: string, yeargraduated: string }) => {
+    const response = await axios.post(`${HOST}/student/filtered-alumni`, {
+        search, program, yeargraduated
+    })
+    return response.data
+}
+
+export const API_STUDENT_YEARS_GRADUATED = async () => {
+    const response = await axios.get(`${HOST}/student/years-graduated`)
+    return response.data
+}
+
 export const API_STUDENT_FINDALL_ATTRITION_RATE_COURSES = async (id: string) => {
     const response = await axios.get(`${HOST}/student/attrition/${id}`)
     return response.data

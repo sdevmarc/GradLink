@@ -33,6 +33,17 @@ interface IAchievements {
     examRating?: string
 }
 
+interface MappedAnswer {
+    question: string;
+    answer: string | { [row: string]: string };
+}
+
+export interface MappedSection {
+    title: string;
+    description?: string;
+    questions: MappedAnswer[];
+}
+
 export interface IAPIStudents {
     _id?: string
     idNumber?: string
@@ -56,6 +67,8 @@ export interface IAPIStudents {
     isenrolled?: string
     undergraduateInformation?: IUndergraduateInformation
     achievements?: IAchievements
+    generalInformation?: MappedSection
+    employmentData?: MappedSection
 }
 
 export interface IEvaluation {
