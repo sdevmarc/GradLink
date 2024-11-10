@@ -83,7 +83,7 @@ export class StudentController {
             const SelectedCourse = await this.coursesService.findOneCourse({course})
             const issuccess = await this.studentService.enrollStudent({course, id})
             if(issuccess.success){
-                await this.auditlogService.createLog({userId, action: "Enroll", description: `${id.length} student/s enrolled in ${SelectedCourse.data.descriptiveTitle}`})
+                await this.auditlogService.createLog({userId, action: "Enroll", description: `${id.length} student/s was enrolled in ${SelectedCourse.data.descriptiveTitle}`})
             }
 
         } catch (error) {
