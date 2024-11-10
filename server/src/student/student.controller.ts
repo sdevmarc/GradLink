@@ -83,7 +83,7 @@ export class StudentController {
             const SelectedCourse = await this.coursesService.findOneCourse({course})
             const issuccess = await this.studentService.enrollStudent({course, id})
             if(issuccess.success){
-                await this.auditlogService.createLog({userId, action: "Enroll", description: `${id.length} student/s was enrolled in ${SelectedCourse.data.descriptiveTitle}`})
+                await this.auditlogService.createLog({userId, action: "Enroll", description: `${id.length} student/s enrolled in ${SelectedCourse.data.descriptiveTitle}`})
             }
 
         } catch (error) {
@@ -100,9 +100,26 @@ export class StudentController {
 
     @Post('evaluate-student')
     async evaluateStudentEnrollee(
-        @Body() { evaluations, course }: IRequestStudent
+        @Body() { userId, evaluations, course }: IRequestStudent
     ) {
-        return await this.studentService.evaluateStudent({ evaluations, course })
+
+        try {
+            const SelectedCourse = await this.coursesService.findOneCourse({course})
+            const issuccess = await this.studentService.evaluateStudent({ evaluations, course })
+            if(issuccess.success){
+                await this.auditlogService.createLog({ userId, action: "Evaluate", description: `${evaluations.length} student/s evaluated in ${SelectedCourse.data.descriptiveTitle}` })
+                return { success: true, message: "Students successfully evaluated." }
+            }
+            await this.auditlogService.createLog({ userId, action: "Evaluate", description: 'Error' })
+            return { success: false, message: issuccess.message }
+
+        } catch (error) {
+            throw new HttpException(
+                { success: false, message: 'Failed to fetch audit logs.', error },
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+        //return await this.studentService.evaluateStudent({ evaluations, course })
     }
 
     @Post('activate-student')
