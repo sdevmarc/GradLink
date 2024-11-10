@@ -64,7 +64,8 @@ export const StudentSchema = new mongoose.Schema({
         }
     },
     generalInformation: {},
-    educationalBackground: {},
+    // educationalBackground: {},
+    employmentData: {},
     trainingAdvanceStudies: {},
     isenrolled: {
         type: Boolean,
