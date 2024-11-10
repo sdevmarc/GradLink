@@ -81,6 +81,6 @@ export interface MappedResponse {
     responseId: string;
     createTime: string;
     generalInformation: MappedSection;
-    educationalBackground: MappedSection;
+    educationalBackground?: MappedSection;
     employmentData: MappedSection;
 }

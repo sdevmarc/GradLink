@@ -34,11 +34,23 @@ export class FormsController {
             const response = await this.formsService.mapQuestionsToAnswers(this.constantsService.getFormId())
 
             const updatePromises = response.map(async (item) => {
-                const idNumber = String(item.generalInformation.answers[0].answer);
-                const { createTime, generalInformation, educationalBackground, employmentData } = item;
+                const idNumber = String(item.generalInformation.answers[6].answer);
+                const {
+                    createTime,
+                    generalInformation,
+                    //  educationalBackground,
+                    employmentData
+                } = item;
 
                 const is_idnumber_in_student = await this.studentModel.findOne({ idNumber })
-                if (is_idnumber_in_student) return await this.studentService.formUpdateStudent({ idNumber, generalInformation, educationalBackground, employmentData, })
+                if (is_idnumber_in_student) {
+                    return await this.studentService.formUpdateStudent({
+                        idNumber,
+                        generalInformation,
+                        //  educationalBackground, 
+                        employmentData,
+                    })
+                }
 
                 const is_idnumber_in_form = await this.formModel.findOne({ idNumber })
 

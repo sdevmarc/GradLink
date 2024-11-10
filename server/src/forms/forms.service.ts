@@ -185,7 +185,7 @@ export class FormsService {
                     responseId: response.responseId,
                     createTime: response.createTime,
                     generalInformation: { title: 'GENERAL INFORMATION', answers: [] },
-                    educationalBackground: { title: 'EDUCATIONAL BACKGROUND', answers: [] },
+                    // educationalBackground: { title: 'EDUCATIONAL BACKGROUND', answers: [] },
                     employmentData: { title: 'EMPLOYMENT DATA', answers: [] },
                 };
 
@@ -259,7 +259,12 @@ export class FormsService {
         }
     }
 
-    async createFormWithQuestions({ title, generalInformation, educationalBackground, employmentData }: IForms)
+    async createFormWithQuestions({
+        title,
+        generalInformation,
+        // educationalBackground,
+        employmentData
+    }: IForms)
         : Promise<{ success: boolean, message: string, data: {} }> {
         try {
             // Step 1: Create the form with only the title
@@ -310,22 +315,22 @@ Thank you for your time!`,
             }
 
             // Add educational background section and questions
-            if (educationalBackground && educationalBackground.length > 0) {
-                requests.push({
-                    createItem: {
-                        item: {
-                            title: 'EDUCATIONAL BACKGROUND',
-                            description: `Kindly share details about your educational background, including your degree and institution. This will help us assess the relevance of your academic qualifications to your current employment.`,
-                            pageBreakItem: {}
-                        },
-                        location: {
-                            index: currentIndex++
-                        }
-                    }
-                });
-                requests.push(...this.createQuestionRequests(educationalBackground, currentIndex));
-                currentIndex += educationalBackground.length;
-            }
+            // if (educationalBackground && educationalBackground.length > 0) {
+            //     requests.push({
+            //         createItem: {
+            //             item: {
+            //                 title: 'EDUCATIONAL BACKGROUND',
+            //                 description: `Kindly share details about your educational background, including your degree and institution. This will help us assess the relevance of your academic qualifications to your current employment.`,
+            //                 pageBreakItem: {}
+            //             },
+            //             location: {
+            //                 index: currentIndex++
+            //             }
+            //         }
+            //     });
+            //     requests.push(...this.createQuestionRequests(educationalBackground, currentIndex));
+            //     currentIndex += educationalBackground.length;
+            // }
 
             // Add training and advance studies section and questions
             if (employmentData && employmentData.length > 0) {
