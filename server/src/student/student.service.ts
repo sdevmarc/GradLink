@@ -1389,6 +1389,8 @@ export class StudentService {
                         firstname: 1,
                         middlename: 1,
                         email: 1,
+                        generalInformation: 1,
+                        employmentData: 1,
                         undergraduateInformation: 1,
                         achievements: 1,
                         program: '$programDetails._id',
@@ -1927,30 +1929,52 @@ export class StudentService {
         }
     }
 
-    async formUpdateStudent({ 
-        idNumber, 
-        generalInformation, 
+    async formUpdateStudent({
+        email,
+        generalInformation,
         // educationalBackground, 
-        employmentData 
+        employmentData
     }: IStudent
     )
         : Promise<IPromiseStudent> {
         try {
-            const isstudent = await this.studentModel.findOne({ idNumber })
-            if (!isstudent) return { success: false, message: 'Student do not exist.', idNumber }
+            const isstudent = await this.studentModel.findOne({ email })
+            if (!isstudent) return { success: false, message: 'Student do not exist.', email }
+
+            const filteredGeneralInformation = generalInformation.answers?.map(item => {
+                const { question, answer } = item
+                return { question, answer }
+            })
+
+            const filteredEmplymentData = employmentData.answers?.map(item => {
+                const { question, answer } = item
+                return { question, answer }
+            })
+
+            const finalEmploymentData = {
+                title: employmentData?.title,
+                description: employmentData?.description,
+                questions: filteredEmplymentData
+            }
+
+            const finalGeneralInformation = {
+                title: employmentData?.title,
+                description: employmentData?.description,
+                questions: filteredGeneralInformation
+            }
 
             await this.studentModel.findOneAndUpdate(
-                { idNumber },
+                { email: email },
                 {
-                    generalInformation,
+                    generalInformation: finalGeneralInformation,
                     // educationalBackground,
-                    employmentData,
+                    employmentData: finalEmploymentData,
                     isenrolled: false,
-                    graduation_date: Date.now()
+                    // graduation_date: Date.now()
                 },
                 { new: true }
             )
-            return { success: true, message: 'Alumni Graduate updated successfully.', idNumber }
+            return { success: true, message: 'Alumni Graduate updated successfully.', email }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Failed to update student graduate', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
