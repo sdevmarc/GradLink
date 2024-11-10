@@ -32,9 +32,19 @@ export class StudentController {
         return this.studentService.findAllStudentsInCourseForAttritionRate(id)
     }
 
+    @Post('filtered-alumni')
+    async findAllFilteredAlumni(@Body() { search, program, yeargraduated }: { search: string, program: string, yeargraduated: string }) {
+        return this.studentService.findFilteredAlumni({ search, program, yeargraduated })
+    }
+
     @Get('alumni')
     async findAllAlumniGraduates() {
         return this.studentService.findAllAlumni()
+    }
+
+    @Get('years-graduated')
+    async findAllYearsGraduation() {
+        return this.studentService.findAllYearrGraduated()
     }
 
     @Post('new-student')
