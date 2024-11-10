@@ -1,7 +1,9 @@
+import mongoose from "mongoose"
 
 
 export interface ICourses {
     _id?: string
+    userId?: mongoose.Schema.Types.ObjectId
     code?: number
     courseno?: string
     descriptiveTitle?: string

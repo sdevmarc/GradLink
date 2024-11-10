@@ -1,5 +1,6 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Get, Post, Body } from '@nestjs/common';
 import { AuditlogService } from './auditlog.service';
+import { IAuditlog } from './auditlog.interface';
 
 @Controller('auditlog')
 export class AuditlogController {
@@ -7,8 +8,16 @@ export class AuditlogController {
         private readonly auditlogService: AuditlogService
     ) { }
 
-    @Post('test') //so bali pagtetest mo sa postman to e localhost:3002/auditlog/test
-    async sampleApi() {
-        return await this.auditlogService.sample()
+    // POST endpoint to create a new audit log entry
+    @Post('create')  // Accessible via POST /auditlog/create
+    async createLog(@Body() logData: IAuditlog) {
+        return await this.auditlogService.createLog(logData);
     }
+
+    // GET endpoint to retrieve all audit logs
+    @Get('')  // Accessible via GET /auditlog/all
+    async getAllLogs() {
+        return await this.auditlogService.getAllLogs();
+    }
+
 }

@@ -9,11 +9,26 @@ export class AuditlogService {
         @InjectModel('Auditlog') private readonly AuditlogModel: Model<IAuditlog> //Check mo audit log interface, dun ka maglagay ng types niya. Pagbasehan mo yung sa schema, make your own schema kapag.
     ) { }
 
-    async sample() {
+    async createLog({ userId, action, description }: IAuditlog): Promise<IAuditlog> {
         try {
-
+            const newLog = new this.AuditlogModel({ userId, action, description });
+            return await newLog.save();
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Failed to fetch all courses.', error }, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new HttpException(
+                { success: false, message: 'Failed to create audit log.', error },
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    async getAllLogs(): Promise<IAuditlog[]> {
+        try {
+            return await this.AuditlogModel.find().sort({ createdAt: -1 }).exec();
+        } catch (error) {
+            throw new HttpException(
+                { success: false, message: 'Failed to fetch audit logs.', error },
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
         }
     }
 }

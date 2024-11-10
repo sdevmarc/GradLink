@@ -4,11 +4,10 @@ import { AppService } from './app.service'
 import { UsersModule } from './users/users.module'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { StudentModule } from './student/student.module'
-import { AuditlogService } from './auditlog/auditlog.service'
+// import { AuditlogService } from './auditlog/auditlog.service'
 import { OtpService } from './otp/otp.service'
 import { MongooseModule } from '@nestjs/mongoose'
 import { OtpModule } from './otp/otp.module'
-import { AuditlogModule } from './auditlog/auditlog.module'
 import { JwtModule } from '@nestjs/jwt'
 import { ProgramsModule } from './programs/programs.module'
 import { CoursesModule } from './courses/courses.module'
@@ -19,6 +18,7 @@ import { MailerModule } from '@nestjs-modules/mailer'
 import { CurriculumModule } from './curriculum/curriculum.module'
 import { OfferedModule } from './offered/offered.module';
 import { SettingsModule } from './settings/settings.module';
+import { AuditlogModule } from './auditlog/auditlog.module';
 
 @Module({
     imports: [
@@ -50,7 +50,6 @@ import { SettingsModule } from './settings/settings.module';
         UsersModule,
         StudentModule,
         OtpModule,
-        AuditlogModule,
         CoursesModule,
         FormsModule,
         MailModule,
@@ -58,6 +57,7 @@ import { SettingsModule } from './settings/settings.module';
         ProgramsModule,
         OfferedModule,
         SettingsModule,
+        AuditlogModule,
     ],
     controllers: [AppController],
     providers: [AppService, OtpService, ConstantsService],

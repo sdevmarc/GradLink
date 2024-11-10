@@ -8,17 +8,7 @@ export const AuditSchema = new mongoose.Schema({
     },
     action: {
         type: String,
-        enum: ['create', 'update', 'delete', 'read'],
         required: true,
-    },
-    collectionName: {
-        type: String,
-        required: true,
-    },
-    changes: {
-        type: Map,
-        of: mongoose.Schema.Types.Mixed,
-        default: {}
     },
     description: {
         type: String,

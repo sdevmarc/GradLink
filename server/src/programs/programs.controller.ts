@@ -1,13 +1,15 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common'
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Post } from '@nestjs/common'
 import { ProgramsService } from './programs.service'
 import { IPrograms } from './programs.interface'
 import { CurriculumService } from 'src/curriculum/curriculum.service'
+import { AuditlogService } from 'src/auditlog/auditlog.service'
 
 @Controller('programs')
 export class ProgramsController {
     constructor(
         private readonly programService: ProgramsService,
-        private readonly curriculumService: CurriculumService
+        private readonly curriculumService: CurriculumService,
+        private readonly auditlogService: AuditlogService
     ) { }
 
     @Get()
@@ -22,8 +24,23 @@ export class ProgramsController {
 
     @Post('create')
     async createProgram(
-        @Body() { code, descriptiveTitle, residency, department }: IPrograms
+        @Body() { userId, code, descriptiveTitle, residency, department }: IPrograms
     ) {
-        return await this.programService.insertNew({ code, descriptiveTitle, residency, department })
+        try {
+            const issuccess = await this.programService.insertNew({ code, descriptiveTitle, residency, department })
+
+            if (issuccess.success) {
+                await this.auditlogService.createLog({ userId, action: "create", description: `Program created is ${code}` })
+                return { success: true, message: "Program successfully created." }
+            }
+            await this.auditlogService.createLog({ userId, action: "create", description: 'Error' })
+            return { success: false, message: issuccess.message }
+
+        } catch (error) {
+            throw new HttpException(
+                { success: false, message: 'Failed to fetch audit logs.', error },
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
     }
 }

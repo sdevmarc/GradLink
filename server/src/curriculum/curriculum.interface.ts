@@ -1,3 +1,5 @@
+import mongoose from "mongoose"
+
 interface ICategories {
     categoryName: string
     courses: string[]
@@ -5,6 +7,7 @@ interface ICategories {
 
 export interface ICurriculum {
     _id?: string
+    userId?: mongoose.Schema.Types.ObjectId
     name?: string
     programid?: string
     major?: string
