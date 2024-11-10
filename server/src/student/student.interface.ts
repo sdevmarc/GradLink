@@ -1,7 +1,7 @@
 import mongoose, { Mongoose } from "mongoose"
 
 interface IStudentEnrollments {
-    course?: string[]
+    course?: { _id: string } 
     enrollmentDate?: string
     ispass?: 'pass' | 'fail' | 'inc' | 'ongoing' | 'drop' | 'discontinue'
 }
@@ -40,6 +40,7 @@ export interface IStudent {
     courses?: string[]
     undergraduateInformation?: IUndergraduateInformation
     achievements?: IAchievements
+    graduation_date?: Date
 }
 
 export interface IEvaluationItem {
