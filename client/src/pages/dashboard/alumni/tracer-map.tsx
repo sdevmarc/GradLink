@@ -11,7 +11,7 @@ import './index.css'
 import { Input } from "@/components/ui/input"
 import { Combobox } from "@/components/combobox"
 import { Badge } from "@/components/ui/badge"
-import { BookOpen, Clock, Filter, GraduationCap, Search } from "lucide-react"
+import { BookOpen, CircleCheck, CircleDashed, CircleX, Clock, Filter, GraduationCap, Loader, Mail, Search } from "lucide-react"
 import { SheetModal } from "@/components/sheet-modal"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { LeftSheetModal } from "@/components/left-sheet-modal"
@@ -19,33 +19,10 @@ import { createPortal } from 'react-dom';
 import AlumniCap from '@/assets/alumnicap.svg';
 import { department } from '@/components/data-table-components/options.json'
 
-interface MapProps {
-    setSelectedMarker: (id: string | null) => void
-}
-
-interface Marker {
-    lng: number
-    lat: number
-    title: string
-    idNumber: string
-}
-
 export default function TracerMap() {
     const [isSearch, setSearch] = useState<boolean>(false)
-    const [isDetailsOpen, setDetailsOpen] = useState<boolean>(false)
-    const [selectedMarker, setSelectedMarker] = useState<string | null>(null)
     const [program, setProgram] = useState<string>('')
     const [yearGraduated, setYearGraduated] = useState<string>('')
-
-    useEffect(() => {
-        if (selectedMarker) {
-            setDetailsOpen(true)
-        }
-    }, [selectedMarker])
-
-    const handleDetailsOpenChange = (open: boolean) => {
-        setDetailsOpen(open)
-    }
 
     const handleSearchOpenChange = (open: boolean) => {
         setSearch(open)
@@ -113,78 +90,14 @@ export default function TracerMap() {
                                 </div>
 
                                 <div className="w-full min-h-[65%] rounded-md overflow-hidden">
-                                    <Map setSelectedMarker={(e) => setSelectedMarker(e)} />
+                                    <Map />
                                     <LeftSheetModal
                                         className="w-[30%]"
                                         isOpen={isSearch}
                                         onOpenChange={handleSearchOpenChange}
                                         title="Search for alumni"
                                         description="View searched results."
-                                        content={''}
-                                    />
-                                    <SheetModal
-                                        className="w-[60%]"
-                                        isOpen={isDetailsOpen}
-                                        onOpenChange={handleDetailsOpenChange}
-                                        title="Alumni Details"
-                                        description="View details of the selected alumna."
-                                        content={
-                                            <div className="flex flex-col min-h-screen items-center">
-                                                <div className="w-full max-w-[90rem] flex flex-col">
-                                                    <main className="flex justify-center items-center py-4">
-                                                        <div className="min-h-screen w-full max-w-[70rem]">
-                                                            <Card className="w-full mx-auto">
-                                                                <CardHeader>
-                                                                    <div className="flex justify-between items-start">
-                                                                        <div>
-                                                                            <CardTitle className="capitalize text-3xl font-bold">
-                                                                                MASTER OF INFORMATION TECHNOLOGY
-                                                                            </CardTitle>
-                                                                            <CardDescription className="mt-2">
-                                                                                <Badge variant="default" className="mr-2">
-                                                                                    MIT
-                                                                                </Badge>
-                                                                                <span className="text-muted-foreground">
-                                                                                    CURRICULUM 2024
-                                                                                </span>
-                                                                            </CardDescription>
-                                                                        </div>
-                                                                        {/* <Button>Apply Now</Button> */}
-                                                                    </div>
-                                                                </CardHeader>
-                                                                <CardContent className="space-y-4">
-                                                                    <section className="space-y-4">
-                                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                                            <div className="flex items-center">
-                                                                                <Clock className="h-5 w-5 mr-2 text-muted-foreground" />
-                                                                                <span>Residency: 3 years</span>
-                                                                            </div>
-                                                                            <div className="flex items-center">
-                                                                                <BookOpen className="h-5 w-5 mr-2 text-muted-foreground" />
-                                                                                <span>Credits: 2-</span>
-                                                                            </div>
-                                                                        </div>
-                                                                    </section>
-
-                                                                    <section className="space-y-4">
-                                                                        <div>
-                                                                            <h3 className="font-semibold text-lg">Courses</h3>
-                                                                            <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
-                                                                                <li className="flex items-center">
-                                                                                    <GraduationCap className="h-5 w-5 mr-2 text-muted-foreground" />
-                                                                                    Data Analytics
-                                                                                </li>
-
-                                                                            </ul>
-                                                                        </div>
-                                                                    </section>
-                                                                </CardContent>
-                                                            </Card>
-                                                        </div>
-                                                    </main>
-                                                </div>
-                                            </div>
-                                        }
+                                        content={<SearchCard idNumber="37472210" />}
                                     />
                                 </div>
                             </div>
@@ -196,78 +109,63 @@ export default function TracerMap() {
     )
 }
 
-// const AlumniDetails = ({ idNumber, onClose }: AlumniDetailsProps) => {
-//     // const idNumber = '37472210'
+const SearchCard = ({ idNumber }: { idNumber: string }) => {
+    console.log('From search card: ', idNumber)
+    return (
+        <div className="flex flex-col">
+            <Card className="w-full mx-auto">
+                <CardHeader>
+                    <div className="flex justify-between items-start">
+                        <div className="w-full flex flex-col">
+                            <div className="w-full flex items-center justify-between">
+                                <CardTitle className="uppercase text-3xl font-bold flex flex-col">
+                                    {/* {lastname}, {firstname} {middlename} */} SUAREZ, MARC EDISON DONATO
+                                    <span className="font-normal text-md lowercase flex items-center gap-2">
+                                        <Mail className="text-muted-foreground" size={18} />
+                                        {/* {email || 'No valid Email'} */} suanieeee@yahoo.com
+                                    </span>
+                                </CardTitle>
+                            </div>
 
-//     const { data: dataAlumni, isLoading: isalumniLoading, isFetched: isalumniFetched } = useQuery({
-//         queryFn: () => API_STUDENT_FINDONE_ALUMNI({ idNumber }),
-//         queryKey: ['alumni', { idNumber }],
-//         enabled: !!idNumber
-//     })
+                            <CardDescription className="mt-2 flex flex-col items-start gap-2">
+                                <div className="flex items-center">
+                                    <Badge variant="default" className="mr-2">
+                                        {/* {idNumber || 'No valid ID Number'} */} 37472210
+                                    </Badge>
+                                    <span className="text-muted-foreground uppercase">
+                                        {/* {department} | {programCode} | {programName} */}
+                                        SEAIT | MIT | Master Of Information Technology
+                                    </span>
+                                </div>
+                                <Badge variant="default" className="mr-2">
+                                    {/* {idNumber || 'No valid ID Number'} */} Software Engineer
+                                </Badge>
+                            </CardDescription>
+                        </div>
+                    </div>
+                    <div className="flex items-center justify-end gap-2">
+                        <Button variant={`outline`} size={`sm`}>
+                            View in Map
+                        </Button>
+                        <Button variant={`default`} size={`sm`}>
+                            View Profile
+                        </Button>
+                    </div>
+                </CardHeader>
+            </Card>
+        </div>
+    )
+}
 
-//     const removeNumbering = (question: string) => {
-//         return question.replace(/^\d+\.\s*/, '') // Removes the number followed by a dot and optional space
-//     }
+interface Marker {
+    lng: number
+    lat: number
+    name: string
+    idNumber: string
+    program: string
+    yearGraduated: string
+}
 
-//     // if (isalumniFetched) { dataAlumni.data.trainingAdvanceStudies.answers.map((item: Answer) => { console.log(item) }) }
-
-//     return (
-//         <>
-//             <div className="z-[1] w-[27%] h-[88dvh] backdrop-blur-[1rem] backdrop-saturate-50 fixed top-[4.5rem] left-[5%] translate-x-[-17%] p-4 rounded-lg shadow-[_0_10px_15px_-3px_rgba(0,0,0,0.1)] before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-full before:h-1/3 before:rounded-lg before:bg-gradient-to-t before:from-accent">
-//                 <div onClick={onClose} className='z-[1] absolute top-4 right-[-6.5%] px-2 py-2 rounded-lg bg-primary hover:bg-black/80 cursor-pointer'>
-//                     <X size={20} color='#ffffff' />
-//                 </div>
-//                 {isalumniLoading && <div className="text-center">Loading...</div>}
-//                 {
-//                     isalumniFetched &&
-//                     <div className="w-full h-full flex flex-col gap-2 overflow-hidden">
-//                         <Button variant={`outline`} size={`sm`} className='absolute bg-primary text-primary-foreground bottom-[5%] left-[50%] translate-x-[-50%]'>
-//                             View More
-//                         </Button>
-//                         <div className="bg-white p-4 rounded-lg shadow-sm">
-//                             <h2 className="text-lg font-semibold text-primary mb-4">General Information</h2>
-//                             <div className="grid grid-cols-1 gap-3">
-//                                 <div className="flex justify-between items-center border-b pb-2">
-//                                     <span className="text-sm text-gray-600">
-//                                         Name
-//                                     </span>
-//                                     <span className="text-sm font-medium text-gray-800">
-//                                         {dataAlumni.data.name || 'N/A'}
-//                                     </span>
-//                                 </div>
-//                                 {
-//                                     dataAlumni.data.generalInformation.answers.map((item: Answer) => (
-//                                         <div key={item.index} className="flex justify-between items-center border-b pb-2">
-//                                             <span className="text-sm text-gray-600">
-//                                                 {removeNumbering(item.question)}
-//                                             </span>
-//                                             <span className="text-sm font-medium text-gray-800">
-//                                                 {item.answer}
-//                                             </span>
-//                                         </div>
-//                                     ))
-//                                 }
-//                             </div>
-//                         </div>
-//                         <div className=" bg-white p-4 rounded-lg shadow-sm">
-//                             <h2 className="text-lg font-semibold text-primary mb-4 line-clamp-1">Training(s) Advance Studies Attended After College</h2>
-//                             <div className="grid grid-cols-1 gap-3">
-//                                 <div className="flex justify-between items-center border-b pb-2">
-//                                     <span className="text-sm text-gray-600">
-//                                         {dataAlumni.data.trainingAdvanceStudies.answers[0].question}
-//                                     </span>
-//                                     <span className="text-sm font-medium text-gray-800">
-//                                         {dataAlumni.data.trainingAdvanceStudies.answers[0].answer || 'N/A'}
-//                                     </span>
-//                                 </div>
-//                             </div>
-//                         </div>
-//                     </div>
-//                 }
-//             </div>
-//         </>
-//     )
-// }
 
 const HoverCard = ({
     isVisible,
@@ -285,19 +183,24 @@ const HoverCard = ({
             className="fixed z-[1000] bg-white rounded-lg shadow-lg p-3 min-w-[200px]"
             style={{
                 left: position.x - 100,
-                top: position.y - 100,
+                top: position.y - 130,
             }}
         >
             <div className="space-y-2">
-                <div className="flex items-center gap-2 border-b pb-2">
+                <div className="w-full flex items-center justify-between gap-2 pb-2">
                     <img src={AlumniCap} alt="Alumni" className="w-6 h-6" />
-                    <div>
-                        <h3 className="font-medium text-sm">{markerData.title}</h3>
-                        <p className="text-xs text-gray-500">{markerData.idNumber}</p>
+                    <div className="w-full flex items-center justify-end">
+                        <div className="w-full flex flex-col gap-1 ">
+                            <h3 className="font-medium text-sm">{markerData.name}</h3>
+                            <p className="text-xs text-gray-500">{markerData.idNumber}</p>
+                            <p className="text-xs font-semibold">
+                                2024 - 2025
+                            </p>
+                            <p className="text-xs font-semibold">
+                                MIT
+                            </p>
+                        </div>
                     </div>
-                </div>
-                <div className="text-xs space-y-1 pt-1">
-                    <p>Location: {markerData.lat.toFixed(4)}, {markerData.lng.toFixed(4)}</p>
                 </div>
             </div>
         </div>,
@@ -305,7 +208,12 @@ const HoverCard = ({
     );
 };
 
-const Map = ({ setSelectedMarker }: MapProps) => {
+
+const Map = () => {
+    const [selectedmarker, setSelectedMarker] = useState<{ visible: boolean, idNumber: string }>({
+        visible: false,
+        idNumber: ''
+    })
     const [hoverInfo, setHoverInfo] = useState<{
         visible: boolean;
         position: { x: number; y: number };
@@ -322,9 +230,9 @@ const Map = ({ setSelectedMarker }: MapProps) => {
     const [zoom, setZoom] = useState(3)
     const [isMapLoading, setMapLoading] = useState(true) // Add loading state
     const markers: Marker[] = [
-        { lng: 121.3598812, lat: 17.667649, title: 'Marker 1', idNumber: '37472210' },
-        { lng: 118.0583411, lat: 17.7292005, title: 'Marker 2', idNumber: '12345678' },
-        { lng: 121.16, lat: 16.49, title: 'Marker 3', idNumber: '87654321' },
+        { lng: 121.3598812, lat: 17.667649, name: 'Marc Edison Suarez', idNumber: '37472210', program: 'MIT', yearGraduated: '2025 - 2026' },
+        { lng: 118.0583411, lat: 17.7292005, name: 'Juan Dela Cruz', idNumber: '12345678', program: 'MIT', yearGraduated: '2025 - 2026' },
+        { lng: 121.16, lat: 16.49, name: 'John Doe', idNumber: '87654321', program: 'MIT', yearGraduated: '2025 - 2026' },
     ]
 
     mapboxgl.accessToken = MAPKEY
@@ -335,7 +243,7 @@ const Map = ({ setSelectedMarker }: MapProps) => {
             map.current = new mapboxgl.Map({
                 container: mapContainer.current,
                 style: 'mapbox://styles/mapbox/streets-v12',
-                center: [lng, lat],
+                center: [121.15340385396442, 16.48675023322725],
                 zoom,
             })
 
@@ -373,7 +281,12 @@ const Map = ({ setSelectedMarker }: MapProps) => {
                         .addTo(map.current!)
                         .getElement()
                         .addEventListener('click', () => {
-                            setSelectedMarker(marker.idNumber) // Set the selected marker
+                            console.log('click')
+                            setSelectedMarker(prev => ({
+                                ...prev,
+                                visible: true,
+                                idNumber: marker.idNumber
+                            }))
                         })
                 })
             })
@@ -383,7 +296,14 @@ const Map = ({ setSelectedMarker }: MapProps) => {
                 setMapLoading(false);
             });
         }
-    }, [lng, lat, zoom, markers, setSelectedMarker])
+    }, [lng, lat, zoom, markers, selectedmarker])
+
+    const handleCloseModal = () => {
+        setSelectedMarker({
+            visible: false,
+            idNumber: ''
+        });
+    };
 
     return (
 
@@ -397,6 +317,224 @@ const Map = ({ setSelectedMarker }: MapProps) => {
                     markerData={hoverInfo.marker}
                 />
             )}
+            <SheetModal
+                className="w-[60%]"
+                isOpen={selectedmarker.visible}
+                onOpenChange={handleCloseModal}
+                title="Alumni Details"
+                description="View details of the selected alumna."
+                content={
+                    <div className="flex flex-col min-h-screen items-center">
+                        <div className="w-full max-w-[90rem] flex flex-col">
+                            <main className="flex justify-center items-center py-4">
+                                <div className="min-h-screen w-full max-w-[70rem] flex flex-col gap-4">
+                                    <Card className="w-full mx-auto">
+                                        <CardHeader>
+                                            <div className="flex justify-between items-start">
+                                                <div className="w-full flex flex-col">
+                                                    <div className="w-full flex items-center justify-between">
+                                                        <CardTitle className="uppercase text-3xl font-bold flex flex-col">
+                                                            {/* {lastname}, {firstname} {middlename} */}
+                                                            SUAREZ, MARC EDISON D.
+                                                            <span className="font-normal text-md lowercase flex items-center gap-2">
+                                                                <Mail className="text-muted-foreground" size={18} />
+                                                                {/* {email || 'No valid Email'} */}
+                                                                suanieeee@yahoo.com
+                                                            </span>
+                                                        </CardTitle>
+
+                                                    </div>
+
+                                                    <CardDescription className="mt-2 flex items-center justify-between">
+                                                        <div className="flex items-center">
+                                                            <Badge variant="default" className="mr-2">
+                                                                {/* {idNumber || 'No valid ID Number'} */}
+                                                                37472210
+                                                            </Badge>
+                                                            <span className="text-muted-foreground uppercase">
+                                                                {/* {department} | {programCode} | {programName} */}
+                                                                SEAIT | MIT | Master of Information Technology
+                                                            </span>
+                                                        </div>
+                                                    </CardDescription>
+                                                </div>
+                                                {/* <Button>Apply Now</Button> */}
+                                            </div>
+                                        </CardHeader>
+                                        <CardContent className="space-y-4">
+                                            <div className="w-full mx-auto">
+                                                <CardHeader>
+                                                    <CardTitle className="text-xl">Bachelor's Degree Information</CardTitle>
+                                                </CardHeader>
+                                                <CardContent className="flex flex-wrap gap-4">
+                                                    <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                        <span className="text-md font-semibold">
+                                                            College/University
+                                                        </span>
+                                                        <span className="text-md font-normal">
+                                                            {/* {undergraduateInformation?.college || 'None'} */}
+                                                            Saint Mary's University
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                        <span className="text-md font-semibold">
+                                                            School
+                                                        </span>
+                                                        <span className="text-md font-normal">
+                                                            {/* {undergraduateInformation?.school || 'None'} */}
+                                                            College of Law
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                        <span className="text-md font-semibold">
+                                                            Program
+                                                        </span>
+                                                        <span className="text-md font-normal">
+                                                            {/* {undergraduateInformation?.programGraduated || 'None'} */}
+                                                            MIT
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                        <span className="text-md font-semibold">
+                                                            Year Graduated
+                                                        </span>
+                                                        <span className="text-md font-normal">
+                                                            {/* {undergraduateInformation?.yearGraduated || 'None'} */}
+                                                            2025
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                        <span className="text-md font-semibold">
+                                                            Honors/Awards Received
+                                                        </span>
+                                                        <span className="text-md font-normal">
+                                                            {/* {achievements?.awards || 'None'} */}
+                                                            Academic Achiever
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                        <span className="text-md font-semibold">
+                                                            Professional Exam Passed
+                                                        </span>
+                                                        <span className="text-md font-normal">
+                                                            {/* {achievements?.examPassed || 'None'} */}
+                                                            CSE
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                        <span className="text-md font-semibold">
+                                                            Professional Exam Date
+                                                        </span>
+                                                        <span className="text-md font-normal">
+                                                            {/* {achievements?.examDate || 'None'} */}
+                                                            2024
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                        <span className="text-md font-semibold">
+                                                            Professional Exam Rating
+                                                        </span>
+                                                        <span className="text-md font-normal">
+                                                            {/* {achievements?.examRating ? `${achievements?.examRating}%` : 'None'} */}
+                                                            20%
+                                                        </span>
+                                                    </div>
+
+                                                </CardContent>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                    <Card className="w-full mx-auto">
+                                        <CardHeader>
+                                            <div className="w-full flex flex-col items-start gap-2">
+                                                <div className="w-full flex items-center justify-between">
+                                                    <h1 className="text-xl font-semibold">
+                                                        {/* {programName} */} Master Of Information Technology
+                                                    </h1>
+                                                </div>
+
+                                                <div className="w-full flex items-center justify-between">
+                                                    <h1 className="text-lg font-medium flex items-center gap-2">
+                                                        Courses:
+                                                    </h1>
+                                                    <div className="flex items-center">
+                                                        <BookOpen className="h-5 w-5 mr-2 text-muted-foreground" />
+                                                        {/* <span>Credits: {totalOfUnitsEarned} / {totalOfUnitsEnrolled}</span> */}
+                                                        <span>Credits: 20 / 20</span>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </CardHeader>
+                                        <CardContent className="space-y-4">
+                                            <div className="flex flex-col">
+                                                <table className="w-full ">
+                                                    <thead>
+                                                        <tr className="border-b">
+                                                            <th className="text-left font-normal pb-2">Course No.</th>
+                                                            <th className="text-left font-medium pb-2">Descriptive Title</th>
+                                                            <th className="text-left font-medium pb-2">Status</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {/* {enrolledCourses?.map((item, i) => (
+                                                        <tr key={i} className="border-b last:border-0">
+                                                            <td className="py-2">
+                                                                <span className="capitalize text-sm font-normal flex items-center gap-2">
+                                                                    <GraduationCap size={18} className="h-5 w-5 text-muted-foreground" />
+                                                                    {item.courseno}
+                                                                </span>
+                                                            </td>
+                                                            <td className="py-2">
+                                                                <span className="capitalize text-sm font-normal flex items-center gap-2">
+                                                                    {item.descriptiveTitle}
+                                                                </span>
+                                                            </td>
+                                                            <td className="py-2 text-left text-medium">
+                                                                <span className="text-sm font-normal flex items-center gap-2 capitalize ">
+                                                                    {
+                                                                        item.status === 'ongoing' &&
+                                                                        <div className="flex items-center gap-2">
+                                                                            <Loader className="text-primary" size={18} />
+                                                                            Ongoing
+                                                                        </div>
+                                                                    }
+                                                                    {
+                                                                        item.status === 'pass' &&
+                                                                        <div className="flex items-center gap-2">
+                                                                            <CircleCheck className="text-primary" size={18} />
+                                                                            PASSED
+                                                                        </div>
+                                                                    }
+                                                                    {
+                                                                        item.status === 'fail' &&
+                                                                        <div className="flex items-center gap-2">
+                                                                            <CircleX className="text-primary" size={18} />
+                                                                            Failed
+                                                                        </div>
+                                                                    }
+                                                                    {
+                                                                        item.status === 'not_taken' &&
+                                                                        <div className="flex items-center gap-2">
+                                                                            <CircleDashed className="text-primary" size={18} />
+                                                                            Not taken yet
+                                                                        </div>
+                                                                    }
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                    ))} */}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                </div>
+                            </main>
+                        </div>
+                    </div>
+                }
+            />
         </div>
     )
 }
