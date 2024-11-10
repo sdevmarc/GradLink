@@ -84,7 +84,10 @@ export class StudentController {
             const issuccess = await this.studentService.enrollStudent({course, id})
             if(issuccess.success){
                 await this.auditlogService.createLog({userId, action: "Enroll", description: `${id.length} student/s was enrolled in ${SelectedCourse.data.descriptiveTitle}`})
+                return { success: true, message: issuccess.message }
             }
+            await this.auditlogService.createLog({ userId, action: "Enroll", description: 'Error Enrollment' })
+            return { success: false, message: issuccess.message }
 
         } catch (error) {
                         throw new HttpException(
