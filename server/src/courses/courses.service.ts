@@ -89,6 +89,15 @@ export class CoursesService {
         }
     }
 
+    async findOneCourse({ course }: { course: string }) {
+        try {
+            const response = await this.CourseModel.findById(course)
+            return { success: true, message: 'Course fetched successfully. ', data: response }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Failed to fetch course.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
     async create({ code, courseno, descriptiveTitle, units }: ICourses)
         : Promise<IPromiseCourse> {
         try {
