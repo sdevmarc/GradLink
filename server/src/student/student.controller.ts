@@ -1,8 +1,10 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common'
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Post } from '@nestjs/common'
 import { StudentService } from './student.service'
 import { IRequestStudent, IStudent } from './student.interface'
 import { FormsService } from 'src/forms/forms.service'
 import { ConstantsService } from 'src/constants/constants.service'
+import { AuditlogService } from 'src/auditlog/auditlog.service'
+import { CoursesService } from 'src/courses/courses.service'
 
 @Controller('student')
 export class StudentController {
@@ -10,6 +12,8 @@ export class StudentController {
         private readonly studentService: StudentService,
         private readonly formService: FormsService,
         private readonly constantsService: ConstantsService,
+        private readonly auditlogService: AuditlogService,
+        private readonly coursesService: CoursesService
     ) { }
 
     @Get()
@@ -49,17 +53,50 @@ export class StudentController {
 
     @Post('new-student')
     async createStudentEnrollee(
-        @Body() { idNumber, lastname, firstname, middlename, email, program, courses, undergraduateInformation, achievements }: IStudent
+        @Body() { userId, idNumber, lastname, firstname, middlename, email, program, courses, undergraduateInformation, achievements }: IStudent
     ) {
-        return await this.studentService.createEnrollee({ idNumber, lastname, firstname, middlename, email, program, courses, undergraduateInformation, achievements })
+        try {
+            const issuccess = await this.studentService.createEnrollee({ idNumber, lastname, firstname, middlename, email, program, courses, undergraduateInformation, achievements })
+            if (issuccess.success)
+            {
+                await this.auditlogService.createLog({ userId, action: "create", description: `Student created w/ ID no: ${idNumber}` })
+                return { success: true, message: "Student successfully created." }
+            }
+            await this.auditlogService.createLog({ userId, action: "create", description: 'Error' })
+            return { success: false, message: issuccess.message }
+
+        } catch (error) {
+            throw new HttpException(
+                { success: false, message: 'Failed to fetch audit logs.', error },
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+
+        //return await this.studentService.createEnrollee({ idNumber, lastname, firstname, middlename, email, program, courses, undergraduateInformation, achievements })
     }
 
     @Post('enroll-student')
     async enrollStudentEnrollee(
-        @Body() { course, id }: IRequestStudent
+        @Body() { userId, course, id }: IRequestStudent
     ) {
+        try {
+            const SelectedCourse = await this.coursesService.findOneCourse({course})
+            const issuccess = await this.studentService.enrollStudent({course, id})
+            if(issuccess.success){
+                await this.auditlogService.createLog({userId, action: "Enroll", description: `${id.length} student/s was enrolled in ${SelectedCourse.data.descriptiveTitle}`})
+            }
+
+        } catch (error) {
+                        throw new HttpException(
+                { success: false, message: 'Failed to fetch audit logs.', error },
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+
+        //console.log(SelectedCourse.data.descriptiveTitle)
         return await this.studentService.enrollStudent({ course, id })
     }
+
 
     @Post('evaluate-student')
     async evaluateStudentEnrollee(
