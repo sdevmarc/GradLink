@@ -5,6 +5,7 @@ import { IPromiseStudent, IRequestStudent, IStudent } from './student.interface'
 import { IModelForm } from 'src/forms/forms.interface'
 import { ICourses } from 'src/courses/courses.interface'
 import { IOffered } from 'src/offered/offered.interface'
+import { ICurriculum } from 'src/curriculum/curriculum.interface'
 
 @Injectable()
 export class StudentService {
@@ -13,7 +14,210 @@ export class StudentService {
         @InjectModel('Form') private readonly formModel: Model<IModelForm>,
         @InjectModel('Course') private readonly courseModel: Model<ICourses>,
         @InjectModel('Offered') private readonly offeredModel: Model<IOffered>,
+        @InjectModel('Curriculum') private readonly curriculumModel: Model<ICurriculum>,
     ) { }
+
+    async findAllYearrGraduated(): Promise<IPromiseStudent> {
+        try {
+            const response = await this.studentModel.aggregate([
+                // Unwind enrollments to get individual enrollment records
+                {
+                    $unwind: "$enrollments"
+                },
+                // Lookup to get the offered course details
+                {
+                    $lookup: {
+                        from: "offereds",
+                        localField: "enrollments.course",
+                        foreignField: "courses",
+                        as: "offeredCourse"
+                    }
+                },
+                // Unwind the looked up offered courses
+                {
+                    $unwind: "$offeredCourse"
+                },
+                // Group by student and get the latest academic year
+                {
+                    $group: {
+                        _id: "$_id",
+                        latestAcademicYear: {
+                            $max: {
+                                startDate: "$offeredCourse.academicYear.startDate",
+                                endDate: "$offeredCourse.academicYear.endDate"
+                            }
+                        }
+                    }
+                },
+                // Group again to get unique academic years
+                {
+                    $group: {
+                        _id: {
+                            startDate: "$latestAcademicYear.startDate",
+                            endDate: "$latestAcademicYear.endDate"
+                        }
+                    }
+                },
+                // Sort by academic year (descending)
+                {
+                    $sort: {
+                        "_id.startDate": -1
+                    }
+                },
+                // Format the output
+                {
+                    $project: {
+                        _id: {
+                            $toString: "$_id.startDate"
+                        },
+                        academicYear: {
+                            $concat: [
+                                { $toString: "$_id.startDate" },
+                                " - ",
+                                { $toString: "$_id.endDate" }
+                            ]
+                        }
+                    }
+                }
+            ]);
+
+            return {
+                success: true,
+                message: 'Academic years fetched successfully.',
+                data: response
+            };
+
+        } catch (error) {
+            throw new HttpException(
+                { success: false, message: 'Failed to fetch academic years.', error },
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    async findFilteredAlumni({ search, program, yeargraduated }: { search?: string, program?: string, yeargraduated?: string }): Promise<IPromiseStudent> {
+        try {
+            if (!search && !program && !yeargraduated) {
+                return {
+                    success: true,
+                    message: 'No search parameters provided',
+                    data: []
+                };
+            }
+
+            const pipeline: any[] = [
+                {
+                    $match: {
+                        status: 'alumni',
+                        graduation_date: { $exists: true }
+                    }
+                }
+            ];
+
+            // Add search filter if provided
+            if (search) {
+                pipeline.push({
+                    $match: {
+                        $or: [
+                            { idNumber: { $regex: search, $options: 'i' } },
+                            { lastname: { $regex: search, $options: 'i' } },
+                            { firstname: { $regex: search, $options: 'i' } },
+                            { middlename: { $regex: search, $options: 'i' } }
+                        ]
+                    }
+                });
+            }
+
+            // Add lookups
+            pipeline.push(
+                {
+                    $lookup: {
+                        from: 'curriculums',
+                        localField: 'program',
+                        foreignField: '_id',
+                        as: 'curriculumInfo'
+                    }
+                },
+                {
+                    $unwind: '$curriculumInfo'
+                },
+                {
+                    $lookup: {
+                        from: 'programs',
+                        localField: 'curriculumInfo.programid',
+                        foreignField: '_id',
+                        as: 'programInfo'
+                    }
+                },
+                {
+                    $unwind: '$programInfo'
+                }
+            );
+
+            // Add program filter if provided
+            if (program) {
+                pipeline.push({
+                    $match: {
+                        'programInfo._id': new mongoose.Types.ObjectId(program)
+                    }
+                });
+            }
+
+            // Add year graduated filter if provided
+            if (yeargraduated) {
+                const [startYear] = yeargraduated.split('-').map(year => parseInt(year.trim()));
+
+                pipeline.push({
+                    $match: {
+                        $expr: {
+                            $eq: [
+                                { $year: '$graduation_date' },
+                                startYear
+                            ]
+                        }
+                    }
+                });
+            }
+
+            // Add the project stage last
+            pipeline.push({
+                $project: {
+                    _id: 1,
+                    idNumber: 1,
+                    firstname: 1,
+                    lastname: 1,
+                    middlename: 1,
+                    email: 1,
+                    program: {
+                        _id: '$programInfo._id',
+                        code: '$programInfo.code',
+                        descriptiveTitle: '$programInfo.descriptiveTitle',
+                        department: '$programInfo.department'
+                    },
+                    curriculum: {
+                        name: '$curriculumInfo.name',
+                        major: '$curriculumInfo.major'
+                    },
+                    graduation_date: 1,
+                    undergraduateInformation: 1,
+                    achievements: 1
+                }
+            });
+
+            const alumni = await this.studentModel.aggregate(pipeline);
+
+            return {
+                success: true,
+                message: 'Filtered alumni fetched successfully.',
+                data: alumni
+            };
+        } catch (error) {
+            throw new HttpException(
+                { success: false, message: 'Failed to fetch filtered alumni', error },
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
 
     async findAllStudents(): Promise<IPromiseStudent> {
         try {
@@ -787,170 +991,442 @@ export class StudentService {
 
     async findAllAlumni(): Promise<IPromiseStudent> {
         try {
-            const response = await this.studentModel.find({ status: 'alumni' }).sort({ createdAt: -1 })
+            const response = await this.studentModel.aggregate([
+                {
+                    $match: {
+                        status: { $in: ['alumni'] }
+                    }
+                },
+                // Initial lookups
+                {
+                    $lookup: {
+                        from: 'courses',
+                        localField: 'enrollments.course',
+                        foreignField: '_id',
+                        as: 'courseDetails'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'curriculums',
+                        localField: 'program',
+                        foreignField: '_id',
+                        as: 'curriculumDetails'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'programs',
+                        localField: 'curriculumDetails.programid',
+                        foreignField: '_id',
+                        as: 'programDetails'
+                    }
+                },
+                // Get curriculum courses
+                {
+                    $lookup: {
+                        from: 'courses',
+                        let: {
+                            curriculumCategories: {
+                                $arrayElemAt: ['$curriculumDetails.categories', 0]
+                            }
+                        },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $in: [
+                                            '$_id',
+                                            {
+                                                $reduce: {
+                                                    input: '$$curriculumCategories',
+                                                    initialValue: [],
+                                                    in: {
+                                                        $concatArrays: ['$$value', '$$this.courses']
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        ],
+                        as: 'curriculumCourses'
+                    }
+                },
+                // Improved offered courses lookup
+                {
+                    $lookup: {
+                        from: 'offereds',
+                        let: {
+                            enrollmentDates: '$enrollments.enrollmentDate',
+                            enrollmentCourses: '$enrollments.course'
+                        },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $or: [
+                                            {
+                                                $and: [
+                                                    { $in: ['$_id', '$$enrollmentCourses'] },
+                                                    { $eq: ['$isActive', true] }
+                                                ]
+                                            },
+                                            {
+                                                $and: [
+                                                    {
+                                                        $reduce: {
+                                                            input: '$$enrollmentDates',
+                                                            initialValue: false,
+                                                            in: {
+                                                                $or: [
+                                                                    '$$value',
+                                                                    {
+                                                                        $and: [
+                                                                            { $lte: ['$createdAt', '$$this'] },
+                                                                            { $gte: ['$updatedAt', '$$this'] }
+                                                                        ]
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        $anyElementTrue: {
+                                                            $map: {
+                                                                input: '$courses',
+                                                                as: 'course',
+                                                                in: { $in: ['$$course', '$$enrollmentCourses'] }
+                                                            }
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        ],
+                        as: 'offeredDetails'
+                    }
+                },
+                // Calculate course IDs from curriculum
+                {
+                    $addFields: {
+                        curriculumCourseIds: {
+                            $reduce: {
+                                input: {
+                                    $arrayElemAt: ['$curriculumDetails.categories', 0]
+                                },
+                                initialValue: [],
+                                in: {
+                                    $concatArrays: ['$$value', '$$this.courses']
+                                }
+                            }
+                        }
+                    }
+                },
+                // Calculate additional courses (not in curriculum)
+                {
+                    $addFields: {
+                        additionalEnrolledCourseIds: {
+                            $filter: {
+                                input: {
+                                    $map: {
+                                        input: '$enrollments',
+                                        as: 'enrollment',
+                                        in: '$$enrollment.course'
+                                    }
+                                },
+                                as: 'courseId',
+                                cond: {
+                                    $not: { $in: ['$$courseId', '$curriculumCourseIds'] }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    $addFields: {
+                        totalOfUnitsEnrolled: {
+                            $add: [
+                                // Units from curriculum courses
+                                {
+                                    $reduce: {
+                                        input: '$curriculumCourses',
+                                        initialValue: 0,
+                                        in: { $add: ['$$value', '$$this.units'] }
+                                    }
+                                },
+                                // Units from additional enrolled courses
+                                {
+                                    $reduce: {
+                                        input: {
+                                            $filter: {
+                                                input: '$courseDetails',
+                                                as: 'course',
+                                                cond: {
+                                                    $in: ['$$course._id', '$additionalEnrolledCourseIds']
+                                                }
+                                            }
+                                        },
+                                        initialValue: 0,
+                                        in: { $add: ['$$value', '$$this.units'] }
+                                    }
+                                }
+                            ]
+                        },
+                        totalOfUnitsEarned: {
+                            $reduce: {
+                                input: {
+                                    $filter: {
+                                        input: '$enrollments',
+                                        as: 'enrollment',
+                                        cond: { $eq: ['$$enrollment.ispass', 'pass'] }
+                                    }
+                                },
+                                initialValue: 0,
+                                in: {
+                                    $add: [
+                                        '$$value',
+                                        {
+                                            $let: {
+                                                vars: {
+                                                    matchedCourse: {
+                                                        $arrayElemAt: [
+                                                            {
+                                                                $filter: {
+                                                                    input: '$courseDetails',
+                                                                    as: 'course',
+                                                                    cond: { $eq: ['$$course._id', '$$this.course'] }
+                                                                }
+                                                            },
+                                                            0
+                                                        ]
+                                                    }
+                                                },
+                                                in: '$$matchedCourse.units'
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        detailedEnrollments: {
+                            $map: {
+                                input: '$enrollments',
+                                as: 'enrollment',
+                                in: {
+                                    $let: {
+                                        vars: {
+                                            courseDetail: {
+                                                $arrayElemAt: [
+                                                    {
+                                                        $filter: {
+                                                            input: '$courseDetails',
+                                                            as: 'course',
+                                                            cond: { $eq: ['$$course._id', '$$enrollment.course'] }
+                                                        }
+                                                    },
+                                                    0
+                                                ]
+                                            },
+                                            matchingOffered: {
+                                                $arrayElemAt: [
+                                                    {
+                                                        $filter: {
+                                                            input: '$offeredDetails',
+                                                            as: 'offered',
+                                                            cond: {
+                                                                $and: [
+                                                                    { $in: ['$$enrollment.course', '$$offered.courses'] },
+                                                                    {
+                                                                        $and: [
+                                                                            { $lte: ['$$offered.createdAt', '$$enrollment.enrollmentDate'] },
+                                                                            { $gte: ['$$offered.updatedAt', '$$enrollment.enrollmentDate'] }
+                                                                        ]
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    },
+                                                    0
+                                                ]
+                                            }
+                                        },
+                                        in: {
+                                            _id: '$$courseDetail._id',
+                                            code: '$$courseDetail.code',
+                                            courseno: '$$courseDetail.courseno',
+                                            descriptiveTitle: '$$courseDetail.descriptiveTitle',
+                                            units: '$$courseDetail.units',
+                                            enrollmentDate: '$$enrollment.enrollmentDate',
+                                            status: '$$enrollment.ispass',
+                                            semester: '$$matchingOffered.semester',
+                                            // academicYear: '$$matchingOffered.academicYear'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    $addFields: {
+                        notTakenCourses: {
+                            $map: {
+                                input: {
+                                    $filter: {
+                                        input: '$curriculumCourses',
+                                        as: 'course',
+                                        cond: {
+                                            $not: {
+                                                $in: [
+                                                    '$$course._id',
+                                                    {
+                                                        $map: {
+                                                            input: { $ifNull: ['$enrollments', []] },
+                                                            as: 'enrollment',
+                                                            in: '$$enrollment.course'
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                },
+                                as: 'course',
+                                in: {
+                                    _id: '$$course._id',
+                                    code: '$$course.code',
+                                    courseno: '$$course.courseno',
+                                    descriptiveTitle: '$$course.descriptiveTitle',
+                                    units: '$$course.units',
+                                    status: 'not_taken'
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    $addFields: {
+                        enrolledCourses: {
+                            $concatArrays: ['$detailedEnrollments', '$notTakenCourses']
+                        }
+                    }
+                },
+                {
+                    $addFields: {
+                        progress: {
+                            $cond: {
+                                if: {
+                                    $and: [
+                                        { $gt: ['$totalOfUnitsEnrolled', 0] },
+                                        { $eq: ['$totalOfUnitsEarned', '$totalOfUnitsEnrolled'] }
+                                    ]
+                                },
+                                then: 'done',
+                                else: 'ongoing'
+                            }
+                        }
+                    }
+                },
+                {
+                    $unwind: '$curriculumDetails'
+                },
+                {
+                    $unwind: '$programDetails'
+                },
+
+                // Get the last attended enrollment for each alumni
+                {
+                    $addFields: {
+                        lastEnrollment: {
+                            $arrayElemAt: [
+                                { $slice: [{ $reverseArray: "$enrollments" }, 1] }, 0
+                            ]
+                        }
+                    }
+                },
+                // Lookup the academic year and semester from the last attended course in the 'offereds' collection
+                {
+                    $lookup: {
+                        from: 'offereds',
+                        let: {
+                            lastCourseId: "$lastEnrollment.course",
+                            lastEnrollmentDate: "$lastEnrollment.enrollmentDate"
+                        },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [
+                                            { $in: ["$$lastCourseId", "$courses"] },
+                                            { $lte: ["$createdAt", "$$lastEnrollmentDate"] }
+                                        ]
+                                    }
+                                }
+                            },
+                            { $sort: { createdAt: -1 } }, // Get the latest offer before or on enrollment date
+                            { $limit: 1 }
+                        ],
+                        as: 'graduationOffer'
+                    }
+                },
+                // Unwind the offer to extract academic year and semester
+                {
+                    $unwind: {
+                        path: '$graduationOffer',
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        idNumber: 1,
+                        lastname: 1,
+                        firstname: 1,
+                        middlename: 1,
+                        email: 1,
+                        undergraduateInformation: 1,
+                        achievements: 1,
+                        program: '$programDetails._id',
+                        programCode: '$programDetails.code',
+                        programName: '$programDetails.descriptiveTitle',
+                        isenrolled: 1,
+                        department: '$programDetails.department',
+                        totalOfUnitsEnrolled: 1,
+                        totalOfUnitsEarned: 1,
+                        enrolledCourses: 1,
+                        status: 1,
+                        progress: 1,
+                        academicYear: {
+                            $concat: [
+                                { $toString: "$graduationOffer.academicYear.startDate" },
+                                " - ",
+                                { $toString: "$graduationOffer.academicYear.endDate" }
+                            ]
+                        },
+                        semester: "$graduationOffer.semester",
+                        graduationDate: "$graduation_date" // Preserved for clarity
+                    }
+                },
+                {
+                    $sort: {
+                        _id: -1
+                    }
+                }
+            ])
+
             return { success: true, message: 'Alumni(s) fetched successfully', data: response }
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Enrollees failed to fetch.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+            throw new HttpException(
+                { success: false, message: 'Enrollees failed to fetch.', error },
+                HttpStatus.INTERNAL_SERVER_ERROR
+            )
         }
     }
-
-    // async findAllStudentsEnrolled(): Promise<IPromiseStudent> {
-    //     try {
-    //         const response = await this.studentModel.aggregate([
-    //             { $match: { isenrolled: true } },
-    //             { $unwind: '$enrollments' },
-    //             {
-    //                 $sort: {
-    //                     'enrollments.enrollment_date': -1
-    //                 }
-    //             },
-    //             {
-    //                 $group: {
-    //                     _id: '$_id',
-    //                     idNumber: { $first: '$idNumber' },
-    //                     name: { $first: '$name' },
-    //                     email: { $first: '$email' },
-    //                     progress: { $first: '$enrollments.progress' },
-    //                     enrollment_date: { $first: '$enrollments.enrollment_date' }
-    //                 }
-    //             },
-    //             {
-    //                 $lookup: {
-    //                     from: 'semesters',
-    //                     let: { studentId: '$_id' },
-    //                     pipeline: [
-    //                         {
-    //                             $match: {
-    //                                 $expr: { $in: ['$$studentId', '$studentsEnrolled'] }
-    //                             }
-    //                         },
-    //                         { $sort: { createdAt: -1 } },
-    //                         { $limit: 1 }
-    //                     ],
-    //                     as: 'semesterInfo'
-    //                 }
-    //             },
-    //             { $unwind: '$semesterInfo' },
-    //             {
-    //                 $project: {
-    //                     _id: 1,
-    //                     idNumber: 1,
-    //                     name: 1,
-    //                     email: 1,
-    //                     progress: 1,
-    //                     enrollment_date: {
-    //                         $dateToString: {
-    //                             format: "%m/%d/%Y",
-    //                             date: "$enrollment_date"
-    //                         }
-    //                     },
-    //                     semester: '$semesterInfo.semester'
-    //                 }
-    //             }
-    //         ])
-
-    //         return { success: true, message: 'Enrolled students fetched successfully.', data: response }
-    //     } catch (error) {
-    //         throw new HttpException({ success: false, message: 'Error finding enrolled students.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
-    //     }
-    // }
-
-    // async findAllStudentsEnrolled(): Promise<IPromiseStudent> {
-    //     try {
-    //         const response = await this.studentModel.aggregate([
-    //             { $match: { isenrolled: true } },
-
-    //             // Unwind the enrollments array
-    //             { $unwind: '$enrollments' },
-
-    //             {
-    //                 $sort: {
-    //                     'enrollments.semester': -1,
-    //                     'enrollments.enrollment_date': -1
-    //                 }
-    //             },
-
-    //             // Convert enrollment_date to MM/DD/YYYY format
-    //             {
-    //                 $addFields: {
-    //                     formatted_enrollment_date: {
-    //                         $dateToString: {
-    //                             format: "%m/%d/%Y",
-    //                             date: "$enrollments.enrollment_date"
-    //                         }
-    //                     }
-    //                 }
-    //             },
-
-    //             // Project to include the formatted date and exclude the original date field
-    //             {
-    //                 $project: {
-    //                     _id: 1,
-    //                     idNumber: 1,
-    //                     name: 1,
-    //                     email: 1,
-    //                     semester: '$enrollments.semester',
-    //                     progress: '$enrollments.progress',
-    //                     enrollment_date: "$formatted_enrollment_date"
-    //                 }
-    //             }
-    //         ])
-
-    //         return { success: true, message: 'Enrolled students fetched successfully.', data: response }
-    //     } catch (error) {
-    //         throw new HttpException({ success: false, message: 'Error finding enrolled students.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
-    //     }
-    // }
-
-    // async findAllAlumni(): Promise<IPromiseStudent> {
-    //     try {
-    //         const response = await this.studentModel.aggregate([
-    //             // Match only enrolled students
-    //             {
-    //                 $match: {
-    //                     isenrolled: false,
-    //                     status: 'alumni'
-    //                 }
-    //             },
-
-    //             // Unwind the enrollments array
-    //             { $unwind: '$enrollments' },
-
-    //             // Sort by the most recent enrollment date
-    //             { $sort: { 'graduation_date': -1 } },
-
-    //             // Convert enrollment_date to MM/DD/YYYY format
-    //             {
-    //                 $addFields: {
-    //                     formatted_graduation_date: {
-    //                         $dateToString: {
-    //                             format: "%m/%d/%Y",
-    //                             date: "$graduation_date"
-    //                         }
-    //                     }
-    //                 }
-    //             },
-
-    //             // Sort the final result by the most recent enrollment date
-    //             { $sort: { enrollment_date: -1 } },
-
-    //             // Project to include the formatted date and exclude the original date field
-    //             {
-    //                 $project: {
-    //                     _id: 1,
-    //                     idNumber: 1,
-    //                     name: 1,
-    //                     email: 1,
-    //                     graduation_date: "$formatted_graduation_date"
-    //                 }
-    //             }
-    //         ])
-
-    //         return { success: true, message: 'Alumni students fetched successfully.', data: response }
-    //     } catch (error) {
-    //         throw new HttpException({ success: false, message: 'Error finding enrolled students.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
-    //     }
-    // }
 
     private capitalizeWords(str: string): string {
         return str
@@ -1219,93 +1695,114 @@ export class StudentService {
 
     async evaluateStudent(request: IRequestStudent): Promise<IPromiseStudent> {
         try {
-            const { course, evaluations } = request
+            const { course, evaluations } = request;
 
-            // Validate basic input
             if (!course || !evaluations || !Array.isArray(evaluations) || evaluations.length === 0) {
                 return {
                     success: false,
                     message: 'Invalid input parameters. Course and evaluation array are required.'
-                }
+                };
             }
 
-            // Check if course exists
-            const iscourse = await this.courseModel.findById(course)
-            if (!iscourse) return { success: false, message: 'Course does not exist.' }
+            const iscourse = await this.courseModel.findById(course);
+            if (!iscourse) return { success: false, message: 'Course does not exist.' };
 
-            // Validate evaluation data structure
-            const validStatus = ['pass', 'fail', 'inc', 'ongoing', 'drop']
+            const validStatus = ['pass', 'fail', 'inc', 'ongoing', 'drop'];
             const invalidEvaluations = evaluations.filter(
                 item => !item.id || !item.ispass || !validStatus.includes(item.ispass)
-            )
+            );
 
             if (invalidEvaluations.length > 0) {
                 return {
                     success: false,
                     message: 'Invalid evaluation data. Each evaluation must contain valid student ID and status.',
                     data: invalidEvaluations
-                }
+                };
             }
 
-            // Process all evaluations
             const results = await Promise.all(
                 evaluations.map(async (item) => {
                     try {
-                        const student = await this.studentModel.findById(item.id)
+                        // Find the student and populate their enrollments with course IDs and units
+                        const student = await this.studentModel.findById(item.id).populate({
+                            path: 'enrollments.course',
+                            select: '_id units'  // Populate course ID and units for calculations
+                        });
 
                         if (!student) {
                             return {
                                 success: false,
                                 studentId: item.id,
                                 message: 'Student not found'
-                            }
+                            };
                         }
 
-                        const enrollmentIndex = student.enrollments.findIndex(
-                            enrollment => enrollment.course.toString() === course
-                        )
+                        // Check if the student is enrolled in the requested course
+                        const enrollmentIndex = student.enrollments.findIndex((enrollment) => {
+                            return enrollment.course._id.toString() === course.toString();
+                        });
 
                         if (enrollmentIndex === -1) {
                             return {
                                 success: false,
                                 studentId: item.id,
                                 message: 'Student not enrolled in this course'
-                            }
+                            };
                         }
 
-                        // Update enrollment status
-                        student.enrollments[enrollmentIndex].ispass = item.ispass
+                        // Update enrollment status based on evaluation
+                        student.enrollments[enrollmentIndex].ispass = item.ispass;
+                        await student.save();
 
-                        // Handle discontinue status
-                        if (item.ispass === 'discontinue') {
-                            student.isenrolled = false
-                            if (item.file) {
-                                student.assessmentForm = item.file
+                        // Calculate required units for the curriculum
+                        const curriculum = await this.curriculumModel
+                            .findById(student.program)
+                            .populate({
+                                path: 'categories.courses',
+                                select: 'units'
+                            });
+
+                        const requiredUnits = curriculum.categories.reduce((total, category) => {
+                            return total + category.courses.reduce((sum, course: any) => {
+                                return sum + (course.units || 0);
+                            }, 0);
+                        }, 0);
+
+                        // Calculate passed units for the student
+                        const passedUnits = student.enrollments.reduce((total, enrollment) => {
+                            if (enrollment.ispass === 'pass') {
+                                const course = enrollment.course as any;
+                                return total + (course.units || 0);
                             }
-                        }
+                            return total;
+                        }, 0);
 
-                        await student.save()
+                        // Check if student qualifies as alumni
+                        if (passedUnits >= requiredUnits) {
+                            student.status = 'alumni';
+                            student.graduation_date = new Date();
+                            await student.save();
+                        }
 
                         return {
                             success: true,
                             studentId: item.id,
                             status: item.ispass,
                             message: `Successfully evaluated student in ${iscourse.descriptiveTitle}`
-                        }
+                        };
 
                     } catch (error) {
                         return {
                             success: false,
                             studentId: item.id,
                             message: `Failed to update student: ${error.message}`
-                        }
+                        };
                     }
                 })
-            )
+            );
 
-            // Analyze results
-            const successfulEvaluations = results.filter(result => result.success)
-            const failedEvaluations = results.filter(result => !result.success)
+            const successfulEvaluations = results.filter(result => result.success);
+            const failedEvaluations = results.filter(result => !result.success);
 
             return {
                 success: true,
@@ -1315,7 +1812,7 @@ export class StudentService {
                     failed: failedEvaluations,
                     course: iscourse.descriptiveTitle
                 }
-            }
+            };
         } catch (error) {
             throw new HttpException(
                 {
@@ -1324,9 +1821,10 @@ export class StudentService {
                     error
                 },
                 HttpStatus.INTERNAL_SERVER_ERROR
-            )
+            );
         }
     }
+
 
     async discontinueStudent({ id, assessmentForm }: IStudent) {
         try {
@@ -1429,8 +1927,12 @@ export class StudentService {
         }
     }
 
-    async formUpdateStudent(
-        { idNumber, generalInformation, educationalBackground, employmentData }: IStudent
+    async formUpdateStudent({ 
+        idNumber, 
+        generalInformation, 
+        // educationalBackground, 
+        employmentData 
+    }: IStudent
     )
         : Promise<IPromiseStudent> {
         try {
@@ -1441,9 +1943,8 @@ export class StudentService {
                 { idNumber },
                 {
                     generalInformation,
-                    educationalBackground,
+                    // educationalBackground,
                     employmentData,
-                    status: 'alumni',
                     isenrolled: false,
                     graduation_date: Date.now()
                 },
