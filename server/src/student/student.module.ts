@@ -8,6 +8,10 @@ import { FormSchema } from 'src/forms/forms.schema'
 import { ConstantsService } from 'src/constants/constants.service'
 import { CoursesSchema } from 'src/courses/courses.schema'
 import { OfferedSchema } from 'src/offered/offered.schema'
+import { AuditlogService } from 'src/auditlog/auditlog.service';
+import { AuditSchema } from 'src/auditlog/auditlog.schema';
+import { CoursesService } from 'src/courses/courses.service'
+import { CurriculumSchema } from 'src/curriculum/curriculum.schema'
 
 @Module({
   imports: [
@@ -16,9 +20,11 @@ import { OfferedSchema } from 'src/offered/offered.schema'
       { name: 'Form', schema: FormSchema },
       { name: 'Course', schema: CoursesSchema },
       { name: 'Offered', schema: OfferedSchema },
+      { name: 'Auditlog', schema: AuditSchema },
+      { name: 'Curriculum', schema: CurriculumSchema },
     ])
   ],
-  providers: [StudentService, FormsService, ConstantsService],
+  providers: [StudentService, FormsService, ConstantsService, AuditlogService, CoursesService],
   controllers: [StudentController]
 })
 export class StudentModule { }

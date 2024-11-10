@@ -1,3 +1,4 @@
+import mongoose, { Mongoose } from "mongoose"
 
 interface IStudentEnrollments {
     course?: string[]
@@ -22,6 +23,7 @@ interface IAchievements {
 export interface IStudent {
     id?: string
     _id?: string | string[]
+    userId?: mongoose.Schema.Types.ObjectId //
     idNumber?: string
     lastname?: string
     firstname?: string
@@ -48,6 +50,7 @@ export interface IEvaluationItem {
 
 export interface IRequestStudent {
     id?: string[]
+    userId?: mongoose.Schema.Types.ObjectId
     course?: string;
     evaluations?: IEvaluationItem[];
 }
