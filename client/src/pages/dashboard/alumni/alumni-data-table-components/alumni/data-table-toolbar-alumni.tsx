@@ -5,37 +5,96 @@ import { Table } from "@tanstack/react-table"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Combobox } from "@/components/combobox"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { useQuery } from "@tanstack/react-query"
+import { API_PROGRAM_FINDALL } from "@/api/program"
+import { API_STUDENT_YEARS_GRADUATED } from "@/api/student"
 import { DataTableFacetedFilter } from "@/components/data-table-components/data-table-faceted-filter"
-import { department } from '@/components/data-table-components/options.json'
+import { IAPIPrograms } from "@/interface/program.interface"
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>
+}
+
+interface ProgramOption {
+    value: string;
+    label: string;
+    department: string;
 }
 
 export function DataTableToolbarAlumni<TData>({
     table
 }: DataTableToolbarProps<TData>) {
     const isFiltered = table.getState().columnFilters.length > 0
-    // const [dateRange, setDateRange] = useState<{ from: Date to: Date }>({
-    //     from: new Date(new Date().getFullYear(), 0, 1),
-    //     to: new Date()
-    // })
+    const [formattedprogram, setFormattedProgram] = useState<ProgramOption[]>([]);
+    const [filteredPrograms, setFilteredPrograms] = useState<ProgramOption[]>([]);
+    const [filteredYearsGraduated, setFilteredYearsGraduated] = useState<{ label: string, value: string }[]>([])
 
-    // const handleDateSelect = ({ from, to }: { from: Date to: Date }) => {
-    //     setDateRange({ from, to })
-    //     // Filter table data based on selected date range
-    //     table.getColumn("date")?.setFilterValue([from, to])
-    // }
-    const [yearGraduated, setYearGraduated] = useState<string>('')
+    const { data: yearsGraduations, isFetched: yearsgraduatedFetched } = useQuery({
+        queryFn: () => API_STUDENT_YEARS_GRADUATED(),
+        queryKey: ['years']
+    })
 
-    const graduation_date = [
-        { label: '2024 - 2025', value: '2024 - 2025' },
-        { label: '2023 - 2024', value: '2023 - 2024' },
-        { label: '2022 - 2023', value: '2022 - 2023' },
-        { label: '2021 - 2022', value: '2021 - 2022' },
-        { label: '2020 - 2021', value: '2020 - 2021' }
+    const { data: program, isLoading: programLoading, isFetched: programFetched } = useQuery({
+        queryFn: () => API_PROGRAM_FINDALL(),
+        queryKey: ['programs']
+    })
+
+    useEffect(() => {
+        if (!programLoading && programFetched) {
+            const formatprogram = program.data.map((item: IAPIPrograms) => {
+                const { _id, code, department } = item
+                return {
+                    value: _id, label: code, department: department // Make sure your API returns this
+                }
+            })
+
+            setFormattedProgram(formatprogram)
+            setFilteredPrograms(formatprogram)
+        }
+    }, [program])
+
+    useEffect(() => {
+        const selectedDepartment = table.getColumn("department")?.getFilterValue() as string[];
+
+        if (selectedDepartment && selectedDepartment.length > 0) {
+            const filtered = formattedprogram.filter((prog: any) =>
+                selectedDepartment.includes(prog.department)
+            );
+            setFilteredPrograms(filtered);
+
+            // Clear program filter if selected program is not in filtered list
+            const currentProgramFilter = table.getColumn("program")?.getFilterValue() as string[];
+            if (currentProgramFilter && currentProgramFilter.length > 0) {
+                const validPrograms = filtered.map(p => p.value);
+                const newProgramFilter = currentProgramFilter.filter(p =>
+                    validPrograms.includes(p)
+                );
+                if (newProgramFilter.length !== currentProgramFilter.length) {
+                    table.getColumn("program")?.setFilterValue(newProgramFilter);
+                }
+            }
+        } else {
+            setFilteredPrograms(formattedprogram);
+        }
+    }, [table.getColumn("department")?.getFilterValue()]);
+
+    useEffect(() => {
+        if (yearsgraduatedFetched) {
+            const filteredYears: { label: string, value: string }[] = yearsGraduations?.data?.map((item: { academicYear: string }) => {
+                const { academicYear } = item
+                return { label: academicYear, value: academicYear }
+            }) || []
+
+            setFilteredYearsGraduated(filteredYears)
+        }
+    }, [yearsGraduations])
+
+    const department_options = [
+        { value: 'SEAIT', label: "Eng'g, Dev't. Arts & Design, Library Science & IT" },
+        { value: 'SHANS', label: "Science and Mathematics" },
+        { value: 'SAB', label: "Business and Accountancy" },
+        { value: 'STEH', label: "Teacher Education and Humanities"}
     ]
 
     return (
@@ -50,26 +109,48 @@ export function DataTableToolbarAlumni<TData>({
                     className="h-8 w-[17rem] lg:w-[20rem]"
                 />
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-4">
+                {table.getColumn("department") && (
                     <DataTableFacetedFilter
-                        column={table.getColumn("name")}
+                        column={table.getColumn("department")}
+                        title="Department"
+                        options={department_options}
+                    />
+                )}
+                   {table.getColumn("program") && (
+                    <DataTableFacetedFilter
+                        column={table.getColumn("program")}
                         title="Program"
-                        options={department}
+                        options={filteredPrograms}
                     />
-                    {/* {table.getColumn("category") && (
+                )}
+                 {table.getColumn("academicYear") && (
                     <DataTableFacetedFilter
-                        column={table.getColumn("category")}
-                        title="Category"
-                        options={categories}
+                        column={table.getColumn("academicYear")}
+                        title="Year Graduated"
+                        options={filteredYearsGraduated}
                     />
-                )} */}
+                )}
+                    {/* <Combobox
+                        btnTitleclassName="gap-2"
+                        icon={<Filter className="text-primary" size={15} />}
+                        className='w-[200px]'
+                        lists={filteredPrograms || []}
+                        placeholder={`Program`}
+                        setValue={(item) => setProgram(item)}
+                        value={program || ''}
+                    />
+
                     <Combobox
+                        btnTitleclassName="gap-2"
+                        icon={<Filter className="text-primary" size={15} />}
                         className='w-[150px]'
-                        lists={graduation_date || []}
+                        lists={filteredYearsGraduated || []}
                         placeholder={`Year Graduated`}
                         setValue={(item) => setYearGraduated(item)}
                         value={yearGraduated || ''}
-                    />
+                    /> */}
+
                 </div>
 
 
