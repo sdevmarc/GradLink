@@ -21,23 +21,23 @@ export class CurriculumController {
     }
 
     @Post('create')
-    async insertCurriculum(@Body() {userId, name, programid, major, categories }: ICurriculum) 
-    {
+    async insertCurriculum(@Body() { userId, name, programid, major, categories }: ICurriculum) {
         try {
-            const issuccess = await this.CurriculumService.insertNew({ name, programid, major, categories })
-            if(issuccess.success){
-                await this.auditlogService.createLog({ userId, action: "create", description: `${name} created` })
-                return { success: true, message: "Curriculum successfully created." }
-            }
-            await this.auditlogService.createLog({ userId, action: "create", description: 'Error creating curriculum' })
-            return { success: false, message: issuccess.message }
+            return await this.CurriculumService.insertNew({ name, programid, major, categories })
+            // const issuccess = await this.CurriculumService.insertNew({ name, programid, major, categories })
+            // if(issuccess.success){
+            //     await this.auditlogService.createLog({ userId, action: "create", description: `${name} created` })
+            //     return { success: true, message: "Curriculum successfully created." }
+            // }
+            // await this.auditlogService.createLog({ userId, action: "create", description: 'Error creating curriculum' })
+            // return { success: false, message: issuccess.message }
         } catch (error) {
             throw new HttpException(
                 { success: false, message: 'Failed to fetch audit logs.', error },
                 HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
- 
+
 
     }
 }
