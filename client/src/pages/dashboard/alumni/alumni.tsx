@@ -27,7 +27,7 @@ export default function Alumni() {
         }
     }, [form])
 
-    const isLoading = formLoading
+    const isLoading = formLoading || alumniLoading
 
     return (
         <>
