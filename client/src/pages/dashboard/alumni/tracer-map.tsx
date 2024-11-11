@@ -45,7 +45,7 @@ export default function TracerMap() {
 
     const { data: yearsGraduations, isLoading: yearsgraduateLoading, isFetched: yearsgraduatedFetched } = useQuery({
         queryFn: () => API_STUDENT_YEARS_GRADUATED(),
-        queryKey: ['students']
+        queryKey: ['years']
     })
 
     const { data: filteredAlumni } = useQuery({
@@ -74,11 +74,12 @@ export default function TracerMap() {
 
     useEffect(() => {
         if (yearsgraduatedFetched) {
-            const filteringprogram: { label: string, value: string }[] = yearsGraduations?.data?.map((item: { academicYear: string }) => {
+            const filteredYears: { label: string, value: string }[] = yearsGraduations?.data?.map((item: { academicYear: string }) => {
                 const { academicYear } = item
                 return { label: academicYear, value: academicYear }
             }) || []
-            setFilteredYearsGraduated(filteringprogram)
+           
+            setFilteredYearsGraduated(filteredYears)
         }
     }, [yearsGraduations])
 
@@ -128,6 +129,7 @@ export default function TracerMap() {
                                             setValue={(item) => setProgram(item)}
                                             value={program || ''}
                                         />
+
                                         <Combobox
                                             btnTitleclassName="gap-2"
                                             icon={<Filter className="text-primary" size={15} />}
@@ -137,6 +139,7 @@ export default function TracerMap() {
                                             setValue={(item) => setYearGraduated(item)}
                                             value={yearGraduated || ''}
                                         />
+
                                     </div>
                                 </div>
 
