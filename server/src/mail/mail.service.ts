@@ -14,7 +14,7 @@ export class MailService {
 
     ) { }
 
-    async sendMail(send_to: string[]): Promise<IPromiseMail> {
+    async sendMail({ email }: { email: string[] }): Promise<IPromiseMail> {
         try {
             const google_form = `https://docs.google.com/forms/d/${this.constantsService.getFormId()}`
             const message = `
@@ -83,8 +83,8 @@ export class MailService {
 </html>
             `;
 
-            const responses = await Promise.all(send_to.map(recipient =>
-                this.mailService.sendMail({
+            const responses = await Promise.all(email.map(async (recipient) =>
+                await this.mailService.sendMail({
                     to: recipient,
                     subject: `Can I take a minute of your time? 😞`,
                     html: message
