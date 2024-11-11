@@ -29,7 +29,7 @@ export default function GoogleForm() {
                         <Sidebar>
                             <SidebarNavs title="Alumni Information" link={ROUTES.ALUMNI} />
                             <SidebarNavs title="Tracer Map" link={ROUTES.TRACER_MAP} />
-                            <SidebarNavs bg='bg-muted' title="Google Form" link={ROUTES.GOOGLE_FORM} />
+                            {/* <SidebarNavs bg='bg-muted' title="Google Form" link={ROUTES.GOOGLE_FORM} /> */}
                         </Sidebar>
                         <MainTable>
                             {isformLoading && <div>Loading...</div>}
