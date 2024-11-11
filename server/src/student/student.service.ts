@@ -33,7 +33,7 @@ export class StudentService {
                         as: "offeredCourse"
                     }
                 },
-                // Unwind the looked up offered courses
+                // Unwind the looked up offered scourses
                 {
                     $unwind: "$offeredCourse"
                 },
