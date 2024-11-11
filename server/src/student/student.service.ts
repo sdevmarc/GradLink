@@ -2132,7 +2132,7 @@ export class StudentService {
 
             // Save mail records for tracking
             const mailRecords = alumni.map(alumnus => ({
-                user: alumnus._id,
+                email: alumnus._id,
                 date_sent: new Date(),
                 notes: `Tracer survey sent for academic year ${academicYear} for program batch`
             }));
