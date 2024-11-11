@@ -12,6 +12,8 @@ import { AuditlogService } from 'src/auditlog/auditlog.service';
 import { AuditSchema } from 'src/auditlog/auditlog.schema';
 import { CoursesService } from 'src/courses/courses.service'
 import { CurriculumSchema } from 'src/curriculum/curriculum.schema'
+import { MailSchema } from 'src/mail/mail.schema'
+import { MailService } from 'src/mail/mail.service'
 
 @Module({
   imports: [
@@ -22,9 +24,10 @@ import { CurriculumSchema } from 'src/curriculum/curriculum.schema'
       { name: 'Offered', schema: OfferedSchema },
       { name: 'Auditlog', schema: AuditSchema },
       { name: 'Curriculum', schema: CurriculumSchema },
+      { name: 'Mail', schema: MailSchema },
     ])
   ],
-  providers: [StudentService, FormsService, ConstantsService, AuditlogService, CoursesService],
+  providers: [StudentService, FormsService, ConstantsService, AuditlogService, CoursesService, MailService],
   controllers: [StudentController]
 })
 export class StudentModule { }
