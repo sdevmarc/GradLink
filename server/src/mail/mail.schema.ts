@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 export const MailSchema = new mongoose.Schema({
-    idNumber: {
+    user: {
         type: String,
         ref: 'Student',
         required: true
