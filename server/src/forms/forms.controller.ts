@@ -7,6 +7,19 @@ import { Model } from 'mongoose';
 import { IStudent } from 'src/student/student.interface';
 import { StudentService } from 'src/student/student.service';
 
+interface MapboxResponse {
+    features: Array<{
+        geometry: {
+            coordinates: [number, number]; // [longitude, latitude]
+        };
+    }>;
+}
+
+interface GeocodedLocation {
+    latitude: number;
+    longitude: number;
+}
+
 @Controller('forms')
 export class FormsController {
     constructor(
@@ -16,6 +29,31 @@ export class FormsController {
         @InjectModel('Form') private readonly formModel: Model<IModelForm>,
         private readonly constantsService: ConstantsService
     ) { }
+
+    private readonly MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoieW91cnBhcmVuZ2VkaXNvbiIsImEiOiJjbTMyem81MHoxOTZzMmxzNDNwNXB4YmM4In0.YjqdD5S9U-Cw9kASDpJGVA';
+
+    private async getCoordinates(address: string): Promise<GeocodedLocation | null> {
+        try {
+            const encodedAddress = encodeURIComponent(address);
+            const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodedAddress}.json?access_token=${this.MAPBOX_ACCESS_TOKEN}`;
+
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Geocoding failed with status: ${response.status}`);
+            }
+
+            const data: MapboxResponse = await response.json();
+
+            if (data.features && data.features.length > 0) {
+                const [longitude, latitude] = data.features[0].geometry.coordinates;
+                return { latitude, longitude };
+            }
+            return null;
+        } catch (error) {
+            console.error('Geocoding error:', error);
+            return null;
+        }
+    }
 
     @Get('unknown-respondents')
     async getUnknownRespondents() {
@@ -35,6 +73,9 @@ export class FormsController {
 
             const updatePromises = response.map(async (item) => {
                 const formemail = String(item.generalInformation.answers[6].answer);
+                const currentaddress = String(item.generalInformation.answers[5].answer);
+                const coordinates = await this.getCoordinates(currentaddress);
+
                 const {
                     // createTime,
                     generalInformation,
@@ -48,6 +89,7 @@ export class FormsController {
                         email: formemail,
                         generalInformation,
                         //  educationalBackground, 
+                        coordinates,
                         employmentData,
                     })
                 }
@@ -88,18 +130,18 @@ export class FormsController {
     @Post('create-form')
     async createForm(
         @Body() {
-             title,
-              generalInformation,
+            title,
+            generalInformation,
             //  educationalBackground,
-              employmentData 
-            }: IForms
+            employmentData
+        }: IForms
     ) {
         return await this.formsService.createFormWithQuestions({
-             title,
-              generalInformation,
+            title,
+            generalInformation,
             //    educationalBackground,
-                employmentData 
-            });
+            employmentData
+        });
     }
 
     @Post(':formId/add-short-answer-question')
