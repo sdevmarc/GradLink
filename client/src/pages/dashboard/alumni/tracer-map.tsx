@@ -22,6 +22,7 @@ import { API_PROGRAM_FINDALL } from "@/api/program"
 import { API_STUDENT_FINDALL_ALUMNI_FOR_TRACER_MAP, API_STUDENT_FINDALL_FILTERED_ALUMNI, API_STUDENT_FINDONE_ALUMNI_FOR_TRACER_MAP, API_STUDENT_YEARS_GRADUATED } from "@/api/student"
 import Loading from "@/components/loading"
 import { AlertDialogConfirmation } from "@/components/alert-dialog"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 
 export default function TracerMap() {
     const [filteredPrograms, setFilteredPrograms] = useState<{ label: string, value: string }[]>([])
@@ -78,7 +79,7 @@ export default function TracerMap() {
                 const { academicYear } = item
                 return { label: academicYear, value: academicYear }
             }) || []
-           
+
             setFilteredYearsGraduated(filteredYears)
         }
     }, [yearsGraduations])
@@ -324,6 +325,8 @@ const HoverCard = ({
 
 
 const Map = ({ coordinates, id }: { coordinates: { lng: number, lat: number }, id: string }) => {
+    const [searchGeneralTerm, setGeneralSearch] = useState("")
+    const [searchEmploymentDataSearch, setEmploymentDataSearch] = useState("")
     const [selectedmarker, setSelectedMarker] = useState<{ visible: boolean, id: string }>({
         visible: false,
         id: ''
@@ -477,6 +480,14 @@ const Map = ({ coordinates, id }: { coordinates: { lng: number, lat: number }, i
         });
     };
 
+    const filtereGeneral = onealumni?.data?.generalInformation?.questions?.filter((qa: { question: string, answer: string | Record<string, any> }) =>
+        qa?.question.toLowerCase().includes(searchGeneralTerm.toLowerCase())
+    )
+
+    const filteredEmploymentData = onealumni?.data?.employmentData?.questions?.filter((qa: { question: string, answer: string | Record<string, any> }) =>
+        qa?.question.toLowerCase().includes(searchEmploymentDataSearch.toLowerCase())
+    )
+
     return (
 
         <div className="w-full h-full relative">
@@ -616,6 +627,56 @@ const Map = ({ coordinates, id }: { coordinates: { lng: number, lat: number }, i
                                     {
                                         (onealumni?.data?.generalInformation || onealumni?.data?.employmentData) &&
                                         <>
+                                            <div className="w-full max-w-3xl mx-auto p-4 space-y-4">
+                                                <h1 className="text-2xl font-bold text-center mb-6">Alumni Information</h1>
+                                                <h1 className="text-xl font-bold text-left mb-6">General Information</h1>
+                                                <div className="relative">
+                                                    <Input
+                                                        type="text"
+                                                        placeholder="Search questions..."
+                                                        value={searchGeneralTerm}
+                                                        onChange={(e) => setGeneralSearch(e.target.value)}
+                                                        className="pl-10"
+                                                    />
+                                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                                                </div>
+                                                <Accordion type="single" collapsible className="w-full">
+                                                    {filtereGeneral?.map((qa: { question: string, answer: string | Record<string, any> }, index: number) => (
+                                                        <AccordionItem value={`item-${index}`} key={index}>
+                                                            <AccordionTrigger className="text-left">{qa.question}</AccordionTrigger>
+                                                            <AccordionContent>{formatAnswer(qa.answer)}</AccordionContent>
+                                                        </AccordionItem>
+                                                    ))}
+                                                </Accordion>
+                                                {filtereGeneral?.length === 0 && (
+                                                    <p className="text-center text-gray-500">No matching questions found.</p>
+                                                )}
+                                                <h1 className="text-xl font-bold text-left mb-6">Employment Information</h1>
+                                                <div className="relative">
+                                                    <Input
+                                                        type="text"
+                                                        placeholder="Search questions..."
+                                                        value={searchEmploymentDataSearch}
+                                                        onChange={(e) => setEmploymentDataSearch(e.target.value)}
+                                                        className="pl-10"
+                                                    />
+                                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                                                </div>
+                                                <Accordion type="single" collapsible className="w-full">
+                                                    {filteredEmploymentData?.map((qa: { question: string, answer: string | Record<string, any> }, index: number) => (
+                                                        <AccordionItem value={`item-${index}`} key={index}>
+                                                            <AccordionTrigger className="text-left">{qa.question}</AccordionTrigger>
+                                                            <AccordionContent>{formatAnswer(qa.answer)}</AccordionContent>
+                                                        </AccordionItem>
+                                                    ))}
+                                                </Accordion>
+                                                {filtereGeneral?.length === 0 && (
+                                                    <p className="text-center text-gray-500">No matching questions found.</p>
+                                                )}
+                                            </div>
+
+
+{/*                                             
                                             <Card className="w-full mx-auto">
                                                 <CardHeader>
                                                     <CardTitle className="text-xl font-bold flex flex-col">
@@ -666,7 +727,7 @@ const Map = ({ coordinates, id }: { coordinates: { lng: number, lat: number }, i
                                                         </CardContent>
                                                     </div>
                                                 </CardContent>
-                                            </Card>
+                                            </Card> */}
                                         </>
                                     }
                                     <Card className="w-full mx-auto">
