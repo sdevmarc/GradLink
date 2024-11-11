@@ -68,6 +68,18 @@ export const API_STUDENT_ENROLL_STUDENT = async ({ course, id }: IRequestStudent
     return response.data
 }
 
+export const API_STUDENT_ACTIVATE_STUDENT = async ({ id }: IRequestStudents) => {
+    const response = await axios.post(`${HOST}/student/activate-student`, {
+        studentid: id
+    })
+    return response.data
+}
+
+export const API_STUDENT_DISCONTINUE_STUDENT = async (formData: FormData) => {
+    const response = await axios.post(`${HOST}/student/discontinue-student`, formData)
+    return response.data
+}
+
 export const API_STUDENT_EVALUATE_STUDENT = async ({ course, evaluations }: IRequestStudents) => {
     const response = await axios.post(`${HOST}/student/evaluate-student`, {
         course, evaluations
