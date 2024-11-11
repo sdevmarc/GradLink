@@ -23,9 +23,9 @@ import { API_STUDENT_FINDALL_ALUMNI_FOR_TRACER_MAP, API_STUDENT_FINDALL_FILTERED
 import Loading from "@/components/loading"
 import { AlertDialogConfirmation } from "@/components/alert-dialog"
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { TooltipComponent } from "@/components/tooltip"
 import { useNavigate } from "react-router-dom"
 import { API_STUDENT_SEND_TRACER } from "@/api/alumni"
+import { API_FORM_MAPPED } from "@/api/form"
 
 export default function TracerMap() {
     const queryClient = useQueryClient()
@@ -51,6 +51,17 @@ export default function TracerMap() {
         id: ''
     })
     const navigate = useNavigate()
+
+    const { data: form, isLoading: formLoading, isFetched: formFetched } = useQuery({
+        queryFn: () => API_FORM_MAPPED(),
+        queryKey: ['form']
+    })
+
+    useEffect(() => {
+        if (formFetched) {
+            console.log(form?.message)
+        }
+    }, [form])
 
     const { data: programs, isLoading: programsLoading, isFetched: programsFetched } = useQuery({
         queryFn: () => API_PROGRAM_FINDALL(),
@@ -141,7 +152,7 @@ export default function TracerMap() {
         setDialogSubmit(false)
     }
 
-    const isLoading = programsLoading || yearsgraduateLoading || tracerLoading
+    const isLoading = formLoading || programsLoading || yearsgraduateLoading || tracerLoading
 
     return (
         <>
