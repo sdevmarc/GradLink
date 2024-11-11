@@ -1,5 +1,5 @@
 export interface IMail {
-    idNumber?: string
+    mail?: string
     date_sent?: string
     notes?: string
 }
