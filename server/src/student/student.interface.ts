@@ -41,7 +41,7 @@ export interface IStudent {
     enrollments?: IStudentEnrollments[]
     status?: string
     isenrolled?: boolean
-    assessmentForm?: string
+    assessmentForm?: Express.Multer.File
     program?: string
     courses?: string[]
     undergraduateInformation?: IUndergraduateInformation
