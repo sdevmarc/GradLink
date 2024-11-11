@@ -63,16 +63,17 @@ export class StudentController {
 
     @Post('new-student')
     async createStudentEnrollee(
-        @Body() { userId, idNumber, lastname, firstname, middlename, email, program, courses, undergraduateInformation, achievements }: IStudent
+        @Body() {  idNumber, lastname, firstname, middlename, email, program, courses, undergraduateInformation, achievements }: IStudent
     ) {
         try {
-            const issuccess = await this.studentService.createEnrollee({ idNumber, lastname, firstname, middlename, email, program, courses, undergraduateInformation, achievements })
-            if (issuccess.success) {
-                await this.auditlogService.createLog({ userId, action: "create", description: `Student created w/ ID no: ${idNumber}` })
-                return { success: true, message: "Student successfully created." }
-            }
-            await this.auditlogService.createLog({ userId, action: "create", description: 'Error' })
-            return { success: false, message: issuccess.message }
+            return await this.studentService.createEnrollee({ idNumber, lastname, firstname, middlename, email, program, courses, undergraduateInformation, achievements })
+            // const issuccess = await this.studentService.createEnrollee({ idNumber, lastname, firstname, middlename, email, program, courses, undergraduateInformation, achievements })
+            // if (issuccess.success) {
+            //     await this.auditlogService.createLog({ userId, action: "create", description: `Student created w/ ID no: ${idNumber}` })
+            //     return { success: true, message: "Student successfully created." }
+            // }
+            // await this.auditlogService.createLog({ userId, action: "create", description: 'Error' })
+            // return { success: false, message: issuccess.message }
 
         } catch (error) {
             throw new HttpException(
@@ -87,11 +88,12 @@ export class StudentController {
         @Body() { userId, course, id }: IRequestStudent
     ) {
         try {
-            const SelectedCourse = await this.coursesService.findOneCourse({ course })
-            const issuccess = await this.studentService.enrollStudent({ course, id })
-            if (issuccess.success) {
-                await this.auditlogService.createLog({ userId, action: "Enroll", description: `${id.length} student/s was enrolled in ${SelectedCourse.data.descriptiveTitle}` })
-            }
+            return await this.studentService.enrollStudent({ course, id })
+            // const SelectedCourse = await this.coursesService.findOneCourse({ course })
+            // const issuccess = await this.studentService.enrollStudent({ course, id })
+            // if (issuccess.success) {
+            //     await this.auditlogService.createLog({ userId, action: "Enroll", description: `${id.length} student/s was enrolled in ${SelectedCourse.data.descriptiveTitle}` })
+            // }
 
         } catch (error) {
             throw new HttpException(
@@ -109,16 +111,17 @@ export class StudentController {
     async evaluateStudentEnrollee(
         @Body() { userId, evaluations, course }: IRequestStudent
     ) {
-
         try {
-            const SelectedCourse = await this.coursesService.findOneCourse({ course })
-            const issuccess = await this.studentService.evaluateStudent({ evaluations, course })
-            if (issuccess.success) {
-                await this.auditlogService.createLog({ userId, action: "Evaluate", description: `${evaluations.length} student/s evaluated in ${SelectedCourse.data.descriptiveTitle}` })
-                return { success: true, message: "Students successfully evaluated." }
-            }
-            await this.auditlogService.createLog({ userId, action: "Evaluate", description: 'Error' })
-            return { success: false, message: issuccess.message }
+            return await this.studentService.evaluateStudent({ evaluations, course })
+
+            // const SelectedCourse = await this.coursesService.findOneCourse({ course })
+            // const issuccess = await this.studentService.evaluateStudent({ evaluations, course })
+            // if (issuccess.success) {
+            //     await this.auditlogService.createLog({ userId, action: "Evaluate", description: `${evaluations.length} student/s evaluated in ${SelectedCourse.data.descriptiveTitle}` })
+            //     return { success: true, message: "Students successfully evaluated." }
+            // }
+            // await this.auditlogService.createLog({ userId, action: "Evaluate", description: 'Error' })
+            // return { success: false, message: issuccess.message }
 
         } catch (error) {
             throw new HttpException(
