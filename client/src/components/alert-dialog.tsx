@@ -163,8 +163,8 @@ export function AlertDialogConfirmation({
                                 </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <Button onClick={btnContinue} variant={`default`} size={`default`}>
+                                <AlertDialogCancel disabled={disabled}>Cancel</AlertDialogCancel>
+                                <Button disabled={disabled} onClick={btnContinue} variant={`default`} size={`default`}>
                                     Continue
                                 </Button>
                             </AlertDialogFooter>
