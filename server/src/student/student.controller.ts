@@ -21,34 +21,44 @@ export class StudentController {
         return this.studentService.findAllStudents()
     }
 
+    @Get('alumni-tracer/:findOne')
+    async findAlumniFromTracer(@Param('findOne') id: string) {
+        return this.studentService.findOneAlumniFromTracerMap({ id })
+    }
+
+    @Get('alumni-for-tracer-map')
+    async findAllAlumniForTracerMap() {
+        return await this.studentService.findAllAlumniForTracerMap()
+    }
+
     @Get('enrollees/:id')
     async findAllStudentStatusEnrolleesInCourse(@Param('id') id: string) {
-        return this.studentService.findAllEnrolleesInCourse(id)
+        return await this.studentService.findAllEnrolleesInCourse(id)
     }
 
     @Get('evaluation/:id')
     async findAllStudentsInCourseForEvaluation(@Param('id') id: string) {
-        return this.studentService.findAllStudentsInCourseForEvaluation(id)
+        return await this.studentService.findAllStudentsInCourseForEvaluation(id)
     }
 
     @Get('attrition/:id')
     async findAllStudentsInCourseForAttrition(@Param('id') id: string) {
-        return this.studentService.findAllStudentsInCourseForAttritionRate(id)
+        return await this.studentService.findAllStudentsInCourseForAttritionRate(id)
     }
 
     @Post('filtered-alumni')
     async findAllFilteredAlumni(@Body() { search, program, yeargraduated }: { search: string, program: string, yeargraduated: string }) {
-        return this.studentService.findFilteredAlumni({ search, program, yeargraduated })
+        return await this.studentService.findFilteredAlumni({ search, program, yeargraduated })
     }
 
     @Get('alumni')
     async findAllAlumniGraduates() {
-        return this.studentService.findAllAlumni()
+        return await this.studentService.findAllAlumni()
     }
 
     @Get('years-graduated')
     async findAllYearsGraduation() {
-        return this.studentService.findAllYearrGraduated()
+        return await this.studentService.findAllYearrGraduated()
     }
 
     @Post('new-student')
@@ -57,8 +67,7 @@ export class StudentController {
     ) {
         try {
             const issuccess = await this.studentService.createEnrollee({ idNumber, lastname, firstname, middlename, email, program, courses, undergraduateInformation, achievements })
-            if (issuccess.success)
-            {
+            if (issuccess.success) {
                 await this.auditlogService.createLog({ userId, action: "create", description: `Student created w/ ID no: ${idNumber}` })
                 return { success: true, message: "Student successfully created." }
             }
@@ -71,8 +80,6 @@ export class StudentController {
                 HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
-
-        // return await this.studentService.createEnrollee({ idNumber, lastname, firstname, middlename, email, program, courses, undergraduateInformation, achievements })
     }
 
     @Post('enroll-student')
@@ -80,14 +87,14 @@ export class StudentController {
         @Body() { userId, course, id }: IRequestStudent
     ) {
         try {
-            const SelectedCourse = await this.coursesService.findOneCourse({course})
-            const issuccess = await this.studentService.enrollStudent({course, id})
-            if(issuccess.success){
-                await this.auditlogService.createLog({userId, action: "Enroll", description: `${id.length} student/s was enrolled in ${SelectedCourse.data.descriptiveTitle}`})
+            const SelectedCourse = await this.coursesService.findOneCourse({ course })
+            const issuccess = await this.studentService.enrollStudent({ course, id })
+            if (issuccess.success) {
+                await this.auditlogService.createLog({ userId, action: "Enroll", description: `${id.length} student/s was enrolled in ${SelectedCourse.data.descriptiveTitle}` })
             }
 
         } catch (error) {
-                        throw new HttpException(
+            throw new HttpException(
                 { success: false, message: 'Failed to fetch audit logs.', error },
                 HttpStatus.INTERNAL_SERVER_ERROR
             );
