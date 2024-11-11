@@ -5,7 +5,7 @@ import {
 } from "@tanstack/react-table"
 
 import { DataTableColumnHeader } from "@/components/data-table-components/data-table-column-header";
-import { BookOpen, CircleCheck, CircleDashed, CircleX, GraduationCap, Loader, Mail, Send, TableOfContents } from "lucide-react";
+import { BookOpen, CircleCheck, CircleDashed, CircleX, GraduationCap, Loader, Mail, Search, Send, TableOfContents } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { IAPIStudents } from "@/interface/student.interface";
 import { useState } from "react";
@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import { SheetModal } from "@/components/sheet-modal";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertDialogConfirmation } from "@/components/alert-dialog";
+import { Input } from "@/components/ui/input";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const formatAnswer = (answer: string | Record<string, any> | null | undefined): React.ReactNode => {
     if (typeof answer === 'object' && answer !== null) {
@@ -200,9 +202,10 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
     {
         id: "actions",
         cell: ({ row }) => {
+            const [searchGeneralTerm, setGeneralSearch] = useState("")
+            const [searchEmploymentDataSearch, setEmploymentDataSearch] = useState("")
             const [isOpen, setIsOpen] = useState<boolean>(false)
             const {
-                _id,
                 idNumber,
                 lastname,
                 firstname,
@@ -227,6 +230,14 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
             const handleOpenChange = (open: boolean) => {
                 setIsOpen(open)
             }
+
+            const filtereGeneral = generalInformation?.questions?.filter(qa =>
+                qa.question.toLowerCase().includes(searchGeneralTerm.toLowerCase())
+            )
+
+            const filteredEmploymentData = employmentData?.questions?.filter(qa =>
+                qa.question.toLowerCase().includes(searchEmploymentDataSearch.toLowerCase())
+            )
 
             return (
                 <div className="flex justify-end">
@@ -360,59 +371,53 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
                                             </Card>
                                             {
                                                 (generalInformation || employmentData) &&
-                                                <>
-                                                    <Card className="w-full mx-auto">
-                                                        <CardHeader>
-                                                            <CardTitle className="text-xl font-bold flex flex-col">
-                                                                Alumni Information
-                                                            </CardTitle>
-                                                        </CardHeader>
-                                                        <CardContent className="">
-                                                            <div className="w-full mx-auto">
-                                                                <CardHeader className="px-0 py-0">
-                                                                    <CardTitle className="text-xl">
-                                                                        General Information
-                                                                    </CardTitle>
-                                                                </CardHeader>
-                                                                <CardContent className="flex flex-wrap gap-4 px-0">
-                                                                    {
-                                                                        generalInformation?.questions?.map(item => (
-                                                                            <div className="flex flex-col basis-[calc(50%-0.5rem)]">
-                                                                                <span className="text-md font-normal">
-                                                                                    {item?.question}
-                                                                                </span>
-                                                                                <span className="text-md font-medium">
-                                                                                    {formatAnswer(item.answer)}
-                                                                                </span>
-                                                                            </div>
-                                                                        ))
-                                                                    }
-                                                                </CardContent>
-                                                            </div>
-                                                            <div className="w-full mx-auto">
-                                                                <CardHeader className="px-0 py-0">
-                                                                    <CardTitle className="text-xl">
-                                                                        Employment Data
-                                                                    </CardTitle>
-                                                                </CardHeader>
-                                                                <CardContent className="flex flex-wrap gap-4 px-0">
-                                                                    {
-                                                                        employmentData?.questions?.map(item => (
-                                                                            <div className="flex flex-col basis-[calc(50%-0.5rem)]">
-                                                                                <span className="text-md font-normal">
-                                                                                    {item?.question}
-                                                                                </span>
-                                                                                <span className="text-md font-medium">
-                                                                                    {formatAnswer(item.answer)}
-                                                                                </span>
-                                                                            </div>
-                                                                        ))
-                                                                    }
-                                                                </CardContent>
-                                                            </div>
-                                                        </CardContent>
-                                                    </Card>
-                                                </>
+                                                <div className="w-full max-w-3xl mx-auto p-4 space-y-4">
+                                                    <h1 className="text-2xl font-bold text-center mb-6">Alumni Information</h1>
+                                                    <h1 className="text-xl font-bold text-left mb-6">General Information</h1>
+                                                    <div className="relative">
+                                                        <Input
+                                                            type="text"
+                                                            placeholder="Search questions..."
+                                                            value={searchGeneralTerm}
+                                                            onChange={(e) => setGeneralSearch(e.target.value)}
+                                                            className="pl-10"
+                                                        />
+                                                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                                                    </div>
+                                                    <Accordion type="single" collapsible className="w-full">
+                                                        {filtereGeneral?.map((qa, index) => (
+                                                            <AccordionItem value={`item-${index}`} key={index}>
+                                                                <AccordionTrigger className="text-left">{qa.question}</AccordionTrigger>
+                                                                <AccordionContent>{formatAnswer(qa.answer)}</AccordionContent>
+                                                            </AccordionItem>
+                                                        ))}
+                                                    </Accordion>
+                                                    {filtereGeneral?.length === 0 && (
+                                                        <p className="text-center text-gray-500">No matching questions found.</p>
+                                                    )}
+                                                    <h1 className="text-xl font-bold text-left mb-6">Employment Information</h1>
+                                                    <div className="relative">
+                                                        <Input
+                                                            type="text"
+                                                            placeholder="Search questions..."
+                                                            value={searchEmploymentDataSearch}
+                                                            onChange={(e) => setEmploymentDataSearch(e.target.value)}
+                                                            className="pl-10"
+                                                        />
+                                                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                                                    </div>
+                                                    <Accordion type="single" collapsible className="w-full">
+                                                        {filteredEmploymentData?.map((qa, index) => (
+                                                            <AccordionItem value={`item-${index}`} key={index}>
+                                                                <AccordionTrigger className="text-left">{qa.question}</AccordionTrigger>
+                                                                <AccordionContent>{formatAnswer(qa.answer)}</AccordionContent>
+                                                            </AccordionItem>
+                                                        ))}
+                                                    </Accordion>
+                                                    {filtereGeneral?.length === 0 && (
+                                                        <p className="text-center text-gray-500">No matching questions found.</p>
+                                                    )}
+                                                </div>
                                             }
                                             <Card className="w-full mx-auto">
                                                 <CardHeader>
