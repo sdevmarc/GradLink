@@ -8,6 +8,7 @@ import { IOffered } from 'src/offered/offered.interface'
 import { ICurriculum } from 'src/curriculum/curriculum.interface'
 import { MailService } from 'src/mail/mail.service'
 import { IMail } from 'src/mail/mail.interface'
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service'
 
 @Injectable()
 export class StudentService {
@@ -18,8 +19,111 @@ export class StudentService {
         @InjectModel('Offered') private readonly offeredModel: Model<IOffered>,
         @InjectModel('Curriculum') private readonly curriculumModel: Model<ICurriculum>,
         @InjectModel('Mail') private readonly mailModel: Model<IMail>,
-        private readonly mailService: MailService
+        private readonly mailService: MailService,
+        private readonly cloudinaryService: CloudinaryService
     ) { }
+
+    async findStudentsOverlapResidency(): Promise<IPromiseStudent> {
+        try {
+            // First, find students who have exceeded their residency
+            const studentsToUpdate = await this.studentModel.aggregate([
+                // Lookup to get curriculum details
+                {
+                    $lookup: {
+                        from: "curriculums",
+                        localField: "program",
+                        foreignField: "_id",
+                        as: "curriculum"
+                    }
+                },
+                // Unwind curriculum array
+                {
+                    $unwind: "$curriculum"
+                },
+                // Lookup to get program details with residency information
+                {
+                    $lookup: {
+                        from: "programs",
+                        localField: "curriculum.programid",
+                        foreignField: "_id",
+                        as: "programInfo"
+                    }
+                },
+                // Unwind program array
+                {
+                    $unwind: "$programInfo"
+                },
+                // Calculate years since enrollment
+                {
+                    $addFields: {
+                        yearsSinceEnrollment: {
+                            $divide: [
+                                { $subtract: [new Date(), "$createdAt"] },
+                                // Convert milliseconds to years (365.25 days per year)
+                                (365.25 * 24 * 60 * 60 * 1000)
+                            ]
+                        }
+                    }
+                },
+                // Filter students who exceeded residency
+                {
+                    $match: {
+                        $expr: {
+                            $gt: ["$yearsSinceEnrollment", "$programInfo.residency"]
+                        },
+                        isenrolled: true
+                    }
+                },
+                // Project only necessary fields
+                {
+                    $project: {
+                        _id: 1,
+                        idNumber: 1,
+                        firstname: 1,
+                        lastname: 1,
+                        enrollments: 1,
+                        yearsSinceEnrollment: 1,
+                        programResidency: "$programInfo.residency"
+                    }
+                }
+            ]);
+
+            // Update each student's enrollment status
+            const bulkOps = studentsToUpdate.map(student => ({
+                updateOne: {
+                    filter: { _id: student._id },
+                    update: {
+                        $set: {
+                            isenrolled: false,
+                            'enrollments.$[elem].ispass': 'discontinue'
+                        }
+                    },
+                    arrayFilters: [{ 'elem.ispass': 'ongoing' }]
+                }
+            }));
+
+            if (bulkOps.length > 0) {
+                await this.studentModel.bulkWrite(bulkOps);
+            }
+
+            return {
+                success: true,
+                message: `Updated ${bulkOps.length} students who exceeded residency period.`,
+                data: studentsToUpdate
+            };
+
+        } catch (error) {
+            throw new HttpException(
+                {
+                    success: false,
+                    message: 'Failed to find and update students who overlap residency.',
+                    error: error.message
+                },
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
 
     async findAllYearrGraduated(): Promise<IPromiseStudent> {
         try {
@@ -747,6 +851,8 @@ export class StudentService {
 
     async findAllStudents(): Promise<IPromiseStudent> {
         try {
+            await this.findStudentsOverlapResidency()
+
             const response = await this.studentModel.aggregate([
                 {
                     $match: {
@@ -1142,7 +1248,7 @@ export class StudentService {
                     $match: {
                         $and: [{
                             status: { $in: ['student', 'enrollee'] },
-                            // isenrolled: true //Dinagdag ko
+                            isenrolled: true //Dinagdag ko
                         }]
                     }
                 },
@@ -1214,6 +1320,7 @@ export class StudentService {
                 {
                     $match: {
                         status: { $in: ['student'] },
+                        isenrolled: true //Dinagdag ko
                     }
                 },
 
@@ -2445,9 +2552,12 @@ export class StudentService {
         }
     }
 
-
-    async discontinueStudent({ id, assessmentForm }: IStudent) {
+    async discontinueStudent({ id, assessmentForm }: Partial<IStudent>) {
         try {
+            const uploadimage = await this.cloudinaryService.uploadFile(assessmentForm)
+            if (!uploadimage) return { success: false, message: 'Header failed to update.' }
+            const { secure_url } = uploadimage
+
             // First, get the student with populated enrollments and course references
             const student = await this.studentModel.findById(id)
                 .populate({
@@ -2485,16 +2595,22 @@ export class StudentService {
             // Get all course IDs from the latest academic year
             const latestYearCourseIds = latestOffered.courses.map(course => course.toString());
 
+            // Create update object based on whether assessmentForm is provided
+            const updateObject: any = {
+                isenrolled: false,
+                'enrollments.$[elem].ispass': 'discontinue'
+            };
+
+            // Only include assessmentForm in the update if it's provided
+            if (assessmentForm !== undefined) {
+                updateObject.assessmentForm = secure_url;
+            }
+
             // Update the student document
             await this.studentModel.findByIdAndUpdate(
                 id,
                 {
-                    $set: {
-                        isenrolled: false,
-                        assessmentForm: assessmentForm,
-                        // Update all enrollments where the course is in the latest academic year
-                        'enrollments.$[elem].ispass': 'discontinue'
-                    }
+                    $set: updateObject
                 },
                 {
                     arrayFilters: [
