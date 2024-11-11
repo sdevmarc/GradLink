@@ -6,6 +6,8 @@ import { IModelForm } from 'src/forms/forms.interface'
 import { ICourses } from 'src/courses/courses.interface'
 import { IOffered } from 'src/offered/offered.interface'
 import { ICurriculum } from 'src/curriculum/curriculum.interface'
+import { MailService } from 'src/mail/mail.service'
+import { IMail } from 'src/mail/mail.interface'
 
 @Injectable()
 export class StudentService {
@@ -15,6 +17,8 @@ export class StudentService {
         @InjectModel('Course') private readonly courseModel: Model<ICourses>,
         @InjectModel('Offered') private readonly offeredModel: Model<IOffered>,
         @InjectModel('Curriculum') private readonly curriculumModel: Model<ICurriculum>,
+        @InjectModel('Mail') private readonly mailModel: Model<IMail>,
+        private readonly mailService: MailService
     ) { }
 
     async findAllYearrGraduated(): Promise<IPromiseStudent> {
@@ -1957,6 +1961,98 @@ export class StudentService {
             .split(' ')
             .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
             .join(' ')
+    }
+
+    async findAlumniByFilterAndSendTracer({ academicYear, program }: { academicYear: string, program: string }): Promise<IPromiseStudent> {
+        try {
+            // Parse academic year string (e.g., "2024 - 2025")
+            const [startYear, endYear] = academicYear.split(' - ').map(year => parseInt(year));
+
+            // Find alumni using aggregation pipeline
+            const alumni = await this.studentModel.aggregate([
+                {
+                    $lookup: {
+                        from: 'curriculums',
+                        localField: 'program',
+                        foreignField: '_id',
+                        as: 'curriculumInfo'
+                    }
+                },
+                {
+                    $unwind: '$curriculumInfo'
+                },
+                {
+                    $match: {
+                        status: 'alumni',
+                        'curriculumInfo.programid': new mongoose.Types.ObjectId(program),
+                        'enrollments': {
+                            $elemMatch: {
+                                'enrollmentDate': {
+                                    $gte: new Date(`${startYear}-01-01`),
+                                    $lte: new Date(`${endYear}-12-31`)
+                                },
+                                'ispass': 'pass'
+                            }
+                        }
+                    }
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        email: 1,
+                        firstname: 1,
+                        lastname: 1,
+                        program: 1,
+                        lastEnrollment: {
+                            $max: '$enrollments.enrollmentDate'
+                        }
+                    }
+                }
+            ]);
+
+            if (!alumni.length) {
+                return {
+                    success: false,
+                    message: 'No alumni found matching the criteria.'
+                };
+            }
+
+            // Extract emails from alumni
+            const emails = alumni.map(a => a.email);
+
+            // Send emails
+            const mailResponse = await this.mailService.sendMail({ email: emails });
+
+            // Save mail records for tracking
+            const mailRecords = alumni.map(alumnus => ({
+                user: alumnus._id,
+                date_sent: new Date(),
+                notes: `Tracer survey sent for academic year ${academicYear} for program batch`
+            }));
+
+            await this.mailModel.insertMany(mailRecords);
+
+            return {
+                success: true,
+                message: 'Tracer sent successfully!',
+                data: {
+                    alumniCount: alumni.length,
+                    mailResponse,
+                    alumni: alumni.map(a => ({
+                        id: a._id,
+                        name: `${a.firstname} ${a.lastname}`,
+                        email: a.email,
+                        lastEnrollment: a.lastEnrollment
+                    }))
+                }
+            };
+
+        } catch (error) {
+            throw new HttpException(
+                { success: false, message: 'Failed to send tracer to alumni.', error },
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
     }
 
     async createEnrollee(
