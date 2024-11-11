@@ -1,12 +1,12 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { MailService } from './mail.service';
 
 @Controller('mail')
 export class MailController {
     constructor(private readonly mailService: MailService) { }
 
-    @Get(':email')
-    async sendMailer(@Param('email') send_to: string[]) {
-        return await this.mailService.sendMail(send_to);
+    @Post('send-tracer')
+    async sendMailer(@Body() { email }: { email: string[] }) {
+        return await this.mailService.sendMail({ email });
     }
 }
