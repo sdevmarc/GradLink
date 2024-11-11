@@ -27,6 +27,10 @@ export const StudentSchema = new mongoose.Schema({
         ref: 'Curriculum',
         required: true
     },
+    coordinates: {
+        latitude: Number,
+        longitude: Number
+    },
     undergraduateInformation: {
         college: {
             type: String,
