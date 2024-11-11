@@ -6,6 +6,9 @@ import { StudentAlumniColumns } from "./alumni-data-table-components/alumni/colu
 import { Sidebar, SidebarNavs } from "@/components/sidebar"
 import MainTable from "@/components/main-table"
 import { ROUTES } from "@/constants"
+import { API_FORM_MAPPED } from "@/api/form"
+import { useEffect } from "react"
+import Loading from "@/components/loading"
 
 export default function Alumni() {
     const { data: dataAlumni, isLoading: alumniLoading, isFetched: alumniFetched } = useQuery({
@@ -13,8 +16,22 @@ export default function Alumni() {
         queryKey: ['students']
     })
 
+    const { data: form, isLoading: formLoading, isFetched: formFetched } = useQuery({
+        queryFn: () => API_FORM_MAPPED(),
+        queryKey: ['form']
+    })
+
+    useEffect(() => {
+        if (formFetched) {
+            console.log(form?.message)
+        }
+    }, [form])
+
+    const isLoading = formLoading
+
     return (
         <>
+            {isLoading && <Loading />}
             <div className="flex flex-col min-h-screen items-center">
                 <div className="w-full max-w-[90rem] flex flex-col">
                     <aside className="px-4 pb-4 pt-[8rem]">
