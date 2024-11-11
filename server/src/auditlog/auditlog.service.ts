@@ -29,6 +29,6 @@ export class AuditlogService {
                 { success: false, message: 'Failed to fetch audit logs.', error },
                 HttpStatus.INTERNAL_SERVER_ERROR
             );
-        }
+        }   
     }
 }
