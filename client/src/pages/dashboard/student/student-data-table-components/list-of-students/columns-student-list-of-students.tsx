@@ -532,6 +532,13 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                                     </div>
                                                                                 }
                                                                                 {
+                                                                                    item.status === 'inc' &&
+                                                                                    <div className="flex items-center gap-2">
+                                                                                        <CircleX className="text-primary" size={18} />
+                                                                                        INCOMPLETE
+                                                                                    </div>
+                                                                                }
+                                                                                {
                                                                                     item.status === 'not_taken' &&
                                                                                     <div className="flex items-center gap-2">
                                                                                         <CircleDashed className="text-primary" size={18} />
