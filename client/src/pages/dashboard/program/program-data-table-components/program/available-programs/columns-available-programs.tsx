@@ -122,62 +122,19 @@ export const AvailableProgramsColumns: ColumnDef<IAPIPrograms>[] = [
                                                         <div>
                                                             <CardTitle className="capitalize text-3xl font-bold flex flex-col">
                                                                 {descriptiveTitle}
-                                                                <span className="font-normal text-md">{major || null}</span>
                                                             </CardTitle>
-                                                            <CardDescription className="mt-2">
+                                                            <CardDescription className="mt-2 flex items-center gap-2">
                                                                 <Badge variant="default" className="mr-2">
                                                                     {code}
                                                                 </Badge>
-                                                                <span className="text-muted-foreground">
-                                                                    {name || 'No Curriculum'}
-                                                                </span>
+                                                                <div className="flex items-center">
+                                                                    <Clock className="h-5 w-5 mr-2 text-muted-foreground" />
+                                                                    <span>Residency: {residency} years</span>
+                                                                </div>
                                                             </CardDescription>
                                                         </div>
-                                                        {/* <Button>Apply Now</Button> */}
                                                     </div>
                                                 </CardHeader>
-                                                <CardContent className="space-y-4">
-                                                    <section className="space-y-4">
-                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                            <div className="flex items-center">
-                                                                <Clock className="h-5 w-5 mr-2 text-muted-foreground" />
-                                                                <span>Residency: {residency} years</span>
-                                                            </div>
-                                                            <div className="flex items-center">
-                                                                <BookOpen className="h-5 w-5 mr-2 text-muted-foreground" />
-                                                                <span>Credits: {totalUnits}</span>
-                                                            </div>
-                                                        </div>
-                                                    </section>
-
-                                                    <section className="space-y-4">
-                                                        {
-                                                            categories?.map((item, i) => (
-                                                                <div key={i} className="flex flex-col">
-                                                                    <h3 className="font-medium text-md">
-                                                                        {item.categoryName}
-                                                                    </h3>
-                                                                    {
-                                                                        item?.courses?.map((course, l) => (
-                                                                            <ul key={l} className="flex items-center gap-4 mt-2">
-                                                                                <li className="w-full flex items-center justify-between text-sm">
-                                                                                    <div className="flex items-center gap-2">
-                                                                                        <GraduationCap size={18} className="h-5 w-5 mr-2 text-muted-foreground" />
-                                                                                        {(course as any)?.descriptiveTitle || 'No Title'}
-                                                                                    </div>
-                                                                                    <h1 className="flex items-center gap-2">
-                                                                                        {(course as any)?.units || 0}<span>Units</span>
-                                                                                    </h1>
-                                                                                </li>
-                                                                            </ul>
-                                                                        ))
-                                                                    }
-
-                                                                </div>
-                                                            ))
-                                                        }
-                                                    </section>
-                                                </CardContent>
                                             </Card>
                                         </div>
                                     </main>
