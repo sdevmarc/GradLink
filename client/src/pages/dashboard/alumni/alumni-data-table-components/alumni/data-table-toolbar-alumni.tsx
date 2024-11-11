@@ -94,7 +94,7 @@ export function DataTableToolbarAlumni<TData>({
         { value: 'SEAIT', label: "Eng'g, Dev't. Arts & Design, Library Science & IT" },
         { value: 'SHANS', label: "Science and Mathematics" },
         { value: 'SAB', label: "Business and Accountancy" },
-        { value: 'STEH', label: "Teacher Education and Humanities"}
+        { value: 'STEH', label: "Teacher Education and Humanities" }
     ]
 
     return (
@@ -109,28 +109,28 @@ export function DataTableToolbarAlumni<TData>({
                     className="h-8 w-[17rem] lg:w-[20rem]"
                 />
 
-                <div className="flex items-center gap-4">
-                {table.getColumn("department") && (
-                    <DataTableFacetedFilter
-                        column={table.getColumn("department")}
-                        title="Department"
-                        options={department_options}
-                    />
-                )}
-                   {table.getColumn("program") && (
-                    <DataTableFacetedFilter
-                        column={table.getColumn("program")}
-                        title="Program"
-                        options={filteredPrograms}
-                    />
-                )}
-                 {table.getColumn("academicYear") && (
-                    <DataTableFacetedFilter
-                        column={table.getColumn("academicYear")}
-                        title="Year Graduated"
-                        options={filteredYearsGraduated}
-                    />
-                )}
+                <div className="flex items-center gap-2">
+                    {table.getColumn("department") && (
+                        <DataTableFacetedFilter
+                            column={table.getColumn("department")}
+                            title="Department"
+                            options={department_options}
+                        />
+                    )}
+                    {table.getColumn("program") && (
+                        <DataTableFacetedFilter
+                            column={table.getColumn("program")}
+                            title="Program"
+                            options={filteredPrograms}
+                        />
+                    )}
+                    {table.getColumn("academicYear") && (
+                        <DataTableFacetedFilter
+                            column={table.getColumn("academicYear")}
+                            title="Year Graduated"
+                            options={filteredYearsGraduated}
+                        />
+                    )}
                     {/* <Combobox
                         btnTitleclassName="gap-2"
                         icon={<Filter className="text-primary" size={15} />}
