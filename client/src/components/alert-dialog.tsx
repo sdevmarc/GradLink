@@ -25,6 +25,7 @@ interface IComponents {
     icon?: React.ReactNode
     btnIcon?: React.ReactNode
     content?: React.ReactNode
+    tooltipContent?: React.ReactNode
 }
 
 export function AlertDialogConfirmation({
@@ -151,7 +152,7 @@ export function AlertDialogConfirmation({
                     <AlertDialog open={isDialog} onOpenChange={(open) => setDialog && setDialog(open)}>
                         <AlertDialogTrigger asChild>
                             <Button disabled={disabled} variant={variant} size="sm" className={cn(className)}>
-                                {btnIcon}   {btnTitle}
+                                {btnIcon} {btnTitle}
                             </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
