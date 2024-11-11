@@ -1,10 +1,11 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Param, Post } from '@nestjs/common'
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, UploadedFile, UseInterceptors } from '@nestjs/common'
 import { StudentService } from './student.service'
 import { IRequestStudent, IStudent } from './student.interface'
 import { FormsService } from 'src/forms/forms.service'
 import { ConstantsService } from 'src/constants/constants.service'
 import { AuditlogService } from 'src/auditlog/auditlog.service'
 import { CoursesService } from 'src/courses/courses.service'
+import { FileInterceptor } from '@nestjs/platform-express'
 
 @Controller('student')
 export class StudentController {
@@ -56,6 +57,11 @@ export class StudentController {
         return await this.studentService.findAllAlumni()
     }
 
+    @Get('student-overlap')
+    async findStudentsOverlap() {
+        return await this.studentService.findStudentsOverlapResidency()
+    }
+
     @Get('years-graduated')
     async findAllYearsGraduation() {
         return await this.studentService.findAllYearrGraduated()
@@ -63,7 +69,7 @@ export class StudentController {
 
     @Post('new-student')
     async createStudentEnrollee(
-        @Body() {  idNumber, lastname, firstname, middlename, email, program, courses, undergraduateInformation, achievements }: IStudent
+        @Body() { idNumber, lastname, firstname, middlename, email, program, courses, undergraduateInformation, achievements }: IStudent
     ) {
         try {
             return await this.studentService.createEnrollee({ idNumber, lastname, firstname, middlename, email, program, courses, undergraduateInformation, achievements })
@@ -130,6 +136,15 @@ export class StudentController {
             );
         }
         //return await this.studentService.evaluateStudent({ evaluations, course })
+    }
+
+    @Post('discontinue-student')
+    @UseInterceptors(FileInterceptor('assessmentForm'))
+    async discontinueStudent(
+        @Body() { id }: { id: string },
+        @UploadedFile() assessmentForm: Express.Multer.File
+    ) {
+        return await this.studentService.discontinueStudent({ id, assessmentForm })
     }
 
     @Post('send-tracer-to-alumni')
