@@ -19,6 +19,7 @@ import { CurriculumModule } from './curriculum/curriculum.module'
 import { OfferedModule } from './offered/offered.module';
 import { SettingsModule } from './settings/settings.module';
 import { AuditlogModule } from './auditlog/auditlog.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
     imports: [
@@ -58,6 +59,7 @@ import { AuditlogModule } from './auditlog/auditlog.module';
         OfferedModule,
         SettingsModule,
         AuditlogModule,
+        CloudinaryModule,
     ],
     controllers: [AppController],
     providers: [AppService, OtpService, ConstantsService],
