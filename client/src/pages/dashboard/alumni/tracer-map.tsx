@@ -17,20 +17,32 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { LeftSheetModal } from "@/components/left-sheet-modal"
 import { createPortal } from 'react-dom';
 import AlumniCap from '@/assets/alumnicap.svg';
-import { useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { API_PROGRAM_FINDALL } from "@/api/program"
 import { API_STUDENT_FINDALL_ALUMNI_FOR_TRACER_MAP, API_STUDENT_FINDALL_FILTERED_ALUMNI, API_STUDENT_FINDONE_ALUMNI_FOR_TRACER_MAP, API_STUDENT_YEARS_GRADUATED } from "@/api/student"
 import Loading from "@/components/loading"
 import { AlertDialogConfirmation } from "@/components/alert-dialog"
 import 'mapbox-gl/dist/mapbox-gl.css';
+import { TooltipComponent } from "@/components/tooltip"
+import { useNavigate } from "react-router-dom"
+import { API_STUDENT_SEND_TRACER } from "@/api/alumni"
 
 export default function TracerMap() {
+    const queryClient = useQueryClient()
     const [filteredPrograms, setFilteredPrograms] = useState<{ label: string, value: string }[]>([])
     const [filteredYearsGraduated, setFilteredYearsGraduated] = useState<{ label: string, value: string }[]>([])
     const [isSearch, setIsSearch] = useState<boolean>(false)
     const [search, setSearch] = useState<string>('')
     const [program, setProgram] = useState<string>('')
     const [yearGraduated, setYearGraduated] = useState<string>('')
+    const [dialogsubmit, setDialogSubmit] = useState<boolean>(false)
+    const [isValid, setValid] = useState<boolean>(false)
+    const [alertdialogstate, setAlertDialogState] = useState({
+        show: false,
+        title: '',
+        description: '',
+        success: false
+    })
     const [searched, setSearched] = useState<{ coordinates: { lng: number, lat: number }, id: string }>({
         coordinates: {
             lng: 0,
@@ -38,6 +50,7 @@ export default function TracerMap() {
         },
         id: ''
     })
+    const navigate = useNavigate()
 
     const { data: programs, isLoading: programsLoading, isFetched: programsFetched } = useQuery({
         queryFn: () => API_PROGRAM_FINDALL(),
@@ -51,7 +64,7 @@ export default function TracerMap() {
 
     const { data: filteredAlumni } = useQuery({
         queryFn: () => API_STUDENT_FINDALL_FILTERED_ALUMNI({ search, program, yeargraduated: yearGraduated }),
-        queryKey: ['students', { search, program, yearGraduated }],
+        queryKey: ['alumni', { search, program, yearGraduated }],
         enabled: isSearch, // Only run when search is triggered
     });
 
@@ -84,11 +97,71 @@ export default function TracerMap() {
         }
     }, [yearsGraduations])
 
-    const isLoading = programsLoading || yearsgraduateLoading
+    const { mutateAsync: tracer, isPending: tracerLoading } = useMutation({
+        mutationFn: API_STUDENT_SEND_TRACER,
+        onSuccess: async (data) => {
+            if (!data.success) {
+                setValid(false)
+                setDialogSubmit(false)
+                setAlertDialogState({ success: false, show: true, title: "Uh, oh. Something went wrong!", description: data.message })
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                })
+                return
+            } else {
+                await queryClient.invalidateQueries({ queryKey: ['alumni'] })
+                await queryClient.refetchQueries({ queryKey: ['programs'] })
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                })
+                setValid(true)
+                setDialogSubmit(false)
+                setAlertDialogState({ success: true, show: true, title: "Yay, success! 🎉", description: data.message })
+                return
+            }
+        },
+        onError: (data) => {
+            setValid(false)
+            setDialogSubmit(false)
+            setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: data.message })
+        }
+    })
+
+    const handleSendTracerStudy = async () => {
+        if (!program || !yearGraduated) {
+            setValid(false)
+            setDialogSubmit(false)
+            setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Please select a semester.' })
+            return
+        }
+
+        await tracer()
+        setDialogSubmit(false)
+    }
+
+    const isLoading = programsLoading || yearsgraduateLoading || tracerLoading
 
     return (
         <>
             {isLoading && <Loading />}
+            <AlertDialogConfirmation
+                btnTitle='Continue'
+                className='w-full py-4'
+                isDialog={alertdialogstate.show}
+                setDialog={(open) => setAlertDialogState(prev => ({ ...prev, show: open }))}
+                type={`alert`}
+                title={alertdialogstate.title}
+                description={alertdialogstate.description}
+                icon={alertdialogstate.success ? <CircleCheck color="#42a626" size={70} /> : <CircleX color="#880808" size={70} />}
+                variant={`default`}
+                btnContinue={() => {
+                    setAlertDialogState(prev => ({ ...prev, show: false }))
+                    if (isValid) return navigate(-1)
+
+                }}
+            />
             <div className="flex flex-col min-h-screen items-center">
                 <div className="w-full max-w-[90rem] flex flex-col">
                     <aside className="px-4 pb-4 pt-[8rem]">
@@ -107,6 +180,25 @@ export default function TracerMap() {
                         </Sidebar>
                         <MainTable>
                             <div className="w-full h-screen flex flex-col gap-4 pb-4 rounded-md">
+                                <div className="flex items-center justify-end">
+                                    <div className="flex flex-col">
+                                        <AlertDialogConfirmation
+                                            isDialog={dialogsubmit}
+                                            setDialog={(open) => setDialogSubmit(open)}
+                                            type={`default`}
+                                            disabled={isLoading}
+                                            className='w-full my-3'
+                                            variant={'default'}
+                                            btnIcon={<Send className="text-primary-foreground" size={18} />}
+                                            btnTitle="Send Tracer Study"
+                                            title="Are you sure?"
+                                            description={`This will send a tracer study and email the alumni accordiing to the filtered program and year graduated.`}
+                                            btnContinue={handleSendTracerStudy}
+                                        />
+
+                                    </div>
+                                </div>
+
                                 <div className="flex items-center justify-between gap-4">
                                     <div className="flex items-center gap-2">
                                         <Input
