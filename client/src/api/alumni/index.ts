@@ -11,3 +11,8 @@ export const API_STUDENT_FINDONE_ALUMNI = async ({ idNumber }: IAPIAlumni) => {
     const response = await axios.get(`${HOST}/student/findone/${idNumber}`)
     return response.data
 }
+
+export const API_STUDENT_SEND_TRACER = async () => {
+    const response = await axios.post(`${HOST}/student/send-tracer-to-alumni`)
+    return response.data
+}
