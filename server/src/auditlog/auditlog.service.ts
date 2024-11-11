@@ -23,7 +23,7 @@ export class AuditlogService {
 
     async getAllLogs(): Promise<IAuditlog[]> {
         try {
-            return await this.AuditlogModel.find().sort({ createdAt: -1 }).exec();
+            return await this.AuditlogModel.find().populate('userId', 'email').sort({ createdAt: -1 }).exec();
         } catch (error) {
             throw new HttpException(
                 { success: false, message: 'Failed to fetch audit logs.', error },
