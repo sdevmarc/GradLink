@@ -10,6 +10,8 @@ import { CoursesSchema } from 'src/courses/courses.schema'
 import { ProgramSchema } from 'src/programs/programs.schema'
 import { OfferedSchema } from 'src/offered/offered.schema'
 import { CurriculumSchema } from 'src/curriculum/curriculum.schema'
+import { MailSchema } from 'src/mail/mail.schema'
+import { MailService } from 'src/mail/mail.service'
 
 @Module({
     imports: [MongooseModule.forFeature([
@@ -19,11 +21,13 @@ import { CurriculumSchema } from 'src/curriculum/curriculum.schema'
         { name: 'Program', schema: ProgramSchema },
         { name: 'Offered', schema: OfferedSchema },
         { name: 'Curriculum', schema: CurriculumSchema },
+        { name: 'Mail', schema: MailSchema },
     ])],
     providers: [
         FormsService,
         ConstantsService,
-        StudentService
+        StudentService,
+        MailService
     ],
     controllers: [FormsController]
 })
