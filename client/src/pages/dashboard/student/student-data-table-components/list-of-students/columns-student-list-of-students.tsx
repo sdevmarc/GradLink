@@ -401,78 +401,6 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                             <h1 className="text-xl font-semibold">
                                                                 {programName}
                                                             </h1>
-                                                            {
-                                                                !settings?.data?.isenroll &&
-                                                                <div className="flex items-center gap-4">
-                                                                    {
-                                                                        isDiscontinue &&
-                                                                        <div className="flex flex-col items-center gap-2">
-                                                                            <h1 className="w-2/3 text-sm text-center">Please input the assessment form to proceed.</h1>
-                                                                            {
-                                                                                values?.previewAssessment &&
-                                                                                <Avatar className="w-20 h-20">
-                                                                                    <AvatarImage src={values.previewAssessment} alt='Assessment Form' />
-                                                                                </Avatar>
-                                                                            }
-
-                                                                            <div>
-                                                                                <Label htmlFor="avatar" className="cursor-pointer">
-                                                                                    <div className="flex items-center space-x-2">
-                                                                                        <Upload className="w-4 h-4" />
-                                                                                        <span>Choose File</span>
-                                                                                    </div>
-                                                                                </Label>
-                                                                                <Input
-                                                                                    id="avatar"
-                                                                                    type="file"
-                                                                                    accept="image/*"
-                                                                                    className="hidden"
-                                                                                    onChange={handleFileChange}
-                                                                                />
-                                                                            </div>
-                                                                        </div>
-                                                                    }
-
-                                                                    <div className="flex items-center gap-2">
-                                                                        {
-                                                                            isDiscontinue &&
-                                                                            <Button onClick={() => {
-                                                                                setDiscontinue(false)
-                                                                                setValues(prev => ({ ...prev, previewAssessment: '', assessmentFile: null }))
-                                                                            }}
-                                                                                variant={`ghost`}
-                                                                                size={`sm`}
-                                                                                className="flex items-center gap-2"
-                                                                            >
-                                                                                <X className="text-primary" size={18} /> Cancel
-                                                                            </Button>
-                                                                        }
-
-                                                                        <AlertDialogConfirmation
-                                                                            isDialog={dialogsubmit}
-                                                                            setDialog={(e) => setDialogSubmit(e)}
-                                                                            className="flex items-center gap-2"
-                                                                            type={`default`}
-                                                                            variant={`${!isDiscontinue ? 'destructive' : 'default'}`}
-                                                                            btnIcon={<UserPen className="text-primary-foreground" size={18} />}
-                                                                            btnTitle={`${!isDiscontinue ? 'Mark as Discontinue' : 'Submit Assessment'}`}
-                                                                            title="Are you sure?"
-                                                                            description={`${lastname}, ${firstname} ${middlename} will be mark as a dicontinuing student, and its courses this semester will be mark as drop.`}
-                                                                            btnContinue={() => {
-                                                                                !isDiscontinue
-                                                                                    ? (
-                                                                                        setDialogSubmit(false),
-                                                                                        setDiscontinue(true)
-                                                                                    )
-                                                                                    : handleSubmit()
-
-                                                                            }}
-                                                                        />
-                                                                    </div>
-
-                                                                </div>
-                                                            }
-
                                                         </div>
 
                                                         <div className="w-full flex items-center justify-between">
@@ -554,6 +482,76 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                 ))}
                                                             </tbody>
                                                         </table>
+                                                    </div>
+                                                    <div className="flex items-center justify-start gap-2">
+                                                        <AlertDialogConfirmation
+                                                            isDialog={dialogsubmit}
+                                                            setDialog={(e) => setDialogSubmit(e)}
+                                                            className="flex items-center gap-2"
+                                                            type={`default`}
+                                                            variant={`${!isDiscontinue ? 'destructive' : 'default'}`}
+                                                            btnIcon={<UserPen className="text-primary-foreground" size={18} />}
+                                                            btnTitle={`${!isDiscontinue ? 'Mark as Discontinue' : 'Submit Assessment'}`}
+                                                            title="Are you sure?"
+                                                            description={`${lastname}, ${firstname} ${middlename} will be mark as a dicontinuing student, and its courses this semester will be mark as drop.`}
+                                                            btnContinue={() => {
+                                                                !isDiscontinue
+                                                                    ? (
+                                                                        setDialogSubmit(false),
+                                                                        setDiscontinue(true)
+                                                                    )
+                                                                    : handleSubmit()
+
+                                                            }}
+                                                        />
+                                                        {
+                                                            !settings?.data?.isenroll &&
+                                                            <>
+                                                                <div className="flex items-center gap-2">
+                                                                    {
+                                                                        isDiscontinue &&
+                                                                        <Button onClick={() => {
+                                                                            setDiscontinue(false)
+                                                                            setValues(prev => ({ ...prev, previewAssessment: '', assessmentFile: null }))
+                                                                        }}
+                                                                            variant={`ghost`}
+                                                                            size={`sm`}
+                                                                            className="flex items-center gap-2"
+                                                                        >
+                                                                            <X className="text-primary" size={18} /> Cancel
+                                                                        </Button>
+                                                                    }
+                                                                </div>
+                                                                {
+                                                                    isDiscontinue &&
+                                                                    <div className="flex flex-col items-center gap-2">
+                                                                        <h1 className="w-2/3 text-sm text-center">Please input the assessment form to proceed.</h1>
+                                                                        {
+                                                                            values?.previewAssessment &&
+                                                                            <Avatar className="w-20 h-20">
+                                                                                <AvatarImage src={values.previewAssessment} alt='Assessment Form' />
+                                                                            </Avatar>
+                                                                        }
+
+                                                                        <div>
+                                                                            <Label htmlFor="avatar" className="cursor-pointer">
+                                                                                <div className="flex items-center space-x-2">
+                                                                                    <Upload className="w-4 h-4" />
+                                                                                    <span>Choose File</span>
+                                                                                </div>
+                                                                            </Label>
+                                                                            <Input
+                                                                                id="avatar"
+                                                                                type="file"
+                                                                                accept="image/*"
+                                                                                className="hidden"
+                                                                                onChange={handleFileChange}
+                                                                            />
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                            </>
+                                                        }
                                                     </div>
                                                 </CardContent>
                                             </Card>
