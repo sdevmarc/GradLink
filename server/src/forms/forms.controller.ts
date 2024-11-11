@@ -76,6 +76,9 @@ export class FormsController {
                 const firstname = String(item.generalInformation.answers[1].answer);
                 const middlename = String(item.generalInformation.answers[2].answer);
 
+                const isFirstJobRelatedToCourse = String(item.generalInformation.answers[19].answer);
+                const howLongDiditTake = String(item.generalInformation.answers[20].answer);
+
                 const formemail = String(item.generalInformation.answers[8].answer);
                 const currentaddress = String(item.generalInformation.answers[7].answer);
                 const coordinates = await this.getCoordinates(currentaddress);
