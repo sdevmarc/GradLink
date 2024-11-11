@@ -13,7 +13,7 @@ import Loading from "@/components/loading"
 export default function Alumni() {
     const { data: dataAlumni, isLoading: alumniLoading, isFetched: alumniFetched } = useQuery({
         queryFn: () => API_STUDENT_FINDALL_ALUMNI(),
-        queryKey: ['alumni']
+        queryKey: ['students']
     })
 
     const { data: form, isLoading: formLoading, isFetched: formFetched } = useQuery({
