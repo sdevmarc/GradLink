@@ -44,6 +44,11 @@ export interface MappedSection {
     questions: MappedAnswer[];
 }
 
+interface ICoordinates {
+    latitude?: number
+    longitude?: number
+}
+
 export interface IAPIStudents {
     _id?: string
     idNumber?: string
@@ -69,6 +74,7 @@ export interface IAPIStudents {
     achievements?: IAchievements
     generalInformation?: MappedSection
     employmentData?: MappedSection
+    coordinates?: ICoordinates
 }
 
 export interface IEvaluation {
