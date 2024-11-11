@@ -141,7 +141,7 @@ export class StudentController {
         const response = await this.formService.mapQuestionsToAnswers(this.constantsService.getFormId())
 
         const updatePromises = response.map(async (item) => {
-            const formemail = String(item.generalInformation.answers[6].answer)
+            const formemail = String(item.generalInformation.answers[8].answer)
             const {
                 generalInformation,
                 // educationalBackground, 
