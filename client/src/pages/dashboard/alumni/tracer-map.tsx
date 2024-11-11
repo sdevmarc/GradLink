@@ -11,33 +11,82 @@ import './index.css'
 import { Input } from "@/components/ui/input"
 import { Combobox } from "@/components/combobox"
 import { Badge } from "@/components/ui/badge"
-import { BookOpen, CircleCheck, CircleDashed, CircleX, Clock, Filter, GraduationCap, Loader, Mail, Search } from "lucide-react"
+import { BookOpen, CircleCheck, CircleDashed, CircleX, Filter, GraduationCap, Loader, Mail, Search, Send } from "lucide-react"
 import { SheetModal } from "@/components/sheet-modal"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { LeftSheetModal } from "@/components/left-sheet-modal"
 import { createPortal } from 'react-dom';
 import AlumniCap from '@/assets/alumnicap.svg';
-import { department } from '@/components/data-table-components/options.json'
+import { useQuery } from "@tanstack/react-query"
+import { API_PROGRAM_FINDALL } from "@/api/program"
+import { API_STUDENT_FINDALL_ALUMNI_FOR_TRACER_MAP, API_STUDENT_FINDALL_FILTERED_ALUMNI, API_STUDENT_FINDONE_ALUMNI_FOR_TRACER_MAP, API_STUDENT_YEARS_GRADUATED } from "@/api/student"
+import Loading from "@/components/loading"
+import { AlertDialogConfirmation } from "@/components/alert-dialog"
 
 export default function TracerMap() {
-    const [isSearch, setSearch] = useState<boolean>(false)
+    const [filteredPrograms, setFilteredPrograms] = useState<{ label: string, value: string }[]>([])
+    const [filteredYearsGraduated, setFilteredYearsGraduated] = useState<{ label: string, value: string }[]>([])
+    const [isSearch, setIsSearch] = useState<boolean>(false)
+    const [search, setSearch] = useState<string>('')
     const [program, setProgram] = useState<string>('')
     const [yearGraduated, setYearGraduated] = useState<string>('')
+    const [searched, setSearched] = useState<{ coordinates: { lng: number, lat: number }, id: string }>({
+        coordinates: {
+            lng: 0,
+            lat: 0
+        },
+        id: ''
+    })
 
-    const handleSearchOpenChange = (open: boolean) => {
-        setSearch(open)
+    const { data: programs, isLoading: programsLoading, isFetched: programsFetched } = useQuery({
+        queryFn: () => API_PROGRAM_FINDALL(),
+        queryKey: ['programs']
+    })
+
+    const { data: yearsGraduations, isLoading: yearsgraduateLoading, isFetched: yearsgraduatedFetched } = useQuery({
+        queryFn: () => API_STUDENT_YEARS_GRADUATED(),
+        queryKey: ['students']
+    })
+
+    const { data: filteredAlumni } = useQuery({
+        queryFn: () => API_STUDENT_FINDALL_FILTERED_ALUMNI({ search, program, yeargraduated: yearGraduated }),
+        queryKey: ['students', { search, program, yearGraduated }],
+        enabled: isSearch, // Only run when search is triggered
+    });
+
+    const handleClickSearch = () => {
+        setIsSearch(true)
     }
 
-    const graduation_date = [
-        { label: '2024 - 2025', value: '2024 - 2025' },
-        { label: '2023 - 2024', value: '2023 - 2024' },
-        { label: '2022 - 2023', value: '2022 - 2023' },
-        { label: '2021 - 2022', value: '2021 - 2022' },
-        { label: '2020 - 2021', value: '2020 - 2021' }
-    ]
+    const handleSearchOpenChange = (open: boolean) => {
+        setIsSearch(open)
+    }
+
+    useEffect(() => {
+        if (programsFetched) {
+            const filteringprogram: { label: string, value: string }[] = programs?.data?.map((item: { _id: string, descriptiveTitle: string }) => {
+                const { _id, descriptiveTitle } = item
+                return { label: descriptiveTitle, value: _id }
+            }) || []
+            setFilteredPrograms(filteringprogram)
+        }
+    }, [programs])
+
+    useEffect(() => {
+        if (yearsgraduatedFetched) {
+            const filteringprogram: { label: string, value: string }[] = yearsGraduations?.data?.map((item: { academicYear: string }) => {
+                const { academicYear } = item
+                return { label: academicYear, value: academicYear }
+            }) || []
+            setFilteredYearsGraduated(filteringprogram)
+        }
+    }, [yearsGraduations])
+
+    const isLoading = programsLoading || yearsgraduateLoading
 
     return (
         <>
+            {isLoading && <Loading />}
             <div className="flex flex-col min-h-screen items-center">
                 <div className="w-full max-w-[90rem] flex flex-col">
                     <aside className="px-4 pb-4 pt-[8rem]">
@@ -52,18 +101,20 @@ export default function TracerMap() {
                         <Sidebar>
                             <SidebarNavs title="Alumni Information" link={ROUTES.ALUMNI} />
                             <SidebarNavs bg='bg-muted' title="Tracer Map" link={ROUTES.TRACER_MAP} />
-                            <SidebarNavs title="Google Form" link={ROUTES.GOOGLE_FORM} />
+                            {/* <SidebarNavs title="Google Form" link={ROUTES.GOOGLE_FORM} /> */}
                         </Sidebar>
                         <MainTable>
                             <div className="w-full h-screen flex flex-col gap-4 pb-4 rounded-md">
                                 <div className="flex items-center justify-between gap-4">
                                     <div className="flex items-center gap-2">
                                         <Input
+                                            value={search}
+                                            onChange={(e) => setSearch(e.target.value)}
                                             placeholder="Search ID Number"
                                             className="h-8 w-[17rem] lg:w-[20rem]"
                                         />
-                                        <Button onClick={() => setSearch(true)} variant={`outline`} size={`sm`} className="flex items-center gap-2">
-                                            <Search className="text-primary" size={18} />    Search
+                                        <Button onClick={handleClickSearch} variant={`outline`} size={`sm`} className="flex items-center gap-2">
+                                            <Search className="text-primary" size={18} /> Search
                                         </Button>
                                     </div>
 
@@ -72,7 +123,7 @@ export default function TracerMap() {
                                             btnTitleclassName="gap-2"
                                             icon={<Filter className="text-primary" size={15} />}
                                             className='w-[200px]'
-                                            lists={department || []}
+                                            lists={filteredPrograms || []}
                                             placeholder={`Program`}
                                             setValue={(item) => setProgram(item)}
                                             value={program || ''}
@@ -81,7 +132,7 @@ export default function TracerMap() {
                                             btnTitleclassName="gap-2"
                                             icon={<Filter className="text-primary" size={15} />}
                                             className='w-[150px]'
-                                            lists={graduation_date || []}
+                                            lists={filteredYearsGraduated || []}
                                             placeholder={`Year Graduated`}
                                             setValue={(item) => setYearGraduated(item)}
                                             value={yearGraduated || ''}
@@ -90,14 +141,30 @@ export default function TracerMap() {
                                 </div>
 
                                 <div className="w-full min-h-[65%] rounded-md overflow-hidden">
-                                    <Map />
+                                    <Map coordinates={searched?.coordinates} id={searched?.id} />
                                     <LeftSheetModal
                                         className="w-[30%]"
                                         isOpen={isSearch}
                                         onOpenChange={handleSearchOpenChange}
-                                        title="Search for alumni"
+                                        title="Search for Alumni"
                                         description="View searched results."
-                                        content={<SearchCard idNumber="37472210" />}
+                                        content={
+                                            <SearchCard
+                                                data={filteredAlumni?.data || []}
+                                                setCoordinates={(lng: number, lat: number) => setSearched(prev => ({
+                                                    ...prev,
+                                                    coordinates: {
+                                                        lng,
+                                                        lat
+                                                    }
+                                                }))}
+                                                setId={(studentid: string) => setSearched(prev => ({
+                                                    ...prev,
+                                                    id: studentid
+                                                }))}
+                                                isclose={(e: boolean) => setIsSearch(e)}
+                                            />
+                                        }
                                     />
                                 </div>
                             </div>
@@ -109,55 +176,99 @@ export default function TracerMap() {
     )
 }
 
-const SearchCard = ({ idNumber }: { idNumber: string }) => {
-    console.log('From search card: ', idNumber)
+const SearchCard = ({ data, setCoordinates, setId, isclose }: { data: any[], setCoordinates: (lng: number, lat: number) => void, setId: (e: string) => void, isclose: (e: boolean) => void }) => {
+    const handleSearchedChange = ({ lng, lat, id }: { lng: number, lat: number, id: string }) => {
+        // Fix: Pass coordinates in correct order
+        setCoordinates(lng, lat);
+        setId(id);
+        isclose(false)
+    };
+
     return (
         <div className="flex flex-col">
-            <Card className="w-full mx-auto">
-                <CardHeader>
-                    <div className="flex justify-between items-start">
-                        <div className="w-full flex flex-col">
-                            <div className="w-full flex items-center justify-between">
-                                <CardTitle className="uppercase text-3xl font-bold flex flex-col">
-                                    {/* {lastname}, {firstname} {middlename} */} SUAREZ, MARC EDISON DONATO
-                                    <span className="font-normal text-md lowercase flex items-center gap-2">
-                                        <Mail className="text-muted-foreground" size={18} />
-                                        {/* {email || 'No valid Email'} */} suanieeee@yahoo.com
-                                    </span>
-                                </CardTitle>
-                            </div>
+            {
+                data?.length > 0 ?
+                    data?.map(item => (
+                        <Card key={item._id} className="w-full mx-auto">
+                            <CardHeader>
+                                <div className="flex justify-between items-start">
+                                    <div className="w-full flex flex-col">
+                                        <div className="w-full flex items-center justify-between">
+                                            <CardTitle className="uppercase text-xl font-bold flex flex-col">
+                                                {item?.lastname}, {item?.firstname} {item?.middlename}
+                                                <span className="font-normal text-md lowercase flex flex-col">
+                                                    <span className="flex items-center gap-2">
+                                                        <Mail className="text-muted-foreground" size={18} />
+                                                        {item?.email || 'No valid Email'}
+                                                    </span>
+                                                    <span className="text-primary text-sm uppercase">
+                                                        {item?.program?.department} | {item?.program?.code} | {item?.program?.descriptiveTitle}
+                                                    </span>
+                                                </span>
 
-                            <CardDescription className="mt-2 flex flex-col items-start gap-2">
-                                <div className="flex items-center">
-                                    <Badge variant="default" className="mr-2">
-                                        {/* {idNumber || 'No valid ID Number'} */} 37472210
-                                    </Badge>
-                                    <span className="text-muted-foreground uppercase">
-                                        {/* {department} | {programCode} | {programName} */}
-                                        SEAIT | MIT | Master Of Information Technology
-                                    </span>
+                                            </CardTitle>
+                                        </div>
+
+                                        <CardDescription className="mt-2 flex flex-col items-start gap-2">
+                                            <div className="flex flex-col items-start">
+                                                <Badge variant="default" className="mr-2">
+                                                    {item?.idNumber || 'No valid ID Number'}
+                                                </Badge>
+                                            </div>
+                                            {/* <Badge variant="default" className="mr-2">
+                                                {/* {idNumber || 'No valid ID Number'} Software Engineer
+                                            </Badge> */}
+                                        </CardDescription>
+                                    </div>
                                 </div>
-                                <Badge variant="default" className="mr-2">
-                                    {/* {idNumber || 'No valid ID Number'} */} Software Engineer
-                                </Badge>
-                            </CardDescription>
+                                <div className="flex items-center justify-end gap-2">
+                                    <Button
+                                        onClick={() => {
+                                            handleSearchedChange({
+                                                // Fix: Swap the coordinates to correct order
+                                                lng: item?.coordinates?.longitude || 0, // Changed from latitude
+                                                lat: item?.coordinates?.latitude || 0,  // Changed from longitude
+                                                id: item?._id || ''
+                                            })
+                                        }}
+                                        variant="outline"
+                                        size="sm"
+                                    >
+                                        View in Map
+                                    </Button>
+                                    {/* <Button variant={`default`} size={`sm`}>
+                                        View Profile
+                                    </Button> */}
+                                </div>
+                            </CardHeader>
+                        </Card>
+                    )) : (
+                        <div className="my-[3rem] flex items-center justify-center">
+                            <h1 className="text-xl font-medium">No Active Results.</h1>
                         </div>
-                    </div>
-                    <div className="flex items-center justify-end gap-2">
-                        <Button variant={`outline`} size={`sm`}>
-                            View in Map
-                        </Button>
-                        <Button variant={`default`} size={`sm`}>
-                            View Profile
-                        </Button>
-                    </div>
-                </CardHeader>
-            </Card>
+                    )
+            }
         </div>
     )
 }
 
+const formatAnswer = (answer: string | Record<string, any> | null | undefined): React.ReactNode => {
+    if (typeof answer === 'object' && answer !== null) {
+        return (
+            <ul className="list-disc pl-4 mt-2">
+                {Object.entries(answer).map(([key, value], index) => (
+                    <li key={index} className="text-md">
+                        {key}: {typeof value === 'string' ? value : JSON.stringify(value)}
+                    </li>
+                ))}
+            </ul>
+        );
+    }
+    return answer || 'None';
+};
+
 interface Marker {
+    _id?: string
     lng: number
     lat: number
     name: string
@@ -182,8 +293,8 @@ const HoverCard = ({
         <div
             className="fixed z-[1000] bg-white rounded-lg shadow-lg p-3 min-w-[200px]"
             style={{
-                left: position.x - 100,
-                top: position.y - 130,
+                left: position.x + 30,
+                top: position.y - 100,
             }}
         >
             <div className="space-y-2">
@@ -209,10 +320,10 @@ const HoverCard = ({
 };
 
 
-const Map = () => {
-    const [selectedmarker, setSelectedMarker] = useState<{ visible: boolean, idNumber: string }>({
+const Map = ({ coordinates, id }: { coordinates: { lng: number, lat: number }, id: string }) => {
+    const [selectedmarker, setSelectedMarker] = useState<{ visible: boolean, id: string }>({
         visible: false,
-        idNumber: ''
+        id: ''
     })
     const [hoverInfo, setHoverInfo] = useState<{
         visible: boolean;
@@ -225,90 +336,147 @@ const Map = () => {
     });
     const mapContainer = useRef<HTMLDivElement>(null)
     const map = useRef<mapboxgl.Map | null>(null)
-    const [lng, setLng] = useState(121.15340385396442)
-    const [lat, setLat] = useState(16.48675023322725)
-    const [zoom, setZoom] = useState(3)
-    const [isMapLoading, setMapLoading] = useState(true) // Add loading state
-    const markers: Marker[] = [
-        { lng: 121.3598812, lat: 17.667649, name: 'Marc Edison Suarez', idNumber: '37472210', program: 'MIT', yearGraduated: '2025 - 2026' },
-        { lng: 118.0583411, lat: 17.7292005, name: 'Juan Dela Cruz', idNumber: '12345678', program: 'MIT', yearGraduated: '2025 - 2026' },
-        { lng: 121.16, lat: 16.49, name: 'John Doe', idNumber: '87654321', program: 'MIT', yearGraduated: '2025 - 2026' },
-    ]
+    const markersRef = useRef<{ [key: string]: mapboxgl.Marker }>({});
+    const [lng, setLng] = useState(121.15340385396442);
+    const [lat, setLat] = useState(16.48675023322725);
+    // const [zoom, setZoom] = useState(3)
+
+    const { data: dataAlumni, isLoading: alumniLoading, isFetched: alumniFetched } = useQuery({
+        queryFn: () => API_STUDENT_FINDALL_ALUMNI_FOR_TRACER_MAP(),
+        queryKey: ['students']
+    })
+
+    const { data: onealumni } = useQuery({
+        queryFn: () => API_STUDENT_FINDONE_ALUMNI_FOR_TRACER_MAP({ id: selectedmarker?.id }),
+        queryKey: ['students', { id: selectedmarker?.id }],
+        enabled: !!selectedmarker?.id
+    })
 
     mapboxgl.accessToken = MAPKEY
 
     useEffect(() => {
-        if (map.current) return // Initialize map only once
-        if (mapContainer.current) {
+        if (!mapContainer.current || !dataAlumni?.data) return;
+
+        if (!map.current) {
             map.current = new mapboxgl.Map({
                 container: mapContainer.current,
                 style: 'mapbox://styles/mapbox/streets-v12',
-                center: [121.15340385396442, 16.48675023322725],
-                zoom,
-            })
-
-            map.current.on('load', () => {
-                setMapLoading(false) // Turn off loading once the map is loaded
-
-                markers.forEach(marker => {
-                    const el = document.createElement('div')
-                    el.className = 'marker'
-
-                    const root = createRoot(el)
-                    root.render(<img src={AlumniCap} alt="icon" className="w-8 h-8" />)
-
-                    el.addEventListener('mouseenter', (e) => {
-                        setHoverInfo({
-                            visible: true,
-                            position: { x: e.pageX, y: e.pageY },
-                            marker: marker
-                        });
-                    });
-
-                    el.addEventListener('mouseleave', () => {
-                        setHoverInfo(prev => ({ ...prev, visible: false }));
-                    });
-
-                    el.addEventListener('mousemove', (e) => {
-                        setHoverInfo(prev => ({
-                            ...prev,
-                            position: { x: e.pageX, y: e.pageY }
-                        }));
-                    });
-
-                    new mapboxgl.Marker(el)
-                        .setLngLat([marker.lng, marker.lat])
-                        .addTo(map.current!)
-                        .getElement()
-                        .addEventListener('click', () => {
-                            console.log('click')
-                            setSelectedMarker(prev => ({
-                                ...prev,
-                                visible: true,
-                                idNumber: marker.idNumber
-                            }))
-                        })
-                })
-            })
-
-            map.current.on('error', (e) => {
-                console.error('Mapbox error:', e);
-                setMapLoading(false);
+                center: [lng, lat],
+                zoom: 3,
             });
         }
-    }, [lng, lat, zoom, markers, selectedmarker])
+
+        map.current = new mapboxgl.Map({
+            container: mapContainer.current,
+            style: 'mapbox://styles/mapbox/streets-v12',
+            center: [lng, lat],
+            zoom: 3,
+        });
+
+        map.current.on('load', () => {
+            // Clear existing markers
+            Object.values(markersRef.current).forEach(marker => marker.remove());
+            markersRef.current = {};
+
+            dataAlumni.data.forEach((marker: Marker) => {
+                const el = document.createElement('div');
+                el.className = 'marker';
+
+                const root = createRoot(el);
+                root.render(<img src={AlumniCap} alt="icon" className="w-8 h-8" />);
+
+                // Add hover events
+                el.addEventListener('mouseenter', (e: MouseEvent) => {
+                    setHoverInfo({
+                        visible: true,
+                        position: { x: e.pageX, y: e.pageY },
+                        marker
+                    });
+                });
+
+                el.addEventListener('mouseleave', () => {
+                    setHoverInfo(prev => ({ ...prev, visible: false }));
+                });
+
+                el.addEventListener('mousemove', (e: MouseEvent) => {
+                    setHoverInfo(prev => ({
+                        ...prev,
+                        position: { x: e.pageX, y: e.pageY }
+                    }));
+                });
+
+                // Create and store marker
+                const markerObj = new mapboxgl.Marker(el)
+                    .setLngLat([marker.lng, marker.lat])
+                    .addTo(map.current!);
+
+                // Store marker reference
+                if (marker._id) {
+                    markersRef.current[marker._id] = markerObj;
+                }
+
+                // Add click handler
+                el.addEventListener('click', () => {
+                    setLng(marker.lng);
+                    setLat(marker.lat);
+
+                    map.current?.flyTo({
+                        center: [marker.lng, marker.lat],
+                        zoom: 7,
+                        duration: 2000,
+                        essential: true
+                    });
+
+                    setSelectedMarker({
+                        visible: true,
+                        id: marker._id || ''
+                    });
+                });
+            });
+        });
+
+
+        map.current?.on('error', (e) => {
+            console.error('Mapbox error:', e);
+        });
+
+        return () => {
+            // Cleanup markers on unmount
+            Object.values(markersRef.current).forEach(marker => marker.remove());
+        };
+    }, [dataAlumni?.data]);
+
+    useEffect(() => {
+        if (map.current && coordinates.lng !== 0 && coordinates.lat !== 0 && id) {
+            map.current.flyTo({
+                center: [coordinates.lng, coordinates.lat],
+                zoom: 13,
+                duration: 2000,
+                essential: true
+            });
+
+            const existingMarker = markersRef.current[id];
+            if (existingMarker) {
+                const el = existingMarker.getElement();
+                el.style.zIndex = '1000';
+                setTimeout(() => {
+                    el.style.zIndex = '';
+                }, 2000);
+            }
+        }
+    }, [coordinates, id]);
+
 
     const handleCloseModal = () => {
         setSelectedMarker({
             visible: false,
-            idNumber: ''
+            id: ''
         });
     };
 
     return (
 
         <div className="w-full h-full relative">
-            {isMapLoading && <div>Map is loading...</div>}
             <div ref={mapContainer} className={`w-full h-full`} />
             {hoverInfo.marker && (
                 <HoverCard
@@ -318,12 +486,13 @@ const Map = () => {
                 />
             )}
             <SheetModal
-                className="w-[60%]"
+                className="w-[60%] overflow-auto"
                 isOpen={selectedmarker.visible}
                 onOpenChange={handleCloseModal}
                 title="Alumni Details"
                 description="View details of the selected alumna."
                 content={
+                    (!alumniLoading && alumniFetched) &&
                     <div className="flex flex-col min-h-screen items-center">
                         <div className="w-full max-w-[90rem] flex flex-col">
                             <main className="flex justify-center items-center py-4">
@@ -334,46 +503,50 @@ const Map = () => {
                                                 <div className="w-full flex flex-col">
                                                     <div className="w-full flex items-center justify-between">
                                                         <CardTitle className="uppercase text-3xl font-bold flex flex-col">
-                                                            {/* {lastname}, {firstname} {middlename} */}
-                                                            SUAREZ, MARC EDISON D.
+                                                            {onealumni?.data?.lastname}, {onealumni?.data?.firstname} {onealumni?.data?.middlename}
                                                             <span className="font-normal text-md lowercase flex items-center gap-2">
-                                                                <Mail className="text-muted-foreground" size={18} />
-                                                                {/* {email || 'No valid Email'} */}
-                                                                suanieeee@yahoo.com
+                                                                <Mail className="text-muted-foreground" size={18} /> {onealumni?.data?.email || 'No valid Email'}
                                                             </span>
                                                         </CardTitle>
-
+                                                        <AlertDialogConfirmation
+                                                            className="flex items-center gap-2"
+                                                            type={`default`}
+                                                            variant={'default'}
+                                                            btnIcon={<Send className="text-primary-foreground" size={18} />}
+                                                            btnTitle="Send Tracer Study"
+                                                            title="Are you sure?"
+                                                            description={`${onealumni?.data?.lastname}, ${onealumni?.data?.firstname} ${onealumni?.data?.middlename} will be mark as a dicontinuing student, and its courses this semester will be mark as drop.`}
+                                                            btnContinue={handleCloseModal}
+                                                        />
                                                     </div>
 
                                                     <CardDescription className="mt-2 flex items-center justify-between">
                                                         <div className="flex items-center">
                                                             <Badge variant="default" className="mr-2">
-                                                                {/* {idNumber || 'No valid ID Number'} */}
-                                                                37472210
+                                                                {onealumni?.data?.idNumber || 'No valid ID Number'}
                                                             </Badge>
                                                             <span className="text-muted-foreground uppercase">
-                                                                {/* {department} | {programCode} | {programName} */}
-                                                                SEAIT | MIT | Master of Information Technology
+                                                                {onealumni?.data?.department} | {onealumni?.data?.programCode} | {onealumni?.data?.programName}
                                                             </span>
                                                         </div>
                                                     </CardDescription>
                                                 </div>
-                                                {/* <Button>Apply Now</Button> */}
                                             </div>
                                         </CardHeader>
                                         <CardContent className="space-y-4">
                                             <div className="w-full mx-auto">
-                                                <CardHeader>
-                                                    <CardTitle className="text-xl">Bachelor's Degree Information</CardTitle>
+                                                <CardHeader className="px-0">
+                                                    <CardTitle className="text-xl">
+                                                        Bachelor's Degree Information
+                                                    </CardTitle>
                                                 </CardHeader>
-                                                <CardContent className="flex flex-wrap gap-4">
+                                                <CardContent className="flex flex-wrap gap-4 px-0">
                                                     <div className="flex flex-col basis-[calc(50%-0.5rem)]">
                                                         <span className="text-md font-semibold">
                                                             College/University
                                                         </span>
                                                         <span className="text-md font-normal">
-                                                            {/* {undergraduateInformation?.college || 'None'} */}
-                                                            Saint Mary's University
+                                                            {onealumni?.data?.undergraduateInformation?.college || 'None'}
                                                         </span>
                                                     </div>
                                                     <div className="flex flex-col basis-[calc(50%-0.5rem)]">
@@ -381,8 +554,7 @@ const Map = () => {
                                                             School
                                                         </span>
                                                         <span className="text-md font-normal">
-                                                            {/* {undergraduateInformation?.school || 'None'} */}
-                                                            College of Law
+                                                            {onealumni?.data?.undergraduateInformation?.school || 'None'}
                                                         </span>
                                                     </div>
                                                     <div className="flex flex-col basis-[calc(50%-0.5rem)]">
@@ -390,8 +562,7 @@ const Map = () => {
                                                             Program
                                                         </span>
                                                         <span className="text-md font-normal">
-                                                            {/* {undergraduateInformation?.programGraduated || 'None'} */}
-                                                            MIT
+                                                            {onealumni?.data?.undergraduateInformation?.programGraduated || 'None'}
                                                         </span>
                                                     </div>
                                                     <div className="flex flex-col basis-[calc(50%-0.5rem)]">
@@ -399,8 +570,7 @@ const Map = () => {
                                                             Year Graduated
                                                         </span>
                                                         <span className="text-md font-normal">
-                                                            {/* {undergraduateInformation?.yearGraduated || 'None'} */}
-                                                            2025
+                                                            {onealumni?.data?.undergraduateInformation?.yearGraduated || 'None'}
                                                         </span>
                                                     </div>
                                                     <div className="flex flex-col basis-[calc(50%-0.5rem)]">
@@ -408,8 +578,7 @@ const Map = () => {
                                                             Honors/Awards Received
                                                         </span>
                                                         <span className="text-md font-normal">
-                                                            {/* {achievements?.awards || 'None'} */}
-                                                            Academic Achiever
+                                                            {onealumni?.data?.achievements?.awards || 'None'}
                                                         </span>
                                                     </div>
                                                     <div className="flex flex-col basis-[calc(50%-0.5rem)]">
@@ -417,8 +586,7 @@ const Map = () => {
                                                             Professional Exam Passed
                                                         </span>
                                                         <span className="text-md font-normal">
-                                                            {/* {achievements?.examPassed || 'None'} */}
-                                                            CSE
+                                                            {onealumni?.data?.achievements?.examPassed || 'None'}
                                                         </span>
                                                     </div>
                                                     <div className="flex flex-col basis-[calc(50%-0.5rem)]">
@@ -426,8 +594,7 @@ const Map = () => {
                                                             Professional Exam Date
                                                         </span>
                                                         <span className="text-md font-normal">
-                                                            {/* {achievements?.examDate || 'None'} */}
-                                                            2024
+                                                            {onealumni?.data?.achievements?.examDate || 'None'}
                                                         </span>
                                                     </div>
                                                     <div className="flex flex-col basis-[calc(50%-0.5rem)]">
@@ -435,8 +602,7 @@ const Map = () => {
                                                             Professional Exam Rating
                                                         </span>
                                                         <span className="text-md font-normal">
-                                                            {/* {achievements?.examRating ? `${achievements?.examRating}%` : 'None'} */}
-                                                            20%
+                                                            {onealumni?.data?.achievements?.examRating ? `${onealumni?.data?.achievements?.examRating}%` : 'None'}
                                                         </span>
                                                     </div>
 
@@ -444,12 +610,68 @@ const Map = () => {
                                             </div>
                                         </CardContent>
                                     </Card>
+                                    {
+                                        (onealumni?.data?.generalInformation || onealumni?.data?.employmentData) &&
+                                        <>
+                                            <Card className="w-full mx-auto">
+                                                <CardHeader>
+                                                    <CardTitle className="text-xl font-bold flex flex-col">
+                                                        Alumni Information
+                                                    </CardTitle>
+                                                </CardHeader>
+                                                <CardContent className="">
+                                                    <div className="w-full mx-auto">
+                                                        <CardHeader className="px-0 py-0">
+                                                            <CardTitle className="text-xl">
+                                                                General Information
+                                                            </CardTitle>
+                                                        </CardHeader>
+                                                        <CardContent className="flex flex-wrap gap-4 px-0">
+                                                            {
+                                                                onealumni?.data?.generalInformation?.questions?.map((item: { question: string, answer: string | Record<string, any> }) => (
+                                                                    <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                                        <span className="text-md font-normal">
+                                                                            {item?.question}
+                                                                        </span>
+                                                                        <span className="text-md font-medium">
+                                                                            {formatAnswer(item.answer)}
+                                                                        </span>
+                                                                    </div>
+                                                                ))
+                                                            }
+                                                        </CardContent>
+                                                    </div>
+                                                    <div className="w-full mx-auto">
+                                                        <CardHeader className="px-0 py-0">
+                                                            <CardTitle className="text-xl">
+                                                                Employment Data
+                                                            </CardTitle>
+                                                        </CardHeader>
+                                                        <CardContent className="flex flex-wrap gap-4 px-0">
+                                                            {
+                                                                onealumni?.data?.employmentData?.questions?.map((item: { question: string, answer: string | Record<string, any> }) => (
+                                                                    <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                                        <span className="text-md font-normal">
+                                                                            {item?.question}
+                                                                        </span>
+                                                                        <span className="text-md font-medium">
+                                                                            {formatAnswer(item.answer)}
+                                                                        </span>
+                                                                    </div>
+                                                                ))
+                                                            }
+                                                        </CardContent>
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
+                                        </>
+                                    }
                                     <Card className="w-full mx-auto">
                                         <CardHeader>
                                             <div className="w-full flex flex-col items-start gap-2">
                                                 <div className="w-full flex items-center justify-between">
                                                     <h1 className="text-xl font-semibold">
-                                                        {/* {programName} */} Master Of Information Technology
+                                                        {onealumni?.data?.programName}
                                                     </h1>
                                                 </div>
 
@@ -459,8 +681,7 @@ const Map = () => {
                                                     </h1>
                                                     <div className="flex items-center">
                                                         <BookOpen className="h-5 w-5 mr-2 text-muted-foreground" />
-                                                        {/* <span>Credits: {totalOfUnitsEarned} / {totalOfUnitsEnrolled}</span> */}
-                                                        <span>Credits: 20 / 20</span>
+                                                        <span>Credits: {onealumni?.data?.totalOfUnitsEarned} / {onealumni?.data?.totalOfUnitsEnrolled}</span>
                                                     </div>
                                                 </div>
 
@@ -477,53 +698,60 @@ const Map = () => {
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {/* {enrolledCourses?.map((item, i) => (
-                                                        <tr key={i} className="border-b last:border-0">
-                                                            <td className="py-2">
-                                                                <span className="capitalize text-sm font-normal flex items-center gap-2">
-                                                                    <GraduationCap size={18} className="h-5 w-5 text-muted-foreground" />
-                                                                    {item.courseno}
-                                                                </span>
-                                                            </td>
-                                                            <td className="py-2">
-                                                                <span className="capitalize text-sm font-normal flex items-center gap-2">
-                                                                    {item.descriptiveTitle}
-                                                                </span>
-                                                            </td>
-                                                            <td className="py-2 text-left text-medium">
-                                                                <span className="text-sm font-normal flex items-center gap-2 capitalize ">
-                                                                    {
-                                                                        item.status === 'ongoing' &&
-                                                                        <div className="flex items-center gap-2">
-                                                                            <Loader className="text-primary" size={18} />
-                                                                            Ongoing
-                                                                        </div>
-                                                                    }
-                                                                    {
-                                                                        item.status === 'pass' &&
-                                                                        <div className="flex items-center gap-2">
-                                                                            <CircleCheck className="text-primary" size={18} />
-                                                                            PASSED
-                                                                        </div>
-                                                                    }
-                                                                    {
-                                                                        item.status === 'fail' &&
-                                                                        <div className="flex items-center gap-2">
-                                                                            <CircleX className="text-primary" size={18} />
-                                                                            Failed
-                                                                        </div>
-                                                                    }
-                                                                    {
-                                                                        item.status === 'not_taken' &&
-                                                                        <div className="flex items-center gap-2">
-                                                                            <CircleDashed className="text-primary" size={18} />
-                                                                            Not taken yet
-                                                                        </div>
-                                                                    }
-                                                                </span>
-                                                            </td>
-                                                        </tr>
-                                                    ))} */}
+                                                        {onealumni?.data?.enrolledCourses?.map((item: { courseno: string, descriptiveTitle: string, status: string }, i: number) => (
+                                                            <tr key={i} className="border-b last:border-0">
+                                                                <td className="py-2">
+                                                                    <span className="capitalize text-sm font-normal flex items-center gap-2">
+                                                                        <GraduationCap size={18} className="h-5 w-5 text-muted-foreground" />
+                                                                        {item.courseno}
+                                                                    </span>
+                                                                </td>
+                                                                <td className="py-2">
+                                                                    <span className="capitalize text-sm font-normal flex items-center gap-2">
+                                                                        {item.descriptiveTitle}
+                                                                    </span>
+                                                                </td>
+                                                                <td className="py-2 text-left text-medium">
+                                                                    <span className="text-sm font-normal flex items-center gap-2 capitalize ">
+                                                                        {
+                                                                            item.status === 'ongoing' &&
+                                                                            <div className="flex items-center gap-2">
+                                                                                <Loader className="text-primary" size={18} />
+                                                                                Ongoing
+                                                                            </div>
+                                                                        }
+                                                                        {
+                                                                            item.status === 'pass' &&
+                                                                            <div className="flex items-center gap-2">
+                                                                                <CircleCheck className="text-primary" size={18} />
+                                                                                PASSED
+                                                                            </div>
+                                                                        }
+                                                                        {
+                                                                            item.status === 'fail' &&
+                                                                            <div className="flex items-center gap-2">
+                                                                                <CircleX className="text-primary" size={18} />
+                                                                                Failed
+                                                                            </div>
+                                                                        }
+                                                                        {
+                                                                            item.status === 'inc' &&
+                                                                            <div className="flex items-center gap-2">
+                                                                                <CircleX className="text-primary" size={18} />
+                                                                                INCOMPLETE
+                                                                            </div>
+                                                                        }
+                                                                        {
+                                                                            item.status === 'not_taken' &&
+                                                                            <div className="flex items-center gap-2">
+                                                                                <CircleDashed className="text-primary" size={18} />
+                                                                                Not taken yet
+                                                                            </div>
+                                                                        }
+                                                                    </span>
+                                                                </td>
+                                                            </tr>
+                                                        ))}
                                                     </tbody>
                                                 </table>
                                             </div>
