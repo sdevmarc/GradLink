@@ -2,7 +2,7 @@ import mongoose, { Mongoose } from "mongoose"
 import { MappedSection } from "src/forms/forms.interface"
 
 interface IStudentEnrollments {
-    course?: { _id: string } 
+    course?: { _id: string }
     enrollmentDate?: string
     ispass?: 'pass' | 'fail' | 'inc' | 'ongoing' | 'drop' | 'discontinue'
 }
@@ -19,6 +19,11 @@ interface IAchievements {
     examPassed?: string
     examDate?: string
     examRating?: string
+}
+
+interface ICoordinates {
+    latitude?: number
+    longitude?: number
 }
 
 export interface IStudent {
@@ -42,6 +47,7 @@ export interface IStudent {
     undergraduateInformation?: IUndergraduateInformation
     achievements?: IAchievements
     graduation_date?: Date
+    coordinates?: ICoordinates
 }
 
 export interface IEvaluationItem {
