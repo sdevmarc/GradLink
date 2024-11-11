@@ -37,7 +37,16 @@ export function DataTableStudentAlumni<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
+    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
+        program: false,
+        totalOfUnitsEnrolled: false,
+        totalOfUnitsEarned: false,
+        email: false,
+        lastname: false,
+        firstname: false,
+        middlename: false,
+        department: false
+    })
     const [rowSelection, setRowSelection] = React.useState({})
 
     const table = useReactTable({
