@@ -27,14 +27,15 @@ export class ProgramsController {
         @Body() { userId, code, descriptiveTitle, residency, department }: IPrograms
     ) {
         try {
-            const issuccess = await this.programService.insertNew({ code, descriptiveTitle, residency, department })
+            return await this.programService.insertNew({ code, descriptiveTitle, residency, department })
+            // const issuccess = await this.programService.insertNew({ code, descriptiveTitle, residency, department })
 
-            if (issuccess.success) {
-                await this.auditlogService.createLog({ userId, action: "create", description: `Program created is ${code}` })
-                return { success: true, message: "Program successfully created." }
-            }
-            await this.auditlogService.createLog({ userId, action: "create", description: 'Error' })
-            return { success: false, message: issuccess.message }
+            // if (issuccess.success) {
+            //     await this.auditlogService.createLog({ userId, action: "create", description: `Program created is ${code}` })
+            //     return { success: true, message: "Program successfully created." }
+            // }
+            // await this.auditlogService.createLog({ userId, action: "create", description: 'Error' })
+            // return { success: false, message: issuccess.message }
 
         } catch (error) {
             throw new HttpException(
