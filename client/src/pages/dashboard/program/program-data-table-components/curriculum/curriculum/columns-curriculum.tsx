@@ -120,7 +120,7 @@ export const CurriculumColumns: ColumnDef<ICurriculum>[] = [
                         <TableOfContents className="text-primary" size={18} />  View Details
                     </Button>
                     <SheetModal
-                        className="w-[60%]"
+                        className="w-[60%] overflow-auto"
                         isOpen={isOpen}
                         onOpenChange={handleOpenChange}
                         title="Curriculum Details"
