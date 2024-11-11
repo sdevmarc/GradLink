@@ -10,8 +10,8 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { SheetModal } from "@/components/sheet-modal"
 import { Badge } from "@/components/ui/badge"
-import { BookCopy, BookOpen, Clock, GraduationCap, TableOfContents } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { BookCopy, Clock, TableOfContents } from "lucide-react"
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 export const AvailableProgramsColumns: ColumnDef<IAPIPrograms>[] = [
     {
@@ -89,8 +89,6 @@ export const AvailableProgramsColumns: ColumnDef<IAPIPrograms>[] = [
             const code = row?.original?.code || 'Invalid Code'
             const descriptiveTitle = row?.original?.descriptiveTitle || 'Invalid Descriptive Title'
             const residency = row?.original?.residency || 'Invalid Descriptive Title'
-            const totalUnits = row?.original?.totalUnits || 0
-            const { name, major, categories } = row?.original?.curriculum || {}
 
             // console.log(test)
             const handleViewDetails = () => {
