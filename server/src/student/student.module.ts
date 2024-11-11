@@ -14,6 +14,7 @@ import { CoursesService } from 'src/courses/courses.service'
 import { CurriculumSchema } from 'src/curriculum/curriculum.schema'
 import { MailSchema } from 'src/mail/mail.schema'
 import { MailService } from 'src/mail/mail.service'
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service'
 
 @Module({
   imports: [
@@ -27,7 +28,7 @@ import { MailService } from 'src/mail/mail.service'
       { name: 'Mail', schema: MailSchema },
     ])
   ],
-  providers: [StudentService, FormsService, ConstantsService, AuditlogService, CoursesService, MailService],
+  providers: [StudentService, FormsService, ConstantsService, AuditlogService, CoursesService, MailService, CloudinaryService],
   controllers: [StudentController]
 })
 export class StudentModule { }
