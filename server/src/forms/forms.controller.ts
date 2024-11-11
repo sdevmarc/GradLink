@@ -72,8 +72,8 @@ export class FormsController {
             const response = await this.formsService.mapQuestionsToAnswers(this.constantsService.getFormId())
 
             const updatePromises = response.map(async (item) => {
-                const formemail = String(item.generalInformation.answers[6].answer);
-                const currentaddress = String(item.generalInformation.answers[5].answer);
+                const formemail = String(item.generalInformation.answers[8].answer);
+                const currentaddress = String(item.generalInformation.answers[7].answer);
                 const coordinates = await this.getCoordinates(currentaddress);
 
                 const {
