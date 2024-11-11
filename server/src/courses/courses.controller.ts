@@ -28,14 +28,17 @@ export class CoursesController {
 
     @Post('create')
     async createCourse(@Body() { userId, code, courseno, descriptiveTitle, units }: ICourses) {
-        const issuccess = await this.courseService.create({ code, courseno, descriptiveTitle, units })
+       
         try {
-            if(issuccess.success){
-                await this.auditlogService.createLog({ userId, action: "create", description: `Course created: ${descriptiveTitle}` })
-                return { success: true, message: "course successfully created." }
-            }
-            await this.auditlogService.createLog({ userId, action: "create", description: 'Error' })
-            return { success: false, message: issuccess.message }
+            return await this.courseService.create({ code, courseno, descriptiveTitle, units })
+            // const issuccess = await this.courseService.create({ code, courseno, descriptiveTitle, units })
+
+            // if(issuccess.success){
+            //     await this.auditlogService.createLog({ userId, action: "create", description: `Course created: ${descriptiveTitle}` })
+            //     return { success: true, message: "course successfully created." }
+            // }
+            // await this.auditlogService.createLog({ userId, action: "create", description: 'Error' })
+            // return { success: false, message: issuccess.message }
         } catch (error) 
         {
             throw new HttpException(
