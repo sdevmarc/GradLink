@@ -111,9 +111,9 @@ export class StudentController {
     ) {
 
         try {
-            const SelectedCourse = await this.coursesService.findOneCourse({course})
+            const SelectedCourse = await this.coursesService.findOneCourse({ course })
             const issuccess = await this.studentService.evaluateStudent({ evaluations, course })
-            if(issuccess.success){
+            if (issuccess.success) {
                 await this.auditlogService.createLog({ userId, action: "Evaluate", description: `${evaluations.length} student/s evaluated in ${SelectedCourse.data.descriptiveTitle}` })
                 return { success: true, message: "Students successfully evaluated." }
             }
@@ -127,6 +127,11 @@ export class StudentController {
             );
         }
         //return await this.studentService.evaluateStudent({ evaluations, course })
+    }
+
+    @Post('send-tracer-to-alumni')
+    async findAlumniAndSendTracer(@Body() { academicYear, program }: { academicYear: string, program: string }) {
+        return await this.studentService.findAlumniByFilterAndSendTracer({ academicYear, program })
     }
 
     @Post('activate-student')
