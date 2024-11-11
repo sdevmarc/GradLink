@@ -2552,7 +2552,10 @@ export class StudentService {
         generalInformation,
         // educationalBackground, 
         coordinates,
-        employmentData
+        employmentData,
+        lastname,
+        firstname,
+        middlename
     }: IStudent
     )
         : Promise<IPromiseStudent> {
@@ -2585,6 +2588,9 @@ export class StudentService {
             await this.studentModel.findOneAndUpdate(
                 { email: email },
                 {
+                    lastname,
+                    firstname,
+                    middlename,
                     generalInformation: finalGeneralInformation,
                     // educationalBackground,
                     employmentData: finalEmploymentData,
