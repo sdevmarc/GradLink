@@ -9,4 +9,9 @@ export class MailController {
     async sendMailer(@Body() { email }: { email: string[] }) {
         return await this.mailService.sendMail({ email });
     }
+
+    @Post('one-alumni')
+    async sendToOneAlumni(@Body() { email }: { email: string }) {
+        return await this.mailService.sendToOneMail({ email })
+    }
 }
