@@ -12,6 +12,7 @@ import { OfferedSchema } from 'src/offered/offered.schema'
 import { CurriculumSchema } from 'src/curriculum/curriculum.schema'
 import { MailSchema } from 'src/mail/mail.schema'
 import { MailService } from 'src/mail/mail.service'
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service'
 
 @Module({
     imports: [MongooseModule.forFeature([
@@ -27,7 +28,8 @@ import { MailService } from 'src/mail/mail.service'
         FormsService,
         ConstantsService,
         StudentService,
-        MailService
+        MailService,
+        CloudinaryService
     ],
     controllers: [FormsController]
 })
