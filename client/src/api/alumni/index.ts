@@ -16,3 +16,10 @@ export const API_STUDENT_SEND_TRACER = async () => {
     const response = await axios.post(`${HOST}/student/send-tracer-to-alumni`)
     return response.data
 }
+
+export const API_STUDENT_SEND_TRACER_TO_ONE = async ({ email }: { email: string }) => {
+    const response = await axios.post(`${HOST}/mail/one-alumni`, {
+        email
+    })
+    return response.data
+}
