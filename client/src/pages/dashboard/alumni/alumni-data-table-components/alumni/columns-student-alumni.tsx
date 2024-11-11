@@ -272,7 +272,10 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
                                                                         {idNumber || 'No valid ID Number'}
                                                                     </Badge>
                                                                     <span className="text-muted-foreground uppercase">
-                                                                        {department} | {programCode} | {programName}
+                                                                        {department === 'SEAIT' && "Eng'g, Dev't. Arts & Design, LIS & IT"}
+                                                                        {department === 'SHANS' && "Science and Mathematics"}
+                                                                        {department === 'STEH' && "Business and Accountancy"}
+                                                                        {department === 'SAB' && "Teacher Education and Humanities"}  | {programCode} | {programName}
                                                                     </span>
                                                                 </div>
                                                             </CardDescription>
