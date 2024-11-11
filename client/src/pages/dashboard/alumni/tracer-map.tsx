@@ -133,7 +133,7 @@ export default function TracerMap() {
         if (!program || !yearGraduated) {
             setValid(false)
             setDialogSubmit(false)
-            setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Please select a semester.' })
+            setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Please filter by program and year graduated.' })
             return
         }
 
