@@ -295,7 +295,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
 
             return (
                 <>
-                    {isLoading && <Loading />}
+                    {isLoading && <div>Loading...</div>}
                     {
                         (!settingsLoading && settingsFetched) &&
                         <div className="flex justify-end">
