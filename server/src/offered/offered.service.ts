@@ -296,4 +296,5 @@ export class OfferedService {
             throw new HttpException({ success: false, message: 'Failed to fetch all courses offered.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
+
 }
