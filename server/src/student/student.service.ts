@@ -2607,6 +2607,7 @@ export class StudentService {
             }
 
             // Update the student document
+            console.log
             await this.studentModel.findByIdAndUpdate(
                 id,
                 {
@@ -2640,18 +2641,72 @@ export class StudentService {
         }
     }
 
-    async activateExisitngStudent(studentid: string) {
+    async activateExistingStudent(studentId: string) {
         try {
+            // Get the student with populated enrollments and their curriculum
+            const student = await this.studentModel.findById(studentId)
+                .populate({
+                    path: 'enrollments.course',
+                    model: 'Course'
+                })
+                .populate({
+                    path: 'program',
+                    model: 'Curriculum',
+                    populate: {
+                        path: 'categories.courses',
+                        model: 'Course'
+                    }
+                });
+
+            if (!student) {
+                throw new HttpException(
+                    {
+                        success: false,
+                        message: 'Student not found.',
+                    },
+                    HttpStatus.NOT_FOUND
+                );
+            }
+
+            // Extract all course IDs from the student's curriculum
+            const curriculumCourseIds = (student.program as ICurriculum).categories
+                .flatMap(category => category.courses)
+                .map(course => course.toString());
+
+            // Filter enrollments to keep only those NOT in the curriculum
+            const updatedEnrollments = student.enrollments.filter(enrollment =>
+                !curriculumCourseIds.includes(enrollment.course.toString())
+            );
+
+            // Update the student document with filtered enrollments and set isenrolled to true
             await this.studentModel.findByIdAndUpdate(
-                studentid,
-                { isenrolled: true },
+                studentId,
+                {
+                    $set: {
+                        enrollments: updatedEnrollments,
+                        isenrolled: true
+                    }
+                },
                 { new: true }
-            )
-            return { success: true, message: 'Student activated successfully.' }
+            );
+
+            return {
+                success: true,
+                message: 'Student activated successfully and enrollments updated.'
+            };
+
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Failed to create form pending.' }, HttpStatus.INTERNAL_SERVER_ERROR)
+            throw new HttpException(
+                {
+                    success: false,
+                    message: 'Failed to activate student.',
+                    error: error.message
+                },
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
         }
     }
+
 
     async insertFormPending({ idNumber }: IModelForm)
         : Promise<IPromiseStudent> {
