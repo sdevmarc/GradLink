@@ -1,7 +1,7 @@
 import mongoose, { Mongoose } from "mongoose"
 import { MappedSection } from "src/forms/forms.interface"
 
-interface IStudentEnrollments {
+export interface IStudentEnrollments {
     course?: { _id: string }
     enrollmentDate?: string
     ispass?: 'pass' | 'fail' | 'inc' | 'ongoing' | 'drop' | 'discontinue'
