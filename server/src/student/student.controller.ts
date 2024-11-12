@@ -156,7 +156,7 @@ export class StudentController {
     async activateStudent(
         @Body() { studentid }: { studentid: string }
     ) {
-        return await this.studentService.activateExisitngStudent(studentid)
+        return await this.studentService.activateExistingStudent(studentid)
     }
 
     @Post('update-graduate')
