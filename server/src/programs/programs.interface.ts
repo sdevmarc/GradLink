@@ -10,6 +10,29 @@ export interface IPrograms {
     createdAt?: string
 }
 
+interface AttritionStats {
+    totalStudentEnrolled: number;
+    totalStudentDiscontinued: number;
+    attritionRate: number;
+}
+
+export interface IProgramForAttrition {
+    _id: string;
+    code: string;
+    descriptiveTitle: string;
+    residency: number;
+    past3years: AttritionStats;
+    yearly: AttritionStats;
+}
+
+export interface IAttritionProgram {
+    program: mongoose.Types.ObjectId;
+    academicYear: string;
+    totalStudents: number;
+    totalDiscontinue: number;
+    attritionRate: number;
+}
+
 export interface IPromisePrograms {
     success: boolean
     message: string
