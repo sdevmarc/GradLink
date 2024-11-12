@@ -1,15 +1,15 @@
 import HeadSection, { SubHeadSectionDetails } from "@/components/head-section"
 import { useQuery } from "@tanstack/react-query"
-import { API_FINDALL_COURSES_OFFERED } from "@/api/offered"
 import { Sidebar, SidebarNavs } from "@/components/sidebar"
 import { ROUTES } from "@/constants"
 import MainTable from "@/components/main-table"
 import { DataTableAttritionRateCourses } from "./enrollment-data-table-components/attrition-rate-courses/data-table-attrition-rate-courses."
 import { AttritionRateCoursestColumns } from "./enrollment-data-table-components/attrition-rate-courses/columns-attrition-rate-courses"
+import { API_COURSE_FINDALL } from "@/api/courses"
 
 export default function AttritionRateCourses() {
     const { data: courses, isLoading: coursesLoading, isFetched: coursesFetched } = useQuery({
-        queryFn: () => API_FINDALL_COURSES_OFFERED(),
+        queryFn: () => API_COURSE_FINDALL(),
         queryKey: ['courses-offered']
     })
 
