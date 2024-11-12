@@ -8,6 +8,8 @@ import { CurriculumService } from 'src/curriculum/curriculum.service';
 import { CoursesSchema } from 'src/courses/courses.schema';
 import { AuditlogService } from 'src/auditlog/auditlog.service';
 import { AuditSchema } from 'src/auditlog/auditlog.schema';
+import { StudentSchema } from 'src/student/student.schema';
+import { OfferedSchema } from 'src/offered/offered.schema';
 
 @Module({
   imports: [MongooseModule.forFeature([
@@ -15,6 +17,8 @@ import { AuditSchema } from 'src/auditlog/auditlog.schema';
     { name: 'Program', schema: ProgramSchema },
     { name: 'Curriculum', schema: CurriculumSchema },
     { name: 'Auditlog', schema: AuditSchema },
+    { name: 'Student', schema: StudentSchema },
+    { name: 'Offered', schema: OfferedSchema },
   ])],
   providers: [ProgramsService, CurriculumService, AuditlogService],
   controllers: [ProgramsController]
