@@ -2607,7 +2607,6 @@ export class StudentService {
             }
 
             // Update the student document
-            console.log
             await this.studentModel.findByIdAndUpdate(
                 id,
                 {
