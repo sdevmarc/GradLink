@@ -3,6 +3,7 @@ import { ProgramsService } from './programs.service'
 import { IPrograms } from './programs.interface'
 import { CurriculumService } from 'src/curriculum/curriculum.service'
 import { AuditlogService } from 'src/auditlog/auditlog.service'
+import mongoose from 'mongoose'
 
 @Controller('programs')
 export class ProgramsController {
@@ -15,6 +16,11 @@ export class ProgramsController {
     @Get()
     async findAllPrograms() {
         return await this.programService.findAll()
+    }
+
+    @Get('attrition-calculate/:id')
+    async findAttritionRateProgram(@Param('id') id: string) {
+        return await this.programService.getAttritionData(id)
     }
 
     // @Get(':id')
