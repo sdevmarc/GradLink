@@ -144,7 +144,6 @@ export class StudentController {
         @Body() { id }: { id: string },
         @UploadedFile() assessmentForm: Express.Multer.File
     ) {
-        console.log('The ssment: ', id)
         return await this.studentService.discontinueStudent({ id, assessmentForm })
     }
 
