@@ -48,6 +48,7 @@ export interface IStudent {
     achievements?: IAchievements
     graduation_date?: Date
     coordinates?: ICoordinates
+    createdAt?: Date;
 }
 
 export interface IEvaluationItem {
