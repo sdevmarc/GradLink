@@ -22,6 +22,11 @@ export class StudentController {
         return this.studentService.findAllStudents()
     }
 
+    @Get('employment-analytics')
+    async findStatisticsForEmployment(@Body() { department, program, academicYear }: { department?: string, program?: string, academicYear?: string }) {
+        return this.studentService.findTracerAnalytics({ department, program, academicYear })
+    }
+
     @Get('alumni-tracer/:findOne')
     async findAlumniFromTracer(@Param('findOne') id: string) {
         return this.studentService.findOneAlumniFromTracerMap({ id })
