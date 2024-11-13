@@ -4,6 +4,7 @@ export interface IUsers {
     password?: string
     role?: string
     isactive?: string
+    name?: string
 }
 
 export interface IPromiseUser {
