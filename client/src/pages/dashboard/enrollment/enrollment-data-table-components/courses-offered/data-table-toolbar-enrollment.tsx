@@ -89,9 +89,9 @@ export function DataTableToolbarCoursesOfferedInEnrollment<TData>({
             <div className="flex flex-1 flex-wrap items-center gap-2">
                 <Input
                     placeholder="Search course..."
-                    value={(table.getColumn("descriptiveTitle")?.getFilterValue() as string) ?? ""}
+                    value={(table.getColumn("courseno")?.getFilterValue() as string) ?? ""}
                     onChange={(event) => {
-                        table.getColumn("descriptiveTitle")?.setFilterValue(event.target.value);
+                        table.getColumn("courseno")?.setFilterValue(event.target.value);
                     }}
                     className="h-8 w-[17rem] lg:w-[20rem]"
                 />
