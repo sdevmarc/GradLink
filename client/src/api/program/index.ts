@@ -2,9 +2,13 @@ import { HOST } from '@/constants'
 import { IAPIPrograms } from '@/interface/program.interface'
 import axios from 'axios'
 
+axios.defaults.withCredentials = true;
+
 export const API_PROGRAM_FINDALL = async () => {
     try {
-        const response = await axios.get(`${HOST}/programs`)
+        const response = await axios.get(`${HOST}/programs`,
+            { withCredentials: true }
+        )
         return response.data
     } catch (error) {
         console.error(error)
@@ -13,7 +17,9 @@ export const API_PROGRAM_FINDALL = async () => {
 
 export const API_PROGRAM_ATTRITION = async ({ id }: { id: string }) => {
     try {
-        const response = await axios.get(`${HOST}/programs/attrition-calculate/${id}`)
+        const response = await axios.get(`${HOST}/programs/attrition-calculate/${id}`,
+            { withCredentials: true }
+        )
         return response.data
     } catch (error) {
         console.error(error)
@@ -23,7 +29,9 @@ export const API_PROGRAM_ATTRITION = async ({ id }: { id: string }) => {
 export const API_PROGRAM_FINDONE = async ({ _id }: IAPIPrograms) => {
     try {
         const baseId = btoa(_id || '')
-        const response = await axios.get(`${HOST}/programs/attrition-calculate/${baseId}`)
+        const response = await axios.get(`${HOST}/programs/attrition-calculate/${baseId}`,
+            { withCredentials: true }
+        )
         return response.data
     } catch (error) {
         console.error(error)
@@ -32,7 +40,9 @@ export const API_PROGRAM_FINDONE = async ({ _id }: IAPIPrograms) => {
 
 export const API_PROGRAM_NEW_PROGRAM = async ({ code, descriptiveTitle, residency, department }: IAPIPrograms) => {
     try {
-        const response = await axios.post(`${HOST}/programs/create`, { code, descriptiveTitle, residency, department })
+        const response = await axios.post(`${HOST}/programs/create`, { code, descriptiveTitle, residency, department },
+            { withCredentials: true }
+        )
         return response.data
     } catch (error) {
         console.error(error)
