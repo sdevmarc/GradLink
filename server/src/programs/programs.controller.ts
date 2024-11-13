@@ -1,11 +1,12 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Param, Post } from '@nestjs/common'
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, UseGuards } from '@nestjs/common'
 import { ProgramsService } from './programs.service'
 import { IPrograms } from './programs.interface'
 import { CurriculumService } from 'src/curriculum/curriculum.service'
 import { AuditlogService } from 'src/auditlog/auditlog.service'
-import mongoose from 'mongoose'
+import { AuthGuard } from 'src/auth/auth.guard'
 
 @Controller('programs')
+@UseGuards(AuthGuard)
 export class ProgramsController {
     constructor(
         private readonly programService: ProgramsService,
