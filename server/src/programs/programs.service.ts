@@ -21,82 +21,134 @@ export class ProgramsService {
 
     async getAttritionData(programId: string) {
         try {
-            const yearlyData = [];
-            let past3YearsTotalEnrolled = 0;
-            let past3YearsTotalDiscontinued = 0;
-
-            // Verify program exists
+            // Verify the program exists
             const program = await this.ProgramModel.findById(programId);
-            if (!program) {
-                throw new HttpException(
-                    { success: false, message: 'Program not found' },
-                    HttpStatus.NOT_FOUND
-                );
-            }
+            if (!program) throw new HttpException({ success: false, message: 'Program not found' }, HttpStatus.NOT_FOUND);
 
-            // Get all academic years for the program
-            const offeredYears = await this.OfferedModel.find()
-                .sort({ 'academicYear.startDate': 1 })
-                .lean();
+            // Get curriculum IDs associated with the program
+            const curriculumIds = await this.CurriculumModel.find({ programid: programId }).distinct('_id');
 
-            if (!offeredYears.length) {
-                throw new HttpException(
-                    { success: false, message: 'No academic years found' },
-                    HttpStatus.NOT_FOUND
-                );
-            }
-
-            // Process each academic year
-            for (const year of offeredYears) {
-                const startDate = new Date(year.academicYear.startDate, 0, 1); // January 1st
-                const endDate = new Date(year.academicYear.endDate, 11, 31);  // December 31st
-
-                // Get enrolled students count
-                const enrolledCount = await this.StudentModel.countDocuments({
-                    program: programId,
-                    isenrolled: true,
-                    'enrollments.enrollmentDate': {
-                        $gte: startDate,
-                        $lte: endDate
+            // Proceed with the aggregation on StudentModel
+            const aggregationResult = await this.StudentModel.aggregate([
+                // Match students associated with the program's curriculums
+                {
+                    $match: {
+                        program: { $in: curriculumIds }
                     }
-                });
-
-                // Get discontinued students count
-                const discontinuedCount = await this.StudentModel.countDocuments({
-                    program: programId,
-                    isenrolled: false,
-                    'enrollments.enrollmentDate': {
-                        $gte: startDate,
-                        $lte: endDate
+                },
+                // Project enrollment data
+                {
+                    $project: {
+                        studentId: '$_id',
+                        isenrolled: 1,
+                        status: 1,
+                        enrollmentData: {
+                            $map: {
+                                input: '$enrollments',
+                                as: 'enrollment',
+                                in: {
+                                    enrollmentYear: { $year: '$$enrollment.enrollmentDate' },
+                                    isDiscontinued: {
+                                        $eq: ['$$enrollment.ispass', 'discontinue']
+                                    }
+                                }
+                            }
+                        }
                     }
-                });
-
-                const attritionRate = enrolledCount > 0
-                    ? (discontinuedCount / enrolledCount) * 100
-                    : 0;
-
-                yearlyData.push({
-                    academicYear: `${year.academicYear.startDate}-${year.academicYear.endDate}`,
-                    enrolledCount,
-                    discontinuedCount,
-                    attritionRate: Number(attritionRate.toFixed(2))
-                });
-
-                // Add to 3-year totals if in last 3 years
-                if (yearlyData.length >= offeredYears.length - 3) {
-                    past3YearsTotalEnrolled += enrolledCount;
-                    past3YearsTotalDiscontinued += discontinuedCount;
+                },
+                // Unwind enrollmentData
+                {
+                    $unwind: '$enrollmentData'
+                },
+                // Group by enrollmentYear and studentId
+                {
+                    $group: {
+                        _id: {
+                            enrollmentYear: '$enrollmentData.enrollmentYear',
+                            studentId: '$studentId'
+                        },
+                        isDiscontinued: { $max: '$enrollmentData.isDiscontinued' }
+                    }
+                },
+                // Group by enrollmentYear to get counts
+                {
+                    $group: {
+                        _id: '$_id.enrollmentYear',
+                        enrolledCount: { $sum: 1 },
+                        discontinuedCount: { $sum: { $cond: ['$isDiscontinued', 1, 0] } }
+                    }
+                },
+                // Calculate attrition rate
+                {
+                    $addFields: {
+                        attritionRate: {
+                            $cond: [
+                                { $gt: ['$enrolledCount', 0] },
+                                { $multiply: [{ $divide: ['$discontinuedCount', '$enrolledCount'] }, 100] },
+                                0
+                            ]
+                        }
+                    }
+                },
+                // Sort by enrollmentYear
+                {
+                    $sort: {
+                        '_id': 1
+                    }
+                },
+                // Group and calculate totals for past 3 years
+                {
+                    $group: {
+                        _id: null,
+                        yearlyData: {
+                            $push: {
+                                academicYear: '$_id',
+                                enrolledCount: '$enrolledCount',
+                                discontinuedCount: '$discontinuedCount',
+                                attritionRate: '$attritionRate'
+                            }
+                        },
+                        past3YearsTotalEnrolled: {
+                            $sum: {
+                                $cond: [
+                                    { $gte: ['$_id', new Date().getFullYear() - 2] },
+                                    '$enrolledCount',
+                                    0
+                                ]
+                            }
+                        },
+                        past3YearsTotalDiscontinued: {
+                            $sum: {
+                                $cond: [
+                                    { $gte: ['$_id', new Date().getFullYear() - 2] },
+                                    '$discontinuedCount',
+                                    0
+                                ]
+                            }
+                        }
+                    }
+                },
+                // Calculate 3-year attrition rate
+                {
+                    $addFields: {
+                        past3YearsAttritionRate: {
+                            $cond: [
+                                { $gt: ['$past3YearsTotalEnrolled', 0] },
+                                { $multiply: [{ $divide: ['$past3YearsTotalDiscontinued', '$past3YearsTotalEnrolled'] }, 100] },
+                                0
+                            ]
+                        }
+                    }
                 }
-            }
+            ]);
 
-            // Calculate 3-year attrition rate
-            const past3YearsAttritionRate = past3YearsTotalEnrolled > 0
-                ? (past3YearsTotalDiscontinued / past3YearsTotalEnrolled) * 100
-                : 0;
+            // Process the aggregation result
+            const result = aggregationResult[0] || { yearlyData: [], past3YearsTotalEnrolled: 0, past3YearsTotalDiscontinued: 0, past3YearsAttritionRate: 0 };
 
-            const last3Years = yearlyData.slice(-3);
-            const startYear = last3Years[0]?.academicYear.split('-')[0];
-            const endYear = last3Years[last3Years.length - 1]?.academicYear.split('-')[1];
+            // Define start and end years for the past 3 years
+            const last3Years = result.yearlyData.slice(-3);
+            const startYear = last3Years.length ? last3Years[0]?.academicYear : 'N/A';
+            const endYear = last3Years.length ? last3Years[last3Years.length - 1]?.academicYear : 'N/A';
 
             return {
                 success: true,
@@ -108,11 +160,11 @@ export class ProgramsService {
                     department: program.department,
                     past3years: {
                         period: `${startYear}-${endYear}`,
-                        totalEnrolled: past3YearsTotalEnrolled,
-                        totalDiscontinued: past3YearsTotalDiscontinued,
-                        attritionRate: Number(past3YearsAttritionRate.toFixed(2))
+                        totalEnrolled: result.past3YearsTotalEnrolled,
+                        totalDiscontinued: result.past3YearsTotalDiscontinued,
+                        attritionRate: Number(result.past3YearsAttritionRate.toFixed(2))
                     },
-                    yearly: yearlyData
+                    yearly: result.yearlyData
                 }
             };
         } catch (error) {
@@ -121,8 +173,7 @@ export class ProgramsService {
                 HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
-    };
-
+    }
 
 
     async findAll(): Promise<IPromisePrograms> {
