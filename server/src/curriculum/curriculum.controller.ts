@@ -1,9 +1,11 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Post, UseGuards } from '@nestjs/common';
 import { CurriculumService } from './curriculum.service';
 import { ICurriculum } from './curriculum.interface';
 import { AuditlogService } from 'src/auditlog/auditlog.service'
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('curriculum')
+@UseGuards(AuthGuard)
 export class CurriculumController {
     constructor(
         private readonly CurriculumService: CurriculumService,
