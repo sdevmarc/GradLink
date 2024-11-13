@@ -30,7 +30,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
             inject: [ConfigService],
             useFactory: async (configService: ConfigService) => ({
                 secret: configService.get<string>('JWT_SECRET'),
-                signOptions: { expiresIn: '10s' },
+                signOptions: { expiresIn: '1h' },
             }),
         }),
         MailerModule.forRoot({
