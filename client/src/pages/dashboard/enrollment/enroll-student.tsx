@@ -16,6 +16,7 @@ export default function EnrollStudent() {
     const { id } = useParams()
 
     const navigate = useNavigate()
+    const [coursename, setCourseName] = useState<string>('')
     const [courseid, setCourseId] = useState<string>('')
     const [checkstudents, setCheckStudents] = useState<IAPICourse[]>([])
     const [dialogsubmit, setDialogSubmit] = useState<boolean>(false)
@@ -31,6 +32,9 @@ export default function EnrollStudent() {
             const jsonString = atob(id);
             const parsedObject = JSON.parse(jsonString);
             const theid = parsedObject.id
+            const courseName = parsedObject.descriptiveTitle
+
+            setCourseName(courseName)
             setCourseId(theid)
         }
     }, [id, courseid])
@@ -90,6 +94,7 @@ export default function EnrollStudent() {
 
     return (
         <>
+            {isLoading && <Loading />}
             <AlertDialogConfirmation
                 btnTitle='Continue'
                 className='w-full py-4'
@@ -105,16 +110,13 @@ export default function EnrollStudent() {
                     navigate(-1)
                 }}
             />
-
-
             <div className="flex flex-col min-h-screen items-center">
-                {isLoading && <Loading />}
                 <div className="w-full max-w-[90rem] flex flex-col pb-[20rem]">
                     <aside className="px-4 pb-4 pt-[8rem]">
                         <HeadSection>
                             <BackHeadSection />
                             <SubHeadSectionDetails
-                                title="Enroll Student"
+                                title={`Enroll Student`}
                                 description="A tool for enrolling student to the selected course."
                             />
                         </HeadSection>
@@ -123,7 +125,9 @@ export default function EnrollStudent() {
                         <MainTable>
                             <div className="flex flex-col border gap-4 rounded-md">
                                 <div className="w-full px-4 py-3 border-b">
-                                    <h1 className='text-text font-semibold text-lg'>Configuration</h1>
+                                    <h1 className='text-text font-semibold text-lg'>
+                                        {coursename}
+                                    </h1>
                                 </div>
                                 <div className="px-4">
                                     {
@@ -144,7 +148,7 @@ export default function EnrollStudent() {
                                         variant={'default'}
                                         btnTitle="Enroll student(s)"
                                         title="Are you sure?"
-                                        description={`This will create a new set of courses offered and replace the current courses offered.`}
+                                        description={`This enroll students t`}
                                         btnContinue={handleSubmit}
                                     />
                                 </div>
