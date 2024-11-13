@@ -101,6 +101,11 @@ export class ProgramsService {
             return {
                 success: true,
                 data: {
+                    _id: program._id,
+                    descriptiveTitle: program.descriptiveTitle,
+                    code: program.code,
+                    residency: program.residency,
+                    department: program.department,
                     past3years: {
                         period: `${startYear}-${endYear}`,
                         totalEnrolled: past3YearsTotalEnrolled,
