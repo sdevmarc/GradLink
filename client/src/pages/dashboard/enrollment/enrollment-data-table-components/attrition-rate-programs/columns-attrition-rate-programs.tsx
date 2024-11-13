@@ -5,17 +5,18 @@ import {
 } from "@tanstack/react-table"
 
 import { DataTableColumnHeader } from "@/components/data-table-components/data-table-column-header"
-import { IAPIOffered } from "@/interface/offered.interface"
 import { Badge } from "@/components/ui/badge"
-import { ChartColumnBig, TableOfContents } from "lucide-react"
+import { ChartColumnBig, Clock, TableOfContents } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { SheetModal } from "@/components/sheet-modal"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { useState } from "react"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Label } from "@/components/ui/label"
+import { useEffect, useState } from "react"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useQuery } from "@tanstack/react-query"
+import { API_PROGRAM_ATTRITION } from "@/api/program"
+import { IAPIPrograms } from "@/interface/program.interface"
 
-export const AttritionRateProgramsColumns: ColumnDef<IAPIOffered>[] = [
+export const AttritionRateProgramsColumns: ColumnDef<IAPIPrograms>[] = [
     {
         id: "icon",
         cell: () => {
@@ -86,9 +87,11 @@ export const AttritionRateProgramsColumns: ColumnDef<IAPIOffered>[] = [
     {
         id: "actions",
         cell: ({ row }) => {
+            // const [attritonRateProgram, setAttritionProgram] = useState({
+
+            // })
             const [isOpen, setIsOpen] = useState<boolean>(false)
-            const { code, descriptiveTitle, curriculum } = row.original || {}
-            const { name } = curriculum || {}
+            const { _id: id, code, descriptiveTitle, residency } = row.original || {}
 
             const handleViewDetails = () => {
                 setIsOpen(true)
@@ -97,6 +100,17 @@ export const AttritionRateProgramsColumns: ColumnDef<IAPIOffered>[] = [
             const handleOpenChange = (open: boolean) => {
                 setIsOpen(open)
             }
+
+            const { data: programs, isLoading: programsLoading, isFetched: programsFetched } = useQuery({
+                queryFn: () => API_PROGRAM_ATTRITION({ id: id ?? '' }),
+                queryKey: ['students', id],
+                enabled: !!id
+            })
+
+            useEffect(() => {
+                console.log(`Program attrtition: `, programs?.data)
+            }, [programs])
+
             return (
                 <div className="flex justify-end">
                     <Button onClick={handleViewDetails} variant={`outline`} size={`sm`} className="flex items-center gap-4">
@@ -118,17 +132,81 @@ export const AttritionRateProgramsColumns: ColumnDef<IAPIOffered>[] = [
                                                     <CardTitle className="capitalize text-3xl font-bold">
                                                         {descriptiveTitle || 'Invalid Descriptive Title'}
                                                     </CardTitle>
-                                                    <CardDescription className="mt-2">
+                                                    <CardDescription className="mt-2 flex items-center gap-2">
                                                         <Badge variant="default" className="mr-2">
                                                             {code || 'Inavlid Code'}
                                                         </Badge>
-                                                        <span className="text-muted-foreground">
-                                                            {name || 'Invalid Curriculum Name'}
-                                                        </span>
+                                                        <div className="flex items-center">
+                                                            <Clock className="h-5 w-5 mr-2 text-muted-foreground" />
+                                                            <span>Residency: {residency} years</span>
+                                                        </div>
                                                     </CardDescription>
                                                 </CardHeader>
                                                 <CardContent className="space-y-8">
-                                                    <RadioGroup
+                                                    <Tabs defaultValue="past3" className="w-full">
+                                                        <TabsList className="bg-background">
+                                                            <TabsTrigger value="past3">Past 3 Years</TabsTrigger>
+                                                            <TabsTrigger value="yearly">Yearly</TabsTrigger>
+                                                        </TabsList>
+                                                        {
+                                                            !programsLoading && programsFetched &&
+                                                            <>
+                                                                <TabsContent value="past3">
+                                                                    <div className="space-y-4">
+                                                                        <div className="grid grid-cols-2 items-center gap-4 text-lg">
+                                                                            <div className="font-medium">
+                                                                                Total Student Enrolled
+                                                                            </div>
+                                                                            <div className="border rounded-lg p-3 text-right">
+                                                                                {programs?.data?.past3years?.totalEnrolled}
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div className="grid grid-cols-2 items-center gap-4 text-lg">
+                                                                            <div className="font-medium">
+                                                                                Total Discontinued
+                                                                            </div>
+                                                                            <div className="border rounded-lg p-3 text-right">
+                                                                                {programs?.data?.past3years?.totalDiscontinued}
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </div>
+                                                                    <div className="pt-4">
+                                                                        <div className="grid grid-cols-2 items-center gap-4 text-lg">
+                                                                            <div className="font-medium flex flex-col gap-2 capitalize">
+                                                                                Attrition Rate for:
+                                                                                <span className="font-semibold underline">
+                                                                                    {descriptiveTitle}
+                                                                                </span>
+                                                                            </div>
+                                                                            <div className="border rounded-lg p-3 text-right font-semibold">
+                                                                                {programs?.data?.past3years?.attritionRate}%
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </TabsContent>
+                                                                <TabsContent value="yearly">
+                                                                    {
+                                                                        programs?.data?.yearly?.map((item: { academicYear: string; attritionRate: number }, i: number) => (
+                                                                            <div key={i} className="flex items-center justify-between p-4 rounded-md border">
+                                                                                <h1 className="font-semibold text-primary">
+                                                                                    {item.academicYear}
+                                                                                </h1>
+                                                                                <h1 className="font-semibold text-primary">
+                                                                                    {item.attritionRate}%
+                                                                                </h1>
+                                                                            </div>
+                                                                        ))
+                                                                    }
+                                                                </TabsContent>
+                                                            </>
+                                                        }
+                                                    </Tabs>
+
+
+
+                                                    {/* <RadioGroup
                                                         defaultValue="latest"
                                                         // onValueChange={setSemester}
                                                         className="flex flex-wrap gap-4"
@@ -170,7 +248,7 @@ export const AttritionRateProgramsColumns: ColumnDef<IAPIOffered>[] = [
                                                         <p className="text-sm text-muted-foreground mt-4 italic">
                                                             *Attrition rate = (Number of students who left / Total enrolled) x 100
                                                         </p>
-                                                    </div>
+                                                    </div> */}
                                                 </CardContent>
                                             </Card>
                                         </div>
