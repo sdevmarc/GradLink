@@ -1,31 +1,79 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ROUTES } from "@/constants"
-import React, { useState } from "react"
+import React, { useContext, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { GraduationCap, EyeOff, Eye, Loader2 } from 'lucide-react'
+import { GraduationCap, EyeOff, Eye, Loader2, CircleCheck, CircleX } from 'lucide-react'
 import SMU from '@/assets/SMU Main Emblem - For dark color backgrounds.png'
 import SOGS from '@/assets/SMU Unit Emblem - SoGS 1by1.png'
 import Loading from "@/components/loading"
+import { AuthContext } from "@/hooks/AuthContext"
+import { useMutation } from "@tanstack/react-query"
+import { API_USER_LOGIN } from "@/api/user"
+import { AlertDialogConfirmation } from "@/components/alert-dialog"
+
 export default function LoginPage() {
+    const { setIsAuthenticated } = useContext(AuthContext);
     const [isImageLoading, setImageLoading] = useState({ smu: true, sogs: true })
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [showPassword, setShowPassword] = useState(false)
     const navigate = useNavigate()
+    const [alertdialogstate, setAlertDialogState] = useState({
+        show: false,
+        title: '',
+        description: '',
+        success: false
+    })
 
-    const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+    const { mutateAsync: userlogin, isPending: userloginPending } = useMutation({
+        mutationFn: API_USER_LOGIN,
+        onSuccess: async (data) => {
+            if (!data.success) {
+                setIsAuthenticated(false)
+                setAlertDialogState({ success: false, show: true, title: "Uh, oh. Something went wrong!", description: data.message })
+                return
+            } else {
+                setIsAuthenticated(true)
+                navigate(ROUTES.OVERVIEW)
+                return
+            }
+        },
+        onError: (data) => {
+            setIsAuthenticated(false)
+            setAlertDialogState({ success: false, show: true, title: "Uh, oh. Something went wrong!", description: data.message })
+            console.error(data)
+        }
+    })
+
+    const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        navigate(ROUTES.OVERVIEW)
+
+        const nospaceemail = (email ?? '').replace(/\s+/g, '')
+
+        if (nospaceemail === '' || !password) return
+        await userlogin({ email, password })
     }
 
-    const isLoading = isImageLoading.smu || isImageLoading.sogs
+    const isLoading = isImageLoading.smu || isImageLoading.sogs || userloginPending
 
     return (
         <>
             {isLoading && <Loading />}
+            <AlertDialogConfirmation
+                btnTitle='Continue'
+                className='w-full py-4'
+                isDialog={alertdialogstate.show}
+                setDialog={(open) => setAlertDialogState(prev => ({ ...prev, show: open }))}
+                type={`alert`}
+                title={alertdialogstate.title}
+                description={alertdialogstate.description}
+                icon={alertdialogstate.success ? <CircleCheck color="#42a626" size={70} /> : <CircleX color="#880808" size={70} />}
+                variant={`default`}
+                btnContinue={() => setAlertDialogState(prev => ({ ...prev, show: false }))}
+            />
             <div className="w-full flex flex-col">
                 <Header />
                 <div className="min-h-screen flex flex-col items-center justify-evenly p-4">
