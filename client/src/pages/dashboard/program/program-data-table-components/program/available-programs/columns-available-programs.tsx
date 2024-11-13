@@ -104,7 +104,7 @@ export const AvailableProgramsColumns: ColumnDef<IAPIPrograms>[] = [
                         <TableOfContents className="text-primary" size={18} /> View Details
                     </Button>
                     <SheetModal
-                        className="w-[60%]"
+                        className="w-[30%]"
                         isOpen={isOpen}
                         onOpenChange={handleOpenChange}
                         title="Program Details"
@@ -118,7 +118,7 @@ export const AvailableProgramsColumns: ColumnDef<IAPIPrograms>[] = [
                                                 <CardHeader>
                                                     <div className="flex justify-between items-start">
                                                         <div>
-                                                            <CardTitle className="capitalize text-3xl font-bold flex flex-col">
+                                                            <CardTitle className="capitalize text-xl font-bold flex flex-col">
                                                                 {descriptiveTitle}
                                                             </CardTitle>
                                                             <CardDescription className="mt-2 flex items-center gap-2">

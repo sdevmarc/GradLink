@@ -14,6 +14,7 @@ import { IEvaluation } from '@/interface/student.interface'
 export default function EvaluateStudent() {
     const queryClient = useQueryClient()
     const { id } = useParams()
+    const [coursename, setCourseName] = useState<string>('')
     const [evaluations, setEvaluations] = useState<IEvaluation[]>([]);
     const navigate = useNavigate()
     const [issuccess, setSuccess] = useState<boolean>(false)
@@ -31,6 +32,9 @@ export default function EvaluateStudent() {
             const jsonString = atob(id);
             const parsedObject = JSON.parse(jsonString);
             const theid = parsedObject.id
+            const courseName = parsedObject.descriptiveTitle
+
+            setCourseName(courseName)
             setCourseId(theid)
         }
     }, [id, courseid])
@@ -132,7 +136,7 @@ export default function EvaluateStudent() {
                         <HeadSection>
                             <BackHeadSection />
                             <SubHeadSectionDetails
-                                title="EVALUATE STUDENT"
+                                title={`Evaluate Students`}
                                 description="A tool for evaluating students to the selected course."
                             />
                         </HeadSection>
@@ -141,7 +145,9 @@ export default function EvaluateStudent() {
                         <MainTable>
                             <div className="flex flex-col border gap-4 rounded-md">
                                 <div className="w-full px-4 py-3 border-b">
-                                    <h1 className='text-text font-semibold text-lg'>Configuration</h1>
+                                    <h1 className='text-text font-semibold text-lg'>
+                                        {coursename}
+                                    </h1>
                                 </div>
                                 <div className="px-4 gap-4 flex flex-col">
                                     {

@@ -112,17 +112,24 @@ export const AvailableCoursesColumns: ColumnDef<IAPICourse>[] = [
                                             <div className="w-full mx-auto">
                                                 <CardHeader>
                                                     <div className="flex justify-between items-start">
-                                                        <div>
-                                                            <CardTitle className="capitalize text-3xl font-bold">
+                                                        <div className="w-full flex flex-col gap-2">
+                                                            <CardTitle className="capitalize text-xl font-bold">
                                                                 {descriptiveTitle || 'Invalid Descriptive Title'}
                                                             </CardTitle>
-                                                            <CardDescription className="mt-2">
-                                                                <Badge variant="default" className="mr-2">
-                                                                    {code || 'Inavlid Code'}
-                                                                </Badge>
-                                                                <span className="text-muted-foreground">
-                                                                    {courseno || 'Invalid Course Number'}
-                                                                </span>
+                                                            <CardDescription className=" flex items-center justify-between">
+                                                                <div className="flex items-center gap-2">
+                                                                    <Badge variant="default" className="mr-2">
+                                                                        {code || 'Inavlid Code'}
+                                                                    </Badge>
+                                                                    <span className="text-muted-foreground">
+                                                                        {courseno || 'Invalid Course Number'}
+                                                                    </span>
+                                                                </div>
+                                                                <div className="flex items-center">
+                                                                    <BookOpen className="h-5 w-5 mr-2 text-muted-foreground" />
+                                                                    <span>Units: {units || 0}</span>
+                                                                </div>
+
                                                             </CardDescription>
                                                         </div>
                                                         {/* <Button>Apply Now</Button> */}
@@ -135,10 +142,7 @@ export const AvailableCoursesColumns: ColumnDef<IAPICourse>[] = [
                                                                 <Clock className="h-5 w-5 mr-2 text-muted-foreground" />
                                                                 <span>Residency: 3 years</span>
                                                             </div> */}
-                                                            <div className="flex items-center">
-                                                                <BookOpen className="h-5 w-5 mr-2 text-muted-foreground" />
-                                                                <span>Units: {units || 0}</span>
-                                                            </div>
+
                                                         </div>
                                                     </section>
 

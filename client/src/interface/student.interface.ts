@@ -85,7 +85,7 @@ export interface IEvaluation {
 }
 
 export interface IRequestStudents {
-    id?: string
+    id?: string | string[]
     course?: string
     evaluations?: IEvaluation[]
     assessmentForm?: File
