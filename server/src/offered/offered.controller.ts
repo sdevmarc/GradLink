@@ -1,8 +1,10 @@
-import { Body, Controller, Get, Post, Query, ParseIntPipe, Param } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, ParseIntPipe, Param, UseGuards } from '@nestjs/common';
 import { OfferedService } from './offered.service';
 import { IOffered } from './offered.interface';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('offered')
+@UseGuards(AuthGuard)
 export class OfferedController {
     constructor(
         private readonly offeredService: OfferedService
