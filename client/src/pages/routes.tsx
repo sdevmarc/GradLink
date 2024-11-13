@@ -26,6 +26,7 @@ import Security from "./dashboard/settings/security"
 import GoogleForm from "./dashboard/alumni/google-form"
 import ArchivedAcademicYearOfferedCourses from "./dashboard/enrollment/archive-academic-year-offered-courses"
 import ArchivedSemestersInAcademicYear from "./dashboard/enrollment/achived-semesters-in-academic-year"
+import ProtectedRoute from "@/components/protected-route"
 
 const Routes = createBrowserRouter([
     {
@@ -33,38 +34,184 @@ const Routes = createBrowserRouter([
         children: [
 
             //Overview
-            { path: '/overview', element: <Overview /> },
+            {
+                path: '/overview',
+                element: (
+                    <ProtectedRoute>
+                        <Overview />
+                    </ProtectedRoute>
+                )
+            },
 
             //Enrollment
-            { path: '/enrollment', element: <Enrollment /> },
-            { path: '/enrollment/archived-academic-year-courses-offered', element: <ArchivedAcademicYearOfferedCourses /> },
-            { path: '/enrollment/archived-semesters-in-academic-year/:id', element: <ArchivedSemestersInAcademicYear /> },
-            { path: '/enrollment/attrition-rate-courses', element: <AttritionRateCourses /> },
-            { path: '/enrollment/attrition-rate-programs', element: <AttritionRatePrograms /> },
-            { path: '/enrollment/create-course-offered', element: <CreateCoursesOffered /> },
-            { path: '/enrollment/enroll-student/:id', element: <EnrollStudent /> },
-            { path: '/enrollment/evaluate-student/:id', element: <EvaluateStudent /> },
+            {
+                path: '/enrollment',
+                element: (
+                    <ProtectedRoute>
+                        <Enrollment />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: '/enrollment/archived-academic-year-courses-offered',
+                element: (
+                    <ProtectedRoute>
+                        <ArchivedAcademicYearOfferedCourses />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: '/enrollment/archived-semesters-in-academic-year/:id',
+                element: (
+                    <ProtectedRoute>
+                        <ArchivedSemestersInAcademicYear />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: '/enrollment/attrition-rate-courses',
+                element: (
+                    <ProtectedRoute>
+                        <AttritionRateCourses />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: '/enrollment/attrition-rate-programs',
+                element: (
+                    <ProtectedRoute>
+                        <AttritionRatePrograms />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: '/enrollment/create-course-offered',
+                element: (
+                    <ProtectedRoute>
+                        <CreateCoursesOffered />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: '/enrollment/enroll-student/:id',
+                element: (
+                    <ProtectedRoute>
+                        <EnrollStudent />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: '/enrollment/evaluate-student/:id',
+                element: (
+                    <ProtectedRoute>
+                        <EvaluateStudent />
+                    </ProtectedRoute>
+                )
+            },
 
             //Student
-            { path: '/student', element: <ListOfStudents /> },
-            { path: '/student/new-student', element: <NewStudent /> },
-            { path: '/student/details/:sid', element: <ViewDetails /> },
+            {
+                path: '/student',
+                element: (
+                    <ProtectedRoute>
+                        <ListOfStudents />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: '/student/new-student',
+                element: (
+                    <ProtectedRoute>
+                        <NewStudent />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: '/student/details/:sid',
+                element: (
+                    <ProtectedRoute>
+                        <ViewDetails />
+                    </ProtectedRoute>
+                )
+            },
 
             //Alumni
-            { path: '/alumni', element: <Alumni /> },
-            { path: '/alumni/tracer', element: <TracerMap /> },
-            { path: '/alumni/google-form', element: <GoogleForm /> },
+            {
+                path: '/alumni',
+                element: (
+                    <ProtectedRoute>
+                        <Alumni />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: '/alumni/tracer',
+                element: (
+                    <ProtectedRoute>
+                        <TracerMap />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: '/alumni/google-form',
+                element: (
+                    <ProtectedRoute>
+                        <GoogleForm />
+                    </ProtectedRoute>
+                )
+            },
 
             //Program
-            { path: '/program', element: <Program /> },
-            { path: '/program/details/:id', element: <ViewProgramDetails /> },
-            { path: '/program/create-program', element: <CreateProgram /> },
-            { path: '/program/create-course', element: <CreateCourse /> },
-            { path: '/program/create-curriculum', element: <CreateCurriculum /> },
+            {
+                path: '/program',
+                element: (
+                    <ProtectedRoute>
+                        <Program />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: '/program/details/:id',
+                element: (
+                    <ProtectedRoute>
+                        <ViewProgramDetails />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: '/program/create-program',
+                element: (
+                    <ProtectedRoute>
+                        <CreateProgram />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: '/program/create-course',
+                element: (
+                    <ProtectedRoute>
+                        <CreateCourse />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: '/program/create-curriculum',
+                element: (
+                    <ProtectedRoute>
+                        <CreateCurriculum />
+                    </ProtectedRoute>
+                )
+            },
 
             //Form
-            { path: '/form', element: <Form /> },
-            // { path: '/form/create-form', element: <PostForm /> },
+            {
+                path: '/form',
+                element: (
+                    <ProtectedRoute>
+                        <Form />
+                    </ProtectedRoute>
+                )
+            },
 
 
         ]
@@ -72,23 +219,53 @@ const Routes = createBrowserRouter([
     {
         element: <TracerHeaderLayout />,
         children: [
-            { path: '/tracer', element: <Tracer /> },
+            {
+                path: '/tracer',
+                element: (
+                    <ProtectedRoute>
+                        <Tracer />
+                    </ProtectedRoute>
+                )
+            },
         ]
     },
     {
         element: <HomeHeaderLayout />,
         children: [
-            // { path: '/', element: <Home /> },
-            { path: '/', element: <LoginPage /> },
+            {
+                path: '/',
+                element: <LoginPage />
+            },
         ]
     },
     {
         element: <SettingsLayout />,
         children: [
             //Settings
-            { path: '/account', element: <GeneralSettings /> },
-            { path: '/audit-log', element: <AuditLog /> },
-            { path: '/account/security', element: <Security /> },
+            {
+                path: '/account',
+                element: (
+                    <ProtectedRoute>
+                        <GeneralSettings />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: '/audit-log',
+                element: (
+                    <ProtectedRoute>
+                        <AuditLog />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: '/account/security',
+                element: (
+                    <ProtectedRoute>
+                        <Security />
+                    </ProtectedRoute>
+                )
+            },
         ]
     }
 ])
