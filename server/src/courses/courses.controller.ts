@@ -3,8 +3,10 @@ import { CoursesService } from './courses.service'
 import { ICourses } from './courses.interface'
 import { privateDecrypt } from 'crypto'
 import { AuditlogService } from 'src/auditlog/auditlog.service'
+import { AuthGuard } from 'src/auth/auth.guard'
 
 @Controller('courses')
+@UseGuards(AuthGuard)
 export class CoursesController {
     constructor(
         private readonly courseService: CoursesService,
