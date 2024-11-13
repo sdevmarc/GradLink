@@ -117,8 +117,6 @@ export const AttritionRateCoursestColumns: ColumnDef<IAPIOffered>[] = [
                 enabled: !!id
             })
 
-            if (coursesFetched) { console.log(courses.data) }
-
             const handleViewDetails = () => {
                 setIsOpen(true)
             }
