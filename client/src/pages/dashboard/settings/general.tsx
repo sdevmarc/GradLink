@@ -105,36 +105,16 @@ export default function GeneralSettings() {
                     <main className="flex">
                         <Sidebar>
                             <SidebarNavs bg='bg-muted' title="General" link={ROUTES.GENERAL_SETTINGS} />
-                            <SidebarNavs title="Security" link={ROUTES.SECURITY} />
+                            {/* <SidebarNavs title="Security" link={ROUTES.SECURITY} /> */}
                         </Sidebar>
                         <MainTable className="pb-[12rem] flex flex-col gap-8">
-                            <Card>
+                            {/* <Card>
                                 <CardHeader>
                                     <CardTitle>Personal Information</CardTitle>
                                     <CardDescription>Customize your personal information.</CardDescription>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="space-y-6">
-                                        {/* <div className="flex items-center space-x-4">
-                                            <Avatar className="w-20 h-20">
-                                                <AvatarImage src={profile.avatar} alt={profile.name} />
-                                                <AvatarFallback>{profile.name.charAt(0)}</AvatarFallback>
-                                            </Avatar>
-                                            <div>
-                                                <Label htmlFor="avatar" className="cursor-pointer">
-                                                    <div className="flex items-center space-x-2">
-                                                        <Upload className="w-4 h-4" />
-                                                        <span>Change Avatar</span>
-                                                    </div>
-                                                </Label>
-                                                <Input
-                                                    id="avatar"
-                                                    type="file"
-                                                    accept="image/*"
-                                                    className="hidden"
-                                                />
-                                            </div>
-                                        </div> */}
                                         <div className="space-y-2">
                                             <Label htmlFor="name">Name</Label>
                                             <Input
@@ -287,7 +267,7 @@ export default function GeneralSettings() {
                                         </div>
                                     </CardContent>
                                 </Card>
-                            }
+                            } */}
 
                             <Card>
                                 <CardHeader>
