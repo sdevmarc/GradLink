@@ -11,16 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 export const SelectCoursesInCurriculumColumns: ColumnDef<IAPICourse>[] = [
     {
         id: "select",
-        header: ({ table }) => (
-            <Checkbox
-                checked={
-                    table.getIsAllPageRowsSelected() ||
-                    (table.getIsSomePageRowsSelected() && "indeterminate")
-                }
-                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                aria-label="Select all"
-            />
-        ),
+        header: () => null, // Remove header checkbox since we only want single select
         cell: ({ row }) => (
             <Checkbox
                 checked={row.getIsSelected()}
