@@ -199,6 +199,11 @@ export const AttritionRateProgramsColumns: ColumnDef<IAPIPrograms>[] = [
                                                             </>
                                                         }
                                                     </Tabs>
+                                                    <div className="pt-4 border-t">
+                                                        <p className="text-sm text-muted-foreground mt-4 italic">
+                                                            *Attrition rate = (Number of students who left / Total enrolled) x 100
+                                                        </p>
+                                                    </div>
                                                 </CardContent>
                                             </Card>
                                         </div>
