@@ -11,10 +11,19 @@ export const API_PROGRAM_FINDALL = async () => {
     }
 }
 
+export const API_PROGRAM_ATTRITION = async ({ id }: { id: string }) => {
+    try {
+        const response = await axios.get(`${HOST}/programs/attrition-calculate/${id}`)
+        return response.data
+    } catch (error) {
+        console.error(error)
+    }
+}
+
 export const API_PROGRAM_FINDONE = async ({ _id }: IAPIPrograms) => {
     try {
         const baseId = btoa(_id || '')
-        const response = await axios.get(`${HOST}/programs/${baseId}`)
+        const response = await axios.get(`${HOST}/programs/attrition-calculate/${baseId}`)
         return response.data
     } catch (error) {
         console.error(error)
