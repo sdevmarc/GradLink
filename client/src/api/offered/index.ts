@@ -2,9 +2,13 @@ import { HOST } from '@/constants'
 import { IAPIOffered } from '@/interface/offered.interface'
 import axios from 'axios'
 
+axios.defaults.withCredentials = true;
+
 export const API_FINDALL_COURSES_OFFERED = async () => {
     try {
-        const response = await axios.get(`${HOST}/offered`)
+        const response = await axios.get(`${HOST}/offered`,
+            { withCredentials: true }
+        )
         return response.data
     } catch (error) {
         console.error(error)
@@ -13,7 +17,9 @@ export const API_FINDALL_COURSES_OFFERED = async () => {
 
 export const API_FINDALL_COURSES_OFFERED_IN_ACADEMIC_YEAR = async ({ academicYear }: { academicYear: string }) => {
     try {
-        const response = await axios.get(`${HOST}/offered/academic-year/${academicYear}`)
+        const response = await axios.get(`${HOST}/offered/academic-year/${academicYear}`,
+            { withCredentials: true }
+        )
         return response.data
     } catch (error) {
         console.error(error)
@@ -22,7 +28,9 @@ export const API_FINDALL_COURSES_OFFERED_IN_ACADEMIC_YEAR = async ({ academicYea
 
 export const API_FINDALL_ACADEMIC_YEARS_IN_OFFERED_COURSES = async () => {
     try {
-        const response = await axios.get(`${HOST}/offered/academic-years`)
+        const response = await axios.get(`${HOST}/offered/academic-years`,
+            { withCredentials: true }
+        )
         return response.data
     } catch (error) {
         console.error(error)
@@ -51,7 +59,7 @@ export const API_CREATE_COURSES_OFFERED = async ({ courses, semester, academicYe
     try {
         const response = await axios.post(`${HOST}/offered/create`, {
             courses, semester, academicYear
-        })
+        }, { withCredentials: true })
 
         return response.data
     } catch (error) {
