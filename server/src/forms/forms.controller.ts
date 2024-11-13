@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, HttpStatus, InternalServerErrorException, NotFoundException, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, InternalServerErrorException, NotFoundException, Param, Post, UseGuards } from '@nestjs/common';
 import { FormsService } from './forms.service';
 import { FormStructure, IForms, IModelForm } from './forms.interface';
 import { ConstantsService } from 'src/constants/constants.service';
@@ -6,6 +6,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { IStudent } from 'src/student/student.interface';
 import { StudentService } from 'src/student/student.service';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 interface MapboxResponse {
     features: Array<{
@@ -21,6 +22,7 @@ interface GeocodedLocation {
 }
 
 @Controller('forms')
+@UseGuards(AuthGuard)
 export class FormsController {
     constructor(
         private readonly formsService: FormsService,
