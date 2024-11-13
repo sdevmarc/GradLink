@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { LoaderCircle } from "lucide-react"
 
 interface IComponents {
     btnTitle?: string
@@ -165,7 +166,16 @@ export function AlertDialogConfirmation({
                             <AlertDialogFooter>
                                 <AlertDialogCancel disabled={disabled}>Cancel</AlertDialogCancel>
                                 <Button disabled={disabled} onClick={btnContinue} variant={`default`} size={`default`}>
-                                    Continue
+                                    {
+                                        disabled ?
+                                            <div className="flex items-center gap-2">
+                                                <LoaderCircle className={`text-muted-foreground animate-spin`} size={18} />
+                                                <h1 className="text-muted-foreground text-sm">
+                                                    Processing
+                                                </h1>
+                                            </div>
+                                            : ' Continue'
+                                    }
                                 </Button>
                             </AlertDialogFooter>
                         </AlertDialogContent>

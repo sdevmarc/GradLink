@@ -26,6 +26,7 @@ export default function Program() {
         queryFn: () => API_CURRICULUM_FINDALL(),
         queryKey: ['curriculums']
     })
+
     return (
         <>
             <div className="flex flex-col min-h-screen items-center">

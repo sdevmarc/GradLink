@@ -17,7 +17,6 @@ import { AlertDialogConfirmation } from "@/components/alert-dialog"
 import { API_FINDONE_SETTINGS } from "@/api/settings"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { API_STUDENT_ACTIVATE_STUDENT, API_STUDENT_DISCONTINUE_STUDENT } from "@/api/student"
-import Loading from "@/components/loading"
 
 const dateRangeFilter = (row: any, columnId: string, filterValue: [Date, Date]) => {
     const cellDate = new Date(row.getValue(columnId));
@@ -331,6 +330,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                                 setDialog={(e) => setDialogSubmit(e)}
                                                                                 className="flex items-center gap-2"
                                                                                 type={`default`}
+                                                                                disabled={activatestudentLoading}
                                                                                 variant={'outline'}
                                                                                 btnIcon={<ShieldCheck className="text-primary" size={18} />}
                                                                                 btnTitle="Re-Activate Student"
@@ -536,7 +536,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                     !isDiscontinue &&
                                                                     <AlertDialogConfirmation
                                                                         isDialog={dialogsubmit}
-                                                                        disabled={isLoading}
+                                                                        disabled={disconLoading}
                                                                         setDialog={(e) => setDialogSubmit(e)}
                                                                         className="flex items-center gap-2"
                                                                         type={`default`}

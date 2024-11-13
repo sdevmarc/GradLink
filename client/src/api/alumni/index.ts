@@ -12,8 +12,10 @@ export const API_STUDENT_FINDONE_ALUMNI = async ({ idNumber }: IAPIAlumni) => {
     return response.data
 }
 
-export const API_STUDENT_SEND_TRACER = async () => {
-    const response = await axios.post(`${HOST}/student/send-tracer-to-alumni`)
+export const API_STUDENT_SEND_TRACER = async ({ academicYear, program }: { academicYear: string, program: string }) => {
+    const response = await axios.post(`${HOST}/student/send-tracer-to-alumni`, {
+        academicYear, program
+    })
     return response.data
 }
 

@@ -11,7 +11,6 @@ export default function ListOfStudents() {
     })
 
     return (
-        <>
             <div className="flex flex-col min-h-screen items-center">
                 <div className="w-full max-w-[90rem] flex flex-col">
                     <aside className="px-4 pb-4 pt-[8rem]">
@@ -34,6 +33,5 @@ export default function ListOfStudents() {
                     </main>
                 </div>
             </div>
-        </>
     )
 }

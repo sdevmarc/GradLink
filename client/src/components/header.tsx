@@ -502,7 +502,7 @@ const HeaderDashboard = () => {
                     </div> */}
                     <div className="w-full h-[30%] flex justify-start items-center">
                         <nav className="flex items-center gap-1">
-                            <NavLink to={`/overview`} className='text-[.8rem] text-text font-normal px-3 py-2'>
+                            <NavLink to={`/overview`} className='text-[.8rem] text-text font-normal px-3 py-2 active:bg-blue-300'>
                                 Overview
                             </NavLink>
                             <NavLink to={`/student`} className='text-[.8rem] text-text font-normal px-3 py-2'>

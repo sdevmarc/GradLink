@@ -11,7 +11,7 @@ import './index.css'
 import { Input } from "@/components/ui/input"
 import { Combobox } from "@/components/combobox"
 import { Badge } from "@/components/ui/badge"
-import { BookOpen, CircleCheck, CircleDashed, CircleX, Filter, GraduationCap, Loader, Mail, Search, Send } from "lucide-react"
+import { BellRing, BookOpen, CircleCheck, CircleDashed, CircleX, Filter, GraduationCap, Loader, LoaderCircle, Mail, Search, Send } from "lucide-react"
 import { SheetModal } from "@/components/sheet-modal"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { LeftSheetModal } from "@/components/left-sheet-modal"
@@ -20,7 +20,6 @@ import AlumniCap from '@/assets/alumnicap.svg';
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { API_PROGRAM_FINDALL } from "@/api/program"
 import { API_STUDENT_FINDALL_ALUMNI_FOR_TRACER_MAP, API_STUDENT_FINDALL_FILTERED_ALUMNI, API_STUDENT_FINDONE_ALUMNI_FOR_TRACER_MAP, API_STUDENT_YEARS_GRADUATED } from "@/api/student"
-import Loading from "@/components/loading"
 import { AlertDialogConfirmation } from "@/components/alert-dialog"
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useNavigate } from "react-router-dom"
@@ -43,6 +42,7 @@ export default function TracerMap() {
         description: '',
         success: false
     })
+    const [reminder, setReminder] = useState<boolean>(true)
     const [searched, setSearched] = useState<{ coordinates: { lng: number, lat: number }, id: string }>({
         coordinates: {
             lng: 0,
@@ -52,16 +52,10 @@ export default function TracerMap() {
     })
     const navigate = useNavigate()
 
-    const { data: form, isLoading: formLoading, isFetched: formFetched } = useQuery({
+    const { isLoading: formLoading } = useQuery({
         queryFn: () => API_FORM_MAPPED(),
         queryKey: ['form']
     })
-
-    useEffect(() => {
-        if (formFetched) {
-            console.log(form?.message)
-        }
-    }, [form])
 
     const { data: programs, isLoading: programsLoading, isFetched: programsFetched } = useQuery({
         queryFn: () => API_PROGRAM_FINDALL(),
@@ -148,15 +142,14 @@ export default function TracerMap() {
             return
         }
 
-        await tracer()
+        await tracer({ academicYear: yearGraduated, program })
         setDialogSubmit(false)
     }
 
-    const isLoading = formLoading || programsLoading || yearsgraduateLoading || tracerLoading
+    const isLoading = programsLoading || yearsgraduateLoading || formLoading
 
     return (
         <>
-            {isLoading && <Loading />}
             <AlertDialogConfirmation
                 btnTitle='Continue'
                 className='w-full py-4'
@@ -173,6 +166,18 @@ export default function TracerMap() {
 
                 }}
             />
+            <AlertDialogConfirmation
+                btnTitle='I understand'
+                className='w-full py-4'
+                isDialog={reminder}
+                setDialog={(open) => setReminder(open)}
+                type={`alert`}
+                title={`Hi! Please remind.`}
+                description={`If the marker is missing, please consider refreshing.`}
+                icon={<BellRing className="text-primary" size={70} />}
+                variant={`default`}
+                btnContinue={() => setReminder(false)}
+            />
             <div className="flex flex-col min-h-screen items-center">
                 <div className="w-full max-w-[90rem] flex flex-col">
                     <aside className="px-4 pb-4 pt-[8rem]">
@@ -187,27 +192,32 @@ export default function TracerMap() {
                         <Sidebar>
                             <SidebarNavs title="Alumni Information" link={ROUTES.ALUMNI} />
                             <SidebarNavs bg='bg-muted' title="Tracer Map" link={ROUTES.TRACER_MAP} />
-                            {/* <SidebarNavs title="Google Form" link={ROUTES.GOOGLE_FORM} /> */}
                         </Sidebar>
                         <MainTable>
                             <div className="w-full h-screen flex flex-col gap-4 pb-4 rounded-md">
-                                <div className="flex items-center justify-end">
-                                    <div className="flex flex-col">
-                                        <AlertDialogConfirmation
-                                            isDialog={dialogsubmit}
-                                            setDialog={(open) => setDialogSubmit(open)}
-                                            type={`default`}
-                                            disabled={isLoading}
-                                            className='w-full my-3'
-                                            variant={'default'}
-                                            btnIcon={<Send className="text-primary-foreground" size={18} />}
-                                            btnTitle="Send Tracer Study"
-                                            title="Are you sure?"
-                                            description={`This will send a tracer study and email the alumni accordiing to the filtered program and year graduated.`}
-                                            btnContinue={handleSendTracerStudy}
-                                        />
 
-                                    </div>
+                                <div className="flex items-center justify-end gap-4">
+                                    {
+                                        isLoading &&
+                                        <div className="flex items-center gap-2">
+                                            <LoaderCircle className={`text-muted-foreground animate-spin`} size={18} />
+                                            <h1 className="text-muted-foreground text-sm">
+                                                Syncing
+                                            </h1>
+                                        </div>
+                                    }
+                                    <AlertDialogConfirmation
+                                        isDialog={dialogsubmit}
+                                        setDialog={(open) => setDialogSubmit(open)}
+                                        type={`default`}
+                                        disabled={tracerLoading}
+                                        variant={'default'}
+                                        btnIcon={<Send className="text-primary-foreground" size={18} />}
+                                        btnTitle="Send Tracer Study"
+                                        title="Are you sure?"
+                                        description={`This will send a tracer study and email the alumni accordiing to the filtered program and year graduated.`}
+                                        btnContinue={handleSendTracerStudy}
+                                    />
                                 </div>
 
                                 <div className="flex items-center justify-between gap-4">

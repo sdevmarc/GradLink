@@ -307,7 +307,7 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
                                                                         btnIcon={<Send className="text-primary-foreground" size={18} />}
                                                                         btnTitle="Send Tracer Study"
                                                                         title="Are you sure?"
-                                                                        description={`${lastname}, ${firstname} ${middlename} will be mark as a dicontinuing student, and its courses this semester will be mark as drop.`}
+                                                                        description={`${lastname}, ${firstname} ${middlename} will be receiving an email tracer study, do you still want to conintinue?`}
                                                                         btnContinue={handleSendTracerStudy}
                                                                     />
                                                                 </div>

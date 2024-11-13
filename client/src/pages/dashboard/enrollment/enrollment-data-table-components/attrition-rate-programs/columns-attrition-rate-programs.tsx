@@ -113,7 +113,7 @@ export const AttritionRateProgramsColumns: ColumnDef<IAPIPrograms>[] = [
                         <TableOfContents className="text-primary" size={18} /> View Attrition
                     </Button>
                     <SheetModal
-                        className="w-[60%]"
+                        className="w-[45%]"
                         isOpen={isOpen}
                         onOpenChange={handleOpenChange}
                         title="Program Details"
@@ -150,7 +150,7 @@ export const AttritionRateProgramsColumns: ColumnDef<IAPIPrograms>[] = [
                                                                 <TabsContent value="past3">
                                                                     <div className="space-y-4">
                                                                         <div className="grid grid-cols-2 items-center gap-4 text-lg">
-                                                                            <div className="font-medium">
+                                                                            <div className="text-md font-medium">
                                                                                 Total Student Enrolled
                                                                             </div>
                                                                             <div className="border rounded-lg p-3 text-right">
@@ -159,7 +159,7 @@ export const AttritionRateProgramsColumns: ColumnDef<IAPIPrograms>[] = [
                                                                         </div>
 
                                                                         <div className="grid grid-cols-2 items-center gap-4 text-lg">
-                                                                            <div className="font-medium">
+                                                                            <div className="text-md font-medium">
                                                                                 Total Discontinued
                                                                             </div>
                                                                             <div className="border rounded-lg p-3 text-right">
@@ -170,9 +170,9 @@ export const AttritionRateProgramsColumns: ColumnDef<IAPIPrograms>[] = [
                                                                     </div>
                                                                     <div className="pt-4">
                                                                         <div className="grid grid-cols-2 items-center gap-4 text-lg">
-                                                                            <div className="font-medium flex flex-col gap-2 capitalize">
+                                                                            <div className="text-md font-medium flex flex-col gap-2 capitalize">
                                                                                 Attrition Rate for:
-                                                                                <span className="font-semibold underline">
+                                                                                <span className=" text-mdfont-semibold underline">
                                                                                     {descriptiveTitle}
                                                                                 </span>
                                                                             </div>
