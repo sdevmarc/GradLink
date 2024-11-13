@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, UploadedFile, UseInterceptors } from '@nestjs/common'
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common'
 import { StudentService } from './student.service'
 import { IRequestStudent, IStudent } from './student.interface'
 import { FormsService } from 'src/forms/forms.service'
@@ -6,8 +6,10 @@ import { ConstantsService } from 'src/constants/constants.service'
 import { AuditlogService } from 'src/auditlog/auditlog.service'
 import { CoursesService } from 'src/courses/courses.service'
 import { FileInterceptor } from '@nestjs/platform-express'
+import { AuthGuard } from 'src/auth/auth.guard'
 
 @Controller('student')
+@UseGuards(AuthGuard)
 export class StudentController {
     constructor(
         private readonly studentService: StudentService,
