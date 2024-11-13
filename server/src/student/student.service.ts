@@ -252,50 +252,30 @@ export class StudentService {
 
             const response = await this.studentModel.aggregate(pipeline);
 
-            // Prepare the return object
-            if (department || program || academicYear) {
-                // Return array format for filtered results
-                if (response.length === 0) {
-                    response.push({
-                        department: department || null,
-                        program: program || null,
-                        academicYear: academicYear || null,
-                        analytics: {
-                            courseRelatedJob: {
-                                title: 'Is your first job related to the course you took in college?',
-                                data: []
-                            },
-                            timeToLandJob: {
-                                title: 'How long did it take you to land your first job?',
-                                data: []
-                            }
-                        }
-                    });
-                }
-                return {
-                    success: true,
-                    message: 'Tracer study analyzed successfully.',
-                    data: response
-                };
-            } else {
-                // Return object format for overall analytics
-                return {
-                    success: true,
-                    message: 'Tracer study analyzed successfully.',
-                    data: response[0] || {
-                        analytics: {
-                            courseRelatedJob: {
-                                title: 'Is your first job related to the course you took in college?',
-                                data: []
-                            },
-                            timeToLandJob: {
-                                title: 'How long did it take you to land your first job?',
-                                data: []
-                            }
+
+            // Return array format for filtered results
+            if (response.length === 0) {
+                response.push({
+                    department: department || null,
+                    program: program || null,
+                    academicYear: academicYear || null,
+                    analytics: {
+                        courseRelatedJob: {
+                            title: 'Is your first job related to the course you took in college?',
+                            data: []
+                        },
+                        timeToLandJob: {
+                            title: 'How long did it take you to land your first job?',
+                            data: []
                         }
                     }
-                };
+                });
             }
+            return {
+                success: true,
+                message: 'Tracer study analyzed successfully.',
+                data: response
+            };
 
         } catch (error) {
             throw new HttpException(
