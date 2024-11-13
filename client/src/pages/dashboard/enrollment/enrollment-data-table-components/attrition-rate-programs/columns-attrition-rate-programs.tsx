@@ -10,7 +10,7 @@ import { ChartColumnBig, Clock, TableOfContents } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { SheetModal } from "@/components/sheet-modal"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useQuery } from "@tanstack/react-query"
 import { API_PROGRAM_ATTRITION } from "@/api/program"
@@ -107,10 +107,6 @@ export const AttritionRateProgramsColumns: ColumnDef<IAPIPrograms>[] = [
                 enabled: !!id
             })
 
-            useEffect(() => {
-                console.log(`Program attrtition: `, programs?.data)
-            }, [programs])
-
             return (
                 <div className="flex justify-end">
                     <Button onClick={handleViewDetails} variant={`outline`} size={`sm`} className="flex items-center gap-4">
@@ -203,52 +199,6 @@ export const AttritionRateProgramsColumns: ColumnDef<IAPIPrograms>[] = [
                                                             </>
                                                         }
                                                     </Tabs>
-
-
-
-                                                    {/* <RadioGroup
-                                                        defaultValue="latest"
-                                                        // onValueChange={setSemester}
-                                                        className="flex flex-wrap gap-4"
-                                                    >
-                                                        <div className="flex items-center space-x-2">
-                                                            <RadioGroupItem value="latest" id="latest" />
-                                                            <Label htmlFor="latest">Past 3 Years</Label>
-                                                        </div>
-                                                        <div className="flex items-center space-x-2">
-                                                            <RadioGroupItem value="past3" id="past3" />
-                                                            <Label htmlFor="past3">Yearly</Label>
-                                                        </div>
-                                                    </RadioGroup>
-
-                                                    <div className="space-y-4">
-                                                        <div className="grid grid-cols-2 items-center gap-4 text-lg">
-                                                            <div className="font-medium">Total Student Enrolled</div>
-                                                            <div className="border rounded-lg p-3 text-right">
-                                                                34
-                                                            </div>
-                                                        </div>
-
-                                                        <div className="grid grid-cols-2 items-center gap-4 text-lg">
-                                                            <div className="font-medium">Passed</div>
-                                                            <div className="border rounded-lg p-3 text-right">
-                                                                34
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-
-                                                    <div className="pt-4 border-t">
-                                                        <div className="grid grid-cols-2 items-center gap-4 text-lg">
-                                                            <div className="font-medium">Attrition Rate for [Course]</div>
-                                                            <div className="border rounded-lg p-3 text-right font-semibold">
-                                                                20 %
-                                                            </div>
-                                                        </div>
-                                                        <p className="text-sm text-muted-foreground mt-4 italic">
-                                                            *Attrition rate = (Number of students who left / Total enrolled) x 100
-                                                        </p>
-                                                    </div> */}
                                                 </CardContent>
                                             </Card>
                                         </div>
