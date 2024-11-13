@@ -59,6 +59,7 @@ export class UsersController {
 
     @Post('logout')
     async logout(@Res() response: Response) {
+
         response.cookie('access_token', '', {
             httpOnly: true,
             secure: false,
