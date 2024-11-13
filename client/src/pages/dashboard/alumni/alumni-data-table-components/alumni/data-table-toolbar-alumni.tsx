@@ -11,9 +11,11 @@ import { API_PROGRAM_FINDALL } from "@/api/program"
 import { API_STUDENT_YEARS_GRADUATED } from "@/api/student"
 import { DataTableFacetedFilter } from "@/components/data-table-components/data-table-faceted-filter"
 import { IAPIPrograms } from "@/interface/program.interface"
+import { LoaderCircle } from "lucide-react"
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>
+    isSync: boolean
 }
 
 interface ProgramOption {
@@ -23,7 +25,8 @@ interface ProgramOption {
 }
 
 export function DataTableToolbarAlumni<TData>({
-    table
+    table,
+    isSync
 }: DataTableToolbarProps<TData>) {
     const isFiltered = table.getState().columnFilters.length > 0
     const [formattedprogram, setFormattedProgram] = useState<ProgramOption[]>([]);
@@ -99,68 +102,54 @@ export function DataTableToolbarAlumni<TData>({
 
     return (
         <div className="flex flex-wrap items-center justify-between">
-            <div className="flex flex-1 flex-wrap items-center gap-2">
-                <Input
-                    placeholder="Search ID Number"
-                    value={(table.getColumn("idNumber")?.getFilterValue() as string) ?? ""}
-                    onChange={(event) => {
-                        table.getColumn("idNumber")?.setFilterValue(event.target.value)
-                    }}
-                    className="h-8 w-[17rem] lg:w-[20rem]"
-                />
-
+            <div className="flex flex-1 flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                    {table.getColumn("department") && (
-                        <DataTableFacetedFilter
-                            column={table.getColumn("department")}
-                            title="Department"
-                            options={department_options}
-                        />
-                    )}
-                    {table.getColumn("program") && (
-                        <DataTableFacetedFilter
-                            column={table.getColumn("program")}
-                            title="Program"
-                            options={filteredPrograms}
-                        />
-                    )}
-                    {table.getColumn("academicYear") && (
-                        <DataTableFacetedFilter
-                            column={table.getColumn("academicYear")}
-                            title="Year Graduated"
-                            options={filteredYearsGraduated}
-                        />
-                    )}
-                    {/* <Combobox
-                        btnTitleclassName="gap-2"
-                        icon={<Filter className="text-primary" size={15} />}
-                        className='w-[200px]'
-                        lists={filteredPrograms || []}
-                        placeholder={`Program`}
-                        setValue={(item) => setProgram(item)}
-                        value={program || ''}
+                    <Input
+                        placeholder="Search ID Number"
+                        value={(table.getColumn("idNumber")?.getFilterValue() as string) ?? ""}
+                        onChange={(event) => {
+                            table.getColumn("idNumber")?.setFilterValue(event.target.value)
+                        }}
+                        className="h-8 w-[17rem] lg:w-[20rem]"
                     />
 
-                    <Combobox
-                        btnTitleclassName="gap-2"
-                        icon={<Filter className="text-primary" size={15} />}
-                        className='w-[150px]'
-                        lists={filteredYearsGraduated || []}
-                        placeholder={`Year Graduated`}
-                        setValue={(item) => setYearGraduated(item)}
-                        value={yearGraduated || ''}
-                    /> */}
+                    <div className="flex items-center gap-2">
+                        {table.getColumn("department") && (
+                            <DataTableFacetedFilter
+                                column={table.getColumn("department")}
+                                title="Department"
+                                options={department_options}
+                            />
+                        )}
+                        {table.getColumn("program") && (
+                            <DataTableFacetedFilter
+                                column={table.getColumn("program")}
+                                title="Program"
+                                options={filteredPrograms}
+                            />
+                        )}
+                        {table.getColumn("academicYear") && (
+                            <DataTableFacetedFilter
+                                column={table.getColumn("academicYear")}
+                                title="Year Graduated"
+                                options={filteredYearsGraduated}
+                            />
+                        )}
 
+                    </div>
                 </div>
 
+                {
+                    isSync &&
+                    <div className="flex items-center gap-2">
 
-                {/*} {table.getColumn("type") && (
-                    <DataTableFacetedFilter
-                        column={table.getColumn("type")}
-                        title="Type"
-                        options={incomeType}
-                    />
-                )} */}
+                        <LoaderCircle className={`text-muted-foreground animate-spin`} size={18} />
+                        <h1 className="text-muted-foreground text-sm">
+                            Syncing
+                        </h1>
+                    </div>
+                }
+
                 {isFiltered && (
                     <Button
                         variant="ghost"
@@ -172,12 +161,6 @@ export function DataTableToolbarAlumni<TData>({
                         <Cross2Icon className="ml-2 h-4 w-4" />
                     </Button>
                 )}
-                {/* <CalendarDatePicker
-                    date={dateRange}
-                    onDateSelect={handleDateSelect}
-                    className="w-[250px] h-8"
-                    variant="outline"
-                /> */}
             </div>
         </div>
     )
