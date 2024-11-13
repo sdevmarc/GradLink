@@ -28,12 +28,14 @@ import { DataTableToolbarAlumni } from './data-table-toolbar-alumni'
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
-    data: TData[]
+    data: TData[],
+    isSync: boolean
 }
 
 export function DataTableStudentAlumni<TData, TValue>({
     columns,
     data,
+    isSync
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -70,7 +72,7 @@ export function DataTableStudentAlumni<TData, TValue>({
 
     return (
         <div className="w-full flex flex-col gap-4">
-            <DataTableToolbarAlumni table={table} />
+            <DataTableToolbarAlumni isSync={isSync} table={table} />
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
