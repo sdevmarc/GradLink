@@ -22,7 +22,7 @@ export class StudentController {
         return this.studentService.findAllStudents()
     }
 
-    @Get('employment-analytics')
+    @Post('employment-analytics')
     async findStatisticsForEmployment(@Body() { department, program, academicYear }: { department?: string, program?: string, academicYear?: string }) {
         return this.studentService.findTracerAnalytics({ department, program, academicYear })
     }
