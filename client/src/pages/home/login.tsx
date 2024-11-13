@@ -116,7 +116,7 @@ export default function LoginPage() {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <div className="flex justify-between items-center">
+                                    {/* <div className="flex justify-between items-center">
                                         <Label htmlFor="password">Password</Label>
                                         <Button
                                             disabled={isLoading}
@@ -128,7 +128,7 @@ export default function LoginPage() {
                                         >
                                             Forgot password?
                                         </Button>
-                                    </div>
+                                    </div> */}
                                     <div className="relative">
                                         <Input
                                             disabled={isLoading}
