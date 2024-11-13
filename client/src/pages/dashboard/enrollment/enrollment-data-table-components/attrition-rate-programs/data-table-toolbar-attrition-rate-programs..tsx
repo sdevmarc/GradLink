@@ -5,7 +5,6 @@ import { Table } from "@tanstack/react-table"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { AlertDialogConfirmation } from "@/components/alert-dialog"
 import { useNavigate } from "react-router-dom"
 import { DataTableFacetedFilter } from "@/components/data-table-components/data-table-faceted-filter"
 
@@ -30,10 +29,10 @@ export function DataTableToolbarAttritionRatePrograms<TData>({
         <div className="flex flex-wrap items-center justify-between">
             <div className="flex items-center gap-2">
                 <Input
-                    placeholder="Search Course..."
-                    value={(table.getColumn("courseno")?.getFilterValue() as string) ?? ""}
+                    placeholder="Search program..."
+                    value={(table.getColumn("code")?.getFilterValue() as string) ?? ""}
                     onChange={(event) => {
-                        table.getColumn("courseno")?.setFilterValue(event.target.value);
+                        table.getColumn("code")?.setFilterValue(event.target.value);
                     }}
                     className="h-8 w-[17rem] lg:w-[20rem]"
                 />
