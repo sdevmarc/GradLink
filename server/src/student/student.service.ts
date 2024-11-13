@@ -23,6 +23,292 @@ export class StudentService {
         private readonly cloudinaryService: CloudinaryService
     ) { }
 
+    async findTracerAnalytics({ department, program, academicYear }: {
+        department?: string,
+        program?: string,
+        academicYear?: string
+    }): Promise<IPromiseStudent> {
+        try {
+            // Base pipeline stages that are always needed
+            const baseStages = [
+                // Match initial conditions
+                {
+                    $match: {
+                        $and: [
+                            { status: 'alumni' },
+                            { isenrolled: false }
+                        ]
+                    }
+                },
+                // Lookup curriculum
+                {
+                    $lookup: {
+                        from: 'curriculums',
+                        localField: 'program',
+                        foreignField: '_id',
+                        as: 'curriculumInfo'
+                    }
+                },
+                {
+                    $unwind: '$curriculumInfo'
+                },
+                // Lookup program from curriculum
+                {
+                    $lookup: {
+                        from: 'programs',
+                        localField: 'curriculumInfo.programid',
+                        foreignField: '_id',
+                        as: 'programInfo'
+                    }
+                },
+                {
+                    $unwind: '$programInfo'
+                },
+                // Unwind employmentData questions
+                {
+                    $unwind: '$employmentData.questions'
+                },
+                // Filter only the questions we want
+                {
+                    $match: {
+                        'employmentData.questions.question': {
+                            $in: [
+                                '20. Is your first job related to the course you took up in college?',
+                                '21. How long did it take you to land your first job?'
+                            ]
+                        }
+                    }
+                }
+            ];
+
+            let pipeline;
+
+            if (department || program || academicYear) {
+                // Pipeline for filtered results
+                pipeline = [
+                    ...baseStages,
+                    // Apply program filter if provided
+                    ...(program ? [{
+                        $match: {
+                            'curriculumInfo.programid': new mongoose.Types.ObjectId(program)
+                        }
+                    }] : []),
+                    // Apply department filter if provided
+                    ...(department ? [{
+                        $match: {
+                            'programInfo.department': department
+                        }
+                    }] : []),
+                    // Group by filters and questions
+                    {
+                        $group: {
+                            _id: {
+                                department: '$programInfo.department',
+                                program: '$curriculumInfo.programid',
+                                academicYear: {
+                                    $concat: [
+                                        { $toString: { $year: '$graduation_date' } },
+                                        ' - ',
+                                        { $toString: { $add: [{ $year: '$graduation_date' }, 1] } }
+                                    ]
+                                },
+                                question: '$employmentData.questions.question',
+                                answer: '$employmentData.questions.answer'
+                            },
+                            count: { $sum: 1 }
+                        }
+                    },
+                    // Filter by academic year if provided
+                    ...(academicYear ? [{
+                        $match: {
+                            '_id.academicYear': academicYear
+                        }
+                    }] : []),
+                    // Group results
+                    {
+                        $group: {
+                            _id: {
+                                department: '$_id.department',
+                                program: '$_id.program',
+                                academicYear: '$_id.academicYear',
+                                question: '$_id.question'
+                            },
+                            data: {
+                                $push: {
+                                    _id: '$_id.answer',
+                                    count: '$count'
+                                }
+                            }
+                        }
+                    },
+                    // Final grouping
+                    {
+                        $group: {
+                            _id: {
+                                department: '$_id.department',
+                                program: '$_id.program',
+                                academicYear: '$_id.academicYear'
+                            },
+                            analytics: {
+                                $push: {
+                                    k: {
+                                        $cond: {
+                                            if: { $regexMatch: { input: '$_id.question', regex: /20\. Is your first job related/ } },
+                                            then: 'courseRelatedJob',
+                                            else: 'timeToLandJob'
+                                        }
+                                    },
+                                    v: {
+                                        title: {
+                                            $cond: {
+                                                if: { $regexMatch: { input: '$_id.question', regex: /20\. Is your first job related/ } },
+                                                then: 'Is your first job related to the course you took in college?',
+                                                else: 'How long did it take you to land your first job?'
+                                            }
+                                        },
+                                        data: '$data'
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    // Project stage
+                    {
+                        $project: {
+                            _id: 0,
+                            department: '$_id.department',
+                            program: '$_id.program',
+                            academicYear: '$_id.academicYear',
+                            analytics: {
+                                $arrayToObject: '$analytics'
+                            }
+                        }
+                    }
+                ];
+            } else {
+                // Pipeline for overall analytics
+                pipeline = [
+                    ...baseStages,
+                    // Group by question and answer
+                    {
+                        $group: {
+                            _id: {
+                                question: '$employmentData.questions.question',
+                                answer: '$employmentData.questions.answer'
+                            },
+                            count: { $sum: 1 }
+                        }
+                    },
+                    // Group by question
+                    {
+                        $group: {
+                            _id: '$_id.question',
+                            data: {
+                                $push: {
+                                    _id: '$_id.answer',
+                                    count: '$count'
+                                }
+                            }
+                        }
+                    },
+                    // Final format
+                    {
+                        $group: {
+                            _id: null,
+                            analytics: {
+                                $push: {
+                                    k: {
+                                        $cond: {
+                                            if: { $regexMatch: { input: '$_id', regex: /20\. Is your first job related/ } },
+                                            then: 'courseRelatedJob',
+                                            else: 'timeToLandJob'
+                                        }
+                                    },
+                                    v: {
+                                        title: {
+                                            $cond: {
+                                                if: { $regexMatch: { input: '$_id', regex: /20\. Is your first job related/ } },
+                                                then: 'Is your first job related to the course you took in college?',
+                                                else: 'How long did it take you to land your first job?'
+                                            }
+                                        },
+                                        data: '$data'
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    // Project stage
+                    {
+                        $project: {
+                            _id: 0,
+                            analytics: {
+                                $arrayToObject: '$analytics'
+                            }
+                        }
+                    }
+                ];
+            }
+
+            const response = await this.studentModel.aggregate(pipeline);
+
+            // Prepare the return object
+            if (department || program || academicYear) {
+                // Return array format for filtered results
+                if (response.length === 0) {
+                    response.push({
+                        department: department || null,
+                        program: program || null,
+                        academicYear: academicYear || null,
+                        analytics: {
+                            courseRelatedJob: {
+                                title: 'Is your first job related to the course you took in college?',
+                                data: []
+                            },
+                            timeToLandJob: {
+                                title: 'How long did it take you to land your first job?',
+                                data: []
+                            }
+                        }
+                    });
+                }
+                return {
+                    success: true,
+                    message: 'Tracer study analyzed successfully.',
+                    data: response
+                };
+            } else {
+                // Return object format for overall analytics
+                return {
+                    success: true,
+                    message: 'Tracer study analyzed successfully.',
+                    data: response[0] || {
+                        analytics: {
+                            courseRelatedJob: {
+                                title: 'Is your first job related to the course you took in college?',
+                                data: []
+                            },
+                            timeToLandJob: {
+                                title: 'How long did it take you to land your first job?',
+                                data: []
+                            }
+                        }
+                    }
+                };
+            }
+
+        } catch (error) {
+            throw new HttpException(
+                {
+                    success: false,
+                    message: 'Failed to analyze tracer responses.',
+                    error: error.message
+                },
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
     async findStudentsOverlapResidency(): Promise<IPromiseStudent> {
         try {
             // First, find students who have exceeded their residency
