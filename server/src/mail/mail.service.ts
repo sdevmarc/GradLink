@@ -169,7 +169,7 @@ export class MailService {
 
             const response = await this.mailService.sendMail({
                 to: email,
-                subject: `Can I take a minute of your time? 😞`,
+                subject: `Your SMU Story Continues—Join Our Tracer Study Today! ✨📝`,
                 html: message
             })
 
