@@ -11,7 +11,7 @@ import './index.css'
 import { Input } from "@/components/ui/input"
 import { Combobox } from "@/components/combobox"
 import { Badge } from "@/components/ui/badge"
-import { BellRing, BookOpen, CircleCheck, CircleDashed, CircleX, Filter, GraduationCap, Loader, LoaderCircle, Mail, Search, Send } from "lucide-react"
+import { BellRing, BookOpen, CircleCheck, CircleDashed, CircleX, Filter, GraduationCap, Loader, LoaderCircle, Mail, Send } from "lucide-react"
 import { SheetModal } from "@/components/sheet-modal"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { LeftSheetModal } from "@/components/left-sheet-modal"
@@ -73,9 +73,15 @@ export default function TracerMap() {
         enabled: isSearch, // Only run when search is triggered
     });
 
-    const handleClickSearch = () => {
-        setIsSearch(true)
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>): void => {
+        if (e.key === 'Enter') {
+            setIsSearch(true);
+        }
     }
+
+    // const handleClickSearch = () => {
+    //     setIsSearch(true)
+    // }
 
     const handleSearchOpenChange = (open: boolean) => {
         setIsSearch(open)
@@ -131,6 +137,7 @@ export default function TracerMap() {
             setValid(false)
             setDialogSubmit(false)
             setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: data.message })
+            return
         }
     })
 
@@ -144,6 +151,7 @@ export default function TracerMap() {
 
         await tracer({ academicYear: yearGraduated, program })
         setDialogSubmit(false)
+        return
     }
 
     const isLoading = programsLoading || yearsgraduateLoading || formLoading
@@ -227,10 +235,11 @@ export default function TracerMap() {
                                             onChange={(e) => setSearch(e.target.value)}
                                             placeholder="Search ID Number"
                                             className="h-8 w-[17rem] lg:w-[20rem]"
+                                            onKeyDown={handleKeyDown}
                                         />
-                                        <Button onClick={handleClickSearch} variant={`outline`} size={`sm`} className="flex items-center gap-2">
+                                        {/* <Button onClick={handleClickSearch} variant={`outline`} size={`sm`} className="flex items-center gap-2">
                                             <Search className="text-primary" size={18} /> Search
-                                        </Button>
+                                        </Button> */}
                                     </div>
 
                                     <div className="flex items-center gap-4">
