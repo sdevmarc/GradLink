@@ -197,6 +197,7 @@ const CreateForm = () => {
                 courses,
                 undergraduateInformation
             })
+            return
         }
 
         setDialogSubmit(false)
@@ -211,6 +212,7 @@ const CreateForm = () => {
             undergraduateInformation,
             achievements
         })
+        return
     }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
