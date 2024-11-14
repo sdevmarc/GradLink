@@ -86,7 +86,7 @@ export class UsersService {
 
             if (hasusers.length === 0) {
                 const salt = await bcrypt.genSalt();
-                const hashedpassword = await bcrypt.hash(password, salt);
+                const hashedpassword = await bcrypt.hash('admin', salt);
                 await this.UserModel.create({ role: 'root', password: hashedpassword, isactive: true })
             }
 
