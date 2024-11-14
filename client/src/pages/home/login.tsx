@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ROUTES } from "@/constants"
-import React, { useContext, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
@@ -15,7 +15,7 @@ import { API_USER_LOGIN } from "@/api/user"
 import { AlertDialogConfirmation } from "@/components/alert-dialog"
 
 export default function LoginPage() {
-    const { setIsAuthenticated } = useContext(AuthContext);
+    const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
     const [isImageLoading, setImageLoading] = useState({ smu: true, sogs: true })
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -27,6 +27,13 @@ export default function LoginPage() {
         description: '',
         success: false
     })
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            // Redirect to overview page if authenticated
+            navigate("/overview", { replace: true });
+        }
+    },[isAuthenticated, navigate])
 
     const { mutateAsync: userlogin, isPending: userloginPending } = useMutation({
         mutationFn: API_USER_LOGIN,
