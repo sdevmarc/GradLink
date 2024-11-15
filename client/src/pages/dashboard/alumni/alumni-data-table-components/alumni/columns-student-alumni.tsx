@@ -222,7 +222,8 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
                 undergraduateInformation,
                 achievements,
                 generalInformation,
-                employmentData
+                employmentData,
+                dateSent
             } = row.original
 
             const handleViewDetails = () => {
@@ -297,19 +298,25 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
                                                                             <Mail className="text-muted-foreground" size={18} /> {email || 'No valid Email'}
                                                                         </span>
                                                                     </CardTitle>
-                                                                    <AlertDialogConfirmation
-                                                                        isDialog={dialogsubmit}
-                                                                        setDialog={(open) => setDialogSubmit(open)}
-                                                                        disabled={isLoading}
-                                                                        className="flex items-center gap-2"
-                                                                        type={`default`}
-                                                                        variant={'default'}
-                                                                        btnIcon={<Send className="text-primary-foreground" size={18} />}
-                                                                        btnTitle="Send Tracer Study"
-                                                                        title="Are you sure?"
-                                                                        description={`${lastname}, ${firstname} ${middlename} will be receiving an email tracer study, do you still want to conintinue?`}
-                                                                        btnContinue={handleSendTracerStudy}
-                                                                    />
+                                                                    <div className="flex flex-col gap-2 items-center">
+                                                                        <AlertDialogConfirmation
+                                                                            isDialog={dialogsubmit}
+                                                                            setDialog={(open) => setDialogSubmit(open)}
+                                                                            disabled={isLoading}
+                                                                            className="flex items-center gap-2"
+                                                                            type={`default`}
+                                                                            variant={'default'}
+                                                                            btnIcon={<Send className="text-primary-foreground" size={18} />}
+                                                                            btnTitle="Send Tracer Study"
+                                                                            title="Are you sure?"
+                                                                            description={`${lastname}, ${firstname} ${middlename} will be receiving an email tracer study, do you still want to conintinue?`}
+                                                                            btnContinue={handleSendTracerStudy}
+                                                                        />
+                                                                        <h1 className="text-muted-foreground text-sm font-normal">
+                                                                            Last Sent: {dateSent || null}
+                                                                        </h1>
+                                                                    </div>
+
                                                                 </div>
 
                                                                 <CardDescription className="mt-2 flex items-center justify-between">
