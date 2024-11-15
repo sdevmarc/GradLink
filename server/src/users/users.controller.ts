@@ -1,12 +1,14 @@
-import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { IUsers } from './users.interface';
-import { Response } from 'express';
+import { Response, Request } from 'express';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('users')
 export class UsersController {
     constructor(
-        private readonly usersService: UsersService
+        private readonly usersService: UsersService,
+        private jwtService: JwtService
     ) { }
 
     @Get()
@@ -14,26 +16,23 @@ export class UsersController {
         return this.usersService.findAll()
     }
 
-    // @Get(':email')
-    // async FindOneUser(
-    //     @Param() { email }: IUsers
-    // ) {
-    //     return this.usersService.findOne({ email })
-    // }
+    @Get('get-user')
+    async findOneUser(@Req() request: Request) {
+        const token = request.cookies['access_token'];
+        if (!token) return { isAuthenticated: false }
 
-    // @Post('create-first-user')
-    // async CreateFirstUser(
-    //     @Body() { email, password }: IUsers
-    // ) {
-    //     return await this.usersService.InsertFirstUser({ email, password })
-    // }
+        try {
+            const payload = this.jwtService.verify(token);
+            const userid = payload.sub
+            const response = await this.usersService.findOne({ id: userid })
 
-    // @Post('create-user')
-    // async CreateUser(
-    //     @Body() { email, password, role }: IUsers
-    // ) {
-    //     return await this.usersService.InsertFirstUser({ email, password, role })
-    // }
+            if (!response.success) return response.message
+
+            return { success: true, message: 'User retrieved successfully.', data: response.data };
+        } catch (error) {
+            return { isAuthenticated: false };
+        }
+    }
 
     @Post('login-user')
     async LoginUser(
