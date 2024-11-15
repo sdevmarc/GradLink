@@ -23,6 +23,6 @@ export const UsersSchema = new mongoose.Schema({
     isactive: {
         type: Boolean,
         required: true,
-        default: false
+        default: true
     }
 }, { timestamps: true })
