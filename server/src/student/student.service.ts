@@ -1899,6 +1899,22 @@ export class StudentService {
                 // Initial lookups
                 {
                     $lookup: {
+                        from: 'mails',
+                        let: { studentEmail: '$email' },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: { $eq: ['$email', '$$studentEmail'] }
+                                }
+                            },
+                            { $sort: { date_sent: -1 } },
+                            { $limit: 1 }
+                        ],
+                        as: 'lastMail'
+                    }
+                },
+                {
+                    $lookup: {
                         from: 'courses',
                         localField: 'enrollments.course',
                         foreignField: '_id',
@@ -2302,6 +2318,20 @@ export class StudentService {
                         enrolledCourses: 1,
                         status: 1,
                         progress: 1,
+                        dateSent: {
+                            $let: {
+                                vars: {
+                                    lastDate: { $arrayElemAt: ['$lastMail.date_sent', 0] }
+                                },
+                                in: {
+                                    $dateToString: {
+                                        format: "%d-%m-%Y",
+                                        date: "$$lastDate",
+                                        onNull: "No mail sent"
+                                    }
+                                }
+                            }
+                        },
                         academicYear: {
                             $concat: [
                                 { $toString: "$graduationOffer.academicYear.startDate" },
