@@ -17,3 +17,10 @@ export const API_USER_LOGOUT = async () => {
     )
     return response.data
 }
+
+export const API_USER_GET_USER = async () => {
+    const response = await axios.get(`${HOST}/users/get-user`,
+        { withCredentials: true }
+    )
+    return response.data
+}
