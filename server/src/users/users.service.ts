@@ -17,6 +17,7 @@ export class UsersService {
         try {
             const isuser = await this.UserModel.findById(id)
             if (!isuser) return { success: false, message: 'User does not exist.' }
+
             return { success: true, message: 'User role retrieved successfully.', role: isuser.role }
         } catch (error) {
             throw new HttpException({ success: false, message: 'User role failed to retrieved.' }, HttpStatus.INTERNAL_SERVER_ERROR)
@@ -30,6 +31,19 @@ export class UsersService {
             return { success: true, message: 'Users retrieved successfully.', data: response }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Users failed to retrieved.' }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async findOne({ id }: { id: string }): Promise<IPromiseUser> {
+        try {
+            const response = await this.UserModel.findById(id)
+            if (!response) return { success: false, message: 'User do not exists.' }
+
+            const { name, email } = response
+
+            return { success: true, message: 'User retrieved successfully.', data: { name, email } }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'User failed to retrieved.' }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
