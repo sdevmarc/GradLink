@@ -14,11 +14,13 @@ import { AlertDialogConfirmation } from "@/components/alert-dialog"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { API_FINDONE_SETTINGS, API_UPDATE_SETTINGS } from "@/api/settings"
 import Loading from "@/components/loading"
+import { API_USER_GET_USER } from "@/api/user"
 
 export default function GeneralSettings() {
     const queryClient = useQueryClient()
     const [ischangepassword, setChangePassword] = useState<boolean>(false)
     const [isevaluate, setEvaluate] = useState<boolean>(false)
+    const [ispassword, setPassword] = useState<boolean>(false)
     const [showPassword, setShowPassword] = useState({
         current: false,
         new: false,
@@ -31,14 +33,25 @@ export default function GeneralSettings() {
         success: false
     })
     const [profile, setProfile] = useState({
-        name: 'John Doe',
-        email: 'john@example.com',
-        avatar: '/placeholder.svg',
-        bio: 'I am a software developer.',
-        theme: 'light',
-        notifications: true,
-        language: 'en',
+        name: '',
+        email: '',
+        password: ''
     })
+
+    const { data: userdata, isLoading: userdataLoading, isFetched: userdataFetched } = useQuery({
+        queryFn: () => API_USER_GET_USER(),
+        queryKey: ['users']
+    })
+
+    useEffect(() => {
+        if (userdataFetched) {
+            setProfile(prev => ({
+                ...prev,
+                name: userdata?.data?.name,
+                email: userdata?.data?.email
+            }))
+        }
+    }, [])
 
     const { data: settings, isLoading: settingsLoading, isFetched: settingsFetched } = useQuery({
         queryFn: () => API_FINDONE_SETTINGS(),
@@ -75,11 +88,11 @@ export default function GeneralSettings() {
         }
     })
 
-    const isLoading = settingsLoading || updatesettingsLoading
+    const isLoading = settingsLoading || updatesettingsLoading || userdataLoading
 
     return (
+        isLoading ? <Loading /> :
         <>
-            {isLoading && <Loading />}
             <AlertDialogConfirmation
                 btnTitle='Continue'
                 className='w-full py-4'
@@ -93,7 +106,7 @@ export default function GeneralSettings() {
                 btnContinue={() => setAlertDialogState(prev => ({ ...prev, show: false }))}
             />
             <div className="flex flex-col min-h-screen items-center">
-                <div className="w-full max-w-[90rem] flex flex-col">
+            <div className="w-full max-w-[90rem] flex flex-col pb-[20rem]">
                     <aside className="px-4 pb-4 pt-[8rem]">
                         <HeadSection>
                             <SubHeadSectionDetails
@@ -105,10 +118,10 @@ export default function GeneralSettings() {
                     <main className="flex">
                         <Sidebar>
                             <SidebarNavs bg='bg-muted' title="General" link={ROUTES.GENERAL_SETTINGS} />
-                            {/* <SidebarNavs title="Security" link={ROUTES.SECURITY} /> */}
+                            <SidebarNavs title="Security" link={ROUTES.SECURITY} />
                         </Sidebar>
                         <MainTable className="pb-[12rem] flex flex-col gap-8">
-                            {/* <Card>
+                            <Card>
                                 <CardHeader>
                                     <CardTitle>Personal Information</CardTitle>
                                     <CardDescription>Customize your personal information.</CardDescription>
@@ -121,6 +134,10 @@ export default function GeneralSettings() {
                                                 id="name"
                                                 name="name"
                                                 value={profile.name}
+                                                onChange={(e) => setProfile(prev => ({
+                                                    ...prev,
+                                                    name: e.target.value
+                                                }))}
                                             />
                                         </div>
                                         <div className="space-y-2">
@@ -130,6 +147,10 @@ export default function GeneralSettings() {
                                                 name="email"
                                                 type="email"
                                                 value={profile.email}
+                                                onChange={(e) => setProfile(prev => ({
+                                                    ...prev,
+                                                    email: e.target.value
+                                                }))}
                                             />
                                         </div>
                                         <div className="flex items-center justify-end">
@@ -267,7 +288,7 @@ export default function GeneralSettings() {
                                         </div>
                                     </CardContent>
                                 </Card>
-                            } */}
+                            }
 
                             <Card>
                                 <CardHeader>
