@@ -11,27 +11,27 @@ export default function ListOfStudents() {
     })
 
     return (
-            <div className="flex flex-col min-h-screen items-center">
-                <div className="w-full max-w-[90rem] flex flex-col">
-                    <aside className="px-4 pb-4 pt-[8rem]">
-                        <HeadSection>
-                            <SubHeadSectionDetails
-                                title="Student Information"
-                                description="View and manage students."
-                            />
-                        </HeadSection>
-                    </aside>
-                    <main className="flex px-8">
-                        {studentLoading && <div>Loading...</div>}
-                        {
-                            (!studentLoading && studentFetched) &&
-                            <DataTableStudentListOfStudent
-                                columns={StudentListOfStudentsColumns}
-                                data={students?.data || []}
-                            />
-                        }
-                    </main>
-                </div>
+        <div className="flex flex-col min-h-screen items-center">
+            <div className="w-full max-w-[90rem] flex flex-col pb-[20rem]">
+                <aside className="px-4 pb-4 pt-[8rem]">
+                    <HeadSection>
+                        <SubHeadSectionDetails
+                            title="Student Information"
+                            description="View and manage students."
+                        />
+                    </HeadSection>
+                </aside>
+                <main className="flex px-8">
+                    {studentLoading && <div>Loading...</div>}
+                    {
+                        (!studentLoading && studentFetched) &&
+                        <DataTableStudentListOfStudent
+                            columns={StudentListOfStudentsColumns}
+                            data={students?.data || []}
+                        />
+                    }
+                </main>
             </div>
+        </div>
     )
 }
