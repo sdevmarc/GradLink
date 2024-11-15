@@ -6,26 +6,68 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Download, PlusCircle, Trash2, UploadCloud } from "lucide-react"
+import { CircleCheck, CircleX, Download, Pencil, Send, Trash2, UploadCloud, X } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useState } from "react"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { AlertDialogConfirmation } from "@/components/alert-dialog"
 
 export default function Security() {
+    const [userBeingUpdated, setUserBeingUpdated] = useState<number | null>(null)
+    const [userDialogUpdating, setUserDialogUpdating] = useState<number | null>(null)
+    const [isupdateuser, setUpdateUser] = useState<boolean>(false)
+    const [isdialogdeleteuser, setDialogDeleteUser] = useState<boolean>(false)
+    const [isdialogadduser, setDialogAddUser] = useState<boolean>(false)
+    const [alertdialogstate, setAlertDialogState] = useState({
+        show: false,
+        title: '',
+        description: '',
+        success: false
+    })
     const [users, setUsers] = useState([
         { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin' },
         { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'User' },
     ])
-    const [roles, setRoles] = useState(['Admin', 'User', 'Editor'])
+    const [roles, setRoles] = useState<string>('')
     const [backupData, setBackupData] = useState('')
     const [backupStatus, setBackupStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null)
 
+    const roles_options = ['Admin', 'Department Head']
+
+    const handleAddUser = async () => {
+        setDialogAddUser(false)
+    }
+
+    const handleDeleteUser = async () => {
+        setDialogDeleteUser(false)
+    }
+
+    const handleNameChange = (e: any, userId: number) => {
+        setUsers((prevUsers) =>
+            prevUsers.map((user) =>
+                user.id === userId ? { ...user, name: e.target.value } : user
+            )
+        )
+    }
+
     return (
         <>
+            <AlertDialogConfirmation
+                btnTitle='Continue'
+                className='w-full py-4'
+                isDialog={alertdialogstate.show}
+                setDialog={(open) => setAlertDialogState(prev => ({ ...prev, show: open }))}
+                type={`alert`}
+                title={alertdialogstate.title}
+                description={alertdialogstate.description}
+                icon={alertdialogstate.success ? <CircleCheck color="#42a626" size={70} /> : <CircleX color="#880808" size={70} />}
+                variant={`default`}
+                btnContinue={() => setAlertDialogState(prev => ({ ...prev, show: false }))}
+            />
             <div className="flex flex-col min-h-screen items-center">
-                <div className="w-full max-w-[90rem] flex flex-col">
+            <div className="w-full max-w-[90rem] flex flex-col pb-[20rem]">
                     <aside className="px-4 pb-4 pt-[8rem]">
                         <HeadSection>
                             <SubHeadSectionDetails
@@ -47,27 +89,39 @@ export default function Security() {
                                 </CardHeader>
                                 <CardContent>
                                     <div className="space-y-4">
-                                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
                                             <Input
                                                 placeholder="Name"
+                                                disabled={userBeingUpdated !== null}
                                             />
                                             <Input
                                                 placeholder="Email"
                                                 type="email"
+                                                disabled={userBeingUpdated !== null}
                                             />
-                                            <Select>
+                                            <Select onValueChange={() => setRoles('')} disabled={userBeingUpdated !== null}>
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Select role" />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    {roles.map((role) => (
+                                                    {roles_options.map((role) => (
                                                         <SelectItem key={role} value={role}>{role}</SelectItem>
                                                     ))}
                                                 </SelectContent>
                                             </Select>
-                                            <Button>
-                                                <PlusCircle className="mr-2 h-4 w-4" /> Add User
-                                            </Button>
+
+                                            <AlertDialogConfirmation
+                                                isDialog={isdialogadduser}
+                                                setDialog={(open) => setDialogAddUser(open)}
+                                                type={`default`}
+                                                disabled={userBeingUpdated !== null}
+                                                className='w-full py-[1.1rem]'
+                                                variant={'default'}
+                                                btnTitle="Create user"
+                                                title="Are you sure?"
+                                                description={`This will create a new user, and may have the ability to read, write, and execute in the system.`}
+                                                btnContinue={handleAddUser}
+                                            />
                                         </div>
                                         <Table>
                                             <TableHeader>
@@ -81,14 +135,87 @@ export default function Security() {
                                             <TableBody>
                                                 {users.map((user) => (
                                                     <TableRow key={user.id}>
-                                                        <TableCell>{user.name}</TableCell>
+                                                        <TableCell>{
+                                                            userBeingUpdated === user.id ?
+                                                                <Input placeholder="Name" value={user.name} onChange={(e) => handleNameChange(e, user.id)} />
+                                                                : user.name
+                                                        }</TableCell>
                                                         <TableCell>{user.email}</TableCell>
                                                         <TableCell>{user.role}</TableCell>
                                                         <TableCell>
-                                                            <Button variant="destructive" size="sm">
-                                                                <Trash2 className="h-4 w-4" />
-                                                                <span className="sr-only">Delete user</span>
-                                                            </Button>
+                                                            <div className="flex items-center gap-4">
+                                                                {
+                                                                    userBeingUpdated !== user.id ?
+                                                                        <AlertDialogConfirmation
+                                                                            isDialog={userDialogUpdating === user.id}
+                                                                            setDialog={(open) => {
+                                                                                if (open) {
+                                                                                    setUserDialogUpdating(user.id)
+                                                                                } else {
+                                                                                    setUserDialogUpdating(null)
+                                                                                }
+                                                                            }}
+                                                                            type={`default`}
+                                                                            disabled={false}
+                                                                            className='py-[1.1rem]'
+                                                                            variant={`outline`}
+                                                                            btnIcon={<Pencil className="text-primary" size={18} />}
+                                                                            title="Are you sure?"
+                                                                            description={`This will modify the information of the user.`}
+                                                                            btnContinue={() => {
+                                                                                setUserDialogUpdating(null)
+                                                                                setUserBeingUpdated(user.id)
+                                                                            }}
+                                                                        />
+                                                                        :
+                                                                        (
+                                                                           <>
+                                                                                <AlertDialogConfirmation
+                                                                                    isDialog={isupdateuser}
+                                                                                    setDialog={(open) => setUpdateUser(open)}
+                                                                                    type={`default`}
+                                                                                    disabled={false}
+                                                                                    className='py-[1.1rem] flex items-center gap-2'
+                                                                                    variant={`default`}
+                                                                                    btnTitle="Update user"
+                                                                                    btnIcon={<Send className="text-primary-foreground" size={18} />}
+                                                                                    title="Are you sure?"
+                                                                                    description={`This will update the user's information.`}
+                                                                                    btnContinue={() => {
+                                                                                        setUpdateUser(false)
+                                                                                        setUserBeingUpdated(null)
+                                                                                    }}
+                                                                                />
+                                                                                <Button onClick={() => {
+                                                                                    setUserBeingUpdated(null)
+                                                                                }}
+                                                                                    variant={`outline`}
+                                                                                    size={`sm`}
+                                                                                    className="py-[1.1rem] flex items-center gap-2"
+                                                                                >
+                                                                                    <X className="text-primary" size={18} />  Cancel
+                                                                                </Button>
+                                                                            </>
+                                                                        )
+
+                                                                }
+
+                                                                {
+                                                                    userBeingUpdated !== user.id &&
+                                                                    <AlertDialogConfirmation
+                                                                        isDialog={isdialogdeleteuser}
+                                                                        setDialog={(open) => setDialogDeleteUser(open)}
+                                                                        type={`default`}
+                                                                        disabled={false}
+                                                                        className='py-[1.1rem]'
+                                                                        variant={`destructive`}
+                                                                        btnIcon={<Trash2 className="text-primary-foreground" size={18} />}
+                                                                        title="Are you sure?"
+                                                                        description={`This will set the user to inactive and cannot read, write, and execute in the system.`}
+                                                                        btnContinue={handleDeleteUser}
+                                                                    />
+                                                                }
+                                                            </div>
                                                         </TableCell>
                                                     </TableRow>
                                                 ))}
