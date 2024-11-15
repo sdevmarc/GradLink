@@ -68,7 +68,7 @@ export default function Overview() {
 
     return (
         <div className="w-full flex flex-col min-h-screen items-center">
-            <main className="w-full max-w-[90rem] flex flex-col">
+            <main className="w-full max-w-[90rem] flex flex-col pb-[20rem]">
                 <aside className="px-4 pb-4 pt-[8rem]">
                     <HeadSection>
                         <SubHeadSectionDetails
