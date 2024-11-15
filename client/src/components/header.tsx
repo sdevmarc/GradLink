@@ -19,6 +19,8 @@ import { API_PROGRAM_FINDALL } from '@/api/program'
 import { IAPIPrograms } from '@/interface/program.interface'
 import { CalendarDatePicker } from './calendar-date-picker'
 import { LeftSheetModal } from './left-sheet-modal'
+import { API_USER_GET_USER } from '@/api/user'
+import { Skeleton } from './ui/skeleton'
 // import { Button } from './ui/button'
 
 // export function BreadcrumbWithCustomSeparator() {
@@ -89,6 +91,11 @@ const BreadCrumbs = ({ children }: { children: React.ReactNode }) => {
 }
 
 const HeaderSettings = () => {
+    const { data: userdata, isLoading: userdataLoading } = useQuery({
+        queryFn: () => API_USER_GET_USER(),
+        queryKey: ['users']
+    })
+
     return (
         <header className="hdashboard z-[1] backdrop-blur-[1rem] backdrop-saturate-50 fixed top-0 left-0 w-full h-[6rem] border-b-[0.7px] border-black/20 flex justify-center items-center">
             <div className="w-full h-full max-w-[90rem] px-4 flex flex-col justify-center items-center">
@@ -119,12 +126,31 @@ const HeaderSettings = () => {
                                         </BreadCrumbs>
                                     );
                                 default:
-                                    return null;
+                                    return (
+                                        <BreadCrumbs>
+                                            <BreadcrumbItem>
+                                                <BreadcrumbPage className='text-md'>
+                                                    <GraduationCap className='text-primary' />
+                                                </BreadcrumbPage>
+                                            </BreadcrumbItem>
+                                            <BreadcrumbSeparator>
+                                                <Slash />
+                                            </BreadcrumbSeparator>
+                                            <BreadcrumbItem>
+                                                <BreadcrumbPage className='text-md font-medium flex items-center gap-2'>
+                                                    <CircleUser className='text-primary' size={18} />   My Account
+                                                </BreadcrumbPage>
+                                            </BreadcrumbItem>
+                                        </BreadCrumbs>
+                                    )
                             }
                         })()}
                     <div className="flex items-center gap-4">
                         <h1 className='text-text font-normal rounded-full px-3 py-1 text-[.8rem]'>
-                            Welcome, Juan Dela Cruz
+                            {
+                                userdataLoading ? <Skeleton className="h-[1rem] w-[10rem]" />
+                                    : `Welcome, ${userdata?.data?.name || 'Guest'}`
+                            }
                         </h1>
                         <UserAvatar />
                     </div>
@@ -134,9 +160,9 @@ const HeaderSettings = () => {
                         <NavLink to={ROUTES.OVERVIEW} className='text-[.8rem] text-text font-normal px-3 py-2'>
                             Overview
                         </NavLink>
-                        {/* <NavLink to={ROUTES.AUDIT_LOG} className='text-[.8rem] text-text font-normal px-3 py-2'>
+                        <NavLink to={ROUTES.AUDIT_LOG} className='text-[.8rem] text-text font-normal px-3 py-2'>
                             Audit Log
-                        </NavLink> */}
+                        </NavLink>
                         <NavLink to={ROUTES.GENERAL_SETTINGS} className='text-[.8rem] text-text font-normal px-3 py-2'>
                             Settings
                         </NavLink>
@@ -152,6 +178,11 @@ const HeaderDashboard = () => {
     const [academicYear, setAcademicYear] = useState<string>('')
     const location = useLocation()
     const { sid, id } = useParams()
+
+    const { data: userdata, isLoading: userdataLoading } = useQuery({
+        queryFn: () => API_USER_GET_USER(),
+        queryKey: ['users']
+    })
 
     useEffect(() => {
         if (id) {
@@ -470,7 +501,10 @@ const HeaderDashboard = () => {
                         </h1> */}
                         <div className="flex items-center gap-4">
                             <h1 className='text-text font-normal rounded-full px-3 py-1 text-[.8rem]'>
-                                Welcome, Juan Dela Cruz
+                                {
+                                    userdataLoading ? <Skeleton className="h-[1rem] w-[10rem]" />
+                                        : `Welcome, ${userdata?.data?.name || 'Guest'}`
+                                }
                             </h1>
                             <UserAvatar />
                         </div>
@@ -535,6 +569,11 @@ export const HeaderTracer = () => {
         to: new Date()
     })
     const [isOpen, setIsOpen] = useState<boolean>(false)
+
+    const { data: userdata, isLoading: userdataLoading } = useQuery({
+        queryFn: () => API_USER_GET_USER(),
+        queryKey: ['users']
+    })
 
     const handleViewDetails = () => {
         setIsOpen(true)
@@ -606,7 +645,10 @@ export const HeaderTracer = () => {
                     </form>
                     <div className="flex items-center gap-4 bg-primary-foreground px-4 py-1 rounded-md">
                         <h1 className='text-text font-normal rounded-full text-[.8rem]'>
-                            Welcome, Juan Dela Cruz
+                            {
+                                userdataLoading ? <Skeleton className="h-[1rem] w-[10rem]" />
+                                    : `Welcome, ${userdata?.data?.name || 'Guest'}`
+                            }
                         </h1>
                         <UserAvatar />
                     </div>
