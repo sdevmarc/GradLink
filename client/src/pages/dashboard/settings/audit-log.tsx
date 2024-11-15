@@ -29,23 +29,19 @@ export default function AuditLog() {
     return (
         <>
             <div className="flex flex-col min-h-screen items-center">
-                <div className="w-full max-w-[90rem] flex flex-col">
+            <div className="w-full max-w-[90rem] flex flex-col pb-[20rem]">
                     <aside className="px-4 pb-4 pt-[8rem]">
                         <HeadSection>
                             <SubHeadSectionDetails
                                 title="Audit Log"
-                                description="View and manage settings."
+                                description="View a log of important actions and changes within the system."
                             />
                         </HeadSection>
                     </aside>
                     <main className="flex px-8">
                         <MainTable className="w-full pb-[12rem]">
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>Audit Log</CardTitle>
-                                    <CardDescription>View a log of important actions and changes within the system.</CardDescription>
-                                </CardHeader>
-                                <CardContent>
+                            <Card className="border-none shadow-none">
+                                <CardContent className="px-0">
                                     <div className="space-y-4">
                                         <div className="flex space-x-2">
                                             <div className="relative flex-grow">
