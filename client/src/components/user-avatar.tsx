@@ -47,6 +47,7 @@ export const UserAvatar = () => {
 
     const handleLogout = async () => {
         await userlogout()
+        window.location.reload()
     }
 
     return (
