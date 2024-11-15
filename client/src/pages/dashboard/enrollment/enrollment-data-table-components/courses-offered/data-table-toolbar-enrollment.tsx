@@ -54,35 +54,35 @@ export function DataTableToolbarCoursesOfferedInEnrollment<TData>({
                 }
             })
 
-            setFormattedProgram(formatprogram)
+            // setFormattedProgram(formatprogram)
             setFilteredPrograms(formatprogram)
         }
     }, [program])
 
-    useEffect(() => {
-        const selectedDepartment = table.getColumn("department")?.getFilterValue() as string[];
+    // useEffect(() => {
+    //     const selectedDepartment = table.getColumn("department")?.getFilterValue() as string[];
 
-        if (selectedDepartment && selectedDepartment.length > 0) {
-            const filtered = formattedprogram.filter((prog: any) =>
-                selectedDepartment.includes(prog.department)
-            );
-            setFilteredPrograms(filtered);
+    //     if (selectedDepartment && selectedDepartment.length > 0) {
+    //         const filtered = formattedprogram.filter((prog: any) =>
+    //             selectedDepartment.includes(prog.department)
+    //         );
+    //         setFilteredPrograms(filtered);
 
-            // Clear program filter if selected program is not in filtered list
-            const currentProgramFilter = table.getColumn("program")?.getFilterValue() as string[];
-            if (currentProgramFilter && currentProgramFilter.length > 0) {
-                const validPrograms = filtered.map(p => p.value);
-                const newProgramFilter = currentProgramFilter.filter(p =>
-                    validPrograms.includes(p)
-                );
-                if (newProgramFilter.length !== currentProgramFilter.length) {
-                    table.getColumn("program")?.setFilterValue(newProgramFilter);
-                }
-            }
-        } else {
-            setFilteredPrograms(formattedprogram);
-        }
-    }, [table.getColumn("department")?.getFilterValue()]);
+    //         // Clear program filter if selected program is not in filtered list
+    //         const currentProgramFilter = table.getColumn("program")?.getFilterValue() as string[];
+    //         if (currentProgramFilter && currentProgramFilter.length > 0) {
+    //             const validPrograms = filtered.map(p => p.value);
+    //             const newProgramFilter = currentProgramFilter.filter(p =>
+    //                 validPrograms.includes(p)
+    //             );
+    //             if (newProgramFilter.length !== currentProgramFilter.length) {
+    //                 table.getColumn("program")?.setFilterValue(newProgramFilter);
+    //             }
+    //         }
+    //     } else {
+    //         setFilteredPrograms(formattedprogram);
+    //     }
+    // }, [table.getColumn("department")?.getFilterValue()]);
 
     return (
         <div className="flex flex-wrap items-center justify-between">
