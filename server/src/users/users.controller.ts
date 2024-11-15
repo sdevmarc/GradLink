@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { IUsers } from './users.interface';
 import { Response, Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('users')
 export class UsersController {
@@ -11,11 +12,13 @@ export class UsersController {
         private jwtService: JwtService
     ) { }
 
+    @UseGuards(AuthGuard)
     @Get()
     async FindAllUsers() {
         return this.usersService.findAll()
     }
 
+    @UseGuards(AuthGuard)
     @Get('get-user')
     async findOneUser(@Req() request: Request) {
         const token = request.cookies['access_token'];
@@ -32,6 +35,43 @@ export class UsersController {
         } catch (error) {
             return { isAuthenticated: false };
         }
+    }
+
+    @UseGuards(AuthGuard)
+    @Post('check-password')
+    async checkPassword(@Body() { id, password }: { id: string, password: string }) {
+        return this.usersService.checkPassword({ id, password })
+    }
+
+    @UseGuards(AuthGuard)
+    @Post('change-password')
+    async changePassword(@Body() { id, password }: { id: string, password: string }) {
+        console.log({ id, password })
+        return this.usersService.updatePassword({ id, password })
+    }
+
+    @Post('create')
+    @UseGuards(AuthGuard)
+    async createUser(@Body() { name, email, role }: IUsers) {
+        return await this.usersService.InsertUser({ name, email, role })
+    }
+
+    @Post('update')
+    @UseGuards(AuthGuard)
+    async updateUser(@Body() { id, name, email, role }: IUsers) {
+        return await this.usersService.updateUser({ id, name, email, role })
+    }
+
+    @Post('update-information')
+    @UseGuards(AuthGuard)
+    async updateInformationUser(@Body() { id, name, email }: IUsers) {
+        return await this.usersService.updateInformationUser({ id, name, email })
+    }
+
+    @Post('inactive')
+    @UseGuards(AuthGuard)
+    async updateToInactiveUser(@Body() { id }: IUsers) {
+        return await this.usersService.updateToInactiveUser({ id })
     }
 
     @Post('login-user')
@@ -56,6 +96,7 @@ export class UsersController {
         return islogin;
     }
 
+    @UseGuards(AuthGuard)
     @Post('logout')
     async logout(@Res() response: Response) {
 
