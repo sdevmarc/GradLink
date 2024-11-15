@@ -27,7 +27,7 @@ export class UsersService {
     async findAll()
         : Promise<IPromiseUser> {
         try {
-            const response = await this.UserModel.find()
+            const response = await this.UserModel.find({ isactive: true }).sort({ _id: -1 })
             return { success: true, message: 'Users retrieved successfully.', data: response }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Users failed to retrieved.' }, HttpStatus.INTERNAL_SERVER_ERROR)
@@ -39,9 +39,25 @@ export class UsersService {
             const response = await this.UserModel.findById(id)
             if (!response) return { success: false, message: 'User do not exists.' }
 
-            const { name, email } = response
+            const { _id, name, email, role } = response
 
-            return { success: true, message: 'User retrieved successfully.', data: { name, email } }
+            return { success: true, message: 'User retrieved successfully.', data: { _id, name, email, role } }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'User failed to retrieved.' }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async checkPassword({ id, password }: { id: string, password: string }): Promise<IPromiseUser> {
+        try {
+            const isuser = await this.UserModel.findById(id)
+            if (!isuser) return { success: false, message: 'User do not exists.' }
+
+            if (!password) return { success: false, message: 'Password is missing.' }
+
+            const ispassword = await bcrypt.compare(password, isuser.password);
+            if (!ispassword) return { success: false, message: 'Password do not match.' }
+
+            return { success: true, message: 'Password match.' }
         } catch (error) {
             throw new HttpException({ success: false, message: 'User failed to retrieved.' }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
@@ -57,39 +73,107 @@ export class UsersService {
     //     }
     // }
 
-    // async InsertFirstUser({ email, password }: IUsers)
-    //     : Promise<IPromiseUser> {
-    //     try {
-    //         const isemail = await this.UserModel.findOne({ email })
-    //         if (isemail) return { success: false, message: 'User email already exists.' }
-
-    //         let role: string
-    //         const hasusers = await this.UserModel.find()
-    //         hasusers.length <= 0 ? role = 'admin' : role = 'user'
-
-    //         const salt = await bcrypt.genSalt();
-    //         const hashedpassword = await bcrypt.hash(password, salt);
-
-    //         await this.UserModel.create({ email, password: hashedpassword, role })
-    //         return { success: true, message: 'User successfully created.' }
-    //     } catch (error) {
-    //         throw new HttpException({ success: false, message: 'User failed to create.' }, HttpStatus.INTERNAL_SERVER_ERROR)
-    //     }
-    // }
-
-    async InsertUser({ email, password, role }: IUsers)
+    async InsertUser({ name, email, role }: IUsers)
         : Promise<IPromiseUser> {
         try {
             const isemail = await this.UserModel.findOne({ email })
-            if (isemail) return { success: false, message: 'User email already exists.' }
+            if (isemail) return { success: false, message: 'Email already exists.' }
 
             const salt = await bcrypt.genSalt();
-            const hashedpassword = await bcrypt.hash('admin', salt);
+            const hashedpassword = await bcrypt.hash(email, salt);
 
-            await this.UserModel.create({ email, password: hashedpassword, role })
+            await this.UserModel.create({ name, email, password: hashedpassword, role })
             return { success: true, message: 'User successfully created.' }
         } catch (error) {
             throw new HttpException({ success: false, message: 'User failed to create.' }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async updateUser({ id, name, email, role }: IUsers): Promise<IPromiseUser> {
+        try {
+            const isemail = await this.UserModel.findOne({ email })
+            if (isemail) return { success: false, message: 'Email already exists.' }
+
+            await this.UserModel.findByIdAndUpdate(
+                id,
+                {
+                    name,
+                    email,
+                    role
+                },
+                { new: true }
+            )
+            return { success: true, message: 'User updated successfully.' }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'User failed to update.' }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async updateInformationUser({ id, name, email }: IUsers): Promise<IPromiseUser> {
+        try {
+            const isemail = await this.UserModel.findOne({ email })
+            if (isemail) return { success: false, message: 'Email already exists.' }
+
+            if (name) {
+                await this.UserModel.findByIdAndUpdate(
+                    id,
+                    {
+                        name
+                    },
+                    { new: true }
+                )
+            }
+
+            if (email) {
+                await this.UserModel.findByIdAndUpdate(
+                    id,
+                    {
+                        email
+                    },
+                    { new: true }
+                )
+            }
+
+            return { success: true, message: 'User updated successfully.' }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'User failed to update.' }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async updateToInactiveUser({ id }: IUsers): Promise<IPromiseUser> {
+        try {
+            if (!id) return { success: false, message: 'Missing ID, please provide an ID.' }
+
+            await this.UserModel.findByIdAndUpdate(
+                id,
+                {
+                    isactive: false
+                },
+                { new: true }
+            )
+            return { success: true, message: 'User updated to inactive successfully.' }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'User failed to update.' }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async updatePassword({ id, password }: IUsers): Promise<IPromiseUser> {
+        try {
+            if (!id) return { success: false, message: 'Missing ID, please provide an ID.' }
+
+            const salt = await bcrypt.genSalt();
+            const hashedpassword = await bcrypt.hash(password, salt);
+
+            await this.UserModel.findByIdAndUpdate(
+                id,
+                {
+                    password: hashedpassword
+                },
+                { new: true }
+            )
+            return { success: true, message: 'User password updated successfully.' }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'User failed to update.' }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
@@ -101,12 +185,21 @@ export class UsersService {
             if (hasusers.length === 0) {
                 const salt = await bcrypt.genSalt();
                 const hashedpassword = await bcrypt.hash('admin', salt);
-                await this.UserModel.create({ role: 'root', password: hashedpassword, isactive: true })
+                await this.UserModel.create({ role: 'root', password: hashedpassword })
             }
 
             const isemail = await this.UserModel.findOne({ email })
 
             if (!isemail) return { success: false, message: 'User email does not exist.' }
+
+            const isactive = await this.UserModel.findOne({
+                $and: [
+                    { email },
+                    { isactive: true }
+                ]
+            })
+
+            if (!isactive) return { success: false, message: 'User is not permitted to login.' }
 
             const ispassword = await bcrypt.compare(password, isemail.password);
 
