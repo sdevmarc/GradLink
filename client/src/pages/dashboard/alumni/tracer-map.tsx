@@ -180,7 +180,7 @@ export default function TracerMap() {
                 isDialog={reminder}
                 setDialog={(open) => setReminder(open)}
                 type={`alert`}
-                title={`Hi! Please remind.`}
+                title={`Hi! Please be remind.`}
                 description={`If the marker is missing, please consider refreshing.`}
                 icon={<BellRing className="text-primary" size={70} />}
                 variant={`default`}
@@ -269,7 +269,7 @@ export default function TracerMap() {
                                 <div className="w-full min-h-[65%] rounded-md overflow-hidden">
                                     <Map coordinates={searched?.coordinates} id={searched?.id} />
                                     <LeftSheetModal
-                                        className="w-[30%]"
+                                        className="w-[30%] overflow-auto"
                                         isOpen={isSearch}
                                         onOpenChange={handleSearchOpenChange}
                                         title="Search for Alumni"
@@ -311,7 +311,7 @@ const SearchCard = ({ data, setCoordinates, setId, isclose }: { data: any[], set
     };
 
     return (
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-4">
             {
                 data?.length > 0 ?
                     data?.map(item => (
@@ -570,6 +570,7 @@ const Map = ({ coordinates, id }: { coordinates: { lng: number, lat: number }, i
             // Cleanup markers on unmount
             Object.values(markersRef.current).forEach(marker => marker.remove());
         };
+        // }, [dataAlumni?.data]);
     }, [dataAlumni?.data]);
 
     useEffect(() => {
