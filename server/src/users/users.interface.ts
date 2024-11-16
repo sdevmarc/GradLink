@@ -3,7 +3,7 @@ export interface IUsers {
     email?: string
     password?: string
     role?: string
-    isactive?: string
+    isactive?: boolean
     name?: string
 }
 
