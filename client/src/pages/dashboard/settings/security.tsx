@@ -41,8 +41,6 @@ export default function Security() {
         email: '',
         role: ''
     })
-    const [backupData, setBackupData] = useState('')
-    const [backupStatus, setBackupStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null)
 
     const { data: userdata, isLoading: userdataLoading, isFetched: userdataFetched } = useQuery({
         queryFn: () => API_USER_GET_ALL_USERS(),
@@ -443,68 +441,25 @@ export default function Security() {
                                         </div>
                                     </CardContent>
                                 </Card>
-                                {/* <Card>
+                                <Card>
                                     <CardHeader>
-                                        <CardTitle>Backup & Restore</CardTitle>
-                                        <CardDescription>Create backups of your settings or restore from a previous backup.</CardDescription>
+                                        <CardTitle>Backup</CardTitle>
+                                        <CardDescription>The backup process is fully automated and is configured to run daily at 10:00 AM. No manual intervention is required to initiate the backup.</CardDescription>
                                     </CardHeader>
                                     <CardContent>
                                         <div className="space-y-6">
                                             <div>
-                                                <h3 className="text-lg font-medium">Create Backup</h3>
-                                                <p className="text-sm text-muted-foreground mb-2">Generate a backup of your current settings.</p>
-                                                <Button>
-                                                    <Download className="mr-2 h-4 w-4" /> Create Backup
-                                                </Button>
-                                                {backupData && (
-                                                    <div className="mt-4">
-                                                        <Label htmlFor="backupData">Backup Data</Label>
-                                                        <Textarea
-                                                            id="backupData"
-
-                                                            value={backupData}
-                                                            readOnly
-                                                            className="h-32 font-mono text-xs"
-                                                        />
-                                                    </div>
-                                                )}
-                                            </div>
-                                            <div>
                                                 <h3 className="text-lg font-medium">Restore Settings</h3>
                                                 <p className="text-sm text-muted-foreground mb-2">Restore your settings from a backup file or by pasting backup data.</p>
                                                 <div className="space-y-2">
-                                                    <div>
-                                                        <Label htmlFor="restoreFile" className="cursor-pointer">
-                                                            <div className="flex items-center space-x-2">
-                                                                <UploadCloud className="w-4 h-4" />
-                                                                <span>Upload Backup File</span>
-                                                            </div>
-                                                        </Label>
-                                                        <Input
-                                                            id="restoreFile"
-                                                            type="file"
-                                                            accept=".json"
-                                                            className="hidden"
-                                                        />
-                                                    </div>
-                                                    <Textarea
-                                                        placeholder="Or paste your backup data here"
-                                                        className="h-32 font-mono text-xs"
-                                                    />
                                                     <Button>
-                                                        Restore Settings
+                                                        Restore Backup Database
                                                     </Button>
                                                 </div>
                                             </div>
-                                            {backupStatus && (
-                                                <Alert variant={backupStatus.type === 'error' ? 'destructive' : 'default'}>
-                                                    <AlertTitle>{backupStatus.type === 'error' ? 'Error' : 'Success'}</AlertTitle>
-                                                    <AlertDescription>{backupStatus.message}</AlertDescription>
-                                                </Alert>
-                                            )}
                                         </div>
                                     </CardContent>
-                                </Card> */}
+                                </Card>
                             </MainTable>
                         </main>
                     </div>
