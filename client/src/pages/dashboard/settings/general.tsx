@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/mode-toggle"
-import { CircleCheck, CircleX, Eye, EyeOff, Save, UserCheck, UserRoundPen, X } from "lucide-react"
+import { CircleCheck, CircleX, Eye, EyeOff, LoaderCircle, Save, UserCheck, UserRoundPen, X } from "lucide-react"
 import { AlertDialogConfirmation } from "@/components/alert-dialog"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { API_FINDONE_SETTINGS, API_UPDATE_SETTINGS } from "@/api/settings"
@@ -105,6 +105,12 @@ export default function GeneralSettings() {
                 })
                 return
             } else {
+                await queryClient.invalidateQueries({ queryKey: ['security'] })
+                await queryClient.refetchQueries({ queryKey: ['security'] })
+
+                await queryClient.invalidateQueries({ queryKey: ['users'] })
+                await queryClient.refetchQueries({ queryKey: ['users'] })
+
                 await queryClient.invalidateQueries({ queryKey: ['settings'] })
                 await queryClient.refetchQueries({ queryKey: ['settings'] })
                 window.scrollTo({
@@ -250,7 +256,7 @@ export default function GeneralSettings() {
 
     }
 
-    const isLoading = settingsLoading || updatesettingsLoading || userdataLoading || checkpasswordLoading || changepasswordLoading || updateinformationLoading
+    const isLoading = settingsLoading || updatesettingsLoading || userdataLoading || checkpasswordLoading || changepasswordLoading
 
     return (
         isLoading ? <Loading /> :
@@ -292,7 +298,18 @@ export default function GeneralSettings() {
                             <MainTable className="pb-[12rem] flex flex-col gap-8">
                                 <Card>
                                     <CardHeader>
-                                        <CardTitle>Name Information</CardTitle>
+                                        <div className="flex items-center justify-between">
+                                            <CardTitle>Name Information</CardTitle>
+                                            {
+                                                updateinformationLoading &&
+                                                <div className="flex items-center gap-2">
+                                                    <LoaderCircle className={`text-muted-foreground animate-spin`} size={18} />
+                                                    <h1 className="text-muted-foreground text-sm">
+                                                        Syncing
+                                                    </h1>
+                                                </div>
+                                            }
+                                        </div>
                                         <CardDescription>Customize your personal information.</CardDescription>
                                     </CardHeader>
                                     <CardContent>
@@ -302,6 +319,7 @@ export default function GeneralSettings() {
                                                 <Input
                                                     id="name"
                                                     name="name"
+                                                    disabled={updateinformationLoading}
                                                     value={profile.name}
                                                     onChange={(e) => setProfile(prev => ({
                                                         ...prev,
@@ -312,6 +330,7 @@ export default function GeneralSettings() {
 
                                             <div className="flex items-center justify-end">
                                                 <AlertDialogConfirmation
+                                                    disabled={updateinformationLoading}
                                                     isDialog={dialogname}
                                                     setDialog={(open) => setDialogName(open)}
                                                     className="flex items-center py-[1.1rem] gap-2"
@@ -330,7 +349,18 @@ export default function GeneralSettings() {
                                 </Card>
                                 <Card>
                                     <CardHeader>
-                                        <CardTitle>Email Information</CardTitle>
+                                        <div className="flex items-center justify-between">
+                                            <CardTitle>Email Information</CardTitle>
+                                            {
+                                                updateinformationLoading &&
+                                                <div className="flex items-center gap-2">
+                                                    <LoaderCircle className={`text-muted-foreground animate-spin`} size={18} />
+                                                    <h1 className="text-muted-foreground text-sm">
+                                                        Syncing
+                                                    </h1>
+                                                </div>
+                                            }
+                                        </div>
                                         <CardDescription>Customize your personal information.</CardDescription>
                                     </CardHeader>
                                     <CardContent>
@@ -341,6 +371,7 @@ export default function GeneralSettings() {
                                                     id="email"
                                                     name="email"
                                                     type="email"
+                                                    disabled={updateinformationLoading}
                                                     value={profile.email}
                                                     onChange={(e) => setProfile(prev => ({
                                                         ...prev,
@@ -350,6 +381,7 @@ export default function GeneralSettings() {
                                             </div>
                                             <div className="flex items-center justify-end">
                                                 <AlertDialogConfirmation
+                                                    disabled={updateinformationLoading}
                                                     isDialog={dialogemail}
                                                     setDialog={(open) => setDialogEmail(open)}
                                                     className="flex items-center py-[1.1rem] gap-2"
@@ -411,11 +443,13 @@ export default function GeneralSettings() {
                                                                     <Input
                                                                         id="current-password"
                                                                         name="current-password"
+                                                                        disabled={checkpasswordLoading}
                                                                         type={showPassword.current ? "text" : "password"}
                                                                         value={currentpassword}
                                                                         onChange={(e) => setCurrentPassword(e.target.value)}
                                                                     />
                                                                     <Button
+                                                                        disabled={checkpasswordLoading}
                                                                         type="button"
                                                                         variant="ghost"
                                                                         size="sm"
@@ -441,12 +475,14 @@ export default function GeneralSettings() {
                                                                 <div className="relative">
                                                                     <Input
                                                                         id="new-password"
+                                                                        disabled={checkpasswordLoading}
                                                                         type={showPassword.new ? "text" : "password"}
                                                                         name="new-password"
                                                                         value={profile.password}
                                                                         onChange={(e) => setProfile(prev => ({ ...prev, password: e.target.value }))}
                                                                     />
                                                                     <Button
+                                                                        disabled={checkpasswordLoading}
                                                                         type="button"
                                                                         variant="ghost"
                                                                         size="sm"
@@ -465,6 +501,7 @@ export default function GeneralSettings() {
                                                                 <Label htmlFor="repeat-password">Repeat Password</Label>
                                                                 <div className="relative">
                                                                     <Input
+                                                                        disabled={checkpasswordLoading}
                                                                         id="repeat-password"
                                                                         name="repeat-password"
                                                                         type={showPassword.repeat ? "text" : "password"}
@@ -472,6 +509,7 @@ export default function GeneralSettings() {
                                                                         onChange={(e) => setCurrentPassword(e.target.value)}
                                                                     />
                                                                     <Button
+                                                                        disabled={checkpasswordLoading}
                                                                         type="button"
                                                                         variant="ghost"
                                                                         size="sm"
@@ -493,6 +531,7 @@ export default function GeneralSettings() {
 
                                                 <div className="flex items-center justify-end">
                                                     <AlertDialogConfirmation
+                                                        disabled={checkpasswordLoading}
                                                         isDialog={dialogsubmit}
                                                         setDialog={(open) => setDialogSubmit(open)}
                                                         className="flex items-center py-[1.1rem] gap-2"
