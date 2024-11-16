@@ -27,7 +27,7 @@ export class UsersService {
     async findAll()
         : Promise<IPromiseUser> {
         try {
-            const response = await this.UserModel.find({ isactive: true }).sort({ _id: -1 })
+            const response = await this.UserModel.find().sort({ _id: -1 })
             return { success: true, message: 'Users retrieved successfully.', data: response }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Users failed to retrieved.' }, HttpStatus.INTERNAL_SERVER_ERROR)
@@ -39,9 +39,9 @@ export class UsersService {
             const response = await this.UserModel.findById(id)
             if (!response) return { success: false, message: 'User do not exists.' }
 
-            const { _id, name, email, role } = response
+            const { _id, name, email, role, isactive } = response
 
-            return { success: true, message: 'User retrieved successfully.', data: { _id, name, email, role } }
+            return { success: true, message: 'User retrieved successfully.', data: { _id, name, email, role, isactive } }
         } catch (error) {
             throw new HttpException({ success: false, message: 'User failed to retrieved.' }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
@@ -140,18 +140,18 @@ export class UsersService {
         }
     }
 
-    async updateToInactiveUser({ id }: IUsers): Promise<IPromiseUser> {
+    async updateUserStatus({ id, isactive }: IUsers): Promise<IPromiseUser> {
         try {
             if (!id) return { success: false, message: 'Missing ID, please provide an ID.' }
 
             await this.UserModel.findByIdAndUpdate(
                 id,
                 {
-                    isactive: false
+                    isactive
                 },
                 { new: true }
             )
-            return { success: true, message: 'User updated to inactive successfully.' }
+            return { success: true, message: `User updated to ${!isactive ? 'Inactive' : 'Active'} successfully.` }
         } catch (error) {
             throw new HttpException({ success: false, message: 'User failed to update.' }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
