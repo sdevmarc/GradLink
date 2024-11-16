@@ -5,5 +5,5 @@ export interface IAPIUsers {
     email?: string
     password?: string
     role?: string
-    isactive?: string
+    isactive?: boolean
 }
