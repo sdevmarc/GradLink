@@ -136,21 +136,11 @@ export default function GeneralSettings() {
             if (!data.success) {
                 setDialogSubmit(false)
                 setAlertDialogState({ success: false, show: true, title: "Uh, oh. Something went wrong!", description: data.message })
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                })
                 return
             } else {
-                await queryClient.invalidateQueries({ queryKey: ['general'] })
-                await queryClient.refetchQueries({ queryKey: ['general'] })
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                })
                 setDialogSubmit(false)
                 setChangePassword(true)
-                setAlertDialogState({ success: true, show: true, title: "Yay, success! 🎉", description: data.message })
+                // setAlertDialogState({ success: true, show: true, title: "Yay, success! 🎉", description: data.message })
                 setCurrentPassword('')
                 return
             }
@@ -227,7 +217,6 @@ export default function GeneralSettings() {
         const nospacepassword = (profile.password ?? '').replace(/\s+/g, '')
 
         if (!ischangepassword) {
-
             if (nospacecurrentpassword === '') {
                 setDialogSubmit(false)
                 setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Password should not be empty.' })
@@ -256,7 +245,7 @@ export default function GeneralSettings() {
 
     }
 
-    const isLoading = settingsLoading || updatesettingsLoading || userdataLoading || checkpasswordLoading || changepasswordLoading
+    const isLoading = settingsLoading || updatesettingsLoading || userdataLoading || changepasswordLoading
 
     return (
         isLoading ? <Loading /> :
@@ -412,11 +401,23 @@ export default function GeneralSettings() {
                                         <CardHeader>
                                             <div className="flex justify-between">
                                                 <div className="flex flex-col gap-2">
-                                                    <CardTitle>Change Password</CardTitle>
+                                                    <div className="flex items-center justify-between">
+                                                        <CardTitle>Change Password</CardTitle>
+                                                        {
+                                                            checkpasswordLoading &&
+                                                            <div className="flex items-center gap-2">
+                                                                <LoaderCircle className={`text-muted-foreground animate-spin`} size={18} />
+                                                                <h1 className="text-muted-foreground text-sm">
+                                                                    Checking
+                                                                </h1>
+                                                            </div>
+                                                        }
+                                                    </div>
                                                     <CardDescription>Manage your password here.</CardDescription>
                                                 </div>
                                                 <div className="">
                                                     <Button
+                                                        disabled={checkpasswordLoading}
                                                         onClick={() => {
                                                             setPassword(false)
                                                             setChangePassword(false)
