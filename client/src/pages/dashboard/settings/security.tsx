@@ -55,7 +55,7 @@ export default function Security() {
         if (userdataFetched) {
             setUsers(userdata?.data)
         }
-    }, [userdataFetched])
+    }, [userdata, userdataFetched])
 
     const roles_options = [
         { value: 'admin', label: 'Admin' },
@@ -390,7 +390,7 @@ export default function Security() {
                                                                         }
 
                                                                         {
-                                                                            userBeingUpdated !== user._id &&
+                                                                            (userBeingUpdated !== user._id || userDialogUpdating !== user._id) &&
                                                                                 user.role === 'root' ? null :
                                                                                 <AlertDialogConfirmation
                                                                                     isDialog={isdialogdeleteuser}
