@@ -68,10 +68,10 @@ export class UsersController {
         return await this.usersService.updateInformationUser({ id, name, email })
     }
 
-    @Post('inactive')
+    @Post('update-status')
     @UseGuards(AuthGuard)
-    async updateToInactiveUser(@Body() { id }: IUsers) {
-        return await this.usersService.updateToInactiveUser({ id })
+    async updateToInactiveUser(@Body() { id, isactive }: IUsers) {
+        return await this.usersService.updateUserStatus({ id, isactive })
     }
 
     @Post('login-user')
