@@ -5,21 +5,19 @@ import { Sidebar, SidebarNavs } from "@/components/sidebar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { CircleCheck, CircleX, Download, Pencil, Send, Trash2, UploadCloud, X } from "lucide-react"
+import { CircleArrowUp, CircleCheck, CircleX, Pencil, Send, Trash2, X } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useEffect, useState } from "react"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertDialogConfirmation } from "@/components/alert-dialog"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { API_USER_CREATE_USER, API_USER_GET_ALL_USERS, API_USER_UPDATE_TO_INACTIVE_USER, API_USER_UPDATE_USER } from "@/api/user"
+import { API_USER_CREATE_USER, API_USER_GET_ALL_USERS, API_USER_UPDATE_STATUS_USER, API_USER_UPDATE_USER } from "@/api/user"
 import { IAPIUsers } from "@/interface/user.interface"
 import { Combobox } from "@/components/combobox"
 import Loading from "@/components/loading"
 
 export default function Security() {
     const queryClient = useQueryClient()
+    const [isactivate, setActivate] = useState<boolean>(false)
     const [userBeingUpdated, setUserBeingUpdated] = useState<string | null>(null)
     const [userDialogUpdating, setUserDialogUpdating] = useState<string | null>(null)
     const [isupdateuser, setUpdateUser] = useState<boolean>(false)
@@ -74,8 +72,8 @@ export default function Security() {
                 })
                 return
             } else {
-                await queryClient.invalidateQueries({ queryKey: ['users-security'] })
-                await queryClient.refetchQueries({ queryKey: ['users-security'] })
+                await queryClient.invalidateQueries({ queryKey: ['security'] })
+                await queryClient.refetchQueries({ queryKey: ['security'] })
                 window.scrollTo({
                     top: 0,
                     behavior: 'smooth'
@@ -125,11 +123,11 @@ export default function Security() {
         }
     })
 
-    const { mutateAsync: inactiveuser, isPending: inactiveuserPending } = useMutation({
-        mutationFn: API_USER_UPDATE_TO_INACTIVE_USER,
+    const { mutateAsync: updateuserstatus, isPending: updateuserstatusPending } = useMutation({
+        mutationFn: API_USER_UPDATE_STATUS_USER,
         onSuccess: async (data) => {
             if (!data.success) {
-                setDialogDeleteUser(false)
+                isactivate ? setActivate(false) : setDialogDeleteUser(false)
                 setAlertDialogState({ success: false, show: true, title: "Uh, oh. Something went wrong!", description: data.message })
                 window.scrollTo({
                     top: 0,
@@ -144,13 +142,13 @@ export default function Security() {
                     behavior: 'smooth'
                 })
                 setAlertDialogState({ success: true, show: true, title: "Yay, success! 🎉", description: data.message })
-                setDialogDeleteUser(false)
+                isactivate ? setActivate(false) : setDialogDeleteUser(false)
                 setUpdateValues(({ userid: '', email: '', name: '', role: '' }))
                 return
             }
         },
         onError: (data) => {
-            setDialogAddUser(false)
+            isactivate ? setActivate(false) : setDialogDeleteUser(false)
             setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: data.message })
         }
     })
@@ -169,11 +167,13 @@ export default function Security() {
 
         await insertUser({ email, name, role })
         setDialogAddUser(false)
+        return
     }
 
     const handleDeleteUser = async ({ userid }: IAPIUsers) => {
-        await inactiveuser({ userid })
+        await updateuserstatus({ userid, isactive: false })
         setDialogDeleteUser(false)
+        return
     }
 
     const handleUpdateUser = async () => {
@@ -181,8 +181,6 @@ export default function Security() {
 
         const loweremail = (email ?? '').replace(/\s+/g, '').toLowerCase()
         const nospacename = (name ?? '').replace(/\s+/g, '')
-
-        console.log({ userid, email, name, role })
 
         if (loweremail === '' || nospacename === '' || !role || !userid) {
             setUpdateUser(false)
@@ -194,9 +192,16 @@ export default function Security() {
         await updateUser({ userid, email, name, role })
         setUpdateUser(false)
         setUserBeingUpdated(null)
+        return
     }
 
-    const isLoading = userdataLoading || insertuserPending || updateuserPending || inactiveuserPending
+    const handleActivateUser = async ({ userid }: IAPIUsers) => {
+        await updateuserstatus({ userid, isactive: true })
+        setActivate(false)
+        return
+    }
+
+    const isLoading = userdataLoading || insertuserPending || updateuserPending || updateuserstatusPending
 
     return (
         isLoading ? <Loading /> :
@@ -279,6 +284,7 @@ export default function Security() {
                                                         <TableHead>Name</TableHead>
                                                         <TableHead>Email</TableHead>
                                                         <TableHead>Role</TableHead>
+                                                        <TableHead>Status</TableHead>
                                                         <TableHead>Actions</TableHead>
                                                     </TableRow>
                                                 </TableHeader>
@@ -325,73 +331,93 @@ export default function Security() {
                                                                                     : user.role === 'user' && 'Department Head'
                                                                     }
                                                                 </TableCell>
+                                                                <TableCell className="text-primary">
+                                                                    {
+                                                                        user.isactive ? 'Active' : 'Inactive'
+                                                                    }
+                                                                </TableCell>
                                                                 <TableCell>
                                                                     <div className="flex items-center gap-4">
                                                                         {
-                                                                            userBeingUpdated !== user._id ?
+                                                                            !user.isactive ?
                                                                                 <AlertDialogConfirmation
-                                                                                    isDialog={userDialogUpdating === user._id}
-                                                                                    setDialog={(open) => {
-                                                                                        if (open) {
-                                                                                            setUserDialogUpdating(user._id ?? null)
-                                                                                        } else {
-                                                                                            setUserDialogUpdating(null)
-                                                                                        }
-                                                                                    }}
+                                                                                    isDialog={isactivate}
+                                                                                    setDialog={(open) => setActivate(open)}
                                                                                     type={`default`}
                                                                                     disabled={false}
-                                                                                    className='py-[1.1rem]'
-                                                                                    variant={`outline`}
-                                                                                    btnIcon={<Pencil className="text-primary" size={18} />}
+                                                                                    className='py-[1.1rem] flex items-center gap-2'
+                                                                                    variant={`default`}
+                                                                                    btnTitle="Activate"
+                                                                                    btnIcon={<CircleArrowUp className="text-primary-foreground" size={18} />}
                                                                                     title="Are you sure?"
-                                                                                    description={`This will modify the information of the user.`}
-                                                                                    btnContinue={() => {
-                                                                                        setUserDialogUpdating(null)
-                                                                                        setUserBeingUpdated(user._id ?? null)
-                                                                                        setUpdateValues(prev => ({
-                                                                                            ...prev,
-                                                                                            userid: user._id,
-                                                                                            email: user.email,
-                                                                                            name: user.name,
-                                                                                            role: user.role
-                                                                                        }))
-                                                                                    }}
+                                                                                    description={`This will activate the user and may have the ability to read, write, and execute in the system.`}
+                                                                                    btnContinue={() => handleActivateUser({ userid: user._id })}
                                                                                 />
                                                                                 :
-                                                                                (
-                                                                                    <>
-                                                                                        <AlertDialogConfirmation
-                                                                                            isDialog={isupdateuser}
-                                                                                            setDialog={(open) => setUpdateUser(open)}
-                                                                                            type={`default`}
-                                                                                            disabled={false}
-                                                                                            className='py-[1.1rem] flex items-center gap-2'
-                                                                                            variant={`default`}
-                                                                                            btnTitle="Update user"
-                                                                                            btnIcon={<Send className="text-primary-foreground" size={18} />}
-                                                                                            title="Are you sure?"
-                                                                                            description={`This will update the user's information.`}
-                                                                                            btnContinue={() => {
-                                                                                                handleUpdateUser()
-                                                                                            }}
-                                                                                        />
-                                                                                        <Button onClick={() => {
-                                                                                            setUserBeingUpdated(null)
+                                                                                userBeingUpdated !== user._id ?
+                                                                                    <AlertDialogConfirmation
+                                                                                        isDialog={userDialogUpdating === user._id}
+                                                                                        setDialog={(open) => {
+                                                                                            if (open) {
+                                                                                                setUserDialogUpdating(user._id ?? null)
+                                                                                            } else {
+                                                                                                setUserDialogUpdating(null)
+                                                                                            }
                                                                                         }}
-                                                                                            variant={`outline`}
-                                                                                            size={`sm`}
-                                                                                            className="py-[1.1rem] flex items-center gap-2"
-                                                                                        >
-                                                                                            <X className="text-primary" size={18} />  Cancel
-                                                                                        </Button>
-                                                                                    </>
-                                                                                )
+                                                                                        type={`default`}
+                                                                                        disabled={false}
+                                                                                        className='py-[1.1rem]'
+                                                                                        variant={`outline`}
+                                                                                        btnIcon={<Pencil className="text-primary" size={18} />}
+                                                                                        title="Are you sure?"
+                                                                                        description={`This will modify the information of the user.`}
+                                                                                        btnContinue={() => {
+                                                                                            setUserDialogUpdating(null)
+                                                                                            setUserBeingUpdated(user._id ?? null)
+                                                                                            setUpdateValues(prev => ({
+                                                                                                ...prev,
+                                                                                                userid: user._id,
+                                                                                                email: user.email,
+                                                                                                name: user.name,
+                                                                                                role: user.role
+                                                                                            }))
+                                                                                        }}
+                                                                                    />
+                                                                                    :
+                                                                                    (
+                                                                                        <>
+                                                                                            <AlertDialogConfirmation
+                                                                                                isDialog={isupdateuser}
+                                                                                                setDialog={(open) => setUpdateUser(open)}
+                                                                                                type={`default`}
+                                                                                                disabled={false}
+                                                                                                className='py-[1.1rem] flex items-center gap-2'
+                                                                                                variant={`default`}
+                                                                                                btnTitle="Update user"
+                                                                                                btnIcon={<Send className="text-primary-foreground" size={18} />}
+                                                                                                title="Are you sure?"
+                                                                                                description={`This will update the user's information.`}
+                                                                                                btnContinue={() => {
+                                                                                                    handleUpdateUser()
+                                                                                                }}
+                                                                                            />
+                                                                                            <Button onClick={() => {
+                                                                                                setUserBeingUpdated(null)
+                                                                                            }}
+                                                                                                variant={`outline`}
+                                                                                                size={`sm`}
+                                                                                                className="py-[1.1rem] flex items-center gap-2"
+                                                                                            >
+                                                                                                <X className="text-primary" size={18} />  Cancel
+                                                                                            </Button>
+                                                                                        </>
+                                                                                    )
 
                                                                         }
 
                                                                         {
                                                                             (userBeingUpdated !== user._id || userDialogUpdating !== user._id) &&
-                                                                                user.role === 'root' ? null :
+                                                                                (user.role === 'root' || !user.isactive) ? null :
                                                                                 <AlertDialogConfirmation
                                                                                     isDialog={isdialogdeleteuser}
                                                                                     setDialog={(open) => setDialogDeleteUser(open)}
