@@ -73,9 +73,9 @@ export const API_USER_UPDATE_USER = async ({ userid, email, name, role }: IAPIUs
     return response.data
 }
 
-export const API_USER_UPDATE_TO_INACTIVE_USER = async ({ userid }: IAPIUsers) => {
-    const response = await axios.post(`${HOST}/users/inactive`,
-        { id: userid },
+export const API_USER_UPDATE_STATUS_USER = async ({ userid, isactive }: IAPIUsers) => {
+    const response = await axios.post(`${HOST}/users/update-status`,
+        { id: userid, isactive },
         { withCredentials: true }
     )
     return response.data
