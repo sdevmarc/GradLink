@@ -6,7 +6,6 @@ import { HeaderLayout, HomeHeaderLayout, SettingsLayout, TracerHeaderLayout } fr
 import Overview from "./dashboard/overview/overview"
 import CreateCourse from "./dashboard/program/create-course"
 import Form from "./dashboard/form/form"
-import ViewDetails from "./dashboard/student/view-details"
 import CreateProgram from "./dashboard/program/create-program"
 import CreateCurriculum from "./dashboard/program/create-curriculum"
 import ViewProgramDetails from "./dashboard/program/view-program-details"
@@ -27,6 +26,7 @@ import GoogleForm from "./dashboard/alumni/google-form"
 import ArchivedAcademicYearOfferedCourses from "./dashboard/enrollment/archive-academic-year-offered-courses"
 import ArchivedSemestersInAcademicYear from "./dashboard/enrollment/achived-semesters-in-academic-year"
 import ProtectedRoute from "@/components/protected-route"
+import UpdateStudent from "./dashboard/student/update-student-information"
 
 const Routes = createBrowserRouter([
     {
@@ -130,7 +130,7 @@ const Routes = createBrowserRouter([
                 path: '/student/details/:sid',
                 element: (
                     <ProtectedRoute>
-                        <ViewDetails />
+                        <UpdateStudent />
                     </ProtectedRoute>
                 )
             },
