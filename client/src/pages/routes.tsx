@@ -27,6 +27,7 @@ import ArchivedAcademicYearOfferedCourses from "./dashboard/enrollment/archive-a
 import ArchivedSemestersInAcademicYear from "./dashboard/enrollment/achived-semesters-in-academic-year"
 import ProtectedRoute from "@/components/protected-route"
 import UpdateStudent from "./dashboard/student/update-student-information"
+import UpdateOfferedCourses from "./dashboard/enrollment/update-offered-courses"
 
 const Routes = createBrowserRouter([
     {
@@ -89,6 +90,14 @@ const Routes = createBrowserRouter([
                 element: (
                     <ProtectedRoute>
                         <CreateCoursesOffered />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: '/enrollment/update-course-offered',
+                element: (
+                    <ProtectedRoute>
+                        <UpdateOfferedCourses />
                     </ProtectedRoute>
                 )
             },
