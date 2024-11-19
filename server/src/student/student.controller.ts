@@ -1,6 +1,6 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common'
 import { StudentService } from './student.service'
-import { IRequestStudent, IStudent } from './student.interface'
+import { IPromiseStudent, IRequestStudent, IStudent } from './student.interface'
 import { FormsService } from 'src/forms/forms.service'
 import { ConstantsService } from 'src/constants/constants.service'
 import { AuditlogService } from 'src/auditlog/auditlog.service'
@@ -22,6 +22,11 @@ export class StudentController {
     @Get()
     async findAllRegisteredStudents() {
         return this.studentService.findAllStudents()
+    }
+
+    @Get('details/:id')
+    async findOneStudentInformation(@Param('id') id: string) {
+        return this.studentService.findOneStudent({ id })
     }
 
     @Post('employment-analytics')
@@ -143,6 +148,14 @@ export class StudentController {
             );
         }
         //return await this.studentService.evaluateStudent({ evaluations, course })
+    }
+
+
+    @Post('update-student')
+    async updateStudent(
+        @Body() { id, lastname, firstname, middlename, undergraduateInformation }: IStudent
+    ) {
+        return await this.studentService.updateStudent({ id, lastname, firstname, middlename, undergraduateInformation })
     }
 
     @Post('discontinue-student')
