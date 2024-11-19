@@ -206,6 +206,8 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
         id: "actions",
         cell: ({ row }) => {
             const queryClient = useQueryClient()
+            const navigate = useNavigate()
+            const [dialogupdate, setDialogUpdate] = useState<boolean>(false)
             const [dialogsubmit, setDialogSubmit] = useState<boolean>(false)
             const [isDiscontinue, setDiscontinue] = useState<boolean>(false)
             const [disconLoading, setDisconLoading] = useState<boolean>(false)
@@ -233,6 +235,12 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                 previewAssessment: '',
                 assessmentFile: null as File | null,
             })
+
+            const handleNavigateUpdateStudent = () => {
+                const base64ID = _id ? btoa(_id) : ''
+
+                navigate(`/student/details/${base64ID}`)
+            }
 
             const { data: settings, isLoading: settingsLoading, isFetched: settingsFetched } = useQuery({
                 queryFn: () => API_FINDONE_SETTINGS(),
@@ -295,9 +303,26 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
             return (
                 <>
                     {isLoading && <div>Loading...</div>}
+
                     {
                         (!settingsLoading && settingsFetched) &&
-                        <div className="flex justify-end">
+                        <div className="flex justify-end gap-2">
+                            <AlertDialogConfirmation
+                                isDialog={dialogupdate}
+                                // disabled={disconLoading}
+                                setDialog={(e) => setDialogUpdate(e)}
+                                className="flex items-center gap-2"
+                                type={`default`}
+                                variant={`destructive`}
+                                btnIcon={<UserPen className="text-primary-foreground" size={18} />}
+                                btnTitle={'Update Information'}
+                                title="Are you sure?"
+                                description={`This will update the student, ${lastname}, ${firstname} ${middlename} information.`}
+                                btnContinue={() => {
+                                    setDialogUpdate(false)
+                                    handleNavigateUpdateStudent()
+                                }}
+                            />
                             <Button onClick={handleViewDetails} variant={`outline`} size={`sm`} className="flex items-center gap-4">
                                 <TableOfContents className="text-primary" size={18} />   View Profile
                             </Button>
@@ -577,6 +602,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
 
 import { useCallback } from "react"
 import { useDropzone } from "react-dropzone"
+import { useNavigate } from "react-router-dom"
 
 const DragDropImage = ({ isdropout, id, isDiscontinue, isdiscontinueLoading, isDialogSubmit }: { isdropout: (e: boolean) => void, id: string, isDiscontinue: (e: boolean) => void, isdiscontinueLoading: (e: boolean) => void, isDialogSubmit: (e: boolean) => void }) => {
     const queryClient = useQueryClient()
