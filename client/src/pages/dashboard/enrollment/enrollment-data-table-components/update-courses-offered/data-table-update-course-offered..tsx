@@ -68,7 +68,7 @@ export function DataTableUpdateCourseOffered<TData, TValue>({
         },
     })
 
-    const { data: courses, isLoading: coursesLoading, isFetched: coursesFetched } = useQuery({
+    const { data: courses, isFetched: coursesFetched } = useQuery({
         queryFn: () => API_FINDALL_COURSES_OFFERED(),
         queryKey: ['courses-offered']
     })
