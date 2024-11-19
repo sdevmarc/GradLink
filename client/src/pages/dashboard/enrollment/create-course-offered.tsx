@@ -62,7 +62,7 @@ export default function CreateCoursesOffered() {
         queryKey: ['courses']
     })
 
-    const { mutateAsync: updatecoursesoffered, isPending: updatecoursesofferedLoading } = useMutation({
+    const { mutateAsync: createcourseoffered, isPending: createcourseofferedLoading } = useMutation({
         mutationFn: API_CREATE_COURSES_OFFERED,
         onSuccess: async (data) => {
             if (!data.success) {
@@ -74,8 +74,8 @@ export default function CreateCoursesOffered() {
                 })
                 return
             } else {
-                await queryClient.invalidateQueries({ queryKey: ['programs'] })
-                await queryClient.refetchQueries({ queryKey: ['programs'] })
+                await queryClient.invalidateQueries({ queryKey: ['courses-offered'] })
+                await queryClient.refetchQueries({ queryKey: ['courses-offered'] })
                 window.scrollTo({
                     top: 0,
                     behavior: 'smooth'
@@ -118,7 +118,7 @@ export default function CreateCoursesOffered() {
         const [startDate, endDate] = hasacademicYear.split('-').map(year => year.trim());
         const courseid = checkcourses.map(item => item._id).filter((id): id is string => id !== undefined)
 
-        await updatecoursesoffered({
+        await createcourseoffered({
             courses: courseid,
             semester: Number(hassemester),
             academicYear: {
@@ -128,7 +128,7 @@ export default function CreateCoursesOffered() {
         })
     }
 
-    const isLoading = coursesLoading || updatecoursesofferedLoading
+    const isLoading = coursesLoading || createcourseofferedLoading
 
     return (
         <>
