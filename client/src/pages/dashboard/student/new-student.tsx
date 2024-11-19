@@ -545,7 +545,7 @@ const CreateForm = () => {
                                         variant={'default'}
                                         btnTitle="Create new student"
                                         title="Are you sure?"
-                                        description={`This will add new student to the system and cannot be modified.`}
+                                        description={`This will add new student to the system.`}
                                         btnContinue={handleSubmit}
                                     />
                                 </div>
