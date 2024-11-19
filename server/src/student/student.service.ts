@@ -469,6 +469,15 @@ export class StudentService {
         }
     }
 
+    async findOneStudent({ id }: IStudent): Promise<IPromiseStudent> {
+        try {
+            const response = await this.studentModel.findById(id)
+            return { success: true, message: 'Student information fetched successfully.', data: response }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Failed to fetch student information.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
     async findFilteredAlumni({ search, program, yeargraduated }: { search?: string, program?: string, yeargraduated?: string }): Promise<IPromiseStudent> {
         try {
             if (!search && !program && !yeargraduated) {
@@ -3002,6 +3011,24 @@ export class StudentService {
         }
     }
 
+    async updateStudent({ id, lastname, firstname, middlename, undergraduateInformation }: IStudent): Promise<IPromiseStudent> {
+        try {
+            const response = await this.studentModel.findByIdAndUpdate(
+                id,
+                {
+                    lastname, firstname, middlename, undergraduateInformation
+                },
+                {
+                    new: true
+                }
+            )
+
+            return { success: true, message: 'Student updated successfully.' }
+
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Failed to update student.', error: error.message }, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     async insertFormPending({ idNumber }: IModelForm)
         : Promise<IPromiseStudent> {
