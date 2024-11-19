@@ -28,16 +28,12 @@ import { DataTableToolbarCoursesOfferedInEnrollment } from './data-table-toolbar
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
-    data: TData[],
-    isenroll: boolean
-    setEnroll: (e: boolean) => void
+    data: TData[]
 }
 
 export function DataTableCoursesOfferedInEnrollment<TData, TValue>({
     columns,
-    data,
-    isenroll,
-    setEnroll
+    data
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -70,8 +66,6 @@ export function DataTableCoursesOfferedInEnrollment<TData, TValue>({
         <div className="w-full flex flex-col gap-4">
             <DataTableToolbarCoursesOfferedInEnrollment
                 table={table}
-                isenroll={isenroll}
-                setEnroll={() => setEnroll(isenroll)}
             />
             <div className="rounded-md border">
                 <Table>
