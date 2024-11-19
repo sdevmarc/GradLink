@@ -278,7 +278,7 @@ export default function GeneralSettings() {
                                 <Sidebar>
                                     <SidebarNavs bg='bg-muted' title="General" link={ROUTES.GENERAL_SETTINGS} />
                                     {
-                                        (userdata?.data?.role === 'root' || userdata?.data?.role === 'root') &&
+                                        (userdata?.data?.role === 'root' || userdata?.data?.role === 'admin') &&
                                         <SidebarNavs title="Security" link={ROUTES.SECURITY} />
                                     }
                                 </Sidebar>
