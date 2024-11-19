@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { AlertDialogConfirmation } from "@/components/alert-dialog"
 import { useNavigate } from "react-router-dom"
 import { ROUTES } from "@/constants"
-import { LibraryBig, Plus } from "lucide-react"
+import { LibraryBig, Pencil, Plus } from "lucide-react"
 import { useEffect, useState } from "react"
 import { API_PROGRAM_FINDALL } from "@/api/program"
 import { useQuery } from "@tanstack/react-query"
@@ -30,7 +30,7 @@ export function DataTableToolbarCoursesOfferedInEnrollment<TData>({
 }: DataTableToolbarProps<TData>) {
     const isFiltered = table.getState().columnFilters.length > 0
     const navigate = useNavigate()
-    const [formattedprogram, setFormattedProgram] = useState<ProgramOption[]>([]);
+    // const [formattedprogram, setFormattedProgram] = useState<ProgramOption[]>([]);
     const [filteredPrograms, setFilteredPrograms] = useState<ProgramOption[]>([]);
 
     const department_options = [
@@ -139,8 +139,18 @@ export function DataTableToolbarCoursesOfferedInEnrollment<TData>({
                     btnIcon={<LibraryBig className="text-primary" size={18} />}
                     btnTitle="Previous Courses"
                     title="Are you sure?"
-                    description={`You will be redirect to a page viewing the past offered courses.`}
+                    description={`You will be redirect to a page for viewing the past offered courses.`}
                     btnContinue={() => navigate(ROUTES.ENROLLMENT_ARCHIVED_ACADEMIC_YEAR_OFFERED_COURSES)}
+                />
+                <AlertDialogConfirmation
+                    className="flex items-center gap-2"
+                    type={`default`}
+                    variant={'outline'}
+                    btnIcon={<Pencil className="text-primary" size={18} />}
+                    // btnTitle=""
+                    title="Are you sure?"
+                    description={`You will be redirect to a page for updating offered courses.`}
+                    btnContinue={() => navigate(ROUTES.UPDATE_COURSE_OFFERED)}
                 />
             </div>
         </div>
