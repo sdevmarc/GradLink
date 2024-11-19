@@ -6,9 +6,9 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { API_PROGRAM_FINDALL } from "@/api/program";
 import { API_STUDENT_YEARS_GRADUATED } from "@/api/student";
-import { TimeToLandJobAnalytics } from "@/components/charts/time-to-land-job-analytics";
-import { CourseRelatedToJobAnalytics } from "@/components/charts/course-related-job";
 import { API_ANALYTICS_EMPLOYMENT } from "@/api/analytics";
+import { PieChartLandJob } from "@/components/charts/pie-chart-land-job";
+import { PieChartRelatedJob } from "@/components/charts/pie-chart-related-job";
 
 export default function Overview() {
     const [program, setProgram] = useState<string>('')
@@ -128,8 +128,8 @@ export default function Overview() {
                             </div>
                         </div>
 
-                        <div className="flex flex-col gap-2">
-                            {
+                        <div className="flex items-center justify-evenly gap-2 flex-wrap">
+                            {/* {
                                 (!tracerresponseLoading && tracerresponseFetched) && (
                                     <TimeToLandJobAnalytics
                                         data={tracerresponse?.data[0]?.analytics?.timeToLandJob?.data || []} />
@@ -140,7 +140,9 @@ export default function Overview() {
                                 (!tracerresponseLoading && tracerresponseFetched) && (
                                     <CourseRelatedToJobAnalytics data={tracerresponse?.data[0]?.analytics?.courseRelatedJob?.data || []} />
                                 )
-                            }
+                            } */}
+                            <PieChartLandJob />
+                            <PieChartRelatedJob />
                         </div>
                     </div>
                 </div>
