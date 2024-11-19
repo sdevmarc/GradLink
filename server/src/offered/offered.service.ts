@@ -181,6 +181,11 @@ export class OfferedService {
     async findAllActive(): Promise<any> {
         try {
             const response = await this.offeredModel.aggregate([
+                {
+                    $match: {
+                        isActive: true
+                    }
+                },
                 // Remove the isActive match to include all courses
                 {
                     $lookup: {
@@ -293,7 +298,20 @@ export class OfferedService {
             await this.offeredModel.create({ semester, academicYear, courses })
             return { success: true, message: 'Courses offered successfully created' }
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Failed to fetch all courses offered.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+            throw new HttpException({ success: false, message: 'Failed to createl courses offered.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async updateOffered({ courses }: IOffered): Promise<IPromiseOffered> {
+        try {
+            await this.offeredModel.findOneAndUpdate(
+                { isActive: true },
+                { courses },
+                { new: true }
+            )
+            return { success: true, message: 'Offered courses updated successfully.' }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Failed to update courses offered.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
