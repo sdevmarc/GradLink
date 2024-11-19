@@ -66,3 +66,15 @@ export const API_CREATE_COURSES_OFFERED = async ({ courses, semester, academicYe
         console.error(error)
     }
 }
+
+export const API_UPDATE_COURSES_OFFERED = async ({ courses }: IAPIOffered) => {
+    try {
+        const response = await axios.post(`${HOST}/offered/update`, {
+            courses
+        }, { withCredentials: true })
+
+        return response.data
+    } catch (error) {
+        console.error(error)
+    }
+}
