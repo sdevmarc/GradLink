@@ -314,7 +314,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                 className="flex items-center gap-2"
                                 type={`default`}
                                 variant={`destructive`}
-                                btnIcon={<UserPen className="text-primary-foreground" size={18} />}
+                                btnIcon={<UserPen className="text-white" size={18} />}
                                 btnTitle={'Update Information'}
                                 title="Are you sure?"
                                 description={`This will update the student, ${lastname}, ${firstname} ${middlename} information.`}
