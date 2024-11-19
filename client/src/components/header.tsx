@@ -250,7 +250,31 @@ const HeaderDashboard = () => {
                                                 </BreadcrumbSeparator>
                                                 <BreadcrumbItem>
                                                     <BreadcrumbPage className='text-md font-medium'>
-                                                        Create courses offered
+                                                        Create offered courses
+                                                    </BreadcrumbPage>
+                                                </BreadcrumbItem>
+                                            </BreadCrumbs>
+                                        )
+                                    case ROUTES.UPDATE_COURSE_OFFERED:
+                                        return (
+                                            <BreadCrumbs>
+                                                <BreadcrumbItem>
+                                                    <BreadcrumbPage className='text-md'>
+                                                        <GraduationCap className='text-primary' />
+                                                    </BreadcrumbPage>
+                                                </BreadcrumbItem>
+                                                <BreadcrumbSeparator>
+                                                    <Slash />
+                                                </BreadcrumbSeparator>
+                                                <BreadcrumbItem>
+                                                    <BreadcrumbItem className='text-md font-light'>Gradlink</BreadcrumbItem>
+                                                </BreadcrumbItem>
+                                                <BreadcrumbSeparator>
+                                                    <Slash />
+                                                </BreadcrumbSeparator>
+                                                <BreadcrumbItem>
+                                                    <BreadcrumbPage className='text-md font-medium'>
+                                                        Update offered courses
                                                     </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                             </BreadCrumbs>
