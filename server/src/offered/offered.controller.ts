@@ -29,4 +29,9 @@ export class OfferedController {
     async createOfferedCourses(@Body() { semester, academicYear, courses }: IOffered) {
         return await this.offeredService.createOffered({ semester, academicYear, courses })
     }
+
+    @Post('update')
+    async updateOfferedCourses(@Body() { courses }: IOffered) {
+        return await this.offeredService.updateOffered({ courses })
+    }
 }
