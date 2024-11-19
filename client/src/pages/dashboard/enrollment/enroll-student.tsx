@@ -148,7 +148,7 @@ export default function EnrollStudent() {
                                         variant={'default'}
                                         btnTitle="Enroll student(s)"
                                         title="Are you sure?"
-                                        description={`This enroll students t`}
+                                        description={`This will enroll the student(s) to the subject ${coursename}`}
                                         btnContinue={handleSubmit}
                                     />
                                 </div>
