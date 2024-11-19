@@ -11,6 +11,13 @@ export const API_STUDENT_FINDALL = async () => {
     return response.data
 }
 
+export const API_STUDENT_FINDONE = async ({ id }: { id: string }) => {
+    const response = await axios.get(`${HOST}/student/details/${id}`,
+        { withCredentials: true }
+    )
+    return response.data
+}
+
 export const API_STUDENT_FINDONE_ALUMNI_FOR_TRACER_MAP = async ({ id }: { id: string }) => {
     const response = await axios.get(`${HOST}/student/alumni-tracer/${id}`,
         { withCredentials: true }
@@ -105,6 +112,13 @@ export const API_STUDENT_DISCONTINUE_STUDENT = async (formData: FormData) => {
 export const API_STUDENT_EVALUATE_STUDENT = async ({ course, evaluations }: IRequestStudents) => {
     const response = await axios.post(`${HOST}/student/evaluate-student`, {
         course, evaluations
+    }, { withCredentials: true })
+    return response.data
+}
+
+export const API_STUDENT_UPDATE_STUDENT = async ({ id, lastname, middlename, firstname, undergraduateInformation }: { id: string, lastname: string, middlename: string, firstname: string, undergraduateInformation: string }) => {
+    const response = await axios.post(`${HOST}/student/update-student`, {
+        id, lastname, middlename, firstname, undergraduateInformation
     }, { withCredentials: true })
     return response.data
 }
