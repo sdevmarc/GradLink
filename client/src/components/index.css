@@ -19,3 +19,15 @@
     width: 100%;
     margin: 0 auto;
 }
+
+.dark .hdashboard a.active::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -7px;
+    height: 1.5px;
+    background: white;
+    width: 100%;
+    margin: 0 auto;
+}
