@@ -25,6 +25,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { useNavigate } from "react-router-dom"
 import { API_STUDENT_SEND_TRACER } from "@/api/alumni"
 import { API_FORM_MAPPED } from "@/api/form"
+import { API_USER_GET_USER } from "@/api/user"
 
 export default function TracerMap() {
     const queryClient = useQueryClient()
@@ -55,6 +56,11 @@ export default function TracerMap() {
     const { isLoading: formLoading } = useQuery({
         queryFn: () => API_FORM_MAPPED(),
         queryKey: ['form']
+    })
+
+    const { data: userdata, isLoading: userdataLoading, isFetched: userdataFetched } = useQuery({
+        queryFn: () => API_USER_GET_USER(),
+        queryKey: ['users']
     })
 
     const { data: programs, isLoading: programsLoading, isFetched: programsFetched } = useQuery({
@@ -154,7 +160,7 @@ export default function TracerMap() {
         return
     }
 
-    const isLoading = programsLoading || yearsgraduateLoading || formLoading
+    const isLoading = programsLoading || yearsgraduateLoading || formLoading || userdataLoading
 
     return (
         <>
@@ -198,7 +204,13 @@ export default function TracerMap() {
                     </aside>
                     <main className="flex">
                         <Sidebar>
-                            <SidebarNavs title="Alumni Information" link={ROUTES.ALUMNI} />
+                            {
+                                userdataFetched &&
+                                (userdata?.data?.role === 'root' || userdata?.data?.role === 'admin') &&
+                                <SidebarNavs title="Alumni Information" link={ROUTES.ALUMNI} />
+                            }
+
+
                             <SidebarNavs bg='bg-muted' title="Tracer Map" link={ROUTES.TRACER_MAP} />
                         </Sidebar>
                         <MainTable>
