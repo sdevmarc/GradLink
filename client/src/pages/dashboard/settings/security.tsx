@@ -17,6 +17,7 @@ import Loading from "@/components/loading"
 
 export default function Security() {
     const queryClient = useQueryClient()
+    const [dialogsubmit, setDialogSubmit] = useState<boolean>(false)
     const [isactivate, setActivate] = useState<boolean>(false)
     const [userBeingUpdated, setUserBeingUpdated] = useState<string | null>(null)
     const [userDialogUpdating, setUserDialogUpdating] = useState<string | null>(null)
@@ -197,6 +198,11 @@ export default function Security() {
         await updateuserstatus({ userid, isactive: true })
         setActivate(false)
         return
+    }
+
+    const handleRestore = async () => {
+        setAlertDialogState({ success: true, show: true, title: "Yay, success! 🎉", description: 'Database has been restored!' })
+        setDialogSubmit(false)
     }
 
     const isLoading = userdataLoading || insertuserPending || updateuserPending || updateuserstatusPending
@@ -423,7 +429,7 @@ export default function Security() {
                                                                                     disabled={false}
                                                                                     className='py-[1.1rem]'
                                                                                     variant={`destructive`}
-                                                                                    btnIcon={<Trash2 className="text-primary-foreground" size={18} />}
+                                                                                    btnIcon={<Trash2 className="text-white" size={18} />}
                                                                                     title="Are you sure?"
                                                                                     description={`This will set the user to inactive and cannot read, write, and execute in the system.`}
                                                                                     btnContinue={() => handleDeleteUser({ userid: user._id })
@@ -449,12 +455,24 @@ export default function Security() {
                                     <CardContent>
                                         <div className="space-y-6">
                                             <div>
-                                                <h3 className="text-lg font-medium">Restore Settings</h3>
-                                                <p className="text-sm text-muted-foreground mb-2">Restore your settings from a backup file or by pasting backup data.</p>
-                                                <div className="space-y-2">
-                                                    <Button>
+                                                <h3 className="text-lg font-medium">Restore Database</h3>
+                                                <p className="text-sm text-muted-foreground mb-2">Restore your database from pre-existing file.</p>
+                                                <div className="flex items-start justify-start">
+                                                    <AlertDialogConfirmation
+                                                        isDialog={dialogsubmit}
+                                                        setDialog={(open) => setDialogSubmit(open)}
+                                                        type={`default`}
+                                                        disabled={isLoading}
+                                                        className='w-full my-3 py-5'
+                                                        variant={'default'}
+                                                        btnTitle="Restore Backup Database"
+                                                        title="Are you sure?"
+                                                        description={`This will restore the database from pre-existing file.`}
+                                                        btnContinue={handleRestore}
+                                                    />
+                                                    {/* <Button>
                                                         Restore Backup Database
-                                                    </Button>
+                                                    </Button> */}
                                                 </div>
                                             </div>
                                         </div>
