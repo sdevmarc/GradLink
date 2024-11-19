@@ -17,6 +17,7 @@ export const ROUTES = {
     ENROLLMENT_ATTRITION_RATE_COURSES: '/enrollment/attrition-rate-courses',
     ENROLLMENT_ATTRITION_RATE_PROGRAMS: '/enrollment/attrition-rate-programs',
     CREATE_COURSE_OFFERED: '/enrollment/create-course-offered',
+    UPDATE_COURSE_OFFERED: '/enrollment/update-course-offered',
 
     //STUDENT
     LIST_OF_STUDENTS: '/student',
