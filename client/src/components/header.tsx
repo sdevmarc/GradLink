@@ -160,9 +160,9 @@ const HeaderSettings = () => {
                         <NavLink to={ROUTES.OVERVIEW} className='text-[.8rem] text-text font-normal px-3 py-2'>
                             Overview
                         </NavLink>
-                        <NavLink to={ROUTES.AUDIT_LOG} className='text-[.8rem] text-text font-normal px-3 py-2'>
+                        {/* <NavLink to={ROUTES.AUDIT_LOG} className='text-[.8rem] text-text font-normal px-3 py-2'>
                             Audit Log
-                        </NavLink>
+                        </NavLink> */}
                         <NavLink to={ROUTES.GENERAL_SETTINGS} className='text-[.8rem] text-text font-normal px-3 py-2'>
                             Settings
                         </NavLink>
