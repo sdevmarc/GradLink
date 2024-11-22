@@ -1,8 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { TrendingUp } from "lucide-react"
-import { Label, Pie, PieChart } from "recharts"
+import { Label, Pie, PieChart, Cell } from "recharts"
 
 import {
     Card,
@@ -18,54 +17,59 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from "@/components/ui/chart"
-const chartData = [
-    { browser: "Less than a month", visitors: 3, fill: "var(--color-chrome)" },
-    { browser: "1 to 6 months", visitors: 4, fill: "var(--color-safari)" },
-    { browser: "7 to 11 months", visitors: 7, fill: "var(--color-firefox)" },
-    { browser: "1 year to less than 2 years", visitors: 2, fill: "var(--color-chrome)" },
-    { browser: "2 year sto less than 2 years", visitors: 7, fill: "var(--color-safari)" },
-    { browser: "3 year to less than 2 years", visitors: 12, fill: "var(--color-firefox)" },
-    { browser: "More than 4 years", visitors: 9, fill: "var(--color-edge)" },
-]
 
-const chartConfig = {
-    visitors: {
-        label: "Visitors",
-    },
-    chrome: {
-        label: "Chrome",
-        color: "hsl(var(--chart-1))",
-    },
-    safari: {
-        label: "Safari",
-        color: "hsl(var(--chart-2))",
-    },
-    firefox: {
-        label: "Firefox",
-        color: "hsl(var(--chart-3))",
-    },
-    edge: {
-        label: "Edge",
-        color: "hsl(var(--chart-4))",
-    },
-    other: {
-        label: "Other",
-        color: "hsl(var(--chart-5))",
-    },
-} satisfies ChartConfig
+interface IData {
+    key: string
+    count: number
+    department?: string
+    program?: string
+    academicYear?: string
+}
 
-export function PieChartLandJob() {
-    const totalVisitors = React.useMemo(() => {
-        return chartData.reduce((acc, curr) => acc + curr.visitors, 0)
-    }, [])
+// Define your chartConfig with keys mapping to labels and colors
+const chartConfig: ChartConfig = {
+    'Less than a month': { label: 'Less than a month', color: 'hsl(var(--chart-1))' },
+    '1 to 6 months': { label: '1 to 6 months', color: 'hsl(var(--chart-2))' },
+    '7 to 11 months': { label: '7 to 11 months', color: 'hsl(var(--chart-3))' },
+    '1 year to less than 2 years': { label: '1 year to less than 2 years', color: 'hsl(var(--chart-4))' },
+    '2 years to less than 3 years': { label: '2 years to less than 3 years', color: 'hsl(var(--chart-5))' },
+    '3 years to less than 4 years': { label: '3 years to less than 4 years', color: 'hsl(var(--chart-6))' },
+    'More than 4 years': { label: 'More than 4 years', color: 'hsl(var(--chart-7))' },
+} satisfies ChartConfig;
+
+export function PieChartLandJob({ data }: { data: IData[] }) {
+    // Map the data to the format required by the chart
+    const chartData = React.useMemo(() => {
+        if (data && data.length > 0) {
+            return data.map((item) => ({
+                key: item.key,
+                count: item.count,
+            }))
+        }
+        return []
+    }, [data])
+
+    // Compute the total number of respondents
+    const totalRespondents = React.useMemo(() => {
+        return chartData.reduce((acc, curr) => acc + (curr.count || 0), 0)
+    }, [chartData])
+
+    // Extract the academic year from the data
+    const academicYear = React.useMemo(() => {
+        if (data && data.length > 0) {
+            // Assuming all entries have the same academicYear
+            return data[0].academicYear || ''
+        }
+        return ''
+    }, [data])
 
     return (
         <Card className="flex flex-col shadow-none border-none">
             <CardHeader className="items-center pb-0">
                 <CardTitle>
-                    Time of Alumni landing their job.
+                    Time of Alumni Landing Their First Job
                 </CardTitle>
-                <CardDescription>2024 - 2025</CardDescription>
+                <CardDescription>{academicYear}</CardDescription>
             </CardHeader>
             <CardContent className="flex-1 pb-0">
                 <ChartContainer
@@ -77,13 +81,21 @@ export function PieChartLandJob() {
                             cursor={false}
                             content={<ChartTooltipContent hideLabel />}
                         />
+                        {/* <Legend /> */}
                         <Pie
                             data={chartData}
-                            dataKey="visitors"
-                            nameKey="browser"
+                            dataKey="count"
+                            nameKey="key"
                             innerRadius={60}
                             strokeWidth={5}
+                            // label
                         >
+                            {chartData.map((entry, index) => (
+                                <Cell
+                                    key={`cell-${index}`}
+                                    fill={chartConfig[entry.key]?.color || '#000000'}
+                                />
+                            ))}
                             <Label
                                 content={({ viewBox }) => {
                                     if (viewBox && "cx" in viewBox && "cy" in viewBox) {
@@ -99,7 +111,7 @@ export function PieChartLandJob() {
                                                     y={viewBox.cy}
                                                     className="fill-foreground text-3xl font-bold"
                                                 >
-                                                    {totalVisitors.toLocaleString()}
+                                                    {totalRespondents.toLocaleString()}
                                                 </tspan>
                                                 <tspan
                                                     x={viewBox.cx}
@@ -111,6 +123,7 @@ export function PieChartLandJob() {
                                             </text>
                                         )
                                     }
+                                    return null
                                 }}
                             />
                         </Pie>
@@ -119,7 +132,7 @@ export function PieChartLandJob() {
             </CardContent>
             <CardFooter className="flex-col gap-2 text-sm">
                 <div className="leading-none text-muted-foreground text-center">
-                    Showing analytics from alumni responses in landing their job.
+                    Showing analytics from alumni responses regarding the time it took them to land their first job.
                 </div>
             </CardFooter>
         </Card>
