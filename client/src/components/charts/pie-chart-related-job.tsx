@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Label, Pie, PieChart } from "recharts"
+import { Label, Pie, PieChart, Cell } from "recharts"
 
 import {
     Card,
@@ -17,49 +17,54 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from "@/components/ui/chart"
-const chartData = [
-    { browser: "Yes", visitors: 14, fill: "var(--color-chrome)" },
-    { browser: "No", visitors: 30, fill: "var(--color-safari)" }
-]
 
-const chartConfig = {
-    visitors: {
-        label: "Visitors",
-    },
-    chrome: {
-        label: "Chrome",
-        color: "hsl(var(--chart-1))",
-    },
-    safari: {
-        label: "Safari",
-        color: "hsl(var(--chart-2))",
-    },
-    firefox: {
-        label: "Firefox",
-        color: "hsl(var(--chart-3))",
-    },
-    edge: {
-        label: "Edge",
-        color: "hsl(var(--chart-4))",
-    },
-    other: {
-        label: "Other",
-        color: "hsl(var(--chart-5))",
-    },
-} satisfies ChartConfig
+interface IData {
+    key: string
+    count: number
+    department?: string
+    program?: string
+    academicYear?: string
+}
 
-export function PieChartRelatedJob() {
-    const totalVisitors = React.useMemo(() => {
-        return chartData.reduce((acc, curr) => acc + curr.visitors, 0)
-    }, [])
+// Define your chartConfig with keys mapping to labels and colors
+const chartConfig: ChartConfig = {
+    'Yes': { label: 'Yes', color: 'hsl(var(--chart-1))' },
+    'No': { label: 'No', color: 'hsl(var(--chart-2))' },
+} satisfies ChartConfig;
+
+export function PieChartRelatedJob({ data }: { data: IData[] }) {
+    // Map the data to the format required by the chart
+    const chartData = React.useMemo(() => {
+        if (data && data.length > 0) {
+            return data.map((item) => ({
+                key: item.key,
+                count: item.count,
+            }))
+        }
+        return []
+    }, [data])
+
+    // Compute the total number of respondents
+    const totalRespondents = React.useMemo(() => {
+        return chartData.reduce((acc, curr) => acc + (curr.count || 0), 0)
+    }, [chartData])
+
+    // Extract the academic year from the data
+    const academicYear = React.useMemo(() => {
+        if (data && data.length > 0) {
+            // Assuming all entries have the same academicYear
+            return data[0].academicYear || ''
+        }
+        return ''
+    }, [data])
 
     return (
         <Card className="flex flex-col shadow-none border-none">
             <CardHeader className="items-center pb-0">
                 <CardTitle>
-                    Course related to job.
+                    Time of Alumni Landing Their First Job
                 </CardTitle>
-                <CardDescription>2024 - 2025</CardDescription>
+                <CardDescription>{academicYear}</CardDescription>
             </CardHeader>
             <CardContent className="flex-1 pb-0">
                 <ChartContainer
@@ -71,13 +76,21 @@ export function PieChartRelatedJob() {
                             cursor={false}
                             content={<ChartTooltipContent hideLabel />}
                         />
+                        {/* <Legend /> */}
                         <Pie
                             data={chartData}
-                            dataKey="visitors"
-                            nameKey="browser"
+                            dataKey="count"
+                            nameKey="key"
                             innerRadius={60}
                             strokeWidth={5}
+                            // label
                         >
+                            {chartData.map((entry, index) => (
+                                <Cell
+                                    key={`cell-${index}`}
+                                    fill={chartConfig[entry.key]?.color || '#000000'}
+                                />
+                            ))}
                             <Label
                                 content={({ viewBox }) => {
                                     if (viewBox && "cx" in viewBox && "cy" in viewBox) {
@@ -93,7 +106,7 @@ export function PieChartRelatedJob() {
                                                     y={viewBox.cy}
                                                     className="fill-foreground text-3xl font-bold"
                                                 >
-                                                    {totalVisitors.toLocaleString()}
+                                                    {totalRespondents.toLocaleString()}
                                                 </tspan>
                                                 <tspan
                                                     x={viewBox.cx}
@@ -105,6 +118,7 @@ export function PieChartRelatedJob() {
                                             </text>
                                         )
                                     }
+                                    return null
                                 }}
                             />
                         </Pie>
@@ -112,8 +126,8 @@ export function PieChartRelatedJob() {
                 </ChartContainer>
             </CardContent>
             <CardFooter className="flex-col gap-2 text-sm">
-                <div className="leading-none text-muted-foreground w-2/3 text-center">
-                    Showing analytics from alumni responses if the course taken is related to current job.
+                <div className="leading-none text-muted-foreground text-center">
+                    Showing analytics from alumni responses regarding the time it took them to land their first job.
                 </div>
             </CardFooter>
         </Card>
