@@ -40,7 +40,7 @@ export default function Overview() {
     })
 
     useEffect(() => {
-        if (tracerresponseFetched) { console.log(tracerresponse?.data[0]) }
+        if (tracerresponseFetched) { console.log(tracerresponse?.data) }
     }, [tracerresponse])
 
     useEffect(() => {
@@ -129,20 +129,17 @@ export default function Overview() {
                         </div>
 
                         <div className="flex items-center justify-evenly gap-2 flex-wrap">
-                            {/* {
+                            {
                                 (!tracerresponseLoading && tracerresponseFetched) && (
-                                    <TimeToLandJobAnalytics
-                                        data={tracerresponse?.data[0]?.analytics?.timeToLandJob?.data || []} />
+                                    <PieChartLandJob data={tracerresponse?.data?.timeToLandJob} />
                                 )
                             }
 
-                            {
+{
                                 (!tracerresponseLoading && tracerresponseFetched) && (
-                                    <CourseRelatedToJobAnalytics data={tracerresponse?.data[0]?.analytics?.courseRelatedJob?.data || []} />
+                                    <PieChartRelatedJob data={tracerresponse?.data?.courseRelatedJob} />
                                 )
-                            } */}
-                            <PieChartLandJob />
-                            <PieChartRelatedJob />
+                            }
                         </div>
                     </div>
                 </div>
