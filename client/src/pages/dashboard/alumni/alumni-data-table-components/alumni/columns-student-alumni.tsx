@@ -201,6 +201,15 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
         enableSorting: false,
     },
     {
+        accessorKey: "currentJobLevel",
+        enableColumnFilter: true,
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id))
+        },
+        enableHiding: true,
+        enableSorting: false,
+    },
+    {
         id: "actions",
         cell: ({ row }) => {
             const queryClient = useQueryClient()
