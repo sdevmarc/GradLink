@@ -1391,9 +1391,37 @@ export class StudentService {
                                     }
                                 }
                             }
+                        },
+
+                    }
+                },
+                {
+                    $addFields: {
+                        enrollments: {
+                            $map: {
+                                input: '$enrollments',
+                                as: 'enrollment',
+                                in: {
+                                    course: '$$enrollment.course',
+                                    enrollmentDate: {
+                                        $cond: [
+                                            { $eq: [{ $type: '$$enrollment.enrollmentDate' }, 'date'] },
+                                            '$$enrollment.enrollmentDate',
+                                            {
+                                                $dateFromString: {
+                                                    dateString: '$$enrollment.enrollmentDate',
+                                                    format: '%Y-%m-%dT%H:%M:%S.%LZ'
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    ispass: '$$enrollment.ispass'
+                                }
+                            }
                         }
                     }
                 },
+
                 {
                     $addFields: {
                         notTakenCourses: {
@@ -1460,6 +1488,122 @@ export class StudentService {
                 {
                     $unwind: '$programDetails'
                 },
+                // Determine the student's start date
+                {
+                    $addFields: {
+                        startDate: {
+                            $cond: [
+                                { $gt: [{ $size: { $ifNull: ['$enrollments', []] } }, 0] },
+                                {
+                                    $min: '$enrollments.enrollmentDate'
+                                },
+                                '$createdAt'
+                            ]
+                        },
+                        programResidency: '$programDetails.residency'
+                    }
+                },
+                {
+                    $addFields: {
+                        startDate: {
+                            $cond: [
+                                { $eq: [{ $type: '$startDate' }, 'date'] },
+                                '$startDate',
+                                {
+                                    $dateFromString: {
+                                        dateString: '$startDate',
+                                        format: '%Y-%m-%dT%H:%M:%S.%LZ'
+                                    }
+                                }
+                            ]
+                        },
+                        createdAt: {
+                            $cond: [
+                                { $eq: [{ $type: '$createdAt' }, 'date'] },
+                                '$createdAt',
+                                {
+                                    $dateFromString: {
+                                        dateString: '$createdAt',
+                                        format: '%Y-%m-%dT%H:%M:%S.%LZ'
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                },
+
+                {
+                    $addFields: {
+                        programResidencyMonths: { $multiply: ['$programResidency', 12] }
+                    }
+                },
+                // Add the missing $addFields stage here
+                {
+                    $addFields: {
+                        startDateParts: { $dateToParts: { date: '$startDate' } },
+                        currentDateParts: { $dateToParts: { date: '$$NOW' } }
+                    }
+                },
+
+                // Proceed with date calculations using the converted dates
+                {
+                    $addFields: {
+                        totalMonths: {
+                            $subtract: [
+                                {
+                                    $add: [
+                                        { $multiply: [{ $toInt: '$currentDateParts.year' }, 12] },
+                                        { $toInt: '$currentDateParts.month' }
+                                    ]
+                                },
+                                {
+                                    $add: [
+                                        { $multiply: [{ $toInt: '$startDateParts.year' }, 12] },
+                                        { $toInt: '$startDateParts.month' }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                },
+
+                {
+                    $addFields: {
+                        totalYears: {
+                            $floor: {
+                                $divide: [
+                                    { $toInt: '$totalMonths' },
+                                    12
+                                ]
+                            }
+                        },
+                        remainingMonths: {
+                            $mod: [
+                                { $toInt: '$totalMonths' },
+                                12
+                            ]
+                        }
+                    }
+                },
+                {
+                    $addFields: {
+                        currentResidency: {
+                            $concat: [
+                                { $toString: '$totalYears' },
+                                ' Years, ',
+                                { $toString: '$remainingMonths' },
+                                ' Months'
+                            ]
+                        },
+                        hasExceededResidency: {
+                            $cond: [
+                                { $gt: ['$totalMonths', '$programResidencyMonths'] },
+                                true,
+                                false
+                            ]
+                        }
+                    }
+                },
                 {
                     $project: {
                         _id: 1,
@@ -1481,7 +1625,21 @@ export class StudentService {
                         totalOfUnitsEnrolled: 1,
                         totalOfUnitsEarned: 1,
                         enrolledCourses: 1,
-                        status: 1
+                        status: 1,
+                        // startDateParts: 1,
+                        // currentDateParts: 1,
+                        // totalMonths: 1,
+                        // totalYears: 1,
+                        // remainingMonths: 1,
+                        // programResidencyMonths: 1,
+                        currentResidency: 1,
+                        // hasExceededResidency: 1,
+                        // // Debugging types
+                        // currentDatePartsYearType: { $type: '$currentDateParts.year' },
+                        // currentDatePartsMonthType: { $type: '$currentDateParts.month' },
+                        // startDatePartsYearType: { $type: '$startDateParts.year' },
+                        // startDatePartsMonthType: { $type: '$startDateParts.month' },
+                        // totalMonthsType: { $type: '$totalMonths' }
                     }
                 },
                 {
