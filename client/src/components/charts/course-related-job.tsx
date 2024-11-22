@@ -22,17 +22,18 @@ const chartConfig = {
     count: { label: "Count", color: "hsl(var(--chart-1))" },
 } satisfies ChartConfig;
 
-export function CourseRelatedToJobAnalytics({ data }: { data: any[]}) {
+export function CourseRelatedToJobAnalytics({ data }: { data: any[] }) {
     const transformedData = data.map(item => ({
         category: item._id,   // Use _id as the category or label for X-axis
         count: item.count     // Use count as the value for Y-axis
     }));
+
     return (
         <Card className="border-none shadow-none">
             <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
                 <div className="grid flex-1 gap-1 text-center sm:text-left">
                     <CardTitle>
-                    Course related to job.
+                        Course related to job.
                     </CardTitle>
                     <CardDescription>
                         Showing analytics from alumni responses if the course taken is related to current job.
@@ -44,7 +45,7 @@ export function CourseRelatedToJobAnalytics({ data }: { data: any[]}) {
                     config={chartConfig}
                     className="aspect-auto h-[250px] w-full"
                 >
-                     <AreaChart data={transformedData || []}>
+                    <AreaChart data={transformedData || []}>
                         <defs>
                             <linearGradient id="fillCount" x1="0" y1="0" x2="0" y2="1">
                                 <stop offset="5%" stopColor="var(--color-count)" stopOpacity={0.8} />
