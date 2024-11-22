@@ -2290,6 +2290,81 @@ export class StudentService {
                         preserveNullAndEmptyArrays: true
                     }
                 },
+                // **Add the corrected $addFields stage for currentJobLevel**
+                {
+                    $addFields: {
+                        currentJobLevel: {
+                            $let: {
+                                vars: {
+                                    answerObj: {
+                                        $ifNull: [
+                                            {
+                                                $arrayElemAt: [
+                                                    {
+                                                        $map: {
+                                                            input: {
+                                                                $filter: {
+                                                                    input: {
+                                                                        $ifNull: ['$employmentData.questions', []]
+                                                                    },
+                                                                    as: 'question',
+                                                                    cond: { $eq: ['$$question.question', '28. Job Level Position (Current Job)'] }
+                                                                }
+                                                            },
+                                                            as: 'q',
+                                                            in: '$$q.answer'
+                                                        }
+                                                    },
+                                                    0
+                                                ]
+                                            },
+                                            {}
+                                        ]
+                                    }
+                                },
+                                in: {
+                                    $let: {
+                                        vars: {
+                                            answerArray: {
+                                                $objectToArray: '$$answerObj'
+                                            },
+                                            validItems: {
+                                                $filter: {
+                                                    input: {
+                                                        $ifNull: [
+                                                            { $objectToArray: '$$answerObj' },
+                                                            []
+                                                        ]
+                                                    },
+                                                    as: 'item',
+                                                    cond: { $ne: ['$$item.v', 'No answer provided'] }
+                                                }
+                                            }
+                                        },
+                                        in: {
+                                            $cond: {
+                                                if: { $gt: [{ $size: '$$validItems' }, 0] },
+                                                then: {
+                                                    $arrayElemAt: [
+                                                        {
+                                                            $map: {
+                                                                input: '$$validItems',
+                                                                as: 'item',
+                                                                in: '$$item.k'
+                                                            }
+                                                        },
+                                                        0
+                                                    ]
+                                                },
+                                                else: null
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 {
                     $project: {
                         _id: 1,
@@ -2334,7 +2409,15 @@ export class StudentService {
                             ]
                         },
                         semester: "$graduationOffer.semester",
-                        graduationDate: "$graduation_date" // Preserved for clarity
+                        graduationDate: "$graduation_date", // Preserved for clarity
+                        // Conditionally include currentJobLevel if it's not null
+                        currentJobLevel: {
+                            $cond: [
+                                { $ne: ['$currentJobLevel', null] },
+                                '$currentJobLevel',
+                                '$$REMOVE'
+                            ]
+                        }
                     }
                 },
                 {
