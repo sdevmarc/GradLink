@@ -76,6 +76,7 @@ export interface IAPIStudents {
     employmentData?: MappedSection
     coordinates?: ICoordinates
     dateSent?: string
+    currentResidency?: string
 }
 
 export interface IEvaluation {
