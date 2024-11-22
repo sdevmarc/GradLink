@@ -62,7 +62,7 @@ export function PieChartRelatedJob({ data }: { data: IData[] }) {
         <Card className="flex flex-col shadow-none border-none">
             <CardHeader className="items-center pb-0">
                 <CardTitle>
-                    Time of Alumni Landing Their First Job
+                    Course related to job.
                 </CardTitle>
                 <CardDescription>{academicYear}</CardDescription>
             </CardHeader>
@@ -83,7 +83,7 @@ export function PieChartRelatedJob({ data }: { data: IData[] }) {
                             nameKey="key"
                             innerRadius={60}
                             strokeWidth={5}
-                            // label
+                        // label
                         >
                             {chartData.map((entry, index) => (
                                 <Cell
@@ -127,7 +127,7 @@ export function PieChartRelatedJob({ data }: { data: IData[] }) {
             </CardContent>
             <CardFooter className="flex-col gap-2 text-sm">
                 <div className="leading-none text-muted-foreground text-center">
-                    Showing analytics from alumni responses regarding the time it took them to land their first job.
+                    Showing analytics from alumni responses if the course taken is related to current job.
                 </div>
             </CardFooter>
         </Card>
