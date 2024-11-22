@@ -100,6 +100,13 @@ export function DataTableToolbarAlumni<TData>({
         { value: 'STEH', label: "Teacher Education and Humanities" }
     ]
 
+    const job_options = [
+        { value: 'Self-employed', label: "Self-employed" },
+        { value: 'Managerial or Executive', label: "Managerial or Executive" },
+        { value: 'Professional, Technical or Supervisory', label: "Professional, Technical or Supervisory" },
+        { value: 'Rank or Clerical', label: "Rank or Clerical" }
+    ]
+
     return (
         <div className="flex flex-wrap items-center justify-between">
             <div className="flex flex-1 flex-wrap items-center justify-between gap-2">
@@ -135,7 +142,13 @@ export function DataTableToolbarAlumni<TData>({
                                 options={filteredYearsGraduated}
                             />
                         )}
-
+                        {table.getColumn("currentJobLevel") && (
+                            <DataTableFacetedFilter
+                                column={table.getColumn("currentJobLevel")}
+                                title="Current Job Level"
+                                options={job_options}
+                            />
+                        )}
                     </div>
                 </div>
 
