@@ -228,7 +228,8 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                 department,
                 undergraduateInformation,
                 achievements,
-                isenrolled
+                isenrolled,
+                currentResidency
             } = row.original
             const [values, setValues] = useState({
                 id: _id || '',
@@ -366,7 +367,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                         }
                                                                     </div>
 
-                                                                    <CardDescription className="mt-2 flex items-center justify-between">
+                                                                    <CardDescription className="mt-2 flex flex-col gap-2">
                                                                         <div className="flex items-center">
                                                                             <Badge variant="default" className="mr-2">
                                                                                 {idNumber || 'No valid ID Number'}
@@ -378,6 +379,14 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                                 {department === 'SAB' && "Teacher Education and Humanities"}  | {programCode} | {programName}
                                                                             </span>
                                                                         </div>
+                                                                        {
+                                                                            currentResidency &&
+                                                                            <div className="flex items-center">
+                                                                                <h1 className="text-primary font-medium">
+                                                                                    Residency: <span>{currentResidency}</span>
+                                                                                </h1>
+                                                                            </div>
+                                                                        }
                                                                     </CardDescription>
                                                                 </div>
                                                                 {/* <Button>Apply Now</Button> */}
