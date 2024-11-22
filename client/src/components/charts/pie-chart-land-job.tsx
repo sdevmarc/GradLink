@@ -23,7 +23,7 @@ const chartData = [
     { browser: "1 to 6 months", visitors: 4, fill: "var(--color-safari)" },
     { browser: "7 to 11 months", visitors: 7, fill: "var(--color-firefox)" },
     { browser: "1 year to less than 2 years", visitors: 2, fill: "var(--color-chrome)" },
-    { browser: "2 year to less than 2 years", visitors: 7, fill: "var(--color-safari)" },
+    { browser: "2 year sto less than 2 years", visitors: 7, fill: "var(--color-safari)" },
     { browser: "3 year to less than 2 years", visitors: 12, fill: "var(--color-firefox)" },
     { browser: "More than 4 years", visitors: 9, fill: "var(--color-edge)" },
 ]
