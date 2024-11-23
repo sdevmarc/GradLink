@@ -71,6 +71,7 @@ export default function EnrollStudent() {
         onError: (data) => {
             setDialogSubmit(false)
             setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: data.message })
+            return
         }
     })
 
@@ -87,6 +88,7 @@ export default function EnrollStudent() {
             const studentid = checkstudents.map(item => item._id).filter((id): id is string => id !== undefined)
             setDialogSubmit(false)
             await enrollstudent({ id: studentid, course: courseid })
+            return
         }
     }
 
