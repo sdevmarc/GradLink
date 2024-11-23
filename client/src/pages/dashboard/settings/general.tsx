@@ -550,27 +550,31 @@ export default function GeneralSettings() {
                                     </Card>
                                 }
 
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>System Settings</CardTitle>
-                                        <CardDescription>Customize your system settings.</CardDescription>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <div className="space-y-6">
-                                            <div className="flex items-center space-x-2">
-                                                <Switch
-                                                    id="notifications"
-                                                    checked={!isevaluate}
-                                                    onCheckedChange={() => {
-                                                        setEvaluate(!isevaluate)
-                                                        updatesettings({ isenroll: !isevaluate })
-                                                    }}
-                                                />
-                                                <Label htmlFor="notifications">Enable Evaluation Mode</Label>
+                                {
+                                    userdataFetched &&
+                                    (userdata?.data?.role === 'root' || userdata?.data?.role === 'admin') &&
+                                    <Card>
+                                        <CardHeader>
+                                            <CardTitle>System Settings</CardTitle>
+                                            <CardDescription>Customize your system settings.</CardDescription>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <div className="space-y-6">
+                                                <div className="flex items-center space-x-2">
+                                                    <Switch
+                                                        id="notifications"
+                                                        checked={!isevaluate}
+                                                        onCheckedChange={() => {
+                                                            setEvaluate(!isevaluate)
+                                                            updatesettings({ isenroll: !isevaluate })
+                                                        }}
+                                                    />
+                                                    <Label htmlFor="notifications">Enable Evaluation Mode</Label>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </CardContent>
-                                </Card>
+                                        </CardContent>
+                                    </Card>
+                                }
 
                                 <Card>
                                     <CardHeader>
