@@ -10,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useEffect, useState } from "react"
 import { AlertDialogConfirmation } from "@/components/alert-dialog"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { API_USER_CREATE_USER, API_USER_GET_ALL_USERS, API_USER_UPDATE_STATUS_USER, API_USER_UPDATE_USER } from "@/api/user"
+import { API_USER_CREATE_USER, API_USER_GET_ALL_USERS, API_USER_GET_USER, API_USER_UPDATE_STATUS_USER, API_USER_UPDATE_USER } from "@/api/user"
 import { IAPIUsers } from "@/interface/user.interface"
 import { Combobox } from "@/components/combobox"
 import Loading from "@/components/loading"
@@ -41,6 +41,11 @@ export default function Security() {
         name: '',
         email: '',
         role: ''
+    })
+
+    const { data: user, isLoading: userLoading, isFetched: userFetched } = useQuery({
+        queryFn: () => API_USER_GET_USER(),
+        queryKey: ['users']
     })
 
     const { data: userdata, isLoading: userdataLoading, isFetched: userdataFetched } = useQuery({
@@ -119,6 +124,7 @@ export default function Security() {
             setUpdateUser(false)
             setUserBeingUpdated(null)
             setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: data.message })
+            return
         }
     })
 
@@ -149,6 +155,7 @@ export default function Security() {
         onError: (data) => {
             isactivate ? setActivate(false) : setDialogDeleteUser(false)
             setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: data.message })
+            return
         }
     })
 
@@ -203,9 +210,10 @@ export default function Security() {
     const handleRestore = async () => {
         setAlertDialogState({ success: true, show: true, title: "Yay, success! 🎉", description: 'Database has been restored!' })
         setDialogSubmit(false)
+        return
     }
 
-    const isLoading = userdataLoading || insertuserPending || updateuserPending || updateuserstatusPending
+    const isLoading = userdataLoading || insertuserPending || updateuserPending || updateuserstatusPending || userLoading
 
     return (
         isLoading ? <Loading /> :
@@ -447,37 +455,41 @@ export default function Security() {
                                         </div>
                                     </CardContent>
                                 </Card>
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>Backup</CardTitle>
-                                        <CardDescription>The backup process is fully automated and is configured to run daily at 10:00 AM. No manual intervention is required to initiate the backup.</CardDescription>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <div className="space-y-6">
-                                            <div>
-                                                <h3 className="text-lg font-medium">Restore Database</h3>
-                                                <p className="text-sm text-muted-foreground mb-2">Restore your database from pre-existing file.</p>
-                                                <div className="flex items-start justify-start">
-                                                    <AlertDialogConfirmation
-                                                        isDialog={dialogsubmit}
-                                                        setDialog={(open) => setDialogSubmit(open)}
-                                                        type={`default`}
-                                                        disabled={isLoading}
-                                                        className='w-full my-3 py-5'
-                                                        variant={'default'}
-                                                        btnTitle="Restore Backup Database"
-                                                        title="Are you sure?"
-                                                        description={`This will restore the database from pre-existing file.`}
-                                                        btnContinue={handleRestore}
-                                                    />
-                                                    {/* <Button>
+                                {
+                                    userFetched &&
+                                    user?.data?.role === 'root' &&
+                                    <Card>
+                                        <CardHeader>
+                                            <CardTitle>Backup</CardTitle>
+                                            <CardDescription>The backup process is fully automated and is configured to run daily at 10:00 AM. No manual intervention is required to initiate the backup.</CardDescription>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <div className="space-y-6">
+                                                <div>
+                                                    <h3 className="text-lg font-medium">Restore Database</h3>
+                                                    <p className="text-sm text-muted-foreground mb-2">Restore your database from pre-existing file.</p>
+                                                    <div className="flex items-start justify-start">
+                                                        <AlertDialogConfirmation
+                                                            isDialog={dialogsubmit}
+                                                            setDialog={(open) => setDialogSubmit(open)}
+                                                            type={`default`}
+                                                            disabled={isLoading}
+                                                            className='w-full my-3 py-5'
+                                                            variant={'default'}
+                                                            btnTitle="Restore Backup Database"
+                                                            title="Are you sure?"
+                                                            description={`This will restore the database from pre-existing file.`}
+                                                            btnContinue={handleRestore}
+                                                        />
+                                                        {/* <Button>
                                                         Restore Backup Database
                                                     </Button> */}
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </CardContent>
-                                </Card>
+                                        </CardContent>
+                                    </Card>
+                                }
                             </MainTable>
                         </main>
                     </div>
