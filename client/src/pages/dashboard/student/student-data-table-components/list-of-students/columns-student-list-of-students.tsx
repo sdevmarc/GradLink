@@ -237,6 +237,11 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                 assessmentFile: null as File | null,
             })
 
+            const { data: userdata, isLoading: userdataLoading, isFetched: userdataFetched } = useQuery({
+                queryFn: () => API_USER_GET_USER(),
+                queryKey: ['users']
+            })
+
             const handleNavigateUpdateStudent = () => {
                 const base64ID = _id ? btoa(_id) : ''
 
@@ -299,7 +304,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                 await activateStudent({ id: values.id })
             }
 
-            const isLoading = settingsLoading || disconLoading || activatestudentLoading
+            const isLoading = settingsLoading || disconLoading || activatestudentLoading || userdataLoading
 
             return (
                 <>
@@ -308,22 +313,27 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                     {
                         (!settingsLoading && settingsFetched) &&
                         <div className="flex justify-end gap-2">
-                            <AlertDialogConfirmation
-                                isDialog={dialogupdate}
-                                // disabled={disconLoading}
-                                setDialog={(e) => setDialogUpdate(e)}
-                                className="flex items-center gap-2"
-                                type={`default`}
-                                variant={`destructive`}
-                                btnIcon={<UserPen className="text-white" size={18} />}
-                                btnTitle={'Update Information'}
-                                title="Are you sure?"
-                                description={`This will update the student, ${lastname}, ${firstname} ${middlename} information.`}
-                                btnContinue={() => {
-                                    setDialogUpdate(false)
-                                    handleNavigateUpdateStudent()
-                                }}
-                            />
+                            {
+                                userdataFetched &&
+                                (userdata?.data?.role === 'root' || userdata?.data?.role === 'admin') &&
+                                <AlertDialogConfirmation
+                                    isDialog={dialogupdate}
+                                    // disabled={disconLoading}
+                                    setDialog={(e) => setDialogUpdate(e)}
+                                    className="flex items-center gap-2"
+                                    type={`default`}
+                                    variant={`destructive`}
+                                    btnIcon={<UserPen className="text-white" size={18} />}
+                                    btnTitle={'Update Information'}
+                                    title="Are you sure?"
+                                    description={`This will update the student, ${lastname}, ${firstname} ${middlename} information.`}
+                                    btnContinue={() => {
+                                        setDialogUpdate(false)
+                                        handleNavigateUpdateStudent()
+                                    }}
+                                />
+                            }
+
                             <Button onClick={handleViewDetails} variant={`outline`} size={`sm`} className="flex items-center gap-4">
                                 <TableOfContents className="text-primary" size={18} />   View Profile
                             </Button>
@@ -612,6 +622,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
 import { useCallback } from "react"
 import { useDropzone } from "react-dropzone"
 import { useNavigate } from "react-router-dom"
+import { API_USER_GET_USER } from "@/api/user"
 
 const DragDropImage = ({ isdropout, id, isDiscontinue, isdiscontinueLoading, isDialogSubmit }: { isdropout: (e: boolean) => void, id: string, isDiscontinue: (e: boolean) => void, isdiscontinueLoading: (e: boolean) => void, isDialogSubmit: (e: boolean) => void }) => {
     const queryClient = useQueryClient()
