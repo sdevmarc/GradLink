@@ -207,7 +207,8 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
             const queryClient = useQueryClient()
             const navigate = useNavigate()
             const [dialogupdate, setDialogUpdate] = useState<boolean>(false)
-            const [dialogsubmit, setDialogSubmit] = useState<boolean>(false)
+            const [dialogactivate, setDialogActivate] = useState<boolean>(false)
+            const [dialogdiscontinue, setDialogDiscontinue] = useState<boolean>(false)
             const [isDiscontinue, setDiscontinue] = useState<boolean>(false)
             const [disconLoading, setDisconLoading] = useState<boolean>(false)
             const [isOpen, setIsOpen] = useState<boolean>(false)
@@ -228,7 +229,8 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                 undergraduateInformation,
                 achievements,
                 isenrolled,
-                currentResidency
+                currentResidency,
+                assessmentForm
             } = row.original
             const [values, setValues] = useState({
                 id: _id || '',
@@ -273,7 +275,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                 mutationFn: API_STUDENT_ACTIVATE_STUDENT,
                 onSuccess: async (data) => {
                     if (!data.success) {
-                        setDialogSubmit(false)
+                        setDialogActivate(false)
                         setDiscontinue(false)
                         window.scrollTo({
                             top: 0,
@@ -287,15 +289,15 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                             top: 0,
                             behavior: 'smooth'
                         })
-                        setDialogSubmit(false)
+                        setDialogActivate(false)
                         setDiscontinue(false)
                         setValues(prev => ({ ...prev, assessmentFile: null, previewAssessment: '' }))
                         return
                     }
                 },
                 onError: () => {
+                    setDialogActivate(false)
                     setDiscontinue(false)
-                    setDialogSubmit(false)
                     return
                 }
             })
@@ -357,10 +359,10 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                             </span>
                                                                         </CardTitle>
                                                                         {
-                                                                            (userdataFetched && !isenrolled) &&
+                                                                            !isenrolled &&
                                                                             <AlertDialogConfirmation
-                                                                                isDialog={dialogsubmit}
-                                                                                setDialog={(e) => setDialogSubmit(e)}
+                                                                                isDialog={dialogactivate}
+                                                                                setDialog={(e) => setDialogActivate(e)}
                                                                                 className="flex items-center gap-2"
                                                                                 type={`default`}
                                                                                 disabled={isLoading}
@@ -582,9 +584,9 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                     // !settings?.data?.isenroll &&
                                                                     (isenrolled && !isDiscontinue) &&
                                                                     <AlertDialogConfirmation
-                                                                        isDialog={dialogsubmit}
-                                                                        disabled={isLoading}
-                                                                        setDialog={(e) => setDialogSubmit(e)}
+                                                                        isDialog={dialogdiscontinue}
+                                                                        disabled={userdataLoading || disconLoading}
+                                                                        setDialog={(e) => setDialogDiscontinue(e)}
                                                                         className="flex items-center gap-2"
                                                                         type={`default`}
                                                                         variant={`${!isDiscontinue ? 'destructive' : 'default'}`}
@@ -593,16 +595,37 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                         title="Are you sure?"
                                                                         description={`${lastname}, ${firstname} ${middlename} will be mark as a dicontinuing student, and its courses this semester will be mark as drop.`}
                                                                         btnContinue={() => {
-                                                                            setDialogSubmit(false),
+                                                                            setDialogDiscontinue(false),
                                                                                 setDiscontinue(true)
                                                                         }}
                                                                     />
                                                                 }
+
+                                                                {
+                                                                    (!isenrolled) &&
+                                                                    <div className="w-full flex items-center justify-center">
+                                                                        <Card className="w-full flex flex-col items-center gap-2">
+                                                                            <CardHeader>
+                                                                                <CardTitle className="text-2xl font-bold">
+                                                                                    Assessment Form
+                                                                                </CardTitle>
+                                                                            </CardHeader>
+                                                                            <CardContent>
+                                                                                {
+                                                                                    assessmentForm ? <img src={assessmentForm} alt="Assessment form" className="w-full h-full object-cover" />
+                                                                                        : 'No Assessment Form Available'
+                                                                                }
+                                                                            </CardContent>
+                                                                        </Card>
+
+                                                                    </div>
+                                                                }
+
                                                                 {isDiscontinue && <DragDropImage
                                                                     id={_id || ''}
                                                                     isDiscontinue={(e) => setDiscontinue(e)}
                                                                     isdiscontinueLoading={(e) => setDisconLoading(e)}
-                                                                    isDialogSubmit={(e) => setDialogSubmit(e)}
+                                                                    isDialogSubmit={(e) => setDialogDiscontinue(e)}
                                                                 />}
                                                             </div>
                                                         </CardContent>
@@ -755,7 +778,7 @@ const DragDropImage = ({ id, isDiscontinue, isdiscontinueLoading, isDialogSubmit
                         removeImage()
                     }
                 } variant={`outline`} size={`sm`} className="flex items-center gap-4" type="button">
-                    <X className='text-primary' size={18} /> Cancel Dropout Form
+                    <X className='text-primary' size={18} /> Cancel
                 </Button>
             </div>
         </div>
