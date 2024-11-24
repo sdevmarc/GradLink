@@ -14,6 +14,7 @@ import { API_PROGRAM_FINDALL } from "@/api/program"
 import { useQuery } from "@tanstack/react-query"
 import { IAPIPrograms } from "@/interface/program.interface"
 import { DataTableFacetedFilter } from "@/components/data-table-components/data-table-faceted-filter"
+import { API_USER_GET_USER } from "@/api/user"
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>
@@ -40,9 +41,15 @@ export function DataTableToolbarCoursesOfferedInEnrollment<TData>({
         { value: 'STEH', label: "Teacher Education and Humanities" }
     ]
 
+    const { data: userdata, isFetched: userdataFetched } = useQuery({
+        queryFn: () => API_USER_GET_USER(),
+        queryKey: ['users']
+    })
+
     const { data: program, isLoading: programLoading, isFetched: programFetched } = useQuery({
         queryFn: () => API_PROGRAM_FINDALL(),
-        queryKey: ['programs']
+        queryKey: ['programs'],
+        enabled: userdataFetched
     })
 
     useEffect(() => {
@@ -121,38 +128,47 @@ export function DataTableToolbarCoursesOfferedInEnrollment<TData>({
                     />
                 )}
             </div>
-            <div className="flex gap-2 items-center">
-                <AlertDialogConfirmation
-                    className="flex items-center gap-2"
-                    type={`default`}
-                    variant={'outline'}
-                    btnIcon={<Plus className="text-primary" size={18} />}
-                    btnTitle="New Offered Courses"
-                    title="Are you sure?"
-                    description={`You will be redirect to a page for creating new offered courses.`}
-                    btnContinue={() => navigate(ROUTES.CREATE_COURSE_OFFERED)}
-                />
-                <AlertDialogConfirmation
-                    className="flex items-center gap-2"
-                    type={`default`}
-                    variant={'outline'}
-                    btnIcon={<LibraryBig className="text-primary" size={18} />}
-                    btnTitle="Previous Courses"
-                    title="Are you sure?"
-                    description={`You will be redirect to a page for viewing the past offered courses.`}
-                    btnContinue={() => navigate(ROUTES.ENROLLMENT_ARCHIVED_ACADEMIC_YEAR_OFFERED_COURSES)}
-                />
-                <AlertDialogConfirmation
-                    className="flex items-center gap-2"
-                    type={`default`}
-                    variant={'outline'}
-                    btnIcon={<Pencil className="text-primary" size={18} />}
-                    // btnTitle=""
-                    title="Are you sure?"
-                    description={`You will be redirect to a page for updating offered courses.`}
-                    btnContinue={() => navigate(ROUTES.UPDATE_COURSE_OFFERED)}
-                />
-            </div>
+            {
+                userdataFetched &&
+                <div className="flex gap-2 items-center">
+                    {
+                        (userdata?.data?.role === 'root' || userdata?.data?.role === 'admin') &&
+                        <AlertDialogConfirmation
+                            className="flex items-center gap-2"
+                            type={`default`}
+                            variant={'outline'}
+                            btnIcon={<Plus className="text-primary" size={18} />}
+                            btnTitle="New Offered Courses"
+                            title="Are you sure?"
+                            description={`You will be redirect to a page for creating new offered courses.`}
+                            btnContinue={() => navigate(ROUTES.CREATE_COURSE_OFFERED)}
+                        />
+                    }
+                    <AlertDialogConfirmation
+                        className="flex items-center gap-2"
+                        type={`default`}
+                        variant={'outline'}
+                        btnIcon={<LibraryBig className="text-primary" size={18} />}
+                        btnTitle="Previous Courses"
+                        title="Are you sure?"
+                        description={`You will be redirect to a page for viewing the past offered courses.`}
+                        btnContinue={() => navigate(ROUTES.ENROLLMENT_ARCHIVED_ACADEMIC_YEAR_OFFERED_COURSES)}
+                    />
+                    {
+                        (userdata?.data?.role === 'root' || userdata?.data?.role === 'admin') &&
+                        <AlertDialogConfirmation
+                            className="flex items-center gap-2"
+                            type={`default`}
+                            variant={'outline'}
+                            btnIcon={<Pencil className="text-primary" size={18} />}
+                            // btnTitle=""
+                            title="Are you sure?"
+                            description={`You will be redirect to a page for updating offered courses.`}
+                            btnContinue={() => navigate(ROUTES.UPDATE_COURSE_OFFERED)}
+                        />
+                    }
+                </div>
+            }
         </div>
     )
 }
