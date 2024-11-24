@@ -40,7 +40,7 @@ export function DataTableArchivedSemesterInAcademicYear<TData, TValue>({
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
         department: false,
         program: false,
-        semesters: false
+        // semesters: false
     })
     const [rowSelection, setRowSelection] = React.useState({})
 
