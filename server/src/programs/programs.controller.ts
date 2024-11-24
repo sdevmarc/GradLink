@@ -1,9 +1,11 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, UseGuards } from '@nestjs/common'
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Req, UseGuards } from '@nestjs/common'
 import { ProgramsService } from './programs.service'
 import { IPrograms } from './programs.interface'
 import { CurriculumService } from 'src/curriculum/curriculum.service'
 import { AuditlogService } from 'src/auditlog/auditlog.service'
 import { AuthGuard } from 'src/auth/auth.guard'
+import { Request } from 'express';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('programs')
 @UseGuards(AuthGuard)
@@ -11,7 +13,8 @@ export class ProgramsController {
     constructor(
         private readonly programService: ProgramsService,
         private readonly curriculumService: CurriculumService,
-        private readonly auditlogService: AuditlogService
+        private readonly auditlogService: AuditlogService,
+        private jwtService: JwtService
     ) { }
 
     @Get()
@@ -31,18 +34,24 @@ export class ProgramsController {
 
     @Post('create')
     async createProgram(
-        @Body() { userId, code, descriptiveTitle, residency, department }: IPrograms
+        @Req() request: Request,
+        @Body() { code, descriptiveTitle, residency, department }: IPrograms
     ) {
-        try {
-            return await this.programService.insertNew({ code, descriptiveTitle, residency, department })
-            // const issuccess = await this.programService.insertNew({ code, descriptiveTitle, residency, department })
+        const token = request.cookies['access_token'];
+        if (!token) return { isAuthenticated: false }
 
-            // if (issuccess.success) {
-            //     await this.auditlogService.createLog({ userId, action: "create", description: `Program created is ${code}` })
-            //     return { success: true, message: "Program successfully created." }
-            // }
-            // await this.auditlogService.createLog({ userId, action: "create", description: 'Error' })
-            // return { success: false, message: issuccess.message }
+        try {
+            const payload = await this.jwtService.verify(token);
+            const userId = await payload.sub
+
+            const issuccess = await this.programService.insertNew({ code, descriptiveTitle, residency, department })
+
+            if (issuccess.success) {
+                await this.auditlogService.createLog({ userId, action: "program_changed", description: `Created a new program with a code of ${code}` })
+                return { success: true, message: "Program successfully created." }
+            }
+
+            return { success: false, message: issuccess.message }
 
         } catch (error) {
             throw new HttpException(
