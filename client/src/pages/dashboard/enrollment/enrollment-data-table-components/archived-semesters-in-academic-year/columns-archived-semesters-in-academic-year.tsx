@@ -104,13 +104,36 @@ export const ArchivedSemesterInAcademicYearColumns: ColumnDef<IAPIOffered>[] = [
     },
     {
         accessorKey: "semesters",
-        enableColumnFilter: true,
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Semesters" className="text-text" />
+        ),
+        cell: ({ row }) => {
+            return (
+                <div className="flex w-[60px] items-center">
+                    <span className="capitalize">
+                        {row.getValue("semesters") === 1 && 'First'}
+                        {row.getValue("semesters") === 2 && 'Second'}
+                        {row.getValue("semesters") === 3 && 'Midyear'}
+                    </span>
+                </div>
+            );
+        },
         filterFn: (row, id, value) => {
-            return value.includes(row.getValue(id))
+            return value.includes(row.getValue(id));
         },
         enableHiding: true,
         enableSorting: false,
+        enableColumnFilter: true
     },
+    // {
+    //     accessorKey: "semesters",
+    //     enableColumnFilter: true,
+    //     filterFn: (row, id, value) => {
+    //         return value.includes(row.getValue(id))
+    //     },
+    //     enableHiding: true,
+    //     enableSorting: false,
+    // },
     {
         id: "actions",
         cell: ({ row }) => {
