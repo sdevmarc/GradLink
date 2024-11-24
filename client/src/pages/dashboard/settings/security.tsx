@@ -267,15 +267,19 @@ export default function Security() {
                                                     disabled={userBeingUpdated !== null}
                                                     onChange={(e) => setValues(prev => ({ ...prev, email: e.target.value }))}
                                                 />
-                                                <div className="w-2/3">
-                                                    <Combobox
-                                                        className='w-[200px]'
-                                                        lists={roles_options || []}
-                                                        placeholder={`Select Role`}
-                                                        setValue={(item) => setValues(prev => ({ ...prev, role: item }))}
-                                                        value={values.role || ''}
-                                                    />
-                                                </div>
+                                                {
+                                                    userBeingUpdated === null &&
+                                                    <div className="w-2/3">
+                                                        <Combobox
+                                                            className='w-[200px]'
+                                                            lists={roles_options || []}
+                                                            placeholder={`Select Role`}
+                                                            setValue={(item) => setValues(prev => ({ ...prev, role: item }))}
+                                                            value={values.role || ''}
+                                                        />
+                                                    </div>
+                                                }
+
                                                 <AlertDialogConfirmation
                                                     isDialog={isdialogadduser}
                                                     setDialog={(open) => setDialogAddUser(open)}
