@@ -128,19 +128,19 @@ export default function Overview() {
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-evenly gap-2 flex-wrap">
-                            {
-                                (!tracerresponseLoading && tracerresponseFetched) && (
+                        {
+                            (!tracerresponseLoading && tracerresponseFetched) &&
+                                (tracerresponse?.data?.timeToLandJob?.length > 0 || tracerresponse?.data?.courseRelatedJob?.length > 0) ?
+                                <div className="flex items-center justify-evenly gap-2 flex-wrap">
                                     <PieChartLandJob data={tracerresponse?.data?.timeToLandJob} />
-                                )
-                            }
-
-{
-                                (!tracerresponseLoading && tracerresponseFetched) && (
                                     <PieChartRelatedJob data={tracerresponse?.data?.courseRelatedJob} />
-                                )
-                            }
-                        </div>
+                                </div>
+                                : <div className="pt-[7rem] pb-[1rem] flex justify-center items-center">
+                                    <h1 className="text-md font-medium">
+                                        No data is available.
+                                    </h1>
+                                </div>
+                        }
                     </div>
                 </div>
             </main>
