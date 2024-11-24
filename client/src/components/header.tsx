@@ -1,7 +1,9 @@
 import { NavLink, Outlet, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { UserAvatar } from '@/components/user-avatar'
 import './index.css'
-import { CircleUser, GraduationCap, House, Slash } from "lucide-react"
+import { CircleUser, House, Slash } from "lucide-react"
+import GradlinkLogoBlack from '@/assets/gradlink-logo-black.svg'
+import GradlinkLogoWhite from '@/assets/gradlink-logo-white.svg'
 
 import {
     Breadcrumb,
@@ -21,6 +23,7 @@ import { CalendarDatePicker } from './calendar-date-picker'
 import { LeftSheetModal } from './left-sheet-modal'
 import { API_USER_GET_USER } from '@/api/user'
 import { Skeleton } from './ui/skeleton'
+import { useTheme } from '@/hooks/useTheme'
 // import { Button } from './ui/button'
 
 // export function BreadcrumbWithCustomSeparator() {
@@ -91,6 +94,8 @@ const BreadCrumbs = ({ children }: { children: React.ReactNode }) => {
 }
 
 const HeaderSettings = () => {
+    const { theme } = useTheme()
+
     const { data: userdata, isLoading: userdataLoading, isFetched: userdataFetched } = useQuery({
         queryFn: () => API_USER_GET_USER(),
         queryKey: ['users']
@@ -112,7 +117,16 @@ const HeaderSettings = () => {
                                         <BreadCrumbs>
                                             <BreadcrumbItem>
                                                 <BreadcrumbPage className='text-md'>
-                                                    <GraduationCap className='text-primary' />
+                                                    {
+                                                        theme === 'light' ?
+                                                            <div className="w-[1.7rem] h-[1.7rem] flex items-center justify-center">
+                                                                <img src={GradlinkLogoBlack} alt="" className='w-full h-full object-contain' />
+                                                            </div>
+                                                            :
+                                                            <div className="w-[1.7rem] h-[1.7rem] flex items-center justify-center">
+                                                                <img src={GradlinkLogoWhite} alt="" className='w-full h-full object-contain' />
+                                                            </div>
+                                                    }
                                                 </BreadcrumbPage>
                                             </BreadcrumbItem>
                                             <BreadcrumbSeparator>
@@ -130,7 +144,16 @@ const HeaderSettings = () => {
                                         <BreadCrumbs>
                                             <BreadcrumbItem>
                                                 <BreadcrumbPage className='text-md'>
-                                                    <GraduationCap className='text-primary' />
+                                                    {
+                                                        theme === 'light' ?
+                                                            <div className="w-[1.7rem] h-[1.7rem] flex items-center justify-center">
+                                                                <img src={GradlinkLogoBlack} alt="" className='w-full h-full object-contain' />
+                                                            </div>
+                                                            :
+                                                            <div className="w-[1.7rem] h-[1.7rem] flex items-center justify-center">
+                                                                <img src={GradlinkLogoWhite} alt="" className='w-full h-full object-contain' />
+                                                            </div>
+                                                    }
                                                 </BreadcrumbPage>
                                             </BreadcrumbItem>
                                             <BreadcrumbSeparator>
@@ -185,6 +208,7 @@ const HeaderDashboard = () => {
     const [academicYear, setAcademicYear] = useState<string>('')
     const location = useLocation()
     const { sid, id } = useParams()
+    const { theme } = useTheme()
 
     const { data: userdata, isLoading: userdataLoading, isFetched: userdataFetched } = useQuery({
         queryFn: () => API_USER_GET_USER(),
@@ -227,7 +251,16 @@ const HeaderDashboard = () => {
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
                                                     <BreadcrumbPage className='text-md'>
-                                                        <GraduationCap className='text-primary' />
+                                                        {
+                                                            theme === 'light' ?
+                                                                <div className="w-[1.7rem] h-[1.7rem] flex items-center justify-center">
+                                                                    <img src={GradlinkLogoBlack} alt="" className='w-full h-full object-contain' />
+                                                                </div>
+                                                                :
+                                                                <div className="w-[1.7rem] h-[1.7rem] flex items-center justify-center">
+                                                                    <img src={GradlinkLogoWhite} alt="" className='w-full h-full object-contain' />
+                                                                </div>
+                                                        }
                                                     </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                                 <BreadcrumbSeparator>
@@ -243,7 +276,16 @@ const HeaderDashboard = () => {
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
                                                     <BreadcrumbPage className='text-md'>
-                                                        <GraduationCap className='text-primary' />
+                                                        {
+                                                            theme === 'light' ?
+                                                                <div className="w-[1.7rem] h-[1.7rem] flex items-center justify-center">
+                                                                    <img src={GradlinkLogoBlack} alt="" className='w-full h-full object-contain' />
+                                                                </div>
+                                                                :
+                                                                <div className="w-[1.7rem] h-[1.7rem] flex items-center justify-center">
+                                                                    <img src={GradlinkLogoWhite} alt="" className='w-full h-full object-contain' />
+                                                                </div>
+                                                        }
                                                     </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                                 <BreadcrumbSeparator>
@@ -267,7 +309,16 @@ const HeaderDashboard = () => {
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
                                                     <BreadcrumbPage className='text-md'>
-                                                        <GraduationCap className='text-primary' />
+                                                        {
+                                                            theme === 'light' ?
+                                                                <div className="w-[1.7rem] h-[1.7rem] flex items-center justify-center">
+                                                                    <img src={GradlinkLogoBlack} alt="" className='w-full h-full object-contain' />
+                                                                </div>
+                                                                :
+                                                                <div className="w-[1.7rem] h-[1.7rem] flex items-center justify-center">
+                                                                    <img src={GradlinkLogoWhite} alt="" className='w-full h-full object-contain' />
+                                                                </div>
+                                                        }
                                                     </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                                 <BreadcrumbSeparator>
@@ -291,7 +342,16 @@ const HeaderDashboard = () => {
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
                                                     <BreadcrumbPage className='text-md'>
-                                                        <GraduationCap className='text-primary' />
+                                                        {
+                                                            theme === 'light' ?
+                                                                <div className="w-[1.7rem] h-[1.7rem] flex items-center justify-center">
+                                                                    <img src={GradlinkLogoBlack} alt="" className='w-full h-full object-contain' />
+                                                                </div>
+                                                                :
+                                                                <div className="w-[1.7rem] h-[1.7rem] flex items-center justify-center">
+                                                                    <img src={GradlinkLogoWhite} alt="" className='w-full h-full object-contain' />
+                                                                </div>
+                                                        }
                                                     </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                                 <BreadcrumbSeparator>
@@ -315,7 +375,16 @@ const HeaderDashboard = () => {
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
                                                     <BreadcrumbPage className='text-md'>
-                                                        <GraduationCap className='text-primary' />
+                                                        {
+                                                            theme === 'light' ?
+                                                                <div className="w-[1.7rem] h-[1.7rem] flex items-center justify-center">
+                                                                    <img src={GradlinkLogoBlack} alt="" className='w-full h-full object-contain' />
+                                                                </div>
+                                                                :
+                                                                <div className="w-[1.7rem] h-[1.7rem] flex items-center justify-center">
+                                                                    <img src={GradlinkLogoWhite} alt="" className='w-full h-full object-contain' />
+                                                                </div>
+                                                        }
                                                     </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                                 <BreadcrumbSeparator>
@@ -339,7 +408,16 @@ const HeaderDashboard = () => {
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
                                                     <BreadcrumbPage className='text-md'>
-                                                        <GraduationCap className='text-primary' />
+                                                        {
+                                                            theme === 'light' ?
+                                                                <div className="w-[1.7rem] h-[1.7rem] flex items-center justify-center">
+                                                                    <img src={GradlinkLogoBlack} alt="" className='w-full h-full object-contain' />
+                                                                </div>
+                                                                :
+                                                                <div className="w-[1.7rem] h-[1.7rem] flex items-center justify-center">
+                                                                    <img src={GradlinkLogoWhite} alt="" className='w-full h-full object-contain' />
+                                                                </div>
+                                                        }
                                                     </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                                 <BreadcrumbSeparator>
@@ -363,7 +441,16 @@ const HeaderDashboard = () => {
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
                                                     <BreadcrumbPage className='text-md'>
-                                                        <GraduationCap className='text-primary' />
+                                                        {
+                                                            theme === 'light' ?
+                                                                <div className="w-[1.7rem] h-[1.7rem] flex items-center justify-center">
+                                                                    <img src={GradlinkLogoBlack} alt="" className='w-full h-full object-contain' />
+                                                                </div>
+                                                                :
+                                                                <div className="w-[1.7rem] h-[1.7rem] flex items-center justify-center">
+                                                                    <img src={GradlinkLogoWhite} alt="" className='w-full h-full object-contain' />
+                                                                </div>
+                                                        }
                                                     </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                                 <BreadcrumbSeparator>
@@ -409,7 +496,16 @@ const HeaderDashboard = () => {
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
                                                     <BreadcrumbPage className='text-md'>
-                                                        <GraduationCap className='text-primary' />
+                                                        {
+                                                            theme === 'light' ?
+                                                                <div className="w-[1.7rem] h-[1.7rem] flex items-center justify-center">
+                                                                    <img src={GradlinkLogoBlack} alt="" className='w-full h-full object-contain' />
+                                                                </div>
+                                                                :
+                                                                <div className="w-[1.7rem] h-[1.7rem] flex items-center justify-center">
+                                                                    <img src={GradlinkLogoWhite} alt="" className='w-full h-full object-contain' />
+                                                                </div>
+                                                        }
                                                     </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                                 <BreadcrumbSeparator>
@@ -433,7 +529,16 @@ const HeaderDashboard = () => {
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
                                                     <BreadcrumbPage className='text-md'>
-                                                        <GraduationCap className='text-primary' />
+                                                        {
+                                                            theme === 'light' ?
+                                                                <div className="w-[1.7rem] h-[1.7rem] flex items-center justify-center">
+                                                                    <img src={GradlinkLogoBlack} alt="" className='w-full h-full object-contain' />
+                                                                </div>
+                                                                :
+                                                                <div className="w-[1.7rem] h-[1.7rem] flex items-center justify-center">
+                                                                    <img src={GradlinkLogoWhite} alt="" className='w-full h-full object-contain' />
+                                                                </div>
+                                                        }
                                                     </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                                 <BreadcrumbSeparator>
@@ -457,7 +562,16 @@ const HeaderDashboard = () => {
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
                                                     <BreadcrumbPage className='text-md'>
-                                                        <GraduationCap className='text-primary' />
+                                                        {
+                                                            theme === 'light' ?
+                                                                <div className="w-[1.7rem] h-[1.7rem] flex items-center justify-center">
+                                                                    <img src={GradlinkLogoBlack} alt="" className='w-full h-full object-contain' />
+                                                                </div>
+                                                                :
+                                                                <div className="w-[1.7rem] h-[1.7rem] flex items-center justify-center">
+                                                                    <img src={GradlinkLogoWhite} alt="" className='w-full h-full object-contain' />
+                                                                </div>
+                                                        }
                                                     </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                                 <BreadcrumbSeparator>
@@ -481,7 +595,16 @@ const HeaderDashboard = () => {
                                             <BreadCrumbs>
                                                 <BreadcrumbItem>
                                                     <BreadcrumbPage className='text-md'>
-                                                        <GraduationCap className='text-primary' />
+                                                        {
+                                                            theme === 'light' ?
+                                                                <div className="w-[1.7rem] h-[1.7rem] flex items-center justify-center">
+                                                                    <img src={GradlinkLogoBlack} alt="" className='w-full h-full object-contain' />
+                                                                </div>
+                                                                :
+                                                                <div className="w-[1.7rem] h-[1.7rem] flex items-center justify-center">
+                                                                    <img src={GradlinkLogoWhite} alt="" className='w-full h-full object-contain' />
+                                                                </div>
+                                                        }
                                                     </BreadcrumbPage>
                                                 </BreadcrumbItem>
                                                 <BreadcrumbSeparator>
