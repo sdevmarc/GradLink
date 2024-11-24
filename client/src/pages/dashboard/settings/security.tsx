@@ -5,7 +5,7 @@ import { Sidebar, SidebarNavs } from "@/components/sidebar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { CircleArrowUp, CircleCheck, CircleX, Pencil, Send, Trash2, X } from "lucide-react"
+import { CircleArrowUp, CircleCheck, CircleX, Pencil, Send, ShieldMinus, X } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useEffect, useState } from "react"
 import { AlertDialogConfirmation } from "@/components/alert-dialog"
@@ -306,9 +306,9 @@ export default function Security() {
                                                 </TableHeader>
                                                 <TableBody>
                                                     {
-                                                        (userdataFetched && users.length > 0) &&
+                                                        (userdataFetched && users?.length > 0) &&
 
-                                                        users.map((user: IAPIUsers) => (
+                                                        users?.map((user: IAPIUsers) => (
                                                             <TableRow key={user._id}>
                                                                 <TableCell className="capitalize">{
                                                                     userBeingUpdated === user._id ?
@@ -441,7 +441,7 @@ export default function Security() {
                                                                                     disabled={false}
                                                                                     className='py-[1.1rem]'
                                                                                     variant={`destructive`}
-                                                                                    btnIcon={<Trash2 className="text-white" size={18} />}
+                                                                                    btnIcon={<ShieldMinus  className="text-white" size={18} />}
                                                                                     title="Are you sure?"
                                                                                     description={`This will set the user to inactive and cannot read, write, and execute in the system.`}
                                                                                     btnContinue={() => handleDeleteUser({ userid: user._id })
