@@ -1734,39 +1734,11 @@ export class StudentService {
     async findAllStudentsInCourseForEvaluation(courseid: string): Promise<IPromiseStudent> {
         try {
             const response = await this.studentModel.aggregate([
-                // Match students with valid status
+                // Match students with valid status and enrollment in the course with 'ongoing' or 'inc' statuses
                 {
                     $match: {
                         status: { $in: ['student'] },
-                        isenrolled: true //Dinagdag ko
-                    }
-                },
-
-                // Lookup curriculum details
-                {
-                    $lookup: {
-                        from: 'curriculums',
-                        localField: 'program',
-                        foreignField: '_id',
-                        as: 'curriculumdetails'
-                    }
-                },
-
-                // Unwind curriculum array
-                {
-                    $unwind: '$curriculumdetails'
-                },
-
-                // Match courses in curriculum
-                {
-                    $match: {
-                        'curriculumdetails.categories.courses': new mongoose.Types.ObjectId(courseid)
-                    }
-                },
-
-                // Match enrollments
-                {
-                    $match: {
+                        isenrolled: true,
                         enrollments: {
                             $elemMatch: {
                                 course: new mongoose.Types.ObjectId(courseid),
@@ -1775,7 +1747,6 @@ export class StudentService {
                         }
                     }
                 },
-
                 // Add field to get specific enrollment for the course
                 {
                     $addFields: {
@@ -1784,13 +1755,22 @@ export class StudentService {
                                 input: '$enrollments',
                                 as: 'enrollment',
                                 cond: {
-                                    $eq: ['$$enrollment.course', new mongoose.Types.ObjectId(courseid)]
+                                    $and: [
+                                        { $eq: ['$$enrollment.course', new mongoose.Types.ObjectId(courseid)] },
+                                        { $in: ['$$enrollment.ispass', ['ongoing', 'inc']] }
+                                    ]
                                 }
                             }
                         }
                     }
                 },
 
+                // Extract the 'ispass' field from 'specificEnrollment'
+                // {
+                //     $addFields: {
+                //         ispass: { $arrayElemAt: ['$specificEnrollment.ispass', 0] }
+                //     }
+                // },
                 // Project final fields
                 {
                     $project: {
@@ -1802,7 +1782,7 @@ export class StudentService {
                         firstname: 1,
                         middlename: 1,
                         email: 1,
-                        program: '$curriculumdetails.programid',
+                        program: 1,
                         ispass: {
                             $let: {
                                 vars: {
@@ -1826,6 +1806,7 @@ export class StudentService {
             throw new HttpException({ success: false, message: 'Enrollees failed to fetch.', error }, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
     async findAllStudentsInCourseForAttritionRate(courseid: string): Promise<IPromiseStudent> {
         try {
@@ -2731,16 +2712,16 @@ export class StudentService {
                 }
             }
 
-            // Name validation (prevent numbers and special characters)
-            const nameRegex = /^[a-zA-ZÀ-ÿ\s'-]+$/
-            if (!nameRegex.test(normalizedData.lastname) ||
-                !nameRegex.test(normalizedData.firstname) ||
-                (normalizedData.middlename && !nameRegex.test(normalizedData.middlename))) {
-                return {
-                    success: false,
-                    message: 'Names should only contain letters, hyphens, and apostrophes.'
-                }
-            }
+            // // Name validation (prevent numbers and special characters)
+            // const nameRegex = /^[a-zA-ZÀ-ÿ\s'-]+$/
+            // if (!nameRegex.test(normalizedData.lastname) ||
+            //     !nameRegex.test(normalizedData.firstname) ||
+            //     (normalizedData.middlename && !nameRegex.test(normalizedData.middlename))) {
+            //     return {
+            //         success: false,
+            //         message: 'Names should only contain letters, hyphens, and apostrophes.'
+            //     }
+            // }
 
             // ID Number validation and duplicate check
             const existingIdNumber = await this.studentModel.findOne({
@@ -3085,15 +3066,27 @@ export class StudentService {
 
     async discontinueStudent({ id, assessmentForm }: Partial<IStudent>) {
         try {
-            const uploadimage = await this.cloudinaryService.uploadFile(assessmentForm)
-            if (!uploadimage) return { success: false, message: 'Header failed to update.' }
-            const { secure_url } = uploadimage
+            // Upload the assessment form if provided
+            let secure_url;
+            if (assessmentForm) {
+                const uploadimage = await this.cloudinaryService.uploadFile(assessmentForm);
+                if (!uploadimage) return { success: false, message: 'Assessment form failed to upload.' };
+                secure_url = uploadimage.secure_url;
+            }
 
-            // First, get the student with populated enrollments and course references
+            // Get the student with populated enrollments and curriculum details
             const student = await this.studentModel.findById(id)
                 .populate({
                     path: 'enrollments.course',
                     model: 'Course'
+                })
+                .populate({
+                    path: 'program',
+                    model: 'Curriculum',
+                    populate: {
+                        path: 'categories.courses',
+                        model: 'Course'
+                    }
                 });
 
             if (!student) {
@@ -3106,25 +3099,10 @@ export class StudentService {
                 );
             }
 
-            // Find the latest academic year by looking up the courses in the offered collection
-            const latestOffered = await this.offeredModel.findOne({
-                courses: {
-                    $in: student.enrollments.map(enrollment => enrollment.course)
-                }
-            }).sort({ 'academicYear.startDate': -1 });
-
-            if (!latestOffered) {
-                throw new HttpException(
-                    {
-                        success: false,
-                        message: 'No academic year found for student enrollments.',
-                    },
-                    HttpStatus.NOT_FOUND
-                );
-            }
-
-            // Get all course IDs from the latest academic year
-            const latestYearCourseIds = latestOffered.courses.map(course => course.toString());
+            // Extract all course IDs from the student's curriculum
+            const curriculumCourseIds = (student.program as ICurriculum).categories
+                .flatMap(category => category.courses)
+                .map(course => course);
 
             // Create update object based on whether assessmentForm is provided
             const updateObject: any = {
@@ -3132,8 +3110,8 @@ export class StudentService {
                 'enrollments.$[elem].ispass': 'discontinue'
             };
 
-            // Only include assessmentForm in the update if it's provided
-            if (assessmentForm !== undefined) {
+            // Include assessmentForm in the update if it's provided
+            if (assessmentForm) {
                 updateObject.assessmentForm = secure_url;
             }
 
@@ -3146,8 +3124,8 @@ export class StudentService {
                 {
                     arrayFilters: [
                         {
-                            'elem.course': { $in: latestYearCourseIds },
-                            'elem.ispass': 'ongoing' // Only update ongoing courses
+                            'elem.course': { $in: curriculumCourseIds },
+                            'elem.ispass': { $in: ['ongoing', 'inc'] }
                         }
                     ],
                     new: true
@@ -3198,14 +3176,9 @@ export class StudentService {
                 );
             }
 
-            // Extract all course IDs from the student's curriculum
-            const curriculumCourseIds = (student.program as ICurriculum).categories
-                .flatMap(category => category.courses)
-                .map(course => course.toString());
-
-            // Filter enrollments to keep only those NOT in the curriculum
+            // Filter enrollments to remove those with 'ispass' status 'inc' or 'ongoing'
             const updatedEnrollments = student.enrollments.filter(enrollment =>
-                !curriculumCourseIds.includes(enrollment.course.toString())
+                !['inc', 'ongoing', 'discontinue'].includes(enrollment.ispass)
             );
 
             // Update the student document with filtered enrollments and set isenrolled to true
