@@ -77,6 +77,7 @@ export interface IAPIStudents {
     coordinates?: ICoordinates
     dateSent?: string
     currentResidency?: string
+    assessmentForm?: string
 }
 
 export interface IEvaluation {
