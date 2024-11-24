@@ -128,54 +128,55 @@ export default function EvaluateStudent() {
                 }}
             />
 
+            {isLoading ? <Loading />
+                :
+                <div className="flex flex-col min-h-screen items-center">
+                    <div className="w-full max-w-[90rem] flex flex-col pb-[20rem]">
+                        <aside className="px-4 pb-4 pt-[8rem]">
+                            <HeadSection>
+                                <BackHeadSection />
+                                <SubHeadSectionDetails
+                                    title={`Evaluate Students`}
+                                    description="A tool for evaluating students to the selected course."
+                                />
+                            </HeadSection>
+                        </aside>
+                        <main className="flex justify-end">
+                            <MainTable>
+                                <div className="flex flex-col border gap-4 rounded-md">
+                                    <div className="w-full px-4 py-3 border-b">
+                                        <h1 className='text-text font-semibold text-lg'>
+                                            {coursename}
+                                        </h1>
+                                    </div>
+                                    <div className="px-4 gap-4 flex flex-col">
+                                        {
+                                            studentFetched &&
+                                            <DataTableEvaluateStudent
+                                                columns={EvaluateStudentColumns(handleEvaluationChange, evaluations)}
+                                                data={students?.data || []}
+                                            />
+                                        }
 
-            <div className="flex flex-col min-h-screen items-center">
-                {isLoading && <Loading />}
-                <div className="w-full max-w-[90rem] flex flex-col pb-[20rem]">
-                    <aside className="px-4 pb-4 pt-[8rem]">
-                        <HeadSection>
-                            <BackHeadSection />
-                            <SubHeadSectionDetails
-                                title={`Evaluate Students`}
-                                description="A tool for evaluating students to the selected course."
-                            />
-                        </HeadSection>
-                    </aside>
-                    <main className="flex justify-end">
-                        <MainTable>
-                            <div className="flex flex-col border gap-4 rounded-md">
-                                <div className="w-full px-4 py-3 border-b">
-                                    <h1 className='text-text font-semibold text-lg'>
-                                        {coursename}
-                                    </h1>
-                                </div>
-                                <div className="px-4 gap-4 flex flex-col">
-                                    {
-                                        studentFetched &&
-                                        <DataTableEvaluateStudent
-                                            columns={EvaluateStudentColumns(handleEvaluationChange, evaluations)}
-                                            data={students?.data || []}
+                                        <AlertDialogConfirmation
+                                            isDialog={dialogsubmit}
+                                            setDialog={(open) => setDialogSubmit(open)}
+                                            type={`default`}
+                                            disabled={isLoading}
+                                            className='w-full my-3 py-5'
+                                            variant={'default'}
+                                            btnTitle="Evaluate student(s)"
+                                            title="Are you sure?"
+                                            description={`This will create a new set of courses offered and replace the current courses offered.`}
+                                            btnContinue={handleSubmit}
                                         />
-                                    }
-
-                                    <AlertDialogConfirmation
-                                        isDialog={dialogsubmit}
-                                        setDialog={(open) => setDialogSubmit(open)}
-                                        type={`default`}
-                                        disabled={isLoading}
-                                        className='w-full my-3 py-5'
-                                        variant={'default'}
-                                        btnTitle="Evaluate student(s)"
-                                        title="Are you sure?"
-                                        description={`This will create a new set of courses offered and replace the current courses offered.`}
-                                        btnContinue={handleSubmit}
-                                    />
+                                    </div>
                                 </div>
-                            </div>
-                        </MainTable>
-                    </main>
+                            </MainTable>
+                        </main>
+                    </div>
                 </div>
-            </div>
+            }
         </>
     )
 }
