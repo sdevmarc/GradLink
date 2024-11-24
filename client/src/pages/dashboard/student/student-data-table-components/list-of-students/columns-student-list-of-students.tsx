@@ -14,7 +14,6 @@ import { CircleCheck, CircleDashed, CircleUserRound, CircleX, Loader, Mail, Shie
 import { BookOpen, GraduationCap } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { AlertDialogConfirmation } from "@/components/alert-dialog"
-import { API_FINDONE_SETTINGS } from "@/api/settings"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { API_STUDENT_ACTIVATE_STUDENT, API_STUDENT_DISCONTINUE_STUDENT } from "@/api/student"
 
@@ -248,10 +247,10 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                 navigate(`/student/details/${base64ID}`)
             }
 
-            const { data: settings, isLoading: settingsLoading, isFetched: settingsFetched } = useQuery({
-                queryFn: () => API_FINDONE_SETTINGS(),
-                queryKey: ['settings']
-            })
+            // const { data: settings, isLoading: settingsLoading, isFetched: settingsFetched } = useQuery({
+            //     queryFn: () => API_FINDONE_SETTINGS(),
+            //     queryKey: ['settings']
+            // })
 
             const handleViewDetails = () => {
                 setIsOpen(true)
@@ -297,6 +296,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                 onError: () => {
                     setDiscontinue(false)
                     setDialogSubmit(false)
+                    return
                 }
             })
 
@@ -304,14 +304,14 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                 await activateStudent({ id: values.id })
             }
 
-            const isLoading = settingsLoading || disconLoading || activatestudentLoading || userdataLoading
+            const isLoading = disconLoading || activatestudentLoading || userdataLoading
 
             return (
                 <>
                     {isLoading && <div>Loading...</div>}
 
                     {
-                        (!settingsLoading && settingsFetched) &&
+                        // (!settingsLoading && settingsFetched) &&
                         <div className="flex justify-end gap-2">
                             {
                                 userdataFetched &&
@@ -575,9 +575,8 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                             </div>
                                                             <div className="flex flex-col gap-2">
                                                                 {
-                                                                    !settings?.data?.isenroll &&
-                                                                    isenrolled &&
-                                                                    !isDiscontinue &&
+                                                                    // !settings?.data?.isenroll &&
+                                                                    (isenrolled && !isDiscontinue) &&
                                                                     <AlertDialogConfirmation
                                                                         isDialog={dialogsubmit}
                                                                         disabled={disconLoading}
@@ -585,7 +584,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                         className="flex items-center gap-2"
                                                                         type={`default`}
                                                                         variant={`${!isDiscontinue ? 'destructive' : 'default'}`}
-                                                                        btnIcon={<UserPen className="text-primary-foreground" size={18} />}
+                                                                        btnIcon={<UserPen className="text-white" size={18} />}
                                                                         btnTitle={'Mark as Discontinue'}
                                                                         title="Are you sure?"
                                                                         description={`${lastname}, ${firstname} ${middlename} will be mark as a dicontinuing student, and its courses this semester will be mark as drop.`}
@@ -659,6 +658,7 @@ const DragDropImage = ({ isdropout, id, isDiscontinue, isdiscontinueLoading, isD
             isDiscontinue(false)
             isDialogSubmit(false)
             setDialogSubmit(false)
+            return
         }
     })
 
@@ -679,11 +679,12 @@ const DragDropImage = ({ isdropout, id, isDiscontinue, isdiscontinueLoading, isD
     }
 
     const handleDiscontinueStudent = async () => {
+        // isDialogSubmit(false)
+        // setDialogSubmit(false)
         if (!image) return;
         const formData = new FormData();
         formData.append("id", id);
         formData.append("assessmentForm", image); // Attach the file directly
-        isDialogSubmit(false)
         await discontinueStudent(formData);
     };
 
@@ -740,7 +741,7 @@ const DragDropImage = ({ isdropout, id, isDiscontinue, isdiscontinueLoading, isD
                     className="flex items-center gap-2"
                     type={`default`}
                     variant={'default'}
-                    btnIcon={<UserPen className="text-primary-foreground" size={18} />}
+                    btnIcon={<UserPen className="text-white" size={18} />}
                     btnTitle={`${!isDiscontinue ? 'Mark as Discontinue' : 'Submit Assessment Form'}`}
                     title="Are you sure?"
                     description={`The student will be mark as a dicontinuing student, and its courses this semester will be mark as drop.`}
