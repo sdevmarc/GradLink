@@ -1625,6 +1625,7 @@ export class StudentService {
                         totalOfUnitsEnrolled: 1,
                         totalOfUnitsEarned: 1,
                         enrolledCourses: 1,
+                        assessmentForm: 1,
                         status: 1,
                         // startDateParts: 1,
                         // currentDateParts: 1,
@@ -3187,7 +3188,8 @@ export class StudentService {
                 {
                     $set: {
                         enrollments: updatedEnrollments,
-                        isenrolled: true
+                        isenrolled: true,
+                        assessmentForm: null
                     }
                 },
                 { new: true }
