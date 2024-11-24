@@ -31,7 +31,7 @@ export function DataTableToolbarListOfStudent<TData>({
     const isFiltered = table.getState().columnFilters.length > 0;
     const navigate = useNavigate()
     const [formattedprogram, setFormattedProgram] = useState<ProgramOption[]>([]);
-    const [filteredPrograms, setFilteredPrograms] = useState<ProgramOption[]>([]);
+    // const [filteredPrograms, setFilteredPrograms] = useState<ProgramOption[]>([]);
     // const [dateRange, setDateRange] = useState<{ from: Date; to: Date } | null>(null);
     // const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({
     //     from: new Date(new Date().getFullYear(), 0, 1),
@@ -74,34 +74,34 @@ export function DataTableToolbarListOfStudent<TData>({
             })
 
             setFormattedProgram(formatprogram)
-            setFilteredPrograms(formatprogram)
+            // setFilteredPrograms(formatprogram)
         }
     }, [program])
 
-    useEffect(() => {
-        const selectedDepartment = table.getColumn("department")?.getFilterValue() as string[];
+    // useEffect(() => {
+    //     const selectedDepartment = table.getColumn("department")?.getFilterValue() as string[];
 
-        if (selectedDepartment && selectedDepartment.length > 0) {
-            const filtered = formattedprogram.filter((prog: any) =>
-                selectedDepartment.includes(prog.department)
-            );
-            setFilteredPrograms(filtered);
+    //     if (selectedDepartment && selectedDepartment.length > 0) {
+    //         const filtered = formattedprogram.filter((prog: any) =>
+    //             selectedDepartment.includes(prog.department)
+    //         );
+    //         setFilteredPrograms(filtered);
 
-            // Clear program filter if selected program is not in filtered list
-            const currentProgramFilter = table.getColumn("program")?.getFilterValue() as string[];
-            if (currentProgramFilter && currentProgramFilter.length > 0) {
-                const validPrograms = filtered.map(p => p.value);
-                const newProgramFilter = currentProgramFilter.filter(p =>
-                    validPrograms.includes(p)
-                );
-                if (newProgramFilter.length !== currentProgramFilter.length) {
-                    table.getColumn("program")?.setFilterValue(newProgramFilter);
-                }
-            }
-        } else {
-            setFilteredPrograms(formattedprogram);
-        }
-    }, [table.getColumn("department")?.getFilterValue()]);
+    //         // Clear program filter if selected program is not in filtered list
+    //         const currentProgramFilter = table.getColumn("program")?.getFilterValue() as string[];
+    //         if (currentProgramFilter && currentProgramFilter.length > 0) {
+    //             const validPrograms = filtered.map(p => p.value);
+    //             const newProgramFilter = currentProgramFilter.filter(p =>
+    //                 validPrograms.includes(p)
+    //             );
+    //             if (newProgramFilter.length !== currentProgramFilter.length) {
+    //                 table.getColumn("program")?.setFilterValue(newProgramFilter);
+    //             }
+    //         }
+    //     } else {
+    //         setFilteredPrograms(formattedprogram);
+    //     }
+    // }, [table.getColumn("department")?.getFilterValue()]);
 
     return (
         <div className="flex flex-wrap items-center justify-between">
@@ -125,7 +125,7 @@ export function DataTableToolbarListOfStudent<TData>({
                     <DataTableFacetedFilter
                         column={table.getColumn("program")}
                         title="Program"
-                        options={filteredPrograms}
+                        options={formattedprogram}
                     />
                 )}
                 {/* <CalendarDatePicker
