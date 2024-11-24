@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common'
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common'
 import { StudentService } from './student.service'
 import { IPromiseStudent, IRequestStudent, IStudent } from './student.interface'
 import { FormsService } from 'src/forms/forms.service'
@@ -7,6 +7,8 @@ import { AuditlogService } from 'src/auditlog/auditlog.service'
 import { CoursesService } from 'src/courses/courses.service'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { AuthGuard } from 'src/auth/auth.guard'
+import { Request } from 'express';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('student')
 @UseGuards(AuthGuard)
@@ -16,7 +18,8 @@ export class StudentController {
         private readonly formService: FormsService,
         private readonly constantsService: ConstantsService,
         private readonly auditlogService: AuditlogService,
-        private readonly coursesService: CoursesService
+        private readonly coursesService: CoursesService,
+        private jwtService: JwtService
     ) { }
 
     @Get()
@@ -81,17 +84,25 @@ export class StudentController {
 
     @Post('new-student')
     async createStudentEnrollee(
+        @Req() request: Request,
         @Body() { idNumber, lastname, firstname, middlename, email, program, courses, undergraduateInformation, achievements }: IStudent
     ) {
+
+        const token = request.cookies['access_token'];
+        if (!token) return { isAuthenticated: false }
+
         try {
-            return await this.studentService.createEnrollee({ idNumber, lastname, firstname, middlename, email, program, courses, undergraduateInformation, achievements })
-            // const issuccess = await this.studentService.createEnrollee({ idNumber, lastname, firstname, middlename, email, program, courses, undergraduateInformation, achievements })
-            // if (issuccess.success) {
-            //     await this.auditlogService.createLog({ userId, action: "create", description: `Student created w/ ID no: ${idNumber}` })
-            //     return { success: true, message: "Student successfully created." }
-            // }
+            const payload = await this.jwtService.verify(token);
+            const userId = await payload.sub
+
+            // return await this.studentService.createEnrollee({ idNumber, lastname, firstname, middlename, email, program, courses, undergraduateInformation, achievements })
+            const issuccess = await this.studentService.createEnrollee({ idNumber, lastname, firstname, middlename, email, program, courses, undergraduateInformation, achievements })
+            if (issuccess.success) {
+                await this.auditlogService.createLog({ userId, action: "student_changed", description: `Student created w/ ID no: ${idNumber}` })
+                return { success: true, message: "Student successfully created." }
+            }
             // await this.auditlogService.createLog({ userId, action: "create", description: 'Error' })
-            // return { success: false, message: issuccess.message }
+            return { success: false, message: issuccess.message }
 
         } catch (error) {
             throw new HttpException(
@@ -103,15 +114,26 @@ export class StudentController {
 
     @Post('enroll-student')
     async enrollStudentEnrollee(
-        @Body() { userId, course, id }: IRequestStudent
+        @Req() request: Request,
+        @Body() { course, id }: IRequestStudent
     ) {
+        const token = request.cookies['access_token'];
+        if (!token) return { isAuthenticated: false }
+
         try {
-            return await this.studentService.enrollStudent({ course, id })
-            // const SelectedCourse = await this.coursesService.findOneCourse({ course })
-            // const issuccess = await this.studentService.enrollStudent({ course, id })
-            // if (issuccess.success) {
-            //     await this.auditlogService.createLog({ userId, action: "Enroll", description: `${id.length} student/s was enrolled in ${SelectedCourse.data.descriptiveTitle}` })
-            // }
+            const payload = await this.jwtService.verify(token);
+            const userId = await payload.sub
+
+            // return await this.studentService.enrollStudent({ course, id })
+            const SelectedCourse = await this.coursesService.findOneCourse({ course })
+            const issuccess = await this.studentService.enrollStudent({ course, id })
+
+            if (issuccess.success) {
+                await this.auditlogService.createLog({ userId, action: "student_changed", description: `${id.length} student/s was enrolled in ${SelectedCourse.data.descriptiveTitle}` })
+                return { success: true, message: "Student successfully enrolled." }
+            }
+
+            return { success: true, message: "Student failed to enroll." }
 
         } catch (error) {
             throw new HttpException(
@@ -119,9 +141,6 @@ export class StudentController {
                 HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
-
-        //console.log(SelectedCourse.data.descriptiveTitle)
-        return await this.studentService.enrollStudent({ course, id })
     }
 
 
