@@ -172,7 +172,7 @@ export const CurriculumColumns: ColumnDef<ICurriculum>[] = [
                                                         {
                                                             categories?.map((item, i) => (
                                                                 <div key={i} className="flex flex-col">
-                                                                    <h3 className="font-medium text-md">
+                                                                    <h3 className="font-medium text-md uppercase">
                                                                         {item.categoryName}
                                                                     </h3>
                                                                     {
