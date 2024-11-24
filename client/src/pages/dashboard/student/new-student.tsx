@@ -317,8 +317,8 @@ const CreateForm = () => {
                                     </div>
                                     <div className="flex items-center justify-start">
                                         <div className="flex flex-col px-4 gap-1">
-                                            <h1 className="text-md font-medium">
-                                                Middle Name (Optional)
+                                            <h1 className="text-md font-medium flex items-center gap-2">
+                                                Middle Name <span className='text-sm'>(Optional)</span>
                                             </h1>
                                             <Input
                                                 disabled={isLoading}
@@ -471,8 +471,8 @@ const CreateForm = () => {
                                         </div>
                                         <div className="flex items-center justify-start">
                                             <div className="flex flex-col mx-4 gap-1">
-                                                <h1 className="text-mr font-medium">
-                                                    Honors/Awards Received
+                                                <h1 className="text-md font-medium flex items-center gap-2">
+                                                    Honors/Awards Received <span className='text-sm'>(Optional)</span>
                                                 </h1>
                                                 <Input
                                                     disabled={isLoading}
@@ -486,8 +486,8 @@ const CreateForm = () => {
                                                 />
                                             </div>
                                             <div className="flex flex-col mr-4 gap-1">
-                                                <h1 className="text-md font-medium">
-                                                    Professional Exam Passed
+                                                <h1 className="text-md font-medium flex items-center gap-2">
+                                                    Professional Exam Passed <span className='text-sm'>(Optional)</span>
                                                 </h1>
                                                 <Input
                                                     disabled={isLoading}
@@ -504,8 +504,8 @@ const CreateForm = () => {
                                         </div>
                                         <div className="flex items-center justify-start">
                                             <div className="flex flex-col mx-4 gap-1">
-                                                <h1 className="text-mr font-medium">
-                                                    Professional Exam Date
+                                                <h1 className="text-md font-medium flex items-center gap-2">
+                                                    Professional Exam Date <span className='text-sm'>(Optional)</span>
                                                 </h1>
                                                 <Input
                                                     disabled={isLoading}
@@ -519,8 +519,8 @@ const CreateForm = () => {
                                                 />
                                             </div>
                                             <div className="flex flex-col mr-4 gap-1">
-                                                <h1 className="text-md font-medium">
-                                                    Professional Exam Rating
+                                                <h1 className="text-md font-medium flex items-center gap-2">
+                                                    Professional Exam Rating<span className='text-sm'>(Optional)</span>
                                                 </h1>
                                                 <Input
                                                     disabled={isLoading}
