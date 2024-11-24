@@ -13,18 +13,23 @@ export default function Enrollment() {
         queryKey: ['courses-offered']
     })
 
+    const getSemesterText = (semester?: number) => {
+        const semesters = {
+            1: 'First',
+            2: 'Second',
+            3: 'Third'
+        }
+        return semester ? `for the ${semesters[semester as keyof typeof semesters]} Semester.` : ''
+    }
+
     return (
         <div className="flex flex-col min-h-screen items-center">
             <div className="w-full max-w-[90rem] flex flex-col pb-[20rem]">
                 <aside className="px-4 pb-4 pt-[8rem]">
                     <HeadSection>
                         <SubHeadSectionDetails
-                            title="Offered Courses"
-                            description={`Here's a list of offered courses ${courses?.data[0]?.semesters === 1 ? 'for the First semester.' :
-                                courses?.data[0]?.semesters === 2 ? 'for the Second semester.' :
-                                    courses?.data[0]?.semesters === 3 ? 'for the Third semester.' :
-                                        ''
-                                }.`}
+                            title={`Offered Courses ${getSemesterText(courses?.data[0]?.semesters)}`}
+                            description={`Here's a list of offered courses.`}
                         />
                     </HeadSection>
                 </aside>
