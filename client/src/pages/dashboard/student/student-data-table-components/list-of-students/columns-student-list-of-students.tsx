@@ -8,7 +8,7 @@ import { DataTableColumnHeader } from "@/components/data-table-components/data-t
 import { IAPIStudents } from "@/interface/student.interface"
 import { Button } from "@/components/ui/button"
 import { SheetModal } from "@/components/sheet-modal"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { CircleCheck, CircleDashed, CircleUserRound, CircleX, Loader, Mail, ShieldCheck, TableOfContents, Upload, UserPen, X } from "lucide-react"
 import { BookOpen, GraduationCap } from "lucide-react"
@@ -304,21 +304,18 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                 await activateStudent({ id: values.id })
             }
 
-            const isLoading = disconLoading || activatestudentLoading || userdataLoading
+            const isLoading = userdataLoading || disconLoading || activatestudentLoading
 
             return (
                 <>
-                    {isLoading && <div>Loading...</div>}
-
                     {
-                        // (!settingsLoading && settingsFetched) &&
+                        userdataFetched &&
                         <div className="flex justify-end gap-2">
                             {
-                                userdataFetched &&
                                 (userdata?.data?.role === 'root' || userdata?.data?.role === 'admin') &&
                                 <AlertDialogConfirmation
                                     isDialog={dialogupdate}
-                                    // disabled={disconLoading}
+                                    disabled={isLoading}
                                     setDialog={(e) => setDialogUpdate(e)}
                                     className="flex items-center gap-2"
                                     type={`default`}
@@ -360,13 +357,13 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                             </span>
                                                                         </CardTitle>
                                                                         {
-                                                                            !isenrolled &&
+                                                                            (userdataFetched && !isenrolled) &&
                                                                             <AlertDialogConfirmation
                                                                                 isDialog={dialogsubmit}
                                                                                 setDialog={(e) => setDialogSubmit(e)}
                                                                                 className="flex items-center gap-2"
                                                                                 type={`default`}
-                                                                                disabled={activatestudentLoading}
+                                                                                disabled={isLoading}
                                                                                 variant={'outline'}
                                                                                 btnIcon={<ShieldCheck className="text-primary" size={18} />}
                                                                                 btnTitle="Re-Activate Student"
@@ -535,7 +532,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                                             item.status === 'pass' &&
                                                                                             <div className="flex items-center gap-2">
                                                                                                 <CircleCheck className="text-primary" size={18} />
-                                                                                                PASSED
+                                                                                                Passed
                                                                                             </div>
                                                                                         }
                                                                                         {
@@ -549,7 +546,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                                             item.status === 'inc' &&
                                                                                             <div className="flex items-center gap-2">
                                                                                                 <CircleX className="text-primary" size={18} />
-                                                                                                INCOMPLETE
+                                                                                                Incomplete
                                                                                             </div>
                                                                                         }
                                                                                         {
@@ -557,6 +554,13 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                                             <div className="flex items-center gap-2">
                                                                                                 <CircleX className="text-primary" size={18} />
                                                                                                 Discontinued
+                                                                                            </div>
+                                                                                        }
+                                                                                        {
+                                                                                            item.status === 'drop' &&
+                                                                                            <div className="flex items-center gap-2">
+                                                                                                <CircleX className="text-primary" size={18} />
+                                                                                                Dropped
                                                                                             </div>
                                                                                         }
                                                                                         {
@@ -579,7 +583,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                     (isenrolled && !isDiscontinue) &&
                                                                     <AlertDialogConfirmation
                                                                         isDialog={dialogsubmit}
-                                                                        disabled={disconLoading}
+                                                                        disabled={isLoading}
                                                                         setDialog={(e) => setDialogSubmit(e)}
                                                                         className="flex items-center gap-2"
                                                                         type={`default`}
@@ -597,7 +601,6 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                 {isDiscontinue && <DragDropImage
                                                                     id={_id || ''}
                                                                     isDiscontinue={(e) => setDiscontinue(e)}
-                                                                    isdropout={(e) => setDiscontinue(e)}
                                                                     isdiscontinueLoading={(e) => setDisconLoading(e)}
                                                                     isDialogSubmit={(e) => setDialogSubmit(e)}
                                                                 />}
@@ -623,7 +626,7 @@ import { useDropzone } from "react-dropzone"
 import { useNavigate } from "react-router-dom"
 import { API_USER_GET_USER } from "@/api/user"
 
-const DragDropImage = ({ isdropout, id, isDiscontinue, isdiscontinueLoading, isDialogSubmit }: { isdropout: (e: boolean) => void, id: string, isDiscontinue: (e: boolean) => void, isdiscontinueLoading: (e: boolean) => void, isDialogSubmit: (e: boolean) => void }) => {
+const DragDropImage = ({ id, isDiscontinue, isdiscontinueLoading, isDialogSubmit }: { id: string, isDiscontinue: (e: boolean) => void, isdiscontinueLoading: (e: boolean) => void, isDialogSubmit: (e: boolean) => void }) => {
     const queryClient = useQueryClient()
     const [image, setImage] = useState<File | null>(null)
     const [dialogsubmit, setDialogSubmit] = useState<boolean>(false)
@@ -634,6 +637,7 @@ const DragDropImage = ({ isdropout, id, isDiscontinue, isdiscontinueLoading, isD
             if (!data.success) {
                 isDialogSubmit(false)
                 isDiscontinue(false)
+                isdiscontinueLoading(false)
                 setDialogSubmit(false)
                 window.scrollTo({
                     top: 0,
@@ -649,6 +653,7 @@ const DragDropImage = ({ isdropout, id, isDiscontinue, isdiscontinueLoading, isD
                 })
                 isDialogSubmit(false)
                 isDiscontinue(false)
+                isdiscontinueLoading(false)
                 setDialogSubmit(false)
                 setImage(null)
                 return
@@ -658,6 +663,7 @@ const DragDropImage = ({ isdropout, id, isDiscontinue, isdiscontinueLoading, isD
             isDiscontinue(false)
             isDialogSubmit(false)
             setDialogSubmit(false)
+            isdiscontinueLoading(false)
             return
         }
     })
@@ -687,10 +693,6 @@ const DragDropImage = ({ isdropout, id, isDiscontinue, isdiscontinueLoading, isD
         formData.append("assessmentForm", image); // Attach the file directly
         await discontinueStudent(formData);
     };
-
-    useEffect(() => {
-        isdiscontinueLoading(discontinueStudentLoading)
-    }, [image, discontinueStudentLoading])
 
     return (
         <div className=" flex flex-col items-center justify-center p-4 gap-4">
@@ -751,7 +753,6 @@ const DragDropImage = ({ isdropout, id, isDiscontinue, isdiscontinueLoading, isD
                     (e) => {
                         e.stopPropagation()
                         removeImage()
-                        isdropout(false)
                     }
                 } variant={`outline`} size={`sm`} className="flex items-center gap-4" type="button">
                     <X className='text-primary' size={18} /> Cancel Dropout Form
