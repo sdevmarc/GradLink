@@ -12,6 +12,13 @@ export class SettingsService {
     async findAll(): Promise<IPromiseSettings> {
         try {
             const response = await this.SettingsModel.findOne({ index: 1 })
+
+            if (!response) {
+                await this.SettingsModel.findOneAndUpdate({ index: 1 }, { isenroll: true }, { new: true, upsert: true })
+
+                const issettings = await this.SettingsModel.findOne({ index: 1 })
+                return { success: true, message: 'Settings fetched successfully.', data: issettings }
+            }
             return { success: true, message: 'Settings fetched successfully.', data: response }
         } catch (error) {
             throw new HttpException(
