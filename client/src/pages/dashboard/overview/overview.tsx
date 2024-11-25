@@ -39,9 +39,9 @@ export default function Overview() {
         queryKey: ['analytics', { department, program, academicYear: yearGraduated }]
     })
 
-    useEffect(() => {
-        if (tracerresponseFetched) { console.log(tracerresponse?.data) }
-    }, [tracerresponse])
+    // useEffect(() => {
+    //     if (tracerresponseFetched) { console.log(tracerresponse?.data) }
+    // }, [tracerresponse])
 
     useEffect(() => {
         if (programsFetched) {
