@@ -156,7 +156,7 @@ export default function Security() {
                 })
                 setAlertDialogState({ success: true, show: true, title: "Yay, success! 🎉", description: data.message })
                 isactivate ? setActivate(false) : setDialogDeleteUser(false)
-                setUpdateValues(({ userid: '', email: '', name: '', role: '' }))
+                setUpdateValues(({ userid: '', email: '', name: '', role: '', department: '' }))
                 return
             }
         },
@@ -191,7 +191,7 @@ export default function Security() {
     }
 
     const handleUpdateUser = async () => {
-        const { userid, email, name, role } = updatevalue
+        const { userid, email, name, role, department } = updatevalue
 
         const loweremail = (email ?? '').replace(/\s+/g, '').toLowerCase()
         const nospacename = (name ?? '').replace(/\s+/g, '')
@@ -203,7 +203,7 @@ export default function Security() {
             return
         }
 
-        await updateUser({ userid, email, name, role })
+        await updateUser({ userid, email, name, role, department })
         setUpdateUser(false)
         setUserBeingUpdated(null)
         return
