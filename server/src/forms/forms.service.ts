@@ -228,7 +228,7 @@ export class FormsService {
 
             // Convert the map values back to an array
             const mappedResponses = Array.from(latestResponseMap.values());
-
+            console.log(mappedResponses)
             return mappedResponses;
         } catch (error) {
             console.error('Error mapping questions to answers:', error);
