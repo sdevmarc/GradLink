@@ -50,9 +50,9 @@ export class UsersService {
             const response = await this.UserModel.findById(id)
             if (!response) return { success: false, message: 'User do not exists.' }
 
-            const { _id, name, email, role, isactive } = response
+            const { _id, name, email, role, isactive, department } = response
 
-            return { success: true, message: 'User retrieved successfully.', data: { _id, name, email, role, isactive } }
+            return { success: true, message: 'User retrieved successfully.', data: { _id, name, email, role, isactive, department } }
         } catch (error) {
             throw new HttpException({ success: false, message: 'User failed to retrieved.' }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
