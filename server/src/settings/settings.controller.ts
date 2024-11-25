@@ -9,7 +9,7 @@ export class SettingsController {
 
     @Get()
     async findAllSystemSettings() {
-        return this.settingsService.findAll()
+        return await this.settingsService.findAll()
     }
 
     @Post('update-settings')
