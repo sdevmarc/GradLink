@@ -23,7 +23,8 @@ export const UsersSchema = new mongoose.Schema({
     department: {
         type: String,
         enum: ['seait', 'steh', 'shans', 'sab'],
-        default: null
+        default: null,
+        required: true
     },
     isactive: {
         type: Boolean,
