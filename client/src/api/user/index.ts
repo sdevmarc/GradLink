@@ -73,9 +73,9 @@ export const API_USER_CREATE_USER = async ({ email, name, role }: IAPIUsers) => 
     return response.data
 }
 
-export const API_USER_UPDATE_USER = async ({ userid, email, name, role }: IAPIUsers) => {
+export const API_USER_UPDATE_USER = async ({ userid, email, name, role, department }: IAPIUsers) => {
     const response = await axios.post(`${HOST}/users/update`,
-        { id: userid, email, name, role },
+        { id: userid, email, name, role, department },
         { withCredentials: true }
     )
     return response.data
