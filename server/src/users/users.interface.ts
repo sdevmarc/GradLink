@@ -6,6 +6,7 @@ export interface IUsers {
     isactive?: boolean
     name?: string
     otp?: number
+    department?: string
 }
 
 export interface IPromiseUser {
