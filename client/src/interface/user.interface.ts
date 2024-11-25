@@ -6,4 +6,5 @@ export interface IAPIUsers {
     password?: string
     role?: string
     isactive?: boolean
+    department?: string
 }
