@@ -125,6 +125,7 @@ const CreateForm = () => {
             setInsertSuccess(false)
             setDialogSubmit(false)
             setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: data.message })
+            return
         }
     })
 
