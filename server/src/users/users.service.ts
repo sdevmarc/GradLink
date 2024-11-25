@@ -100,7 +100,7 @@ export class UsersService {
         }
     }
 
-    async updateUser({ id, name, email, role }: IUsers): Promise<IPromiseUser> {
+    async updateUser({ id, name, email, role, department }: IUsers): Promise<IPromiseUser> {
         try {
             const isemail = await this.UserModel.findOne({ email })
             if (isemail) return { success: false, message: 'Email already exists.' }
@@ -110,7 +110,8 @@ export class UsersService {
                 {
                     name,
                     email,
-                    role
+                    role,
+                    department
                 },
                 { new: true }
             )
