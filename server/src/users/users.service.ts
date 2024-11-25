@@ -12,6 +12,17 @@ export class UsersService {
         private jwtService: JwtService
     ) { }
 
+    async isUserEmail({ email }: { email: string }): Promise<IPromiseUser> {
+        try {
+            const isemail = await this.UserModel.findOne({ email })
+
+            if (!isemail) return { success: false, message: 'Email do not exists in the system.' }
+            return { success: true, message: 'Email exists.' }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Fetching email failed.' }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
     async GetRole({ id }: IUsers)
         : Promise<IPromiseUser> {
         try {
@@ -166,6 +177,26 @@ export class UsersService {
 
             await this.UserModel.findByIdAndUpdate(
                 id,
+                {
+                    password: hashedpassword
+                },
+                { new: true }
+            )
+            return { success: true, message: 'User password updated successfully.' }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'User failed to update.' }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async updateForgotPassword({ email, password }: IUsers): Promise<IPromiseUser> {
+        try {
+            if (!email) return { success: false, message: 'Missing Email, please provide an email.' }
+
+            const salt = await bcrypt.genSalt();
+            const hashedpassword = await bcrypt.hash(password, salt);
+
+            await this.UserModel.findOneAndUpdate(
+                { email },
                 {
                     password: hashedpassword
                 },
