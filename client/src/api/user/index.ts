@@ -57,6 +57,14 @@ export const API_USER_CHANGE_PASSWORD = async ({ userid, password }: IAPIUsers) 
     return response.data
 }
 
+export const API_USER_CHANGE_FORGOT_PASSWORD = async ({ email, password }: IAPIUsers) => {
+    const response = await axios.post(`${HOST}/users/change-forgot-password`,
+        { email, password },
+        { withCredentials: true }
+    )
+    return response.data
+}
+
 export const API_USER_CREATE_USER = async ({ email, name, role }: IAPIUsers) => {
     const response = await axios.post(`${HOST}/users/create`,
         { email, name, role },
