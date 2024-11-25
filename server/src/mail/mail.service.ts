@@ -4,6 +4,7 @@ import { IMail, IPromiseMail } from './mail.interface';
 import { ConstantsService } from 'src/constants/constants.service';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class MailService {
@@ -183,6 +184,99 @@ export class MailService {
         } catch (error) {
             throw new HttpException({ success: false, message: 'Email failed to send.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
+    }
 
+    private generateOtp(): string {
+        return Math.floor(100000 + Math.random() * 900000).toString(); // Ensures a 6-digit number
+    }
+
+    async sendOtpMail({ email }: { email: string }): Promise<IPromiseMail> {
+        try {
+            const otp_code = this.generateOtp()
+            const message = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your One-Time Password</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        .header {
+            background: linear-gradient(135deg, #4a90e2, #0078d7);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+        }
+        .content {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .otp-box {
+            font-size: 24px;
+            font-weight: bold;
+            background-color: #f4f4f9;
+            border: 2px dashed #0078d7;
+            padding: 10px;
+            margin: 20px 0;
+            text-align: center;
+            color: #0078d7;
+        }
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.8em;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Your One-Time Password</h1>
+    </div>
+    <div class="content">
+        <p>Hello,</p>
+        <p>Here is your one-time password (OTP). Please use it to complete your verification process. For security reasons, do not share this OTP with anyone.</p>
+        <div class="otp-box">${otp_code}</div>
+        <p><strong>Note:</strong> This OTP is valid for 5 minutes only.</p>
+        <p>If you did not request this OTP, please ignore this email or contact support immediately.</p>
+    </div>
+    <div class="footer">
+        <p>© ${new Date().getFullYear()} Saint Mary's University. All rights reserved.</p>
+    </div>
+</body>
+</html>
+            `;
+
+            await this.mailService.sendMail({
+                to: email,
+                subject: `Gradlink: One-Time-Password!`,
+                html: message
+            })
+
+            await this.mailModel.create({
+                email,
+                date_sent: new Date(),
+                notes: `One-time-password sent successfully to ${email}.`
+            })
+
+            const salt = await bcrypt.genSalt();
+            const hashedOtp = await bcrypt.hash(otp_code, salt);
+
+            return { success: true, message: 'Email sent successfully!', data: hashedOtp }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Email failed to send.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
     }
 }
