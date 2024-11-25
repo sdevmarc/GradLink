@@ -5,6 +5,7 @@ export interface IUsers {
     role?: string
     isactive?: boolean
     name?: string
+    otp?: number
 }
 
 export interface IPromiseUser {
