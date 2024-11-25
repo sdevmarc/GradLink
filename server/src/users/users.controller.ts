@@ -66,8 +66,8 @@ export class UsersController {
 
     @Post('update')
     @UseGuards(AuthGuard)
-    async updateUser(@Body() { id, name, email, role }: IUsers) {
-        return await this.usersService.updateUser({ id, name, email, role })
+    async updateUser(@Body() { id, name, email, role, department }: IUsers) {
+        return await this.usersService.updateUser({ id, name, email, role, department })
     }
 
     @Post('update-information')
