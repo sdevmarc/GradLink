@@ -4,12 +4,15 @@ import { IUsers } from './users.interface';
 import { Response, Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { MailService } from 'src/mail/mail.service';
+import * as bcrypt from 'bcryptjs';
 
 @Controller('users')
 export class UsersController {
     constructor(
         private readonly usersService: UsersService,
-        private jwtService: JwtService
+        private readonly jwtService: JwtService,
+        private readonly mailService: MailService
     ) { }
 
     @UseGuards(AuthGuard)
@@ -25,7 +28,7 @@ export class UsersController {
         if (!token) return { isAuthenticated: false }
 
         try {
-            const payload = this.jwtService.verify(token);
+            const payload = await this.jwtService.verify(token);
             const userid = payload.sub
             const response = await this.usersService.findOne({ id: userid })
 
@@ -46,8 +49,13 @@ export class UsersController {
     @UseGuards(AuthGuard)
     @Post('change-password')
     async changePassword(@Body() { id, password }: { id: string, password: string }) {
-        console.log({ id, password })
         return this.usersService.updatePassword({ id, password })
+    }
+
+    // @UseGuards(AuthGuard)
+    @Post('change-forgot-password')
+    async changeForgotPassword(@Body() { email, password }: { email: string, password: string }) {
+        return this.usersService.updateForgotPassword({ email, password })
     }
 
     @Post('create')
@@ -94,6 +102,64 @@ export class UsersController {
         }
 
         return islogin;
+    }
+
+    @Post('otp')
+    async SendOtp(
+        @Body() { email }: IUsers,
+        @Res({ passthrough: true }) response: Response,
+    ) {
+        try {
+            const isemail = await this.usersService.isUserEmail({ email })
+            if (!isemail.success) return isemail
+
+            const isOtp = await this.mailService.sendOtpMail({ email })
+            if (isOtp.success) {
+                // Set the access_token as an HTTP-only cookie
+                response.cookie('otp', isOtp.data, {
+                    httpOnly: true, // Prevents client-side JavaScript from accessing the cookie
+                    secure: false,   // Ensures the cookie is sent over HTTPS
+                    sameSite: 'lax', // CSRF protection
+                    maxAge: 300000, // Cookie expiration time in milliseconds (e.g., 5 Minutes)
+                });
+
+                // Optionally, remove the access_token from the response body
+                delete isOtp.data;
+            }
+
+            return isOtp;
+        } catch (error) {
+            return { success: false, message: 'Error sending one-time-password' }
+        }
+
+    }
+
+    @Post('verify-otp')
+    async verifyOtp(
+        @Body() { otp }: IUsers,
+        @Req() request: Request,
+        @Res() response: Response
+    ) {
+        const token = request.cookies['otp']
+        if (!token) return response.json({ isAuthenticated: false })
+
+        try {
+            const isOtp = await bcrypt.compare(otp.toString(), token);
+
+            if (isOtp) {
+                response.cookie('otp', '', {
+                    httpOnly: true,
+                    secure: false,
+                    sameSite: 'lax',
+                    expires: new Date(0), // Expire the cookie immediately
+                })
+
+                return response.json({ success: true, message: 'One-time-password matched!' })
+            }
+            response.json({ success: false, message: 'One-time-password do not match.' })
+        } catch (error) {
+            return response.json({ isAuthenticated: false, error })
+        }
     }
 
     @UseGuards(AuthGuard)
