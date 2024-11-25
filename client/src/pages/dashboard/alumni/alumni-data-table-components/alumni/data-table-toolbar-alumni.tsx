@@ -30,7 +30,7 @@ export function DataTableToolbarAlumni<TData>({
 }: DataTableToolbarProps<TData>) {
     const isFiltered = table.getState().columnFilters.length > 0
     const [formattedprogram, setFormattedProgram] = useState<ProgramOption[]>([]);
-    const [filteredPrograms, setFilteredPrograms] = useState<ProgramOption[]>([]);
+    // const [filteredPrograms, setFilteredPrograms] = useState<ProgramOption[]>([]);
     const [filteredYearsGraduated, setFilteredYearsGraduated] = useState<{ label: string, value: string }[]>([])
 
     const { data: yearsGraduations, isFetched: yearsgraduatedFetched } = useQuery({
@@ -53,34 +53,34 @@ export function DataTableToolbarAlumni<TData>({
             })
 
             setFormattedProgram(formatprogram)
-            setFilteredPrograms(formatprogram)
+            // setFilteredPrograms(formatprogram)
         }
     }, [program])
 
-    useEffect(() => {
-        const selectedDepartment = table.getColumn("department")?.getFilterValue() as string[];
+    // useEffect(() => {
+    //     const selectedDepartment = table.getColumn("department")?.getFilterValue() as string[];
 
-        if (selectedDepartment && selectedDepartment.length > 0) {
-            const filtered = formattedprogram.filter((prog: any) =>
-                selectedDepartment.includes(prog.department)
-            );
-            setFilteredPrograms(filtered);
+    //     if (selectedDepartment && selectedDepartment.length > 0) {
+    //         const filtered = formattedprogram.filter((prog: any) =>
+    //             selectedDepartment.includes(prog.department)
+    //         );
+    //         setFilteredPrograms(filtered);
 
-            // Clear program filter if selected program is not in filtered list
-            const currentProgramFilter = table.getColumn("program")?.getFilterValue() as string[];
-            if (currentProgramFilter && currentProgramFilter.length > 0) {
-                const validPrograms = filtered.map(p => p.value);
-                const newProgramFilter = currentProgramFilter.filter(p =>
-                    validPrograms.includes(p)
-                );
-                if (newProgramFilter.length !== currentProgramFilter.length) {
-                    table.getColumn("program")?.setFilterValue(newProgramFilter);
-                }
-            }
-        } else {
-            setFilteredPrograms(formattedprogram);
-        }
-    }, [table.getColumn("department")?.getFilterValue()]);
+    //         // Clear program filter if selected program is not in filtered list
+    //         const currentProgramFilter = table.getColumn("program")?.getFilterValue() as string[];
+    //         if (currentProgramFilter && currentProgramFilter.length > 0) {
+    //             const validPrograms = filtered.map(p => p.value);
+    //             const newProgramFilter = currentProgramFilter.filter(p =>
+    //                 validPrograms.includes(p)
+    //             );
+    //             if (newProgramFilter.length !== currentProgramFilter.length) {
+    //                 table.getColumn("program")?.setFilterValue(newProgramFilter);
+    //             }
+    //         }
+    //     } else {
+    //         setFilteredPrograms(formattedprogram);
+    //     }
+    // }, [table.getColumn("department")?.getFilterValue()]);
 
     useEffect(() => {
         if (yearsgraduatedFetched) {
@@ -132,7 +132,7 @@ export function DataTableToolbarAlumni<TData>({
                             <DataTableFacetedFilter
                                 column={table.getColumn("program")}
                                 title="Program"
-                                options={filteredPrograms}
+                                options={formattedprogram}
                             />
                         )}
                         {table.getColumn("academicYear") && (
