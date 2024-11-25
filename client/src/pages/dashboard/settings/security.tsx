@@ -40,7 +40,8 @@ export default function Security() {
         userid: '',
         name: '',
         email: '',
-        role: ''
+        role: '',
+        department: ''
     })
 
     const { data: user, isLoading: userLoading, isFetched: userFetched } = useQuery({
@@ -62,6 +63,13 @@ export default function Security() {
     const roles_options = [
         { value: 'admin', label: 'Admin' },
         { value: 'user', label: 'Department Head' }
+    ]
+
+    const department_options = [
+        { value: 'SEAIT', label: "SEAIT" },
+        { value: 'SHANS', label: "SHANS" },
+        { value: 'SAB', label: "SAB" },
+        { value: 'STEH', label: "STEH" }
     ]
 
     const { mutateAsync: insertUser, isPending: insertuserPending } = useMutation({
@@ -301,6 +309,7 @@ export default function Security() {
                                                         <TableHead>Email</TableHead>
                                                         <TableHead>Role</TableHead>
                                                         <TableHead>Status</TableHead>
+                                                        <TableHead>Department</TableHead>
                                                         <TableHead>Actions</TableHead>
                                                     </TableRow>
                                                 </TableHeader>
@@ -348,8 +357,19 @@ export default function Security() {
                                                                     }
                                                                 </TableCell>
                                                                 <TableCell className="text-primary">
+                                                                    {user.isactive ? 'Active' : 'Inactive'}
+                                                                </TableCell>
+                                                                <TableCell>
                                                                     {
-                                                                        user.isactive ? 'Active' : 'Inactive'
+                                                                        (userBeingUpdated === user._id && user.role === 'user') ?
+                                                                            <Combobox
+                                                                                className='w-[150px]'
+                                                                                lists={department_options || []}
+                                                                                placeholder={`Select Department`}
+                                                                                setValue={(item) => setUpdateValues(prev => ({ ...prev, department: item }))}
+                                                                                value={updatevalue.department || user.department || ''}
+                                                                            />
+                                                                            : (user?.department || (user.role === 'root' ? null : (user.role === 'admin' ? null : 'None')))
                                                                     }
                                                                 </TableCell>
                                                                 <TableCell>
@@ -441,7 +461,7 @@ export default function Security() {
                                                                                     disabled={false}
                                                                                     className='py-[1.1rem]'
                                                                                     variant={`destructive`}
-                                                                                    btnIcon={<ShieldMinus  className="text-white" size={18} />}
+                                                                                    btnIcon={<ShieldMinus className="text-white" size={18} />}
                                                                                     title="Are you sure?"
                                                                                     description={`This will set the user to inactive and cannot read, write, and execute in the system.`}
                                                                                     btnContinue={() => handleDeleteUser({ userid: user._id })
