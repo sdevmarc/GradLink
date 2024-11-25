@@ -20,6 +20,11 @@ export const UsersSchema = new mongoose.Schema({
         enum: ['root', 'admin', 'user'],
         default: 'user'
     },
+    department: {
+        type: String,
+        enum: ['seait', 'steh', 'shans', 'sab'],
+        default: null
+    },
     isactive: {
         type: Boolean,
         required: true,
