@@ -7,13 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AlertDialogConfirmation } from "@/components/alert-dialog";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { ROUTES } from "@/constants";
 import { DataTableFacetedFilter } from "@/components/data-table-components/data-table-faceted-filter";
 import { Plus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { API_PROGRAM_FINDALL } from "@/api/program";
 import { IAPIPrograms } from "@/interface/program.interface";
+import { API_USER_GET_USER } from "@/api/user";
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>;
@@ -30,7 +31,8 @@ export function DataTableToolbarListOfStudent<TData>({
 }: DataTableToolbarProps<TData>) {
     const isFiltered = table.getState().columnFilters.length > 0;
     const navigate = useNavigate()
-    const [formattedprogram, setFormattedProgram] = useState<ProgramOption[]>([]);
+    // const [formattedprogram, setFormattedProgram] = useState<ProgramOption[]>([]);
+    // const [filteredPrograms, setFilteredPrograms] = useState<ProgramOption[]>([]);
     // const [filteredPrograms, setFilteredPrograms] = useState<ProgramOption[]>([]);
     // const [dateRange, setDateRange] = useState<{ from: Date; to: Date } | null>(null);
     // const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({
@@ -51,12 +53,30 @@ export function DataTableToolbarListOfStudent<TData>({
     //     }
     // }
 
+    const { data: userdata, isFetched: userdataFetched } = useQuery({
+        queryFn: () => API_USER_GET_USER(),
+        queryKey: ['users']
+    })
+
+    const hasUserDepartment = userdata?.data?.department && userdata.data.department.trim() !== "";
+
+    useEffect(() => {
+        if (userdataFetched && hasUserDepartment) {
+            table.getColumn("department")?.setFilterValue([userdata.data.department]);
+        }
+    }, [userdataFetched, hasUserDepartment]);
+
+    // Get the department filter value
+    // const departmentFilterValue = hasUserDepartment
+    //     ? [userdata.data.department]
+    //     : (table.getColumn("department")?.getFilterValue() as string[] | undefined);
+
 
     const department_options = [
         { value: 'SEAIT', label: "Eng'g, Dev't. Arts & Design, Library Science & IT" },
         { value: 'SHANS', label: "Science and Mathematics" },
         { value: 'SAB', label: "Business and Accountancy" },
-        { value: 'STEH', label: "Teacher Education and Humanities"}
+        { value: 'STEH', label: "Teacher Education and Humanities" }
     ]
 
     const { data: program, isLoading: programLoading, isFetched: programFetched } = useQuery({
@@ -64,19 +84,55 @@ export function DataTableToolbarListOfStudent<TData>({
         queryKey: ['programs']
     })
 
-    useEffect(() => {
-        if (!programLoading && programFetched) {
-            const formatprogram = program.data.map((item: IAPIPrograms) => {
-                const { _id, code, department } = item
-                return {
-                    value: _id, label: code, department: department // Make sure your API returns this
-                }
-            })
+    // useEffect(() => {
+    //     if (!programLoading && programFetched) {
+    //         const formatprogram = program.data.map((item: IAPIPrograms) => {
+    //             const { _id, code, department } = item
+    //             return {
+    //                 value: _id, label: code, department: department // Make sure your API returns this
+    //             }
+    //         })
 
-            setFormattedProgram(formatprogram)
-            // setFilteredPrograms(formatprogram)
+    //         setFormattedProgram(formatprogram)
+    //         // setFilteredPrograms(formatprogram)
+    //     }
+    // }, [program])
+
+     // Compute filtered programs using useMemo
+     const filteredPrograms = useMemo(() => {
+        if (!programLoading && programFetched && program?.data) {
+            // Map programs to options
+            const allPrograms = program.data.map((item: IAPIPrograms) => {
+                const { _id, code, department } = item;
+                return {
+                    value: _id,
+                    label: code,
+                    department: department
+                };
+            });
+
+            // Get department filter value
+            const selectedDepartments = hasUserDepartment
+                ? [userdata.data.department]
+                : (table.getColumn("department")?.getFilterValue() as string[] | undefined);
+
+            if (selectedDepartments && selectedDepartments.length > 0) {
+                return allPrograms.filter((program: ProgramOption) =>
+                    selectedDepartments.includes(program.department)
+                );
+            } else {
+                return allPrograms;
+            }
         }
-    }, [program])
+        return [];
+    }, [
+        programLoading,
+        programFetched,
+        program?.data,
+        hasUserDepartment,
+        userdata?.data?.department,
+        table.getColumn("department")?.getFilterValue()
+    ]);
 
     // useEffect(() => {
     //     const selectedDepartment = table.getColumn("department")?.getFilterValue() as string[];
@@ -114,18 +170,28 @@ export function DataTableToolbarListOfStudent<TData>({
                     }}
                     className="h-8 w-[250px] lg:w-[300px]"
                 />
-                {table.getColumn("department") && (
+                {/* <Input
+                    placeholder="Search ID Number or Lastname..."
+                    value={table.getColumn("search")?.getFilterValue() as string || ""}
+                    onChange={(event) => {
+                        table.getColumn("search")?.setFilterValue(event.target.value);
+                    }}
+                    className="h-8 w-[250px] lg:w-[300px]"
+                /> */}
+                {/* Conditionally render the department faceted filter */}
+                {table.getColumn("department") && !hasUserDepartment && (
                     <DataTableFacetedFilter
                         column={table.getColumn("department")}
                         title="Department"
                         options={department_options}
                     />
                 )}
+                {/* Render the program faceted filter with filtered options */}
                 {(table.getColumn("program") && programFetched) && (
                     <DataTableFacetedFilter
                         column={table.getColumn("program")}
                         title="Program"
-                        options={formattedprogram}
+                        options={filteredPrograms}
                     />
                 )}
                 {/* <CalendarDatePicker
@@ -137,7 +203,7 @@ export function DataTableToolbarListOfStudent<TData>({
                     className="w-[200px] h-8"
                     variant={`outline`}
                 /> */}
-                {isFiltered && (
+                {isFiltered && !hasUserDepartment && (
                     <Button
                         variant="ghost"
                         onClick={() => table.resetColumnFilters()}
