@@ -31,3 +31,11 @@ export const API_STUDENT_SEND_TRACER_TO_ONE = async ({ email }: { email: string 
         { withCredentials: true })
     return response.data
 }
+
+export const API_STUDENT_UPDATE_ALUMNI_EMAIL = async ({ id, email }: { id: string, email: string }) => {
+    const response = await axios.post(`${HOST}/student/update-alumni-email`, {
+        id, email
+    },
+        { withCredentials: true })
+    return response.data
+}
