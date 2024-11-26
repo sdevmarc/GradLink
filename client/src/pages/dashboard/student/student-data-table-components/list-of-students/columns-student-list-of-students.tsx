@@ -215,13 +215,16 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
         cell: ({ row }) => {
             const queryClient = useQueryClient()
             const navigate = useNavigate()
+            // const [dialogshiftprogram, setDialogShiftProgram] = useState<boolean>(false)
+            // const [dialogisshift, setDialogIsShift] = useState<boolean>(false)
             const [dialogupdate, setDialogUpdate] = useState<boolean>(false)
             const [dialogactivate, setDialogActivate] = useState<boolean>(false)
             const [dialogdiscontinue, setDialogDiscontinue] = useState<boolean>(false)
             const [isDiscontinue, setDiscontinue] = useState<boolean>(false)
             const [disconLoading, setDisconLoading] = useState<boolean>(false)
             const [isOpen, setIsOpen] = useState<boolean>(false)
-
+            // const [selectedProgram, setSelectedProgram] = useState('')
+            // const [formattedPrograms, setFormattedPrograms] = useState([])
             const {
                 _id,
                 idNumber,
@@ -234,6 +237,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                 enrolledCourses,
                 programName,
                 programCode,
+                // program,
                 department,
                 undergraduateInformation,
                 achievements,
@@ -251,6 +255,26 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                 queryFn: () => API_USER_GET_USER(),
                 queryKey: ['users']
             })
+
+            // const { data: curriculum, isLoading: curriculumLoading, isFetched: curriculumFetched } = useQuery({
+            //     queryFn: () => API_CURRICULUM_FINDALL_ACTIVE(),
+            //     queryKey: ['curriculums']
+            // })
+
+            // useEffect(() => {
+            //     if (curriculumFetched && curriculum?.data) {
+            //         const formatCurriculum = curriculum.data.map((item: ICurriculum) => ({
+            //             value: item._id,
+            //             label: item.program
+            //         }))
+            //         setFormattedPrograms(formatCurriculum)
+            //     }
+            // }, [curriculum, curriculumFetched])
+
+            // // const handleProgramChange = (value: string) => {
+            // //     setSelectedProgram(value)
+            // //     // Add any additional logic you need when program changes
+            // // }
 
             const handleNavigateUpdateStudent = () => {
                 const base64ID = _id ? btoa(_id) : ''
@@ -367,22 +391,66 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                                 <Mail className="text-muted-foreground" size={18} /> {email || 'No valid Email'}
                                                                             </span>
                                                                         </CardTitle>
-                                                                        {
-                                                                            !isenrolled &&
-                                                                            <AlertDialogConfirmation
-                                                                                isDialog={dialogactivate}
-                                                                                setDialog={(e) => setDialogActivate(e)}
-                                                                                className="flex items-center gap-2"
-                                                                                type={`default`}
-                                                                                disabled={isLoading}
-                                                                                variant={'outline'}
-                                                                                btnIcon={<ShieldCheck className="text-primary" size={18} />}
-                                                                                btnTitle="Re-Activate Student"
-                                                                                title="Are you sure?"
-                                                                                description={`${lastname}, ${firstname} ${middlename} will be re-activated if this continue.`}
-                                                                                btnContinue={handleActivateStudent}
-                                                                            />
-                                                                        }
+                                                                        <div className="flex flex-col gap">
+                                                                            {
+                                                                                !isenrolled &&
+                                                                                <AlertDialogConfirmation
+                                                                                    isDialog={dialogactivate}
+                                                                                    setDialog={(e) => setDialogActivate(e)}
+                                                                                    className="flex items-center gap-2"
+                                                                                    type={`default`}
+                                                                                    disabled={isLoading}
+                                                                                    variant={'outline'}
+                                                                                    btnIcon={<ShieldCheck className="text-primary" size={18} />}
+                                                                                    btnTitle="Re-Activate Student"
+                                                                                    title="Are you sure?"
+                                                                                    description={`${lastname}, ${firstname} ${middlename} will be re-activated if this continue.`}
+                                                                                    btnContinue={handleActivateStudent}
+                                                                                />
+                                                                            }
+                                                                            {/* <div className="flex items-center gap-2">
+                                                                                <AlertDialogConfirmation
+                                                                                    isDialog={dialogisshift}
+                                                                                    setDialog={(e) => setDialogIsShift(e)}
+                                                                                    className="flex items-center gap-2"
+                                                                                    type={`default`}
+                                                                                    disabled={isLoading}
+                                                                                    variant={'outline'}
+                                                                                    btnIcon={<ShieldCheck className="text-primary" size={18} />}
+                                                                                    btnTitle="Shift Student"
+                                                                                    title="Are you sure?"
+                                                                                    description={`${lastname}, ${firstname} ${middlename} will shift its program.`}
+                                                                                    btnContinue={() => {
+                                                                                        setDialogIsShift(false)
+                                                                                        setDialogShiftProgram(true)
+                                                                                    }}
+                                                                                />
+                                                                                <AlertDialogConfirmation
+                                                                                    isDialog={dialogshiftprogram}
+                                                                                    setDialog={(e) => setDialogShiftProgram(e)}
+                                                                                    className="flex items-center gap-2"
+                                                                                    type={`input`}
+                                                                                    disabled={isLoading}
+                                                                                    variant={'default'}
+                                                                                    btnIcon={<ShieldCheck className="text-primary" size={18} />}
+                                                                                    btnTitle="Shift to this program"
+                                                                                    title="Are you sure?"
+                                                                                    description={`${lastname}, ${firstname} ${middlename} will shift its program.`}
+                                                                                    btnContinue={() => {
+                                                                                        setDialogShiftProgram(false)
+                                                                                    }}
+                                                                                    content={
+                                                                                        <Combobox
+                                                                                            className="w-[300px]"
+                                                                                            lists={formattedPrograms}
+                                                                                            placeholder="Select program"
+                                                                                            value={selectedProgram}
+                                                                                            setValue={handleProgramChange}
+                                                                                        />
+                                                                                    }
+                                                                                />
+                                                                            </div> */}
+                                                                        </div>
                                                                     </div>
 
                                                                     <CardDescription className="mt-2 flex flex-col gap-2">
