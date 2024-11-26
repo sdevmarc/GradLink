@@ -122,3 +122,10 @@ export const API_STUDENT_UPDATE_STUDENT = async ({ id, lastname, middlename, fir
     }, { withCredentials: true })
     return response.data
 }
+
+// export const API_STUDENT_UPDATE_STUDENT_SHIFT_STUDENT = async ({ id, idNumber, program }: { id: string, idNumber: string, program: string }) => {
+//     const response = await axios.post(`${HOST}/student/shift-student`, {
+//         id, idNumber, program
+//     }, { withCredentials: true })
+//     return response.data
+// }
