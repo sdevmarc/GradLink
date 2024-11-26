@@ -271,7 +271,7 @@ export default function Security() {
                                                 <Input
                                                     placeholder="Email"
                                                     type="email"
-                                                    value={values.email}
+                                                    value={values?.email}
                                                     disabled={userBeingUpdated !== null}
                                                     onChange={(e) => setValues(prev => ({ ...prev, email: e.target.value }))}
                                                 />
