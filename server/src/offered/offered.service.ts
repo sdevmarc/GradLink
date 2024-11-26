@@ -30,8 +30,7 @@ export class OfferedService {
                 // Group by the academic year to remove duplicates
                 {
                     $group: {
-                        _id: null,
-                        academicYear: { $first: "$academicYear" },
+                        _id: "$academicYear",
                         offeredId: { $first: "$_id" }
                     }
                 },
