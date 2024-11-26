@@ -17,4 +17,9 @@ export class SettingsController {
         return await this.settingsService.upsertSettings({ isenroll })
     }
 
+    @Get('restore')
+    async restoreDatabase() {
+        return await this.settingsService.restoreDatabase()
+    }
+
 }
