@@ -207,6 +207,13 @@ export class StudentController {
         return await this.studentService.updateStudent({ id, lastname, firstname, middlename, undergraduateInformation })
     }
 
+    @Post('update-alumni-email')
+    async updateAlumniEmail(
+        @Body() { id, email }: IStudent
+    ) {
+        return await this.studentService.updateAlumniEmail({ id, email })
+    }
+
     @Post('discontinue-student')
     @UseInterceptors(FileInterceptor('assessmentForm'))
     async discontinueStudent(
