@@ -10,9 +10,9 @@ import { Button } from "@/components/ui/button"
 import { SheetModal } from "@/components/sheet-modal"
 import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
-import { CircleCheck, CircleDashed, CircleUserRound, CircleX, Loader, Mail, ShieldCheck, TableOfContents, Upload, UserPen, X } from "lucide-react"
+import { CircleCheck, CircleDashed, CircleUserRound, CircleX, Download, Loader, Mail, ShieldCheck, TableOfContents, Upload, UserPen, X } from "lucide-react"
 import { BookOpen, GraduationCap } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { AlertDialogConfirmation } from "@/components/alert-dialog"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { API_STUDENT_ACTIVATE_STUDENT, API_STUDENT_DISCONTINUE_STUDENT } from "@/api/student"
@@ -338,6 +338,38 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
             const handleActivateStudent = async () => {
                 await activateStudent({ id: values.id })
             }
+
+            const handleDownload = async () => {
+                try {
+                    // Fetch the image
+                    if (!assessmentForm) {
+                        throw new Error('Assessment form URL is undefined');
+                    }
+                    const response = await fetch(assessmentForm);
+                    const blob = await response.blob();
+
+                    // Create a blob URL
+                    const blobUrl = window.URL.createObjectURL(blob);
+
+                    // Create a link element
+                    const link = document.createElement('a');
+                    link.href = blobUrl;
+                    link.download = 'assessment-form.png'; // or whatever extension your image has
+
+                    // Required for Firefox
+                    document.body.appendChild(link);
+
+                    // Trigger download
+                    link.click();
+
+                    // Cleanup
+                    document.body.removeChild(link);
+                    window.URL.revokeObjectURL(blobUrl);
+                } catch (error) {
+                    console.error('Download failed:', error);
+                    // You might want to add some error handling UI here
+                }
+            };
 
             const isLoading = userdataLoading || disconLoading || activatestudentLoading
 
@@ -693,6 +725,17 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                                         : 'No Assessment Form Available'
                                                                                 }
                                                                             </CardContent>
+                                                                            {assessmentForm && (
+                                                                                <CardFooter>
+                                                                                    <Button
+                                                                                        onClick={handleDownload}
+                                                                                        className="flex items-center gap-2"
+                                                                                    >
+                                                                                        <Download className="w-4 h-4" />
+                                                                                        Download Form
+                                                                                    </Button>
+                                                                                </CardFooter>
+                                                                            )}
                                                                         </Card>
 
                                                                     </div>
