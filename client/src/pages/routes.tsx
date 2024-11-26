@@ -28,6 +28,7 @@ import ArchivedSemestersInAcademicYear from "./dashboard/enrollment/achived-seme
 import ProtectedRoute from "@/components/protected-route"
 import UpdateStudent from "./dashboard/student/update-student-information"
 import UpdateOfferedCourses from "./dashboard/enrollment/update-offered-courses"
+import NotFound from "./error/404-NotFound"
 
 const Routes = createBrowserRouter([
     {
@@ -276,6 +277,10 @@ const Routes = createBrowserRouter([
                 )
             },
         ]
+    },
+    {
+        path: '*',
+        element: <NotFound />
     }
 ])
 
