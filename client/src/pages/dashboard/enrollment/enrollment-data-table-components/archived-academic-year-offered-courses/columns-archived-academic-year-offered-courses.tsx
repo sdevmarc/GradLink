@@ -24,14 +24,14 @@ export const ArchivedAcademicYearOfferedCoursesColumns: ColumnDef<IAPIOffered>[]
         }
     },
     {
-        accessorKey: "academicYear",
+        accessorKey: "_id",
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="Academic Year" className="text-text" />
         ),
         cell: ({ row }) => (
             <div className="flex justify-start items-center capitalize gap-4 ">
                 <Badge variant={`default`}>
-                    {row.getValue("academicYear")}
+                    {row.getValue("_id")}
                 </Badge>
             </div>
         ),
@@ -44,7 +44,8 @@ export const ArchivedAcademicYearOfferedCoursesColumns: ColumnDef<IAPIOffered>[]
 
             const handleNavigateToSemestersInAcademicYear = () => {
                 const id = (row.original as any).offeredId
-                const academicYear = (row.original as any).academicYear
+                const academicYear = (row.original as any)._id
+                console.log('The academic year: ', academicYear)
                 const combinedString = JSON.stringify({ id, academicYear });
                 const base64ID = btoa(combinedString)
                 
