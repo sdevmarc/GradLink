@@ -66,10 +66,10 @@ export default function Security() {
     ]
 
     const department_options = [
-        { value: 'SEAIT', label: "SEAIT" },
-        { value: 'SHANS', label: "SHANS" },
-        { value: 'SAB', label: "SAB" },
-        { value: 'STEH', label: "STEH" }
+        { value: 'SEAIT', label: "EDADLSIT" },
+        { value: 'SHANS', label: "SM" },
+        { value: 'SAB', label: "BA" },
+        { value: 'STEH', label: "TEH" }
     ]
 
     const { mutateAsync: insertUser, isPending: insertuserPending } = useMutation({
@@ -369,7 +369,9 @@ export default function Security() {
                                                                                 setValue={(item) => setUpdateValues(prev => ({ ...prev, department: item }))}
                                                                                 value={updatevalue.department || user.department || ''}
                                                                             />
-                                                                            : (user?.department || (user.role === 'root' ? null : (user.role === 'admin' ? null : 'None')))
+                                                                            : (
+                                                                                (user?.department) === 'SEAIT' && 'EDADLSIT' ||  (user?.department) === 'SAB' && 'BA' ||  (user?.department) === 'SHANS' && 'SM' ||  (user?.department) === 'STEH' && 'TEH'
+                                                                                 || (user.role === 'root' ? null : (user.role === 'admin' ? null : 'None')))
                                                                     }
                                                                 </TableCell>
                                                                 <TableCell>
