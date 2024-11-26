@@ -6,7 +6,14 @@ export interface IAuditlog {
     description: string;
 }
 
+interface AuditLog {
+    name?: string
+    action?: string
+    description?: string
+}
+
 export interface IPromiseAudit {
     success: boolean
     message: string
+    data?: AuditLog[]
 }
