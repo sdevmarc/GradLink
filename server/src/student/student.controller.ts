@@ -112,6 +112,36 @@ export class StudentController {
         }
     }
 
+    @Post('shift-student')
+    async shiftStudent(
+        @Req() request: Request,
+        @Body() { id, idNumber, program }: IStudent
+    ) {
+
+        const token = request.cookies['access_token'];
+        if (!token) return { isAuthenticated: false }
+
+        try {
+            const payload = await this.jwtService.verify(token);
+            const userId = await payload.sub
+
+            // return await this.studentService.createEnrollee({ idNumber, lastname, firstname, middlename, email, program, courses, undergraduateInformation, achievements })
+            const issuccess = await this.studentService.updateStudentShiftProgram({ id, program })
+            if (issuccess.success) {
+                await this.auditlogService.createLog({ userId, action: "student_changed", description: `Student w/ ID No. of ${idNumber} successfully shifted.` })
+                return { success: true, message: "Student successfully shifted." }
+            }
+            // await this.auditlogService.createLog({ userId, action: "create", description: 'Error' })
+            return { success: false, message: issuccess.message }
+
+        } catch (error) {
+            throw new HttpException(
+                { success: false, message: 'Failed to fetch audit logs.', error },
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
     @Post('enroll-student')
     async enrollStudentEnrollee(
         @Req() request: Request,
