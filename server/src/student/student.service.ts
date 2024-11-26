@@ -3231,6 +3231,25 @@ export class StudentService {
         }
     }
 
+    async updateStudentShiftProgram({ id, program }: IStudent): Promise<IPromiseStudent> {
+        try {
+            const response = await this.studentModel.findByIdAndUpdate(
+                id,
+                {
+                    program
+                },
+                {
+                    new: true
+                }
+            )
+
+            return { success: true, message: 'Student updated successfully.' }
+
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Failed to update student.', error: error.message }, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     async insertFormPending({ idNumber }: IModelForm)
         : Promise<IPromiseStudent> {
         try {
