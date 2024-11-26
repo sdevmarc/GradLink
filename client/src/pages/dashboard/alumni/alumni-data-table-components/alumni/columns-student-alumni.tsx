@@ -5,17 +5,18 @@ import {
 } from "@tanstack/react-table"
 
 import { DataTableColumnHeader } from "@/components/data-table-components/data-table-column-header";
-import { BookOpen, CircleCheck, CircleDashed, CircleX, GraduationCap, Loader, Mail, Send, TableOfContents } from "lucide-react";
+import { BookOpen, CircleCheck, CircleDashed, CircleX, GraduationCap, Loader, Mail, Pencil, Send, TableOfContents, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { IAPIStudents } from "@/interface/student.interface";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { SheetModal } from "@/components/sheet-modal";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertDialogConfirmation } from "@/components/alert-dialog";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { API_STUDENT_SEND_TRACER_TO_ONE } from "@/api/alumni";
+import { API_STUDENT_SEND_TRACER_TO_ONE, API_STUDENT_UPDATE_ALUMNI_EMAIL } from "@/api/alumni";
 import Loading from "@/components/loading";
+import { Input } from "@/components/ui/input";
 
 const formatAnswer = (answer: string | Record<string, any> | null | undefined): React.ReactNode => {
     if (typeof answer === 'object' && answer !== null) {
@@ -215,8 +216,19 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
             const queryClient = useQueryClient()
             const [isOpen, setIsOpen] = useState<boolean>(false)
             const [dialogsubmit, setDialogSubmit] = useState<boolean>(false)
+            const [dialogupdateemail, setDialogUpdateEmail] = useState<boolean>(false)
+            const [dialogsubmitupdate, setDialogSubmitUpdate] = useState<boolean>(false)
+            const [isupdateemail, setIsUpdateEmail] = useState<boolean>(false)
+            const [updatedemail, setUpdatedEmail] = useState<string>('')
+            const [alertdialogstate, setAlertDialogState] = useState({
+                show: false,
+                title: '',
+                description: '',
+                success: false
+            })
 
             const {
+                _id,
                 idNumber,
                 lastname,
                 firstname,
@@ -234,6 +246,12 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
                 employmentData,
                 dateSent
             } = row.original
+
+            useEffect(() => {
+                if (email) {
+                    setUpdatedEmail(email)
+                }
+            }, [email])
 
             const handleViewDetails = () => {
                 setIsOpen(true)
@@ -269,6 +287,36 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
                 }
             })
 
+            const { mutateAsync: updateEmail, isPending: updateEmailLoading } = useMutation({
+                mutationFn: API_STUDENT_UPDATE_ALUMNI_EMAIL,
+                onSuccess: async (data) => {
+                    if (!data.success) {
+                        setIsUpdateEmail(false)
+                        setDialogSubmitUpdate(false)
+                        window.scrollTo({
+                            top: 0,
+                            behavior: 'smooth'
+                        })
+                        return
+                    } else {
+                        await queryClient.invalidateQueries({ queryKey: ['students'] })
+                        await queryClient.refetchQueries({ queryKey: ['students'] })
+                        window.scrollTo({
+                            top: 0,
+                            behavior: 'smooth'
+                        })
+                        setIsUpdateEmail(false)
+                        setDialogSubmitUpdate(false)
+                        return
+                    }
+                },
+                onError: () => {
+                    setIsUpdateEmail(false)
+                    setDialogSubmitUpdate(false)
+                    return
+                }
+            })
+
             const handleSendTracerStudy = async () => {
                 console.log('asdasd')
                 if (email) {
@@ -276,12 +324,38 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
                 }
             }
 
-            const isLoading = tracerLoading
+            const handleUpdateAlumniEmail = async () => {
+                const nospaceEmail = (updatedemail ?? '').replace(/\s+/g, '').toLowerCase()
+                if (nospaceEmail === '') {
+                    setIsUpdateEmail(false)
+                    setDialogSubmitUpdate(false)
+                    setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Please fill-up the required fields.' })
+                    return
+                }
+
+                await updateEmail({ id: _id || '', email: updatedemail });
+                return
+
+            }
+
+            const isLoading = tracerLoading || updateEmailLoading
 
             return (
                 <>
                     {isLoading && <Loading />}
                     <div className="flex justify-end">
+                        <AlertDialogConfirmation
+                            btnTitle='Continue'
+                            className='w-full py-4'
+                            isDialog={alertdialogstate.show}
+                            setDialog={(open) => setAlertDialogState(prev => ({ ...prev, show: open }))}
+                            type={`alert`}
+                            title={alertdialogstate.title}
+                            description={alertdialogstate.description}
+                            icon={alertdialogstate.success ? <CircleCheck color="#42a626" size={70} /> : <CircleX color="#880808" size={70} />}
+                            variant={`default`}
+                            btnContinue={() => setAlertDialogState(prev => ({ ...prev, show: false }))}
+                        />
                         <Button onClick={handleViewDetails} variant={`outline`} size={`sm`} className="flex items-center gap-4">
                             <TableOfContents className="text-primary" size={18} />   View Profile
                         </Button>
@@ -301,11 +375,64 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
                                                         <div className="flex justify-between items-start">
                                                             <div className="w-full flex flex-col">
                                                                 <div className="w-full flex items-center justify-between">
-                                                                    <CardTitle className="uppercase text-3xl font-bold flex flex-col">
-                                                                        {lastname}, {firstname} {middlename}
-                                                                        <span className="font-normal text-md lowercase flex items-center gap-2">
-                                                                            <Mail className="text-muted-foreground" size={18} /> {email || 'No valid Email'}
-                                                                        </span>
+                                                                    <CardTitle className="uppercase text-3xl font-bold flex flex-col gap-2">
+                                                                        <div className="flex items-center gap-4">
+                                                                            {lastname}, {firstname} {middlename}
+                                                                            {
+                                                                                isupdateemail ?
+                                                                                    <div className="flex items-center gap-2">
+                                                                                        <AlertDialogConfirmation
+                                                                                            isDialog={dialogsubmitupdate}
+                                                                                            setDialog={(open) => setDialogSubmitUpdate(open)}
+                                                                                            disabled={isLoading}
+                                                                                            className="flex items-center gap-2"
+                                                                                            type={`default`}
+                                                                                            variant={'outline'}
+                                                                                            btnIcon={<Pencil className="text-primary" size={16} />}
+                                                                                            btnTitle="Submit Updated Email"
+                                                                                            title="Are you sure?"
+                                                                                            description={`This action will update the email of ${lastname}, ${firstname} ${middlename}.`}
+                                                                                            btnContinue={handleUpdateAlumniEmail}
+                                                                                        />
+                                                                                        <Button
+                                                                                            onClick={() => {
+                                                                                                setIsUpdateEmail(false)
+                                                                                                setDialogSubmitUpdate(false)
+                                                                                            }}
+                                                                                            variant={`destructive`}
+                                                                                            size={`sm`}
+                                                                                            className="flex items-center gap-2"
+                                                                                        >
+                                                                                            <X className="text-primary" size={16} /> Cancel
+                                                                                        </Button>
+                                                                                    </div>
+
+                                                                                    :
+                                                                                    <AlertDialogConfirmation
+                                                                                        isDialog={dialogupdateemail}
+                                                                                        setDialog={(open) => setDialogUpdateEmail(open)}
+                                                                                        disabled={isLoading}
+                                                                                        className="flex items-center gap-2"
+                                                                                        type={`default`}
+                                                                                        variant={'outline'}
+                                                                                        btnIcon={<Pencil className="text-primary" size={16} />}
+                                                                                        btnTitle="Update Email"
+                                                                                        title="Are you sure?"
+                                                                                        description={`This action will update the email of ${lastname}, ${firstname} ${middlename}.`}
+                                                                                        btnContinue={() => {
+                                                                                            setDialogUpdateEmail(false)
+                                                                                            setIsUpdateEmail(true)
+                                                                                        }}
+                                                                                    />
+                                                                            }
+                                                                        </div>
+                                                                        {
+                                                                            isupdateemail ? <Input value={updatedemail} className="font-normal" onChange={(e) => setUpdatedEmail(e.target.value)} />
+                                                                                :
+                                                                                <span className="font-normal text-md lowercase flex items-center gap-2">
+                                                                                    <Mail className="text-muted-foreground" size={18} /> {email || 'No valid Email'}
+                                                                                </span>
+                                                                        }
                                                                     </CardTitle>
                                                                     <div className="flex flex-col gap-2 items-center">
                                                                         <AlertDialogConfirmation
