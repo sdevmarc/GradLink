@@ -54,7 +54,7 @@ export default function CreateCoursesOffered() {
         { label: 'Third Semester', value: '3' }
     ]
 
-    const count = 1; // Current year + 5 future years
+    const count = 3; // Current year + 5 future years
     const academicYear = generateAcademicYears(count);
 
     const { data: courses, isLoading: coursesLoading, isFetched: coursesFetched } = useQuery({
