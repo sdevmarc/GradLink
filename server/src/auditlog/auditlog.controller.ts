@@ -8,16 +8,13 @@ export class AuditlogController {
         private readonly auditlogService: AuditlogService
     ) { }
 
-    // POST endpoint to create a new audit log entry
-    @Post('create')  // Accessible via POST /auditlog/create
+    @Get()
+    async findAllAuditLogs() {
+        return await this.auditlogService.findAll()
+    }
+
+    @Post('create') 
     async createLog(@Body() logData: IAuditlog) {
         return await this.auditlogService.createLog(logData);
     }
-
-    // GET endpoint to retrieve all audit logs
-    @Get('')  // Accessible via GET /auditlog/all
-    async getAllLogs() {
-        return await this.auditlogService.getAllLogs();
-    }
-
 }
