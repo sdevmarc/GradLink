@@ -354,7 +354,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                     // Create a link element
                     const link = document.createElement('a');
                     link.href = blobUrl;
-                    link.download = 'assessment-form.png'; // or whatever extension your image has
+                    link.download = `Assessment Form - ${lastname}, ${firstname} ${middlename}.png`// or whatever extension your image has
 
                     // Required for Firefox
                     document.body.appendChild(link);
@@ -737,7 +737,6 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                                 </CardFooter>
                                                                             )}
                                                                         </Card>
-
                                                                     </div>
                                                                 }
 
