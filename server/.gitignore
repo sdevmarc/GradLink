@@ -7,6 +7,7 @@
 /dockerfile
 /docker-compose.yml
 /backup.sh
+/restore.sh
 /cronjob
 
 # Logs
