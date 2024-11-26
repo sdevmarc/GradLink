@@ -1,7 +1,11 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { IPromiseSettings, ISettings } from './settings.interface';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+
+const execAsync = promisify(exec);
 
 @Injectable()
 export class SettingsService {
@@ -39,6 +43,36 @@ export class SettingsService {
         } catch (error) {
             throw new HttpException(
                 { success: false, message: 'Failed to update settings.', error },
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    async restoreDatabase(): Promise<IPromiseSettings> {
+        try {
+            // Define the command to run the restore.sh script
+            const command = 'docker exec -it server-nestjs-1 sh restore.sh';
+
+            // Execute the command using execAsync (promisified version of exec)
+            const { stdout, stderr } = await execAsync(command);
+
+            console.log(stdout)
+
+            return { success: true, message: 'Database restored successfully!' }
+
+            //   // Log standard output and errors (if any)
+            //   if (stdout) {
+            //     this.logger.log(`Restore Output: ${stdout}`);
+            //   }
+
+            //   if (stderr) {
+            //     this.logger.warn(`Restore Errors/Warnings: ${stderr}`);
+            //   }
+
+            //   this.logger.log('Database restore completed successfully');
+        } catch (error) {
+            throw new HttpException(
+                { success: false, message: 'Failed to restore database.', error },
                 HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
