@@ -31,6 +31,10 @@ export class AuditlogService {
                         description: 1,
                         updatedAt: 1
                     }
+                }, {
+                    $sort: {
+                        _id: -1
+                    }
                 }
             ])
             return { success: true, message: 'Audit retrieved successfully.', data: response }
