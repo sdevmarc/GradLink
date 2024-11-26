@@ -91,7 +91,7 @@ export function DataTableCurriculum<TData, TValue>({
                                 <TableRow
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
-                                    className="hover:bg-gray-100"
+                                    // className="hover:bg-gray-100"
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
