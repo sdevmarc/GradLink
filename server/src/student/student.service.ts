@@ -3214,10 +3214,30 @@ export class StudentService {
 
     async updateStudent({ id, lastname, firstname, middlename, undergraduateInformation }: IStudent): Promise<IPromiseStudent> {
         try {
-            const response = await this.studentModel.findByIdAndUpdate(
+            await this.studentModel.findByIdAndUpdate(
                 id,
                 {
                     lastname, firstname, middlename, undergraduateInformation
+                },
+                {
+                    new: true
+                }
+            )
+
+            return { success: true, message: 'Student updated successfully.' }
+
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Failed to update student.', error: error.message }, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    async updateAlumniEmail({ id, email }: IStudent): Promise<IPromiseStudent> {
+        try {
+            console.log({ id, email })
+            await this.studentModel.findByIdAndUpdate(
+                id,
+                {
+                    email
                 },
                 {
                     new: true
