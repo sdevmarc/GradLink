@@ -75,7 +75,7 @@ const CreateForm = () => {
 
     const { data: curriculum, isLoading: curriculumLoading, isFetched: curriculumFetched } = useQuery({
         queryFn: () => API_CURRICULUM_FINDALL_ACTIVE(),
-        queryKey: ['programs']
+        queryKey: ['curriculums']
     })
 
     React.useEffect(() => {
