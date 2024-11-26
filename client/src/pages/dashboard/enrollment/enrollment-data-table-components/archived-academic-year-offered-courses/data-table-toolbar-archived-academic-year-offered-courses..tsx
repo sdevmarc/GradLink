@@ -36,9 +36,9 @@ export function DataTableToolbarArchivedAcademicYearOfferedCourses<TData>({
     return (
         <div className="flex flex-wrap items-center justify-between">
             <div className="flex flex-1 flex-wrap items-center gap-2">
-                {table.getColumn("academicYear") && (
+                {table.getColumn("_id") && (
                     <DataTableFacetedFilter
-                        column={table.getColumn("academicYear")}
+                        column={table.getColumn("_id")}
                         title="Academic Year"
                         options={filteredAcademicYear || []}
                     />
