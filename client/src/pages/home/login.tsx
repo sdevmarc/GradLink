@@ -5,7 +5,7 @@ import React, { useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { GraduationCap, EyeOff, Eye, Loader2, CircleCheck, CircleX } from 'lucide-react'
+import { EyeOff, Eye, Loader2, CircleCheck, CircleX } from 'lucide-react'
 import SMU from '@/assets/SMU Main Emblem - For dark color backgrounds.png'
 import SOGS from '@/assets/SMU Unit Emblem - SoGS 1by1.png'
 import Loading from "@/components/loading"
@@ -15,6 +15,9 @@ import { API_USER_CHANGE_FORGOT_PASSWORD, API_USER_LOGIN } from "@/api/user"
 import { AlertDialogConfirmation } from "@/components/alert-dialog"
 import { InputOTPForm } from "@/components/otp"
 import { API_SETTINGS_SEND_OTP } from "@/api/settings"
+import GradlinkLogoBlack from '@/assets/gradlink-logo-black.svg'
+import GradlinkLogoWhite from '@/assets/gradlink-logo-white.svg'
+import { useTheme } from "@/hooks/useTheme"
 
 export default function LoginPage() {
     const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
@@ -114,7 +117,7 @@ export default function LoginPage() {
         const nospaceemail = (email ?? '').replace(/\s+/g, '').toLowerCase()
         if (nospaceemail === '' || !password) return
 
-        await userlogin({ email: nospaceemail, password })
+        await userlogin({ email, password })
     }
 
     const handleForgotPassword = async () => {
@@ -338,6 +341,7 @@ export default function LoginPage() {
                                                 id="password"
                                                 type={showPassword ? "text" : "password"}
                                                 value={password}
+                                                placeholder="Password"
                                                 onChange={(e) => setPassword(e.target.value)}
                                                 required
                                             />
@@ -382,10 +386,21 @@ export default function LoginPage() {
 }
 
 const Header = () => {
+    const { theme } = useTheme()
+
     return (
         <div className="fixed top-0 w-full h-[4rem] flex justify-center items-center">
             <div className="w-full max-w-[90rem] h-full px-4 flex items-center gap-4">
-                <GraduationCap className="text-primary" />
+                {
+                    theme === 'light' ?
+                        <div className="w-[1.7rem] h-[1.7rem] flex items-center justify-center">
+                            <img src={GradlinkLogoBlack} alt="" className='w-full h-full object-contain' />
+                        </div>
+                        :
+                        <div className="w-[1.7rem] h-[1.7rem] flex items-center justify-center">
+                            <img src={GradlinkLogoWhite} alt="" className='w-full h-full object-contain' />
+                        </div>
+                }
                 <h1 className="text-md font-medium">
                     GradLink
                 </h1>
