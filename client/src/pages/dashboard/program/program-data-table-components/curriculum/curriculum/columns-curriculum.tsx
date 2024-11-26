@@ -7,7 +7,7 @@ import {
 import { DataTableColumnHeader } from "@/components/data-table-components/data-table-column-header"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import {  SheetModal } from "@/components/sheet-modal"
+import { SheetModal } from "@/components/sheet-modal"
 import { useState } from "react"
 import { Bookmark, TableOfContents } from "lucide-react"
 import { BookOpen, Clock, GraduationCap } from "lucide-react"
@@ -147,7 +147,11 @@ export const CurriculumColumns: ColumnDef<ICurriculum>[] = [
                                                                     }
                                                                 </Badge>
                                                                 <span className="text-muted-foreground">
-                                                                    {department || 'No Department Available'} | {program || 'No Program Available'}
+                                                                    {department === 'SEAIT' && "Eng'g, Dev't. Arts & Design, LIS & IT"}
+                                                                    {department === 'SHANS' && "Science and Mathematics"}
+                                                                    {department === 'STEH' && "Business and Accountancy"}
+                                                                    {department === 'SAB' && "Teacher Education and Humanities"}  | {program}
+                                                                    {/* {department || 'No Department Available'} | {program || 'No Program Available'} */}
                                                                 </span>
                                                             </CardDescription>
                                                         </div>
