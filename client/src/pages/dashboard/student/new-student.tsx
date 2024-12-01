@@ -15,6 +15,7 @@ import { DataTableSelectCoursesInNewStudent } from './student-data-table-compone
 import { SelectCoursesInNewStudentColumns } from './student-data-table-components/new-student/columns-select-courses-in-new-student'
 import { Button } from '@/components/ui/button'
 import { API_COURSE_FINDALL_COURSES_IN_NEW_STUDENT } from '@/api/courses'
+import { AuthContext } from '@/hooks/AuthContext'
 
 export default function NewStudent() {
     return (
@@ -72,6 +73,15 @@ const CreateForm = () => {
             examRating: ''
         }
     })
+
+    const { isAuthenticated } = React.useContext(AuthContext)
+
+    React.useEffect(() => {
+        if (!isAuthenticated) {
+            // Redirect to login page if not authenticated
+            navigate("/", { replace: true });
+        }
+    }, [isAuthenticated, navigate])
 
     const { data: curriculum, isLoading: curriculumLoading, isFetched: curriculumFetched } = useQuery({
         queryFn: () => API_CURRICULUM_FINDALL_ACTIVE(),
