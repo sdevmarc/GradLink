@@ -1,7 +1,7 @@
 import HeadSection, { BackHeadSection, SubHeadSectionDetails } from '@/components/head-section'
 import MainTable from '@/components/main-table'
 import { ROUTES } from '@/constants'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { AlertDialogConfirmation } from '@/components/alert-dialog'
 import { CircleCheck, CircleX, Plus, X } from 'lucide-react'
@@ -29,6 +29,7 @@ import { Progress } from '@/components/ui/progress'
 import { ICurriculum, IRequestCourse, IShowCategories } from '@/interface/curriculum.interface'
 import { API_NEW_CURRICULUM } from '@/api/curriculum'
 import { useNavigate } from 'react-router-dom'
+import { AuthContext } from '@/hooks/AuthContext'
 
 export default function CreateCurriculum() {
     const navigate = useNavigate()
@@ -69,6 +70,15 @@ export default function CreateCurriculum() {
         success: false
     })
     const [isValid, setValid] = useState<boolean>(false)
+
+    const { isAuthenticated } = useContext(AuthContext)
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            // Redirect to login page if not authenticated
+            navigate("/", { replace: true });
+        }
+    }, [isAuthenticated, navigate])
 
     const { data: course, isLoading: courseLoading, isFetched: courseFetched } = useQuery({
         queryFn: () => API_COURSE_FINDALL(),
