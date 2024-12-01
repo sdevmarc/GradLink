@@ -105,7 +105,17 @@ export const CurriculumColumns: ColumnDef<ICurriculum>[] = [
         cell: ({ row }) => {
             const [isOpen, setIsOpen] = useState<boolean>(false)
 
-            const { name, major, categories, isActive, program, department, totalOfUnits, residency } = row.original
+            const {
+                name,
+                major,
+                categories,
+                isActive,
+                program,
+                department,
+                totalOfUnits,
+                residency,
+                createdAt
+            } = row.original
 
             const handleViewDetails = () => {
                 setIsOpen(true)
@@ -133,26 +143,43 @@ export const CurriculumColumns: ColumnDef<ICurriculum>[] = [
                                             <Card className="w-full mx-auto">
                                                 <CardHeader>
                                                     <div className="flex justify-between items-start">
-                                                        <div>
-                                                            <CardTitle className="capitalize flex flex-col text-3xl font-bold">
-                                                                {name || 'No Name Available'}
-                                                                <span className="font-normal text-md">
-                                                                    {major || null}
-                                                                </span>
-                                                            </CardTitle>
-                                                            <CardDescription className="mt-2">
-                                                                <Badge variant={isActive ? 'default' : 'destructive'} className="mr-2">
-                                                                    {
-                                                                        isActive ? 'Active' : 'Legacy'
-                                                                    }
-                                                                </Badge>
-                                                                <span className="text-muted-foreground">
-                                                                    {department === 'SEAIT' && "Eng'g, Dev't. Arts & Design, LIS & IT"}
-                                                                    {department === 'SHANS' && "Science and Mathematics"}
-                                                                    {department === 'STEH' && "Business and Accountancy"}
-                                                                    {department === 'SAB' && "Teacher Education and Humanities"}  | {program}
-                                                                    {/* {department || 'No Department Available'} | {program || 'No Program Available'} */}
-                                                                </span>
+                                                        <div className="w-full">
+                                                            <div className="flex items-center justify-between">
+                                                                <CardTitle className="capitalize flex flex-col text-3xl font-bold">
+                                                                    {name || 'No Name Available'}
+                                                                    <span className="font-normal text-md">
+                                                                        {major || null}
+                                                                    </span>
+                                                                </CardTitle>
+                                                                <div className="flex flex-col items-center">
+                                                                    <h1 className="text-muted font-semibold text-sm">Date Created</h1>
+                                                                    <span className="text-primary text-md font-semibold">
+                                                                        {createdAt}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+
+                                                            <CardDescription className="mt-2 flex flex-col gap-2">
+                                                                <div className="flex gap-2">
+                                                                    <Badge variant={isActive ? 'default' : 'destructive'} className="mr-2">
+                                                                        {
+                                                                            isActive ? 'Active' : 'Legacy'
+                                                                        }
+                                                                    </Badge>
+                                                                    <span className="text-muted-foreground">
+                                                                        {department === 'SEAIT' && "Eng'g, Dev't. Arts & Design, LIS & IT"}
+                                                                        {department === 'SHANS' && "Science and Mathematics"}
+                                                                        {department === 'STEH' && "Business and Accountancy"}
+                                                                        {department === 'SAB' && "Teacher Education and Humanities"}  | {program}
+                                                                        {/* {department || 'No Department Available'} | {program || 'No Program Available'} */}
+                                                                    </span>
+                                                                </div>
+                                                                <div className="flex gap-2">
+                                                                    <h1 className="text-primary font-semibold text-md">Date Created</h1>
+                                                                    <span className="text-primary text-md font-semibold">
+                                                                        {createdAt}
+                                                                    </span>
+                                                                </div>
                                                             </CardDescription>
                                                         </div>
                                                         {/* <Button>Apply Now</Button> */}
