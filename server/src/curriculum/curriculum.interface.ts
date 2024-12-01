@@ -13,6 +13,7 @@ export interface ICurriculum {
     major?: string
     categories?: ICategories[]
     isActive?: boolean
+    year?: string
 }
 
 export interface IPromiseCurriculum {
