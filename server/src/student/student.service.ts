@@ -1605,6 +1605,33 @@ export class StudentService {
                     }
                 },
                 {
+                    $addFields: {
+                        status: {
+                            $switch: {
+                                branches: [
+                                    {
+                                        case: { $and: [{ $eq: ['$status', 'student'] }, { $eq: ['$isenrolled', true] }] },
+                                        then: 'ongoing'
+                                    },
+                                    {
+                                        case: { $and: [{ $eq: ['$status', 'student'] }, { $eq: ['$isenrolled', false] }] },
+                                        then: 'discontinued'
+                                    },
+                                    {
+                                        case: { $and: [{ $eq: ['$status', 'enrollee'] }, { $eq: ['$isenrolled', true] }] },
+                                        then: 'ongoing'
+                                    },
+                                    {
+                                        case: { $and: [{ $eq: ['$status', 'enrollee'] }, { $eq: ['$isenrolled', false] }] },
+                                        then: 'discontinued'
+                                    }
+                                ],
+                                default: '$status'
+                            }
+                        }
+                    }
+                },                
+                {
                     $project: {
                         _id: 1,
                         idNumber: 1,
