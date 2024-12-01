@@ -1,6 +1,6 @@
 import HeadSection, { BackHeadSection, SubHeadSectionDetails } from '@/components/head-section'
 import MainTable from '@/components/main-table'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { CircleCheck, CircleX } from 'lucide-react'
 import { AlertDialogConfirmation } from '@/components/alert-dialog'
 import Loading from '@/components/loading'
@@ -10,12 +10,13 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { API_STUDENT_ENROLL_STUDENT, API_STUDENT_FINDALL_ENROLLEES_IN_COURSE } from '@/api/student'
 import { DataTableEnrollStudent } from './enrollment-data-table-components/enroll-student/data-table-enroll-student'
 import { EnrollStudentColumns } from './enrollment-data-table-components/enroll-student/columns-enroll-student'
+import { AuthContext } from '@/hooks/AuthContext'
 
 export default function EnrollStudent() {
     const queryClient = useQueryClient()
     const { id } = useParams()
-
     const navigate = useNavigate()
+
     const [coursename, setCourseName] = useState<string>('')
     const [courseid, setCourseId] = useState<string>('')
     const [checkstudents, setCheckStudents] = useState<IAPICourse[]>([])
@@ -26,6 +27,15 @@ export default function EnrollStudent() {
         description: '',
         success: false
     })
+
+    const { isAuthenticated } = useContext(AuthContext);
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            // Redirect to login page if not authenticated
+            navigate("/", { replace: true });
+        }
+    }, [isAuthenticated, navigate])
 
     useEffect(() => {
         if (id) {
