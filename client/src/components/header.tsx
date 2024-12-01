@@ -59,15 +59,6 @@ export const HeaderLayout = () => {
     )
 }
 
-export const TracerHeaderLayout = () => {
-    return (
-        <>
-            <HeaderTracer />
-            <Outlet />
-        </>
-    )
-}
-
 export const HomeHeaderLayout = () => {
     return (
         <Outlet />
