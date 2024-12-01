@@ -1,14 +1,12 @@
 import { createBrowserRouter } from "react-router-dom"
-import Tracer from "./dashboard/tracer/tracer"
 import Program from "./dashboard/program/available-programs"
 import LoginPage from "./home/login"
-import { HeaderLayout, HomeHeaderLayout, SettingsLayout, TracerHeaderLayout } from "@/components/header"
+import { HeaderLayout, HomeHeaderLayout, SettingsLayout } from "@/components/header"
 import Overview from "./dashboard/overview/overview"
 import CreateCourse from "./dashboard/program/create-course"
 import Form from "./dashboard/form/form"
 import CreateProgram from "./dashboard/program/create-program"
 import CreateCurriculum from "./dashboard/program/create-curriculum"
-import ViewProgramDetails from "./dashboard/program/view-program-details"
 import Enrollment from "./dashboard/enrollment/courses-offered"
 import CreateCoursesOffered from "./dashboard/enrollment/create-course-offered"
 import NewStudent from "./dashboard/student/new-student"
@@ -181,14 +179,6 @@ const Routes = createBrowserRouter([
                 )
             },
             {
-                path: '/program/details/:id',
-                element: (
-                    <ProtectedRoute>
-                        <ViewProgramDetails />
-                    </ProtectedRoute>
-                )
-            },
-            {
                 path: '/program/create-program',
                 element: (
                     <ProtectedRoute>
@@ -224,19 +214,6 @@ const Routes = createBrowserRouter([
             },
 
 
-        ]
-    },
-    {
-        element: <TracerHeaderLayout />,
-        children: [
-            {
-                path: '/tracer',
-                element: (
-                    <ProtectedRoute>
-                        <Tracer />
-                    </ProtectedRoute>
-                )
-            },
         ]
     },
     {
