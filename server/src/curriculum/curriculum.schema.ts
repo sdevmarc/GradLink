@@ -14,6 +14,10 @@ export const CurriculumSchema = new mongoose.Schema({
         type: String,
         default: null
     },
+    year: {
+        type: String,
+        required: true
+    },
     categories: [{
         categoryName: {
             type: String,
