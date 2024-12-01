@@ -6,8 +6,21 @@ import MainTable from "@/components/main-table"
 import { DataTableAttritionRatePrograms } from "./enrollment-data-table-components/attrition-rate-programs/data-table-attrition-rate-programs."
 import { AttritionRateProgramsColumns } from "./enrollment-data-table-components/attrition-rate-programs/columns-attrition-rate-programs"
 import { API_PROGRAM_FINDALL } from "@/api/program"
+import { useContext, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
+import { AuthContext } from "@/hooks/AuthContext"
 
 export default function AttritionRatePrograms() {
+    const { isAuthenticated } = useContext(AuthContext);
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            // Redirect to login page if not authenticated
+            navigate("/", { replace: true });
+        }
+    }, [isAuthenticated, navigate])
+
     const { data: program, isLoading: programLoading, isFetched: programFetched } = useQuery({
         queryFn: () => API_PROGRAM_FINDALL(),
         queryKey: ['programs']
