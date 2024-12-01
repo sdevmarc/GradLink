@@ -76,7 +76,6 @@ export const StudentSchema = new mongoose.Schema({
         required: true,
         default: false
     },
-    //Will be implemented later
     assessmentForm: {
         type: String,
         default: null
