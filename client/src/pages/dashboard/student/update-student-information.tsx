@@ -8,8 +8,19 @@ import { CircleCheck, CircleX } from 'lucide-react'
 import Loading from '@/components/loading'
 import { AlertDialogConfirmation } from '@/components/alert-dialog'
 import { useNavigate, useParams } from 'react-router-dom'
+import { AuthContext } from '@/hooks/AuthContext'
 
 export default function UpdateStudent() {
+    const { isAuthenticated } = React.useContext(AuthContext);
+    const navigate = useNavigate()
+
+    React.useEffect(() => {
+        if (!isAuthenticated) {
+            // Redirect to login page if not authenticated
+            navigate("/", { replace: true });
+        }
+    }, [isAuthenticated, navigate])
+
     return (
         <div className="flex flex-col min-h-screen items-center">
             <div className="w-full max-w-[90rem] flex flex-col pb-[20rem]">
