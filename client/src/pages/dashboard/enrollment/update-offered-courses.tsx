@@ -1,6 +1,6 @@
 import HeadSection, { BackHeadSection, SubHeadSectionDetails } from '@/components/head-section'
 import MainTable from '@/components/main-table'
-import { useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { CircleCheck, CircleX } from 'lucide-react'
 import { AlertDialogConfirmation } from '@/components/alert-dialog'
 import Loading from '@/components/loading'
@@ -11,10 +11,10 @@ import { API_COURSE_FINDALL } from '@/api/courses'
 import { API_UPDATE_COURSES_OFFERED } from '@/api/offered'
 import { UpdateCourseOfferedColumns } from './enrollment-data-table-components/update-courses-offered/columns-update-course-offered'
 import { DataTableUpdateCourseOffered } from './enrollment-data-table-components/update-courses-offered/data-table-update-course-offered.'
+import { AuthContext } from '@/hooks/AuthContext'
 
 export default function UpdateOfferedCourses() {
     const queryClient = useQueryClient()
-    const navigate = useNavigate()
     const [checkcourses, setCheckCourses] = useState<IAPICourse[]>([])
     const [isValid, setValid] = useState<boolean>(false)
     const [dialogsubmit, setDialogSubmit] = useState<boolean>(false)
@@ -24,6 +24,17 @@ export default function UpdateOfferedCourses() {
         description: '',
         success: false
     })
+
+    const { isAuthenticated } = useContext(AuthContext);
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            // Redirect to login page if not authenticated
+            navigate("/", { replace: true });
+        }
+    }, [isAuthenticated, navigate])
+
     const { data: courses, isLoading: coursesLoading, isFetched: coursesFetched } = useQuery({
         queryFn: () => API_COURSE_FINDALL(),
         queryKey: ['courses']
