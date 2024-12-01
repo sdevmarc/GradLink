@@ -64,7 +64,7 @@ export function PieChartRelatedJob({ data }: { data: IData[] }) {
                 <CardTitle>
                     Course related to job.
                 </CardTitle>
-                <CardDescription>{academicYear}</CardDescription>
+                <CardDescription className="text-lg font-bold text-primary">{academicYear}</CardDescription>
             </CardHeader>
             <CardContent className="flex-1 pb-0">
                 <ChartContainer
