@@ -95,7 +95,7 @@ export class UsersController {
                 httpOnly: true, // Prevents client-side JavaScript from accessing the cookie
                 secure: false,   // Ensures the cookie is sent over HTTPS
                 sameSite: 'lax', // CSRF protection
-                maxAge: 3600000, // Cookie expiration time in milliseconds (e.g., 1 hour)
+                maxAge: 14400000, // Cookie expiration time in milliseconds (e.g., 4 hour)
             });
 
             // Optionally, remove the access_token from the response body
