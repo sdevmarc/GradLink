@@ -3,13 +3,24 @@ import { Input } from '@/components/ui/input'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { API_COURSE_CREATE } from '@/api/courses'
 import { IAPICourse } from '@/interface/course.interface'
-import React, { useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { CircleCheck, CircleX } from 'lucide-react'
 import { AlertDialogConfirmation } from '@/components/alert-dialog'
 import Loading from '@/components/loading'
 import { useNavigate } from 'react-router-dom'
+import { AuthContext } from '@/hooks/AuthContext'
 
 export default function CreateCourse() {
+    const { isAuthenticated } = useContext(AuthContext);
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            // Redirect to login page if not authenticated
+            navigate("/", { replace: true });
+        }
+    }, [isAuthenticated, navigate])
+
     return (
         <>
             <div className="flex flex-col min-h-screen items-center">
