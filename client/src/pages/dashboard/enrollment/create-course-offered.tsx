@@ -1,6 +1,6 @@
 import HeadSection, { BackHeadSection, SubHeadSectionDetails } from '@/components/head-section'
 import MainTable from '@/components/main-table'
-import { useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { CircleCheck, CircleX } from 'lucide-react'
 import { AlertDialogConfirmation } from '@/components/alert-dialog'
 import Loading from '@/components/loading'
@@ -12,6 +12,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { API_COURSE_FINDALL } from '@/api/courses'
 import { Combobox } from '@/components/combobox'
 import { API_CREATE_COURSES_OFFERED } from '@/api/offered'
+import { AuthContext } from '@/hooks/AuthContext'
 
 interface AcademicYear {
     label: string;
@@ -48,6 +49,16 @@ export default function CreateCoursesOffered() {
         description: '',
         success: false
     })
+
+    const { isAuthenticated } = useContext(AuthContext)
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            // Redirect to login page if not authenticated
+            navigate("/", { replace: true });
+        }
+    }, [isAuthenticated, navigate])
+    
     const semester = [
         { label: 'First Semester', value: '1' },
         { label: 'Second Semester', value: '2' },
