@@ -79,6 +79,11 @@ export function DataTableToolbarListOfStudent<TData>({
         { value: 'STEH', label: "Teacher Education and Humanities" }
     ]
 
+    const status_options = [
+        { value: 'ongoing', label: 'Ongoing' },
+        { value: 'discontinued', label: 'Discontinued' }
+    ]
+
     const { data: program, isLoading: programLoading, isFetched: programFetched } = useQuery({
         queryFn: () => API_PROGRAM_FINDALL(),
         queryKey: ['programs']
@@ -98,8 +103,8 @@ export function DataTableToolbarListOfStudent<TData>({
     //     }
     // }, [program])
 
-     // Compute filtered programs using useMemo
-     const filteredPrograms = useMemo(() => {
+    // Compute filtered programs using useMemo
+    const filteredPrograms = useMemo(() => {
         if (!programLoading && programFetched && program?.data) {
             // Map programs to options
             const allPrograms = program.data.map((item: IAPIPrograms) => {
@@ -192,6 +197,14 @@ export function DataTableToolbarListOfStudent<TData>({
                         column={table.getColumn("program")}
                         title="Program"
                         options={filteredPrograms}
+                    />
+                )}
+
+                {(table.getColumn("status")) && (
+                    <DataTableFacetedFilter
+                        column={table.getColumn("status")}
+                        title="Status"
+                        options={status_options}
                     />
                 )}
                 {/* <CalendarDatePicker
