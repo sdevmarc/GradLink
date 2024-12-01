@@ -162,14 +162,14 @@ export class CurriculumService {
         }
     }
 
-    async insertNew({ name, programid, major, categories }: ICurriculum) {
+    async insertNew({ name, year, programid, major, categories }: ICurriculum) {
         try {
             if (!name || !programid || categories.length === 0) return { success: false, message: 'Please fill-in the required fields.' }
 
             const activeCurriculum = await this.CurriculumModel.findOne({ programid, isActive: true })
             if (activeCurriculum) await this.CurriculumModel.updateMany({ programid, isActive: true }, { isActive: false })
 
-            await this.CurriculumModel.create({ name, programid, major, categories })
+            await this.CurriculumModel.create({ name, year, programid, major, categories })
             return { success: true, message: 'Curriculum successfully created.' }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Failed to create new curriculum.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
