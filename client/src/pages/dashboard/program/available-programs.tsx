@@ -10,8 +10,21 @@ import { useQuery } from '@tanstack/react-query'
 import { API_COURSE_FINDALL } from '@/api/courses'
 import { API_PROGRAM_FINDALL } from '@/api/program'
 import { API_CURRICULUM_FINDALL } from '@/api/curriculum'
+import { AuthContext } from '@/hooks/AuthContext'
+import { useContext, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 export default function Program() {
+    const { isAuthenticated } = useContext(AuthContext);
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            // Redirect to login page if not authenticated
+            navigate("/", { replace: true });
+        }
+    }, [isAuthenticated, navigate])
+
     const { data: course, isLoading: courseLoading, isFetched: courseFetched } = useQuery({
         queryFn: () => API_COURSE_FINDALL(),
         queryKey: ['courses']
