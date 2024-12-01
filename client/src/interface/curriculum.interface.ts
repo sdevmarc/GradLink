@@ -23,5 +23,6 @@ export interface ICurriculum {
     isActive?: boolean
     department?: string
     totalOfUnits?: number
-    residency?: number
+    residency?: number,
+    createdAt?: string
 }
