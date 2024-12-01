@@ -52,6 +52,7 @@ export default function CreateCurriculum() {
         name: '',
         programid: '',
         major: '',
+        year: 0,
         programcode: '',
         programDescriptiveTitle: '',
         categories: [],
@@ -120,6 +121,7 @@ export default function CreateCurriculum() {
                     name: '',
                     programid: '',
                     programcode: '',
+                    year: 0,
                     programDescriptiveTitle: '',
                     major: '',
                     categories: [],
@@ -232,17 +234,13 @@ export default function CreateCurriculum() {
     };
 
     const handleSubmit = async () => {
-        const { name, programid, major, categories } = values
+        const { name, year, programid, major, categories } = values
         const trimmedMajor = major.trim()
 
-        await addcurriculum({ name, programid, major: trimmedMajor, categories })
+        await addcurriculum({ name, year, programid, major: trimmedMajor, categories })
     }
 
     const isLoading = courseLoading || addcurriculumLoading
-
-    useEffect(() => {
-        console.log(isValid)
-    }, [isValid])
 
     return (
         <>
@@ -310,6 +308,46 @@ export default function CreateCurriculum() {
                                     show: true,
                                     title: 'Uh, oh. Something went wrong!',
                                     description: `Please add a program first.`
+                                });
+                                setStep(0)
+                                setValid(false)
+                                return
+                            }
+
+                            const nospaceYear = (values.year?.toString() ?? '').replace(/\s+/g, '')
+
+                            if (nospaceYear === '') {
+                                setAlertDialogState({
+                                    success: false,
+                                    show: true,
+                                    title: 'Uh, oh. Something went wrong!',
+                                    description: `Please enter a valid year..`
+                                });
+                                setStep(0)
+                                setValid(false)
+                                return
+                            }
+
+                            const yearPattern = /^\d{4}$/;
+                            if (!yearPattern.test(nospaceYear)) {
+                                setAlertDialogState({
+                                    success: false,
+                                    show: true,
+                                    title: 'Invalid Year Format',
+                                    description: 'Please enter a valid 4-digit year (e.g., 2024)'
+                                });
+                                setStep(0)
+                                setValid(false)
+                                return
+                            }
+
+                            const yearNum = parseInt(nospaceYear);
+                            if (yearNum < 1900) {
+                                setAlertDialogState({
+                                    success: false,
+                                    show: true,
+                                    title: 'Invalid Year',
+                                    description: 'Please enter a year from 1900 onwards'
                                 });
                                 setStep(0)
                                 setValid(false)
@@ -395,21 +433,39 @@ export default function CreateCurriculum() {
                                     </div>
                                     <div className="w-full flex flex-col gap-4">
                                         <div className={`${step === 0 ? 'block' : 'hidden'} w-full flex flex-col gap-4`}>
-                                            <div className="flex flex-col gap-2">
-                                                <h1 className="text-md font-medium">
-                                                    Title of Curriculum
-                                                </h1>
-                                                <Input
-                                                    disabled={isLoading}
-                                                    value={values.name}
-                                                    type='text'
-                                                    name='name'
-                                                    placeholder='eg. New Curriculum 2024'
-                                                    className='h-8 max-w-[400px]'
-                                                    onChange={handleOnChangeValues}
-                                                    required
-                                                />
+                                            <div className="flex items-center justify-start gap-8">
+                                                <div className="flex flex-col gap-2">
+                                                    <h1 className="text-md font-medium">
+                                                        Title of Curriculum
+                                                    </h1>
+                                                    <Input
+                                                        disabled={isLoading}
+                                                        value={values.name}
+                                                        type='text'
+                                                        name='name'
+                                                        placeholder='eg. New Curriculum 2024'
+                                                        className='h-8 max-w-[400px]'
+                                                        onChange={handleOnChangeValues}
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="flex flex-col gap-2">
+                                                    <h1 className="text-md font-medium">
+                                                        Year
+                                                    </h1>
+                                                    <Input
+                                                        disabled={isLoading}
+                                                        value={values.year}
+                                                        type='text'
+                                                        name='year'
+                                                        placeholder='eg. 2024'
+                                                        className='h-8 max-w-[400px]'
+                                                        onChange={handleOnChangeValues}
+                                                        required
+                                                    />
+                                                </div>
                                             </div>
+
 
                                             <div className="flex flex-col gap-2 px-4 py-2 border rounded-md">
                                                 <h1 className="text-md font-medium">
