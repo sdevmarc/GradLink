@@ -6,8 +6,21 @@ import MainTable from "@/components/main-table"
 import { DataTableAttritionRateCourses } from "./enrollment-data-table-components/attrition-rate-courses/data-table-attrition-rate-courses."
 import { AttritionRateCoursestColumns } from "./enrollment-data-table-components/attrition-rate-courses/columns-attrition-rate-courses"
 import { API_COURSE_FINDALL } from "@/api/courses"
+import { useContext, useEffect } from "react"
+import { AuthContext } from "@/hooks/AuthContext"
+import { useNavigate } from "react-router-dom"
 
 export default function AttritionRateCourses() {
+    const { isAuthenticated } = useContext(AuthContext);
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            // Redirect to login page if not authenticated
+            navigate("/", { replace: true });
+        }
+    }, [isAuthenticated, navigate])
+
     const { data: courses, isLoading: coursesLoading, isFetched: coursesFetched } = useQuery({
         queryFn: () => API_COURSE_FINDALL(),
         queryKey: ['courses-offered']
