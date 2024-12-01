@@ -3,7 +3,7 @@ import { Sidebar, SidebarNavs } from "@/components/sidebar"
 import MainTable from "@/components/main-table"
 import { MAPKEY, ROUTES } from "@/constants"
 import 'mapbox-gl/dist/mapbox-gl.css'
-import { useRef, useEffect, useState } from 'react'
+import { useRef, useEffect, useState, useContext } from 'react'
 import mapboxgl from 'mapbox-gl'
 import { Button } from '@/components/ui/button'
 import { createRoot } from 'react-dom/client'
@@ -26,6 +26,7 @@ import { useNavigate } from "react-router-dom"
 import { API_STUDENT_SEND_TRACER } from "@/api/alumni"
 import { API_FORM_MAPPED } from "@/api/form"
 import { API_USER_GET_USER } from "@/api/user"
+import { AuthContext } from "@/hooks/AuthContext"
 
 export default function TracerMap() {
     const queryClient = useQueryClient()
@@ -51,7 +52,15 @@ export default function TracerMap() {
         },
         id: ''
     })
+    const { isAuthenticated } = useContext(AuthContext);
     const navigate = useNavigate()
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            // Redirect to login page if not authenticated
+            navigate("/", { replace: true });
+        }
+    }, [isAuthenticated, navigate])
 
     const { isLoading: formLoading } = useQuery({
         queryFn: () => API_FORM_MAPPED(),
