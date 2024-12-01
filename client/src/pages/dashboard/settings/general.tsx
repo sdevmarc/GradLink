@@ -3,7 +3,7 @@ import MainTable from "@/components/main-table"
 import { ROUTES } from "@/constants"
 import { Sidebar, SidebarNavs } from "@/components/sidebar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
@@ -15,6 +15,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { API_FINDONE_SETTINGS, API_UPDATE_SETTINGS } from "@/api/settings"
 import Loading from "@/components/loading"
 import { API_USER_CHANGE_PASSWORD, API_USER_CHECK_PASSWORD, API_USER_GET_USER, API_USER_UPDATE_INFORMATION } from "@/api/user"
+import { AuthContext } from "@/hooks/AuthContext"
+import { useNavigate } from "react-router-dom"
 
 export default function GeneralSettings() {
     const queryClient = useQueryClient()
@@ -41,6 +43,16 @@ export default function GeneralSettings() {
         email: '',
         password: ''
     })
+
+    const { isAuthenticated } = useContext(AuthContext);
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            // Redirect to login page if not authenticated
+            navigate("/", { replace: true });
+        }
+    }, [isAuthenticated, navigate])
 
     const { data: userdata, isLoading: userdataLoading, isFetched: userdataFetched } = useQuery({
         queryFn: () => API_USER_GET_USER(),
