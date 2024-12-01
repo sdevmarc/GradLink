@@ -1,4 +1,5 @@
 import { HOST } from '@/constants'
+import { IAPISettings } from '@/interface/settings.interface';
 import axios from 'axios'
 
 axios.defaults.withCredentials = true;
@@ -28,6 +29,17 @@ export const API_UPDATE_SETTINGS = async ({ isenroll }: IAPISettings) => {
 export const API_GET_AUDIT_LOGS = async () => {
     try {
         const response = await axios.get(`${HOST}/auditlog`,
+            { withCredentials: true }
+        )
+        return response.data
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+export const API_GET_RESTORE = async () => {
+    try {
+        const response = await axios.get(`${HOST}/settings/restore`,
             { withCredentials: true }
         )
         return response.data
