@@ -8,7 +8,7 @@ import { DataTableColumnHeader } from "@/components/data-table-components/data-t
 import { IAPIStudents } from "@/interface/student.interface"
 import { Button } from "@/components/ui/button"
 import { SheetModal } from "@/components/sheet-modal"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { CircleCheck, CircleDashed, CircleUserRound, CircleX, Download, Loader, Mail, ShieldCheck, TableOfContents, Upload, UserPen, X } from "lucide-react"
 import { BookOpen, GraduationCap } from "lucide-react"
@@ -224,16 +224,16 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
         cell: ({ row }) => {
             const queryClient = useQueryClient()
             const navigate = useNavigate()
-            // const [dialogshiftprogram, setDialogShiftProgram] = useState<boolean>(false)
-            // const [dialogisshift, setDialogIsShift] = useState<boolean>(false)
+            const [dialogshiftprogram, setDialogShiftProgram] = useState<boolean>(false)
+            const [dialogisshift, setDialogIsShift] = useState<boolean>(false)
             const [dialogupdate, setDialogUpdate] = useState<boolean>(false)
             const [dialogactivate, setDialogActivate] = useState<boolean>(false)
             const [dialogdiscontinue, setDialogDiscontinue] = useState<boolean>(false)
             const [isDiscontinue, setDiscontinue] = useState<boolean>(false)
             const [disconLoading, setDisconLoading] = useState<boolean>(false)
             const [isOpen, setIsOpen] = useState<boolean>(false)
-            // const [selectedProgram, setSelectedProgram] = useState('')
-            // const [formattedPrograms, setFormattedPrograms] = useState([])
+            const [selectedProgram, setSelectedProgram] = useState('')
+            const [formattedPrograms, setFormattedPrograms] = useState([])
             const {
                 _id,
                 idNumber,
@@ -246,7 +246,6 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                 enrolledCourses,
                 programName,
                 programCode,
-                // program,
                 department,
                 undergraduateInformation,
                 achievements,
@@ -265,25 +264,25 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                 queryKey: ['users']
             })
 
-            // const { data: curriculum, isLoading: curriculumLoading, isFetched: curriculumFetched } = useQuery({
-            //     queryFn: () => API_CURRICULUM_FINDALL_ACTIVE(),
-            //     queryKey: ['curriculums']
-            // })
+            const { data: curriculum, isLoading: curriculumLoading, isFetched: curriculumFetched } = useQuery({
+                queryFn: () => API_CURRICULUM_FINDALL_ACTIVE(),
+                queryKey: ['curriculums']
+            })
 
-            // useEffect(() => {
-            //     if (curriculumFetched && curriculum?.data) {
-            //         const formatCurriculum = curriculum.data.map((item: ICurriculum) => ({
-            //             value: item._id,
-            //             label: item.program
-            //         }))
-            //         setFormattedPrograms(formatCurriculum)
-            //     }
-            // }, [curriculum, curriculumFetched])
+            useEffect(() => {
+                if (curriculumFetched && curriculum?.data) {
+                    const formatCurriculum = curriculum.data.map((item: ICurriculum) => ({
+                        value: item._id,
+                        label: item.program
+                    }))
+                    setFormattedPrograms(formatCurriculum)
+                }
+            }, [curriculum, curriculumFetched])
 
-            // // const handleProgramChange = (value: string) => {
-            // //     setSelectedProgram(value)
-            // //     // Add any additional logic you need when program changes
-            // // }
+            const handleProgramChange = (value: string) => {
+                setSelectedProgram(value)
+                // Add any additional logic you need when program changes
+            }
 
             const handleNavigateUpdateStudent = () => {
                 const base64ID = _id ? btoa(_id) : ''
@@ -380,7 +379,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                 }
             };
 
-            const isLoading = userdataLoading || disconLoading || activatestudentLoading
+            const isLoading = userdataLoading || disconLoading || activatestudentLoading || curriculumLoading
 
             return (
                 <>
@@ -433,7 +432,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                             </span>
                                                                         </CardTitle>
                                                                         <div className="flex flex-col gap">
-                                                                            {
+                                                                            {/* {
                                                                                 !isenrolled &&
                                                                                 <AlertDialogConfirmation
                                                                                     isDialog={dialogactivate}
@@ -448,8 +447,8 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                                     description={`${lastname}, ${firstname} ${middlename} will be re-activated if this continue.`}
                                                                                     btnContinue={handleActivateStudent}
                                                                                 />
-                                                                            }
-                                                                            {/* <div className="flex items-center gap-2">
+                                                                            } */}
+                                                                            <div className="flex items-center gap-2">
                                                                                 <AlertDialogConfirmation
                                                                                     isDialog={dialogisshift}
                                                                                     setDialog={(e) => setDialogIsShift(e)}
@@ -490,7 +489,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                                         />
                                                                                     }
                                                                                 />
-                                                                            </div> */}
+                                                                            </div>
                                                                         </div>
                                                                     </div>
 
@@ -697,7 +696,23 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                     </tbody>
                                                                 </table>
                                                             </div>
-                                                            <div className="flex flex-col gap-2">
+                                                            <div className="flex flex-col gap-4">
+                                                                {
+                                                                    !isenrolled &&
+                                                                    <AlertDialogConfirmation
+                                                                        isDialog={dialogactivate}
+                                                                        setDialog={(e) => setDialogActivate(e)}
+                                                                        className="flex items-center gap-2"
+                                                                        type={`default`}
+                                                                        disabled={isLoading}
+                                                                        variant={'outline'}
+                                                                        btnIcon={<ShieldCheck className="text-primary" size={18} />}
+                                                                        btnTitle="Re-Activate Student"
+                                                                        title="Are you sure?"
+                                                                        description={`${lastname}, ${firstname} ${middlename} will be re-activated if this continue.`}
+                                                                        btnContinue={handleActivateStudent}
+                                                                    />
+                                                                }
                                                                 {
                                                                     // !settings?.data?.isenroll &&
                                                                     (isenrolled && !isDiscontinue) &&
@@ -776,6 +791,9 @@ import { useCallback } from "react"
 import { useDropzone } from "react-dropzone"
 import { useNavigate } from "react-router-dom"
 import { API_USER_GET_USER } from "@/api/user"
+import { Combobox } from "@/components/combobox"
+import { API_CURRICULUM_FINDALL_ACTIVE } from "@/api/curriculum"
+import { ICurriculum } from "@/interface/curriculum.interface"
 
 const DragDropImage = ({ id, isDiscontinue, isdiscontinueLoading, isDialogSubmit }: { id: string, isDiscontinue: (e: boolean) => void, isdiscontinueLoading: (e: boolean) => void, isDialogSubmit: (e: boolean) => void }) => {
     const queryClient = useQueryClient()
