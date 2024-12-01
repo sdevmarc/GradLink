@@ -2,13 +2,15 @@ import HeadSection, { SubHeadSectionDetails } from "@/components/head-section";
 import './index.css'
 import { Combobox } from "@/components/combobox";
 import { Filter, LoaderCircle } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { API_PROGRAM_FINDALL } from "@/api/program";
 import { API_STUDENT_YEARS_GRADUATED } from "@/api/student";
 import { API_ANALYTICS_EMPLOYMENT } from "@/api/analytics";
 import { PieChartLandJob } from "@/components/charts/pie-chart-land-job";
 import { PieChartRelatedJob } from "@/components/charts/pie-chart-related-job";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "@/hooks/AuthContext";
 
 export default function Overview() {
     const [program, setProgram] = useState<string>('')
@@ -16,6 +18,16 @@ export default function Overview() {
     const [department, setDepartment] = useState<string>('')
     const [filteredPrograms, setFilteredPrograms] = useState<{ label: string, value: string }[]>([])
     const [filteredYearsGraduated, setFilteredYearsGraduated] = useState<{ label: string, value: string }[]>([])
+
+    const { isAuthenticated } = useContext(AuthContext);
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            // Redirect to login page if not authenticated
+            navigate("/", { replace: true });
+        }
+    }, [isAuthenticated, navigate])
 
     const { data: programs, isLoading: programsLoading, isFetched: programsFetched } = useQuery({
         queryFn: () => API_PROGRAM_FINDALL(),
