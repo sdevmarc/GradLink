@@ -6,8 +6,21 @@ import { ROUTES } from "@/constants"
 import MainTable from "@/components/main-table"
 import { DataTableArchivedAcademicYearOfferedCourses } from "./enrollment-data-table-components/archived-academic-year-offered-courses/data-table-archived-academic-year-offered-courses."
 import { ArchivedAcademicYearOfferedCoursesColumns } from "./enrollment-data-table-components/archived-academic-year-offered-courses/columns-archived-academic-year-offered-courses"
+import { useNavigate } from "react-router-dom"
+import { useContext, useEffect } from "react"
+import { AuthContext } from "@/hooks/AuthContext"
 
 export default function ArchivedAcademicYearOfferedCourses() {
+    const { isAuthenticated } = useContext(AuthContext);
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            // Redirect to login page if not authenticated
+            navigate("/", { replace: true });
+        }
+    }, [isAuthenticated, navigate])
+
     const { data: courses, isLoading: coursesLoading, isFetched: coursesFetched } = useQuery({
         queryFn: () => API_FINDALL_ACADEMIC_YEARS_IN_OFFERED_COURSES(),
         queryKey: ['courses-offered']
