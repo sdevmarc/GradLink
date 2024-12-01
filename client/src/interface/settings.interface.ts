@@ -1,4 +1,4 @@
-interface IAPISettings {
+export interface IAPISettings {
     isenroll?: boolean
 }
 
