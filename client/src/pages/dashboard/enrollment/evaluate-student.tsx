@@ -1,6 +1,6 @@
 import HeadSection, { BackHeadSection, SubHeadSectionDetails } from '@/components/head-section'
 import MainTable from '@/components/main-table'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { CircleCheck, CircleX } from 'lucide-react'
 import { AlertDialogConfirmation } from '@/components/alert-dialog'
 import Loading from '@/components/loading'
@@ -10,6 +10,7 @@ import { API_STUDENT_EVALUATE_STUDENT, API_STUDENT_FINDALL_EVALUATEES_IN_COURSE 
 import { DataTableEvaluateStudent } from './enrollment-data-table-components/evaluate-student/data-table-evaluate-student'
 import { EvaluateStudentColumns } from './enrollment-data-table-components/evaluate-student/columns-evaluate-student'
 import { IEvaluation } from '@/interface/student.interface'
+import { AuthContext } from '@/hooks/AuthContext'
 
 export default function EvaluateStudent() {
     const queryClient = useQueryClient()
@@ -26,6 +27,15 @@ export default function EvaluateStudent() {
         description: '',
         success: false
     })
+
+    const { isAuthenticated } = useContext(AuthContext)
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            // Redirect to login page if not authenticated
+            navigate("/", { replace: true });
+        }
+    }, [isAuthenticated, navigate])
 
     useEffect(() => {
         if (id) {
