@@ -45,7 +45,7 @@ export function DataTableStudentListOfStudent<TData, TValue>({
         firstname: false,
         middlename: false,
         email: false,
-        // status: false
+        status: false
     })
     const [rowSelection, setRowSelection] = React.useState({})
 
