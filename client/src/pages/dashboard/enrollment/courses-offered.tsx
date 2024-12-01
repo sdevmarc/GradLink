@@ -6,8 +6,21 @@ import { API_FINDALL_COURSES_OFFERED } from "@/api/offered"
 import MainTable from "@/components/main-table"
 import { Sidebar, SidebarNavs } from "@/components/sidebar"
 import { ROUTES } from "@/constants"
+import { AuthContext } from "@/hooks/AuthContext"
+import { useContext, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 
 export default function Enrollment() {
+    const { isAuthenticated } = useContext(AuthContext);
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            // Redirect to login page if not authenticated
+            navigate("/", { replace: true });
+        }
+    }, [isAuthenticated, navigate])
+
     const { data: courses, isLoading: coursesLoading, isFetched: coursesFetched } = useQuery({
         queryFn: () => API_FINDALL_COURSES_OFFERED(),
         queryKey: ['courses-offered']
