@@ -6,12 +6,22 @@ import { ROUTES } from "@/constants"
 import MainTable from "@/components/main-table"
 import { DataTableArchivedSemesterInAcademicYear } from "./enrollment-data-table-components/archived-semesters-in-academic-year/data-table-archived-semesters-in-academic-year"
 import { ArchivedSemesterInAcademicYearColumns } from "./enrollment-data-table-components/archived-semesters-in-academic-year/columns-archived-semesters-in-academic-year"
-import { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useContext, useEffect, useState } from "react"
+import { useNavigate, useParams } from "react-router-dom"
+import { AuthContext } from "@/hooks/AuthContext"
 
 export default function ArchivedSemestersInAcademicYear() {
     const [academicYear, setAcademicYear] = useState<string>('')
     const nospaceAcademicYear = (academicYear ?? '').replace(/\s+/g, '')
+    const { isAuthenticated } = useContext(AuthContext);
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            // Redirect to login page if not authenticated
+            navigate("/", { replace: true });
+        }
+    }, [isAuthenticated, navigate])
 
     const { data: courses, isLoading: coursesLoading, isFetched: coursesFetched } = useQuery({
         queryFn: () => API_FINDALL_COURSES_OFFERED_IN_ACADEMIC_YEAR({ academicYear: nospaceAcademicYear }),
