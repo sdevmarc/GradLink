@@ -28,7 +28,7 @@ export class CurriculumController {
     @Post('create')
     async insertCurriculum(
         @Req() request: Request,
-        @Body() { name, programid, major, categories }: ICurriculum) {
+        @Body() { name, year, programid, major, categories }: ICurriculum) {
 
         const token = request.cookies['access_token'];
         if (!token) return { isAuthenticated: false }
@@ -38,7 +38,7 @@ export class CurriculumController {
             const userId = await payload.sub
 
             // return await this.CurriculumService.insertNew({ name, programid, major, categories })
-            const issuccess = await this.CurriculumService.insertNew({ name, programid, major, categories })
+            const issuccess = await this.CurriculumService.insertNew({ name, year, programid, major, categories })
 
             if (issuccess.success) {
                 await this.auditlogService.createLog({ userId, action: "curriculum_changed", description: `Curriculum ${name} created successfully.` })
