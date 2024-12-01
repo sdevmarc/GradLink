@@ -25,4 +25,5 @@ export interface ICurriculum {
     totalOfUnits?: number
     residency?: number,
     createdAt?: string
+    year?: number
 }
