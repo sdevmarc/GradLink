@@ -1,6 +1,6 @@
 import HeadSection, { BackHeadSection, SubHeadSectionDetails } from '@/components/head-section'
 import MainTable from '@/components/main-table'
-import { useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { CircleCheck, CircleX } from 'lucide-react'
 import { AlertDialogConfirmation } from '@/components/alert-dialog'
 import Loading from '@/components/loading'
@@ -10,6 +10,7 @@ import { IAPIPrograms } from '@/interface/program.interface'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { API_PROGRAM_NEW_PROGRAM } from '@/api/program'
 import { Combobox } from '@/components/combobox'
+import { AuthContext } from '@/hooks/AuthContext'
 
 export default function CreateProgram() {
     const queryClient = useQueryClient()
@@ -28,6 +29,15 @@ export default function CreateProgram() {
         residency: '',
         department: '',
     })
+
+    const { isAuthenticated } = useContext(AuthContext)
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            // Redirect to login page if not authenticated
+            navigate("/", { replace: true });
+        }
+    }, [isAuthenticated, navigate])
 
     const department = [
         { label: "Eng'g, Dev't. Arts & Design, Library Science & IT", value: 'SEAIT' },
