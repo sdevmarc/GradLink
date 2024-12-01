@@ -7,13 +7,15 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { CircleArrowUp, CircleCheck, CircleX, Pencil, Send, ShieldMinus, X } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { AlertDialogConfirmation } from "@/components/alert-dialog"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { API_USER_CREATE_USER, API_USER_GET_ALL_USERS, API_USER_GET_USER, API_USER_UPDATE_STATUS_USER, API_USER_UPDATE_USER } from "@/api/user"
 import { IAPIUsers } from "@/interface/user.interface"
 import { Combobox } from "@/components/combobox"
 import Loading from "@/components/loading"
+import { AuthContext } from "@/hooks/AuthContext"
+import { useNavigate } from "react-router-dom"
 
 export default function Security() {
     const queryClient = useQueryClient()
@@ -43,6 +45,16 @@ export default function Security() {
         role: '',
         department: ''
     })
+
+    const { isAuthenticated } = useContext(AuthContext);
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            // Redirect to login page if not authenticated
+            navigate("/", { replace: true });
+        }
+    }, [isAuthenticated, navigate])
 
     const { data: user, isLoading: userLoading, isFetched: userFetched } = useQuery({
         queryFn: () => API_USER_GET_USER(),
