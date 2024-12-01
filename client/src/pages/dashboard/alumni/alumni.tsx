@@ -7,9 +7,21 @@ import { Sidebar, SidebarNavs } from "@/components/sidebar"
 import MainTable from "@/components/main-table"
 import { ROUTES } from "@/constants"
 import { API_FORM_MAPPED } from "@/api/form"
-import { useEffect } from "react"
+import { useContext, useEffect } from "react"
+import { AuthContext } from "@/hooks/AuthContext"
+import { useNavigate } from "react-router-dom"
 
 export default function Alumni() {
+    const { isAuthenticated } = useContext(AuthContext);
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            // Redirect to login page if not authenticated
+            navigate("/", { replace: true });
+        }
+    }, [isAuthenticated, navigate])
+
     const { data: dataAlumni, isLoading: alumniLoading, isFetched: alumniFetched } = useQuery({
         queryFn: () => API_STUDENT_FINDALL_ALUMNI(),
         queryKey: ['students']
