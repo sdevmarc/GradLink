@@ -201,6 +201,15 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
         enableHiding: true,
         enableSorting: false,
     },
+    {
+        accessorKey: "status",
+        enableColumnFilter: true,
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id))
+        },
+        enableHiding: true,
+        enableSorting: false,
+    },
     // {
     //     accessorKey: 'search',
     //     header: 'Search',
