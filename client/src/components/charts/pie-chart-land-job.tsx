@@ -69,7 +69,7 @@ export function PieChartLandJob({ data }: { data: IData[] }) {
                 <CardTitle>
                     Time of Alumni Landing Their First Job
                 </CardTitle>
-                <CardDescription>{academicYear}</CardDescription>
+                <CardDescription className="text-lg font-bold text-primary">{academicYear}</CardDescription>
             </CardHeader>
             <CardContent className="flex-1 pb-0">
                 <ChartContainer
