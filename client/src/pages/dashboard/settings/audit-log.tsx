@@ -5,8 +5,20 @@ import { Card, CardContent } from "@/components/ui/card"
 import { useQuery } from "@tanstack/react-query"
 import { DataTableAudit } from "./settings-data-table-components/data-table-list-of-audit"
 import { AuditColumns } from "./settings-data-table-components/columns-student-list-of-audit"
+import { useContext, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
+import { AuthContext } from "@/hooks/AuthContext"
 
 export default function AuditLog() {
+    const { isAuthenticated } = useContext(AuthContext);
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            // Redirect to login page if not authenticated
+            navigate("/", { replace: true });
+        }
+    }, [isAuthenticated, navigate])
 
     const { data: auditlog, isLoading: auditlogLoading, isFetched: auditlogFetched } = useQuery({
         queryFn: () => API_GET_AUDIT_LOGS(),
