@@ -81,9 +81,6 @@ export default function Overview() {
                     <div className="flex flex-col gap-4">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                                <h1 className="text-lg font-semibold">
-                                    Employment Rate
-                                </h1>
                                 {
                                     isLoading &&
                                     <div className="flex items-center gap-2">
