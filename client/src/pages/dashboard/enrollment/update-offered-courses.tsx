@@ -12,6 +12,7 @@ import { API_UPDATE_COURSES_OFFERED } from '@/api/offered'
 import { UpdateCourseOfferedColumns } from './enrollment-data-table-components/update-courses-offered/columns-update-course-offered'
 import { DataTableUpdateCourseOffered } from './enrollment-data-table-components/update-courses-offered/data-table-update-course-offered.'
 import { AuthContext } from '@/hooks/AuthContext'
+import { API_USER_CHECK_DEFAULT_PASSWORD } from '@/api/user'
 
 export default function UpdateOfferedCourses() {
     const queryClient = useQueryClient()
@@ -34,6 +35,19 @@ export default function UpdateOfferedCourses() {
             navigate("/", { replace: true });
         }
     }, [isAuthenticated, navigate])
+
+    const { data: checkpassword, isFetched: checkpasswordFetched } = useQuery({
+        queryFn: () => API_USER_CHECK_DEFAULT_PASSWORD(),
+        queryKey: ['check-password']
+    })
+
+    useEffect(() => {
+        if (checkpasswordFetched) {
+            if (!checkpassword.success) {
+               navigate('/overview')
+            } 
+        }
+    }, [checkpassword])
 
     const { data: courses, isLoading: coursesLoading, isFetched: coursesFetched } = useQuery({
         queryFn: () => API_COURSE_FINDALL(),
