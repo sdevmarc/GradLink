@@ -224,7 +224,6 @@ export default function TracerMap() {
                         </Sidebar>
                         <MainTable>
                             <div className="w-full h-screen flex flex-col gap-4 pb-4 rounded-md">
-
                                 <div className="flex items-center justify-end gap-4">
                                     {
                                         isLoading &&
@@ -235,18 +234,6 @@ export default function TracerMap() {
                                             </h1>
                                         </div>
                                     }
-                                    <AlertDialogConfirmation
-                                        isDialog={dialogsubmit}
-                                        setDialog={(open) => setDialogSubmit(open)}
-                                        type={`default`}
-                                        disabled={tracerLoading}
-                                        variant={'default'}
-                                        btnIcon={<Send className="text-primary-foreground" size={18} />}
-                                        btnTitle="Send Tracer Study"
-                                        title="Are you sure?"
-                                        description={`This will send a tracer study and email the alumni accordiing to the filtered program and year graduated.`}
-                                        btnContinue={handleSendTracerStudy}
-                                    />
                                 </div>
 
                                 <div className="flex items-center justify-between gap-4">
@@ -258,32 +245,44 @@ export default function TracerMap() {
                                             className="h-8 w-[17rem] lg:w-[20rem]"
                                             onKeyDown={handleKeyDown}
                                         />
-                                        {/* <Button onClick={handleClickSearch} variant={`outline`} size={`sm`} className="flex items-center gap-2">
-                                            <Search className="text-primary" size={18} /> Search
-                                        </Button> */}
+                                        <div className="flex items-center gap-2">
+                                            <Combobox
+                                                btnTitleclassName="gap-2"
+                                                icon={<Filter className="text-primary" size={15} />}
+                                                className='w-[200px]'
+                                                lists={filteredPrograms || []}
+                                                placeholder={`Program`}
+                                                setValue={(item) => setProgram(item)}
+                                                value={program || ''}
+                                            />
+
+                                            <Combobox
+                                                btnTitleclassName="gap-2"
+                                                icon={<Filter className="text-primary" size={15} />}
+                                                className='w-[150px]'
+                                                lists={filteredYearsGraduated || []}
+                                                placeholder={`Year Graduated`}
+                                                setValue={(item) => setYearGraduated(item)}
+                                                value={yearGraduated || ''}
+                                            />
+                                        </div>
+
+
                                     </div>
 
                                     <div className="flex items-center gap-4">
-                                        <Combobox
-                                            btnTitleclassName="gap-2"
-                                            icon={<Filter className="text-primary" size={15} />}
-                                            className='w-[200px]'
-                                            lists={filteredPrograms || []}
-                                            placeholder={`Program`}
-                                            setValue={(item) => setProgram(item)}
-                                            value={program || ''}
+                                        <AlertDialogConfirmation
+                                            isDialog={dialogsubmit}
+                                            setDialog={(open) => setDialogSubmit(open)}
+                                            type={`default`}
+                                            disabled={tracerLoading}
+                                            variant={'default'}
+                                            btnIcon={<Send className="text-primary-foreground" size={18} />}
+                                            btnTitle="Send Tracer Study"
+                                            title="Are you sure?"
+                                            description={`This will send a tracer study and email the alumni accordiing to the filtered program and year graduated.`}
+                                            btnContinue={handleSendTracerStudy}
                                         />
-
-                                        <Combobox
-                                            btnTitleclassName="gap-2"
-                                            icon={<Filter className="text-primary" size={15} />}
-                                            className='w-[150px]'
-                                            lists={filteredYearsGraduated || []}
-                                            placeholder={`Year Graduated`}
-                                            setValue={(item) => setYearGraduated(item)}
-                                            value={yearGraduated || ''}
-                                        />
-
                                     </div>
                                 </div>
 
