@@ -3,8 +3,26 @@ import { Sidebar, SidebarNavs } from "@/components/sidebar"
 import MainTable from "@/components/main-table"
 import { ROUTES } from "@/constants"
 import { DataTableAlumniGoogleForm } from "./alumni-data-table-components/google-form/data-table-google-form"
+import { useEffect } from "react"
+import { useNavigate } from "react-router-dom"
+import { API_USER_CHECK_DEFAULT_PASSWORD } from "@/api/user"
+import { useQuery } from "@tanstack/react-query"
 
 export default function GoogleForm() {
+    const navigate = useNavigate()
+    const { data: checkpassword, isFetched: checkpasswordFetched } = useQuery({
+        queryFn: () => API_USER_CHECK_DEFAULT_PASSWORD(),
+        queryKey: ['check-password']
+    })
+
+    useEffect(() => {
+        if (checkpasswordFetched) {
+            if (!checkpassword.success) {
+               navigate('/overview')
+            } 
+        }
+    }, [checkpassword])
+
     // const { data: dataForm, isLoading: isformLoading, isFetched: formFetched } = useQuery({
     //     queryFn: () => API_FORM_FINDALL_UNKNOWN(),
     //     queryKey: ['forms']
@@ -26,7 +44,7 @@ export default function GoogleForm() {
                         <Sidebar>
                             <SidebarNavs title="Alumni Information" link={ROUTES.ALUMNI} />
                             <SidebarNavs title="Tracer Map" link={ROUTES.TRACER_MAP} />
-                            <SidebarNavs bg='bg-muted' title="Google Form" link={ROUTES.GOOGLE_FORM} />
+                            <SidebarNavs bg='bg-muted' title="Tracer Respondents" link={ROUTES.GOOGLE_FORM} />
                         </Sidebar>
                         <MainTable>
 
