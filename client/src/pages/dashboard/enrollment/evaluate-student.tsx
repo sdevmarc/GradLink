@@ -11,6 +11,7 @@ import { DataTableEvaluateStudent } from './enrollment-data-table-components/eva
 import { EvaluateStudentColumns } from './enrollment-data-table-components/evaluate-student/columns-evaluate-student'
 import { IEvaluation } from '@/interface/student.interface'
 import { AuthContext } from '@/hooks/AuthContext'
+import { API_USER_CHECK_DEFAULT_PASSWORD } from '@/api/user'
 
 export default function EvaluateStudent() {
     const queryClient = useQueryClient()
@@ -36,6 +37,19 @@ export default function EvaluateStudent() {
             navigate("/", { replace: true });
         }
     }, [isAuthenticated, navigate])
+
+    const { data: checkpassword, isFetched: checkpasswordFetched } = useQuery({
+        queryFn: () => API_USER_CHECK_DEFAULT_PASSWORD(),
+        queryKey: ['check-password']
+    })
+
+    useEffect(() => {
+        if (checkpasswordFetched) {
+            if (!checkpassword.success) {
+               navigate('/overview')
+            } 
+        }
+    }, [checkpassword])
 
     useEffect(() => {
         if (id) {
