@@ -8,14 +8,16 @@ import { DataTableColumnHeader } from "@/components/data-table-components/data-t
 import { IAPIStudents } from "@/interface/student.interface"
 import { Button } from "@/components/ui/button"
 import { SheetModal } from "@/components/sheet-modal"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Badge } from "@/components/ui/badge"
-import { CircleCheck, CircleDashed, CircleUserRound, CircleX, Download, Loader, Mail, ShieldCheck, TableOfContents, Upload, UserPen, X } from "lucide-react"
+import { CircleCheck, CircleDashed, CircleUserRound, CircleX, Download, Loader, Mail, Printer, ShieldCheck, TableOfContents, Upload, UserPen, X } from "lucide-react"
 import { BookOpen, GraduationCap } from "lucide-react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { AlertDialogConfirmation } from "@/components/alert-dialog"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { API_STUDENT_ACTIVATE_STUDENT, API_STUDENT_DISCONTINUE_STUDENT } from "@/api/student"
+import PrintableComponent from "@/pages/dashboard/student/student-printable-component"
+import { useReactToPrint } from 'react-to-print';
 
 const dateRangeFilter = (row: any, columnId: string, filterValue: [Date, Date]) => {
     const cellDate = new Date(row.getValue(columnId));
@@ -224,7 +226,9 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
         cell: ({ row }) => {
             const queryClient = useQueryClient()
             const navigate = useNavigate()
+            const printableRef = useRef<HTMLDivElement>(null);
             const [dialogshiftprogram, setDialogShiftProgram] = useState<boolean>(false)
+            const [dialogprint, setDialogPrint] = useState<boolean>(false)
             const [dialogisshift, setDialogIsShift] = useState<boolean>(false)
             const [dialogupdate, setDialogUpdate] = useState<boolean>(false)
             const [dialogactivate, setDialogActivate] = useState<boolean>(false)
@@ -379,6 +383,13 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                 }
             };
 
+            const handlePrint = useReactToPrint({
+                documentTitle: 'TestDocument',
+                contentRef: printableRef,
+                onAfterPrint: () => setDialogPrint(false),
+
+            });
+
             const isLoading = userdataLoading || disconLoading || activatestudentLoading || curriculumLoading
 
             return (
@@ -386,6 +397,44 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                     {
                         userdataFetched &&
                         <div className="flex justify-end gap-2">
+                            <PrintableComponent
+                                ref={printableRef}
+                                lastname={lastname || ''}
+                                firstname={firstname || ''}
+                                middlename={middlename || ''}
+                                email={email || ''}
+                                idNumber={idNumber || ''}
+                                department={department || ''}
+                                programCode={programCode || ''}
+                                programName={programName || ''}
+                                totalOfUnitsEarned={totalOfUnitsEarned || 0}
+                                totalOfUnitsEnrolled={totalOfUnitsEnrolled || 0}
+                                enrolledCourses={enrolledCourses || []}
+                            />
+                            <AlertDialogConfirmation
+                                isDialog={dialogshiftprogram}
+                                setDialog={(e) => setDialogShiftProgram(e)}
+                                className="flex items-center gap-2"
+                                type={`input`}
+                                disabled={isLoading}
+                                variant={'default'}
+                                btnIcon={<ShieldCheck className="text-primary" size={18} />}
+                                btnTitle="Shift to this program"
+                                title="Are you sure?"
+                                description={`${lastname}, ${firstname} ${middlename} will shift its program.`}
+                                btnContinue={() => {
+                                    setDialogShiftProgram(false)
+                                }}
+                                content={
+                                    <Combobox
+                                        className="w-[300px]"
+                                        lists={formattedPrograms}
+                                        placeholder="Select program"
+                                        value={selectedProgram}
+                                        setValue={handleProgramChange}
+                                    />
+                                }
+                            />
                             {
                                 (userdata?.data?.role === 'root' || userdata?.data?.role === 'admin') &&
                                 <AlertDialogConfirmation
@@ -450,45 +499,19 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                             } */}
                                                                             <div className="flex items-center gap-2">
                                                                                 <AlertDialogConfirmation
-                                                                                    isDialog={dialogisshift}
-                                                                                    setDialog={(e) => setDialogIsShift(e)}
+                                                                                    isDialog={dialogprint}
+                                                                                    setDialog={(e) => setDialogPrint(e)}
                                                                                     className="flex items-center gap-2"
                                                                                     type={`default`}
                                                                                     disabled={isLoading}
                                                                                     variant={'outline'}
-                                                                                    btnIcon={<ShieldCheck className="text-primary" size={18} />}
-                                                                                    btnTitle="Shift Student"
+                                                                                    btnIcon={<Printer className="text-primary" size={18} />}
+                                                                                    btnTitle="Print Enrollments"
                                                                                     title="Are you sure?"
-                                                                                    description={`${lastname}, ${firstname} ${middlename} will shift its program.`}
-                                                                                    btnContinue={() => {
-                                                                                        setDialogIsShift(false)
-                                                                                        setDialogShiftProgram(true)
-                                                                                    }}
+                                                                                    description={`This action will print the enrollments of ${lastname}, ${firstname} ${middlename}.`}
+                                                                                    btnContinue={() => handlePrint()}
                                                                                 />
-                                                                                <AlertDialogConfirmation
-                                                                                    isDialog={dialogshiftprogram}
-                                                                                    setDialog={(e) => setDialogShiftProgram(e)}
-                                                                                    className="flex items-center gap-2"
-                                                                                    type={`input`}
-                                                                                    disabled={isLoading}
-                                                                                    variant={'default'}
-                                                                                    btnIcon={<ShieldCheck className="text-primary" size={18} />}
-                                                                                    btnTitle="Shift to this program"
-                                                                                    title="Are you sure?"
-                                                                                    description={`${lastname}, ${firstname} ${middlename} will shift its program.`}
-                                                                                    btnContinue={() => {
-                                                                                        setDialogShiftProgram(false)
-                                                                                    }}
-                                                                                    content={
-                                                                                        <Combobox
-                                                                                            className="w-[300px]"
-                                                                                            lists={formattedPrograms}
-                                                                                            placeholder="Select program"
-                                                                                            value={selectedProgram}
-                                                                                            setValue={handleProgramChange}
-                                                                                        />
-                                                                                    }
-                                                                                />
+
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -600,6 +623,22 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                     <h1 className="text-xl font-semibold">
                                                                         {programName}
                                                                     </h1>
+                                                                    <AlertDialogConfirmation
+                                                                        isDialog={dialogisshift}
+                                                                        setDialog={(e) => setDialogIsShift(e)}
+                                                                        className="flex items-center gap-2"
+                                                                        type={`default`}
+                                                                        disabled={isLoading}
+                                                                        variant={'outline'}
+                                                                        btnIcon={<ShieldCheck className="text-primary" size={18} />}
+                                                                        btnTitle="Shift Student"
+                                                                        title="Are you sure?"
+                                                                        description={`${lastname}, ${firstname} ${middlename} will shift its program.`}
+                                                                        btnContinue={() => {
+                                                                            setDialogIsShift(false)
+                                                                            setDialogShiftProgram(true)
+                                                                        }}
+                                                                    />
                                                                 </div>
 
                                                                 <div className="w-full flex items-center justify-between">
