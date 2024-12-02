@@ -7,7 +7,7 @@ interface IAcademicYear {
     endDate?: number
 }
 
-interface ICourses {
+export interface ICourses {
     _id?: string
     code?: number
     courseno?: string
