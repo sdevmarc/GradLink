@@ -125,7 +125,6 @@ export class StudentController {
             const payload = await this.jwtService.verify(token);
             const userId = await payload.sub
 
-            // return await this.studentService.createEnrollee({ idNumber, lastname, firstname, middlename, email, program, courses, undergraduateInformation, achievements })
             const issuccess = await this.studentService.updateStudentShiftProgram({ id, program })
             if (issuccess.success) {
                 await this.auditlogService.createLog({ userId, action: "student_changed", description: `Student w/ ID No. of ${idNumber} successfully shifted.` })
