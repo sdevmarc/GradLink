@@ -9,6 +9,7 @@ import { API_PROGRAM_FINDALL } from "@/api/program"
 import { useContext, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { AuthContext } from "@/hooks/AuthContext"
+import { API_USER_CHECK_DEFAULT_PASSWORD } from "@/api/user"
 
 export default function AttritionRatePrograms() {
     const { isAuthenticated } = useContext(AuthContext);
@@ -20,6 +21,19 @@ export default function AttritionRatePrograms() {
             navigate("/", { replace: true });
         }
     }, [isAuthenticated, navigate])
+
+    const { data: checkpassword, isFetched: checkpasswordFetched } = useQuery({
+        queryFn: () => API_USER_CHECK_DEFAULT_PASSWORD(),
+        queryKey: ['check-password']
+    })
+
+    useEffect(() => {
+        if (checkpasswordFetched) {
+            if (!checkpassword.success) {
+               navigate('/overview')
+            } 
+        }
+    }, [checkpassword])
 
     const { data: program, isLoading: programLoading, isFetched: programFetched } = useQuery({
         queryFn: () => API_PROGRAM_FINDALL(),
