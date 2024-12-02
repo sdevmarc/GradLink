@@ -41,9 +41,24 @@ export const API_USER_UPDATE_INFORMATION = async ({ userid, name, email }: IAPIU
     return response.data
 }
 
+export const API_USER_CHECK_DEFAULT_PASSWORD = async () => {
+    const response = await axios.get(`${HOST}/users/check-default-password`,
+        { withCredentials: true }
+    )
+    return response.data
+}
+
 export const API_USER_CHECK_PASSWORD = async ({ userid, password }: IAPIUsers) => {
     const response = await axios.post(`${HOST}/users/check-password`,
         { id: userid, password },
+        { withCredentials: true }
+    )
+    return response.data
+}
+
+export const API_USER_CHANGE_DEFAULT_PASSWORD = async ({ password }: IAPIUsers) => {
+    const response = await axios.post(`${HOST}/users/change-default-password`,
+        { password },
         { withCredentials: true }
     )
     return response.data
