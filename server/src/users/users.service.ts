@@ -58,6 +58,18 @@ export class UsersService {
         }
     }
 
+    async checkDefaultPassword({ id }: { id: string }): Promise<IPromiseUser> {
+        try {
+            const { email, password } = await this.UserModel.findById(id)
+     
+            const decodedPassword = await  bcrypt.compare(email, password);
+            if (decodedPassword) return { success: false, message: 'Your password is still in default, please change your password.' }
+            return { success: true, message: 'Password is not in default.' }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'User failed to retrieved.' }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
     async checkPassword({ id, password }: { id: string, password: string }): Promise<IPromiseUser> {
         try {
             const isuser = await this.UserModel.findById(id)
