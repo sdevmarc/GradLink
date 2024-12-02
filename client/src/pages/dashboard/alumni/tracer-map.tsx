@@ -25,7 +25,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { useNavigate } from "react-router-dom"
 import { API_STUDENT_SEND_TRACER } from "@/api/alumni"
 import { API_FORM_MAPPED } from "@/api/form"
-import { API_USER_GET_USER } from "@/api/user"
+import { API_USER_CHECK_DEFAULT_PASSWORD, API_USER_GET_USER } from "@/api/user"
 import { AuthContext } from "@/hooks/AuthContext"
 
 export default function TracerMap() {
@@ -61,6 +61,19 @@ export default function TracerMap() {
             navigate("/", { replace: true });
         }
     }, [isAuthenticated, navigate])
+
+    const { data: checkpassword, isLoading: checkpasswordLoading, isFetched: checkpasswordFetched } = useQuery({
+        queryFn: () => API_USER_CHECK_DEFAULT_PASSWORD(),
+        queryKey: ['check-password']
+    })
+
+    useEffect(() => {
+        if (checkpasswordFetched) {
+            if (!checkpassword.success) {
+               navigate('/overview')
+            } 
+        }
+    }, [checkpassword])
 
     const { isLoading: formLoading } = useQuery({
         queryFn: () => API_FORM_MAPPED(),
@@ -169,7 +182,7 @@ export default function TracerMap() {
         return
     }
 
-    const isLoading = programsLoading || yearsgraduateLoading || formLoading || userdataLoading
+    const isLoading = programsLoading || yearsgraduateLoading || formLoading || userdataLoading || checkpasswordLoading
 
     return (
         <>
@@ -220,7 +233,7 @@ export default function TracerMap() {
                                 )
                             }
                             <SidebarNavs bg='bg-muted' title="Tracer Map" link={ROUTES.TRACER_MAP} />
-                            <SidebarNavs title="Google Form" link={ROUTES.GOOGLE_FORM} />
+                            <SidebarNavs title="Tracer Respondents" link={ROUTES.GOOGLE_FORM} />
                         </Sidebar>
                         <MainTable>
                             <div className="w-full h-screen flex flex-col gap-4 pb-4 rounded-md">
