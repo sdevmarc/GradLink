@@ -154,7 +154,7 @@ export const AttritionRateProgramsColumns: ColumnDef<IAPIPrograms>[] = [
                                                                                 Total Student Enrolled
                                                                             </div>
                                                                             <div className="border rounded-lg p-3 text-right">
-                                                                                {programs?.data?.past3years?.totalEnrolled}
+                                                                                {programs?.data?.past3years?.totalEnrolled || 0}
                                                                             </div>
                                                                         </div>
 
@@ -163,7 +163,7 @@ export const AttritionRateProgramsColumns: ColumnDef<IAPIPrograms>[] = [
                                                                                 Total Discontinued
                                                                             </div>
                                                                             <div className="border rounded-lg p-3 text-right">
-                                                                                {programs?.data?.past3years?.totalDiscontinued}
+                                                                                {programs?.data?.past3years?.totalDiscontinued || 0}
                                                                             </div>
                                                                         </div>
 
@@ -177,7 +177,7 @@ export const AttritionRateProgramsColumns: ColumnDef<IAPIPrograms>[] = [
                                                                                 </span>
                                                                             </div>
                                                                             <div className="border rounded-lg p-3 text-right font-semibold">
-                                                                                {programs?.data?.past3years?.attritionRate}%
+                                                                                {programs?.data?.past3years?.attritionRate || 0.00}%
                                                                             </div>
                                                                         </div>
                                                                     </div>
