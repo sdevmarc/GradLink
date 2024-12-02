@@ -8,6 +8,7 @@ import { AuditColumns } from "./settings-data-table-components/columns-student-l
 import { useContext, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { AuthContext } from "@/hooks/AuthContext"
+import { API_USER_CHECK_DEFAULT_PASSWORD } from "@/api/user"
 
 export default function AuditLog() {
     const { isAuthenticated } = useContext(AuthContext);
@@ -19,6 +20,19 @@ export default function AuditLog() {
             navigate("/", { replace: true });
         }
     }, [isAuthenticated, navigate])
+
+    const { data: checkpassword, isFetched: checkpasswordFetched } = useQuery({
+        queryFn: () => API_USER_CHECK_DEFAULT_PASSWORD(),
+        queryKey: ['check-password']
+    })
+
+    useEffect(() => {
+        if (checkpasswordFetched) {
+            if (!checkpassword.success) {
+               navigate('/overview')
+            } 
+        }
+    }, [checkpassword])
 
     const { data: auditlog, isLoading: auditlogLoading, isFetched: auditlogFetched } = useQuery({
         queryFn: () => API_GET_AUDIT_LOGS(),
