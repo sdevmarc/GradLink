@@ -9,6 +9,7 @@ import { ArchivedSemesterInAcademicYearColumns } from "./enrollment-data-table-c
 import { useContext, useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { AuthContext } from "@/hooks/AuthContext"
+import { API_USER_CHECK_DEFAULT_PASSWORD } from "@/api/user"
 
 export default function ArchivedSemestersInAcademicYear() {
     const [academicYear, setAcademicYear] = useState<string>('')
@@ -22,6 +23,19 @@ export default function ArchivedSemestersInAcademicYear() {
             navigate("/", { replace: true });
         }
     }, [isAuthenticated, navigate])
+
+    const { data: checkpassword, isFetched: checkpasswordFetched } = useQuery({
+        queryFn: () => API_USER_CHECK_DEFAULT_PASSWORD(),
+        queryKey: ['check-password']
+    })
+
+    useEffect(() => {
+        if (checkpasswordFetched) {
+            if (!checkpassword.success) {
+               navigate('/overview')
+            } 
+        }
+    }, [checkpassword])
 
     const { data: courses, isLoading: coursesLoading, isFetched: coursesFetched } = useQuery({
         queryFn: () => API_FINDALL_COURSES_OFFERED_IN_ACADEMIC_YEAR({ academicYear: nospaceAcademicYear }),
