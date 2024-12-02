@@ -12,13 +12,13 @@ const queryClient = new QueryClient()
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-        <AuthProvider>
-            <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-                <QueryClientProvider client={queryClient}>
+        <QueryClientProvider client={queryClient}>
+            <AuthProvider>
+                <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
                     <RouterProvider router={Routes} />
                     <Toaster />
-                </QueryClientProvider>
-            </ThemeProvider>
-        </AuthProvider>
+                </ThemeProvider>
+            </AuthProvider>
+        </QueryClientProvider>
     </React.StrictMode>,
 )
