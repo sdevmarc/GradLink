@@ -215,12 +215,12 @@ export default function TracerMap() {
                         <Sidebar>
                             {
                                 userdataFetched &&
-                                (userdata?.data?.role === 'root' || userdata?.data?.role === 'admin') &&
-                                <SidebarNavs title="Alumni Information" link={ROUTES.ALUMNI} />
+                                (userdata?.data?.role === 'root' || userdata?.data?.role === 'admin') && (
+                                    <SidebarNavs title="Alumni Information" link={ROUTES.ALUMNI} />
+                                )
                             }
-
-
                             <SidebarNavs bg='bg-muted' title="Tracer Map" link={ROUTES.TRACER_MAP} />
+                            <SidebarNavs title="Google Form" link={ROUTES.GOOGLE_FORM} />
                         </Sidebar>
                         <MainTable>
                             <div className="w-full h-screen flex flex-col gap-4 pb-4 rounded-md">
@@ -445,7 +445,7 @@ const HoverCard = ({
         >
             <div className="space-y-2">
                 <div className="w-full flex items-center justify-between gap-2 pb-2">
-                    <img src={AlumniCap} alt="Alumni" className="w-6 h-6" />
+                    <img src={AlumniCap} alt="Alumni" className="w-6 h-6" loading="lazy" />
                     <div className="w-full flex items-center justify-end">
                         <div className="w-full flex flex-col gap-1 ">
                             <h3 className="font-medium text-sm">{markerData.name}</h3>
