@@ -7,10 +7,11 @@ import Loading from '@/components/loading'
 import { useNavigate } from 'react-router-dom'
 import { Input } from '@/components/ui/input'
 import { IAPIPrograms } from '@/interface/program.interface'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { API_PROGRAM_NEW_PROGRAM } from '@/api/program'
 import { Combobox } from '@/components/combobox'
 import { AuthContext } from '@/hooks/AuthContext'
+import { API_USER_CHECK_DEFAULT_PASSWORD } from '@/api/user'
 
 export default function CreateProgram() {
     const queryClient = useQueryClient()
@@ -38,6 +39,19 @@ export default function CreateProgram() {
             navigate("/", { replace: true });
         }
     }, [isAuthenticated, navigate])
+
+    const { data: checkpassword, isFetched: checkpasswordFetched } = useQuery({
+        queryFn: () => API_USER_CHECK_DEFAULT_PASSWORD(),
+        queryKey: ['check-password']
+    })
+
+    useEffect(() => {
+        if (checkpasswordFetched) {
+            if (!checkpassword.success) {
+               navigate('/overview')
+            } 
+        }
+    }, [checkpassword])
 
     const department = [
         { label: "Eng'g, Dev't. Arts & Design, Library Science & IT", value: 'SEAIT' },
