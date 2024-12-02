@@ -13,4 +13,5 @@ export interface IAPICourse {
     curriculumid?: string
     evaluation?: string;
     ispass?: string
+    status?: string
 }
