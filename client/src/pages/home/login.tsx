@@ -134,8 +134,8 @@ export default function LoginPage() {
     const handleChangePassword = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
-        const nospaceNewPassword = (password ?? '').replace(/\s+/g, '').toLowerCase()
-        const nospaceConfirmPassword = (confirmpassword ?? '').replace(/\s+/g, '').toLowerCase()
+        const nospaceNewPassword = (password ?? '').replace(/\s+/g, '')
+        const nospaceConfirmPassword = (confirmpassword ?? '').replace(/\s+/g, '')
 
         if (nospaceNewPassword === '' || nospaceConfirmPassword === '') {
             setAlertDialogState({ success: false, show: true, title: "Uh, oh. Something went wrong!", description: 'Please fill-in the required field.' })
