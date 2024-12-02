@@ -13,6 +13,7 @@ import { API_CURRICULUM_FINDALL } from '@/api/curriculum'
 import { AuthContext } from '@/hooks/AuthContext'
 import { useContext, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { API_USER_CHECK_DEFAULT_PASSWORD } from '@/api/user'
 
 export default function Program() {
     const { isAuthenticated } = useContext(AuthContext);
@@ -24,6 +25,19 @@ export default function Program() {
             navigate("/", { replace: true });
         }
     }, [isAuthenticated, navigate])
+
+    const { data: checkpassword, isFetched: checkpasswordFetched } = useQuery({
+        queryFn: () => API_USER_CHECK_DEFAULT_PASSWORD(),
+        queryKey: ['check-password']
+    })
+
+    useEffect(() => {
+        if (checkpasswordFetched) {
+            if (!checkpassword.success) {
+               navigate('/overview')
+            } 
+        }
+    }, [checkpassword])
 
     const { data: course, isLoading: courseLoading, isFetched: courseFetched } = useQuery({
         queryFn: () => API_COURSE_FINDALL(),
