@@ -294,11 +294,6 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                 navigate(`/student/details/${base64ID}`)
             }
 
-            // const { data: settings, isLoading: settingsLoading, isFetched: settingsFetched } = useQuery({
-            //     queryFn: () => API_FINDONE_SETTINGS(),
-            //     queryKey: ['settings']
-            // })
-
             const handleViewDetails = () => {
                 setIsOpen(true)
             }
@@ -384,7 +379,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
             };
 
             const handlePrint = useReactToPrint({
-                documentTitle: 'TestDocument',
+                documentTitle: `${idNumber} - ${lastname}, ${firstname} ${middlename || ''}`,
                 contentRef: printableRef,
                 onAfterPrint: () => setDialogPrint(false),
 
@@ -481,22 +476,6 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                             </span>
                                                                         </CardTitle>
                                                                         <div className="flex flex-col gap">
-                                                                            {/* {
-                                                                                !isenrolled &&
-                                                                                <AlertDialogConfirmation
-                                                                                    isDialog={dialogactivate}
-                                                                                    setDialog={(e) => setDialogActivate(e)}
-                                                                                    className="flex items-center gap-2"
-                                                                                    type={`default`}
-                                                                                    disabled={isLoading}
-                                                                                    variant={'outline'}
-                                                                                    btnIcon={<ShieldCheck className="text-primary" size={18} />}
-                                                                                    btnTitle="Re-Activate Student"
-                                                                                    title="Are you sure?"
-                                                                                    description={`${lastname}, ${firstname} ${middlename} will be re-activated if this continue.`}
-                                                                                    btnContinue={handleActivateStudent}
-                                                                                />
-                                                                            } */}
                                                                             <div className="flex items-center gap-2">
                                                                                 <AlertDialogConfirmation
                                                                                     isDialog={dialogprint}
@@ -511,7 +490,6 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                                     description={`This action will print the enrollments of ${lastname}, ${firstname} ${middlename}.`}
                                                                                     btnContinue={() => handlePrint()}
                                                                                 />
-
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -631,7 +609,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                         disabled={isLoading}
                                                                         variant={'outline'}
                                                                         btnIcon={<ShieldCheck className="text-primary" size={18} />}
-                                                                        btnTitle="Shift Student"
+                                                                        btnTitle="Shift Program"
                                                                         title="Are you sure?"
                                                                         description={`${lastname}, ${firstname} ${middlename} will shift its program.`}
                                                                         btnContinue={() => {
