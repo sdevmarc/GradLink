@@ -16,6 +16,7 @@ import { SelectCoursesInNewStudentColumns } from './student-data-table-component
 import { Button } from '@/components/ui/button'
 import { API_COURSE_FINDALL_COURSES_IN_NEW_STUDENT } from '@/api/courses'
 import { AuthContext } from '@/hooks/AuthContext'
+import { API_USER_CHECK_DEFAULT_PASSWORD } from '@/api/user'
 
 export default function NewStudent() {
     return (
@@ -82,6 +83,19 @@ const CreateForm = () => {
             navigate("/", { replace: true });
         }
     }, [isAuthenticated, navigate])
+
+    const { data: checkpassword, isFetched: checkpasswordFetched } = useQuery({
+        queryFn: () => API_USER_CHECK_DEFAULT_PASSWORD(),
+        queryKey: ['check-password']
+    })
+
+    React.useEffect(() => {
+        if (checkpasswordFetched) {
+            if (!checkpassword.success) {
+               navigate('/overview')
+            } 
+        }
+    }, [checkpassword])
 
     const { data: curriculum, isLoading: curriculumLoading, isFetched: curriculumFetched } = useQuery({
         queryFn: () => API_CURRICULUM_FINDALL_ACTIVE(),
