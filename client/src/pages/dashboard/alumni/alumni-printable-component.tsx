@@ -1,9 +1,10 @@
 import React from "react";
 import { Badge } from "@/components/ui/badge"
-import { CircleCheck, CircleDashed, CircleX, Loader, Mail } from "lucide-react"
+import { CircleCheck, CircleDashed, CircleX, Loader } from "lucide-react"
 import { BookOpen, GraduationCap } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ICourses } from "@/interface/student.interface";
+import { ICourses, MappedSection } from "@/interface/student.interface";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 interface PrintableComponentProps {
     // children: React.ReactNode;
@@ -18,11 +19,33 @@ interface PrintableComponentProps {
     totalOfUnitsEarned: number
     totalOfUnitsEnrolled: number
     enrolledCourses: ICourses[]
+    generalInformation: MappedSection
+    employmentData: MappedSection
 }
+
+const formatAnswer = (answer: string | Record<string, any> | null | undefined): React.ReactNode => {
+    if (typeof answer === 'object' && answer !== null) {
+        return (
+            <ul className="list-disc pl-4 mt-2">
+                {Object.entries(answer).map(([key, value], index) => (
+                    <li key={index} className="text-sm">
+                        {key}: {typeof value === 'string' ? value : JSON.stringify(value)}
+                    </li>
+                ))}
+            </ul>
+        );
+    }
+    return answer || 'None';
+};
+
+const formatQuestion = (question: string): string => {
+    // Remove pattern like "1. ", "12. ", etc.
+    return question.replace(/^\d+\.\s*/, '');
+};
 
 const AlumniPrintableComponent = React.forwardRef<HTMLDivElement, PrintableComponentProps>((props, ref) => {
     return (
-        <div ref={ref} className="w-full hidden flex-col min-h-screen items-center print:flex">
+        <div ref={ref} className="hidden flex-col min-h-screen items-center print:flex">
             <div className="w-full max-w-[90rem] flex flex-col">
                 <main className="flex justify-center items-center py-4">
                     <div className="min-h-screen w-full max-w-[70rem] flex flex-col gap-4">
@@ -31,15 +54,15 @@ const AlumniPrintableComponent = React.forwardRef<HTMLDivElement, PrintableCompo
                                 <div className="flex justify-between items-start">
                                     <div className="w-full flex flex-col">
                                         <div className="w-full flex items-center justify-between">
-                                            <CardTitle className="uppercase text-3xl font-bold flex flex-col">
-                                                {props.lastname}, {props.firstname} {props.middlename}
-                                                <span className="font-normal text-md lowercase flex items-center gap-2">
-                                                    <Mail className="text-muted-foreground" size={18} /> {props.email || 'No valid Email'}
-                                                </span>
+                                            <CardTitle className="uppercase text-3xl font-bold flex flex-col gap-2">
+                                                <div className="flex items-center gap-4">
+                                                    {props.lastname}, {props.firstname} {props.middlename}
+
+                                                </div>
                                             </CardTitle>
                                         </div>
 
-                                        <CardDescription className="mt-2 flex flex-col gap-2">
+                                        <CardDescription className="mt-2 flex items-center justify-between">
                                             <div className="flex items-center">
                                                 <Badge variant="default" className="mr-2">
                                                     {props.idNumber || 'No valid ID Number'}
@@ -53,10 +76,77 @@ const AlumniPrintableComponent = React.forwardRef<HTMLDivElement, PrintableCompo
                                             </div>
                                         </CardDescription>
                                     </div>
-                                    {/* <Button>Apply Now</Button> */}
                                 </div>
                             </CardHeader>
                         </Card>
+                        {
+                            (props.generalInformation.questions.length > 0 || props.employmentData.questions.length > 0) &&
+                            <>
+                                <Card className="w-full mx-auto border-none shadow-none">
+                                    <CardHeader>
+                                        <CardTitle className="text-xl font-bold flex flex-col uppercase">
+                                            Alumni Information
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="">
+                                        <div className="w-full mx-auto">
+                                            <CardTitle className="text-xl font-normal">
+                                                General Information
+                                            </CardTitle>
+                                            <CardContent className="flex flex-wrap gap-2 px-0">
+                                                <Table>
+                                                    <TableHeader>
+                                                        <TableRow>
+                                                            <TableHead className="w-[100px]">ID</TableHead>
+                                                            <TableHead className="w-1/3">Question</TableHead>
+                                                            <TableHead>Answer</TableHead>
+                                                        </TableRow>
+                                                    </TableHeader>
+                                                    <TableBody>
+                                                        {
+                                                            props.generalInformation?.questions?.map((item, index) => (
+                                                                <TableRow key={index} className="print:break-inside-avoid">
+                                                                    <TableCell className="font-medium">{index + 1}</TableCell>
+                                                                    <TableCell>{formatQuestion(item.question)}</TableCell>
+                                                                    <TableCell>{formatAnswer(item.answer)}</TableCell>
+                                                                </TableRow>
+                                                            ))
+                                                        }
+                                                    </TableBody>
+                                                </Table>
+                                            </CardContent>
+                                        </div>
+                                        <div className="w-full mx-auto">
+                                            <CardTitle className="text-xl font-normal">
+                                                Employment Data
+                                            </CardTitle>
+                                            <CardContent className="flex flex-wrap gap-4 px-0">
+                                                <Table>
+                                                    <TableHeader>
+                                                        <TableRow>
+                                                            <TableHead className="w-[100px]">ID</TableHead>
+                                                            <TableHead className="w-1/3">Question</TableHead>
+                                                            <TableHead>Answer</TableHead>
+                                                        </TableRow>
+                                                    </TableHeader>
+                                                    <TableBody>
+                                                        {
+                                                            props.employmentData?.questions?.map((item, index) => (
+                                                                <TableRow key={index} className="print:break-inside-avoid">
+                                                                    <TableCell className="font-medium">{index + 1}</TableCell>
+                                                                    <TableCell>{formatQuestion(item.question)}</TableCell>
+                                                                    <TableCell>{formatAnswer(item.answer)}</TableCell>
+                                                                </TableRow>
+                                                            ))
+                                                        }
+                                                    </TableBody>
+                                                </Table>
+                                            </CardContent>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </>
+                        }
                         <Card className="w-full mx-auto border-none shadow-none">
                             <CardHeader>
                                 <div className="w-full flex flex-col items-start gap-2">
@@ -115,7 +205,7 @@ const AlumniPrintableComponent = React.forwardRef<HTMLDivElement, PrintableCompo
                                                                 item.status === 'pass' &&
                                                                 <div className="flex items-center gap-2">
                                                                     <CircleCheck className="text-primary" size={18} />
-                                                                    Passed
+                                                                    PASSED
                                                                 </div>
                                                             }
                                                             {
@@ -129,21 +219,7 @@ const AlumniPrintableComponent = React.forwardRef<HTMLDivElement, PrintableCompo
                                                                 item.status === 'inc' &&
                                                                 <div className="flex items-center gap-2">
                                                                     <CircleX className="text-primary" size={18} />
-                                                                    Incomplete
-                                                                </div>
-                                                            }
-                                                            {
-                                                                item.status === 'discontinue' &&
-                                                                <div className="flex items-center gap-2">
-                                                                    <CircleX className="text-primary" size={18} />
-                                                                    Discontinued
-                                                                </div>
-                                                            }
-                                                            {
-                                                                item.status === 'drop' &&
-                                                                <div className="flex items-center gap-2">
-                                                                    <CircleX className="text-primary" size={18} />
-                                                                    Dropped
+                                                                    INCOMPLETE
                                                                 </div>
                                                             }
                                                             {
