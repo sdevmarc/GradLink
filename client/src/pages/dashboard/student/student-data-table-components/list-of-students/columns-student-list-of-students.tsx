@@ -30,6 +30,13 @@ const dateRangeFilter = (row: any, columnId: string, filterValue: [Date, Date]) 
     return cellDate >= startDate && cellDate <= endDate;
 };
 
+const formatExamRating = (rating: string | number | undefined): string => {
+    if (!rating) return 'None';
+    // Remove any non-digit characters except decimal point
+    const numericRating = String(rating).replace(/[^\d.]/g, '');
+    return `${numericRating}%`;
+};
+
 export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
     {
         id: "icon",
@@ -596,7 +603,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                             Professional Exam Rating
                                                                         </span>
                                                                         <span className="text-md font-normal">
-                                                                            {achievements?.examRating ? `${achievements?.examRating}%` : 'None'}
+                                                                            {achievements?.examRating ? `${formatExamRating(achievements?.examRating)}` : 'None'}
                                                                         </span>
                                                                     </div>
 
