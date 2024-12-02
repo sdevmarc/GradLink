@@ -170,35 +170,35 @@ export const AttritionRateCoursestColumns: ColumnDef<IAPIOffered>[] = [
                                                                         <div className="grid grid-cols-2 items-center gap-4 text-lg">
                                                                             <div className="font-medium">Total Student Enrolled</div>
                                                                             <div className="border rounded-lg p-3 text-right">
-                                                                                {courses?.data?.latestSemester?.totalStudentsEnrolled}
+                                                                                {courses?.data?.latestSemester?.totalStudentsEnrolled || 0}
                                                                             </div>
                                                                         </div>
 
                                                                         <div className="grid grid-cols-2 items-center gap-4 text-lg">
                                                                             <div className="font-medium">Passed</div>
                                                                             <div className="border rounded-lg p-3 text-right">
-                                                                                {courses?.data?.latestSemester?.totalStudentsPassed}
+                                                                                {courses?.data?.latestSemester?.totalStudentsPassed || 0}
                                                                             </div>
                                                                         </div>
 
                                                                         <div className="grid grid-cols-2 items-center gap-4 text-lg">
                                                                             <div className="font-medium">Failed</div>
                                                                             <div className="border rounded-lg p-3 text-right">
-                                                                                {courses?.data?.latestSemester?.totalStudentsFailed}
+                                                                                {courses?.data?.latestSemester?.totalStudentsFailed || 0}
                                                                             </div>
                                                                         </div>
 
                                                                         <div className="grid grid-cols-2 items-center gap-4 text-lg">
                                                                             <div className="font-medium">Dropped/Retake</div>
                                                                             <div className="border rounded-lg p-3 text-right">
-                                                                                {courses?.data?.latestSemester?.totalStudentsDropped}
+                                                                                {courses?.data?.latestSemester?.totalStudentsDropped || 0}
                                                                             </div>
                                                                         </div>
 
                                                                         <div className="grid grid-cols-2 items-center gap-4 text-lg">
                                                                             <div className="font-medium">Dropped/Leave</div>
                                                                             <div className="border rounded-lg p-3 text-right">
-                                                                                {courses?.data?.latestSemester?.totalStudentsDiscontinued}
+                                                                                {courses?.data?.latestSemester?.totalStudentsDiscontinued || 0}
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -206,7 +206,7 @@ export const AttritionRateCoursestColumns: ColumnDef<IAPIOffered>[] = [
                                                                         <div className="grid grid-cols-2 items-center gap-4 text-lg">
                                                                             <div className="font-medium">Attrition Rate for {courseno || "Can't resolve course."}</div>
                                                                             <div className="border rounded-lg p-3 text-right font-semibold">
-                                                                                {courses?.data?.latestSemester?.attritionRate} %
+                                                                                {courses?.data?.latestSemester?.attritionRate || 0.00} %
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -216,35 +216,35 @@ export const AttritionRateCoursestColumns: ColumnDef<IAPIOffered>[] = [
                                                                         <div className="grid grid-cols-2 items-center gap-4 text-lg">
                                                                             <div className="font-medium">Total Student Enrolled</div>
                                                                             <div className="border rounded-lg p-3 text-right">
-                                                                                {courses?.data?.pastThreeSemesters?.totalStudentsEnrolled}
+                                                                                {courses?.data?.pastThreeSemesters?.totalStudentsEnrolled || 0}
                                                                             </div>
                                                                         </div>
 
                                                                         <div className="grid grid-cols-2 items-center gap-4 text-lg">
                                                                             <div className="font-medium">Passed</div>
                                                                             <div className="border rounded-lg p-3 text-right">
-                                                                                {courses?.data?.pastThreeSemesters?.totalStudentsPassed}
+                                                                                {courses?.data?.pastThreeSemesters?.totalStudentsPassed || 0}
                                                                             </div>
                                                                         </div>
 
                                                                         <div className="grid grid-cols-2 items-center gap-4 text-lg">
                                                                             <div className="font-medium">Failed</div>
                                                                             <div className="border rounded-lg p-3 text-right">
-                                                                                {courses?.data?.pastThreeSemesters?.totalStudentsFailed}
+                                                                                {courses?.data?.pastThreeSemesters?.totalStudentsFailed || 0}
                                                                             </div>
                                                                         </div>
 
                                                                         <div className="grid grid-cols-2 items-center gap-4 text-lg">
                                                                             <div className="font-medium">Dropped/Retake</div>
                                                                             <div className="border rounded-lg p-3 text-right">
-                                                                                {courses?.data?.pastThreeSemesters?.totalStudentsDropped}
+                                                                                {courses?.data?.pastThreeSemesters?.totalStudentsDropped || 0}
                                                                             </div>
                                                                         </div>
 
                                                                         <div className="grid grid-cols-2 items-center gap-4 text-lg">
                                                                             <div className="font-medium">Dropped/Leave</div>
                                                                             <div className="border rounded-lg p-3 text-right">
-                                                                                {courses?.data?.pastThreeSemesters?.totalStudentsDiscontinued}
+                                                                                {courses?.data?.pastThreeSemesters?.totalStudentsDiscontinued || 0}
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -252,7 +252,7 @@ export const AttritionRateCoursestColumns: ColumnDef<IAPIOffered>[] = [
                                                                         <div className="grid grid-cols-2 items-center gap-4 text-lg">
                                                                             <div className="font-medium">Attrition Rate for {courseno || "Can't resolve course."}</div>
                                                                             <div className="border rounded-lg p-3 text-right font-semibold">
-                                                                                {courses?.data?.pastThreeSemesters?.attritionRate} %
+                                                                                {courses?.data?.pastThreeSemesters?.attritionRate || 0.00} %
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -262,35 +262,35 @@ export const AttritionRateCoursestColumns: ColumnDef<IAPIOffered>[] = [
                                                                         <div className="grid grid-cols-2 items-center gap-4 text-lg">
                                                                             <div className="font-medium">Total Student Enrolled</div>
                                                                             <div className="border rounded-lg p-3 text-right">
-                                                                                {courses?.data?.allSemesters?.totalStudentsEnrolled}
+                                                                                {courses?.data?.allSemesters?.totalStudentsEnrolled || 0}
                                                                             </div>
                                                                         </div>
 
                                                                         <div className="grid grid-cols-2 items-center gap-4 text-lg">
                                                                             <div className="font-medium">Passed</div>
                                                                             <div className="border rounded-lg p-3 text-right">
-                                                                                {courses?.data?.allSemesters?.totalStudentsPassed}
+                                                                                {courses?.data?.allSemesters?.totalStudentsPassed || 0}
                                                                             </div>
                                                                         </div>
 
                                                                         <div className="grid grid-cols-2 items-center gap-4 text-lg">
                                                                             <div className="font-medium">Failed</div>
                                                                             <div className="border rounded-lg p-3 text-right">
-                                                                                {courses?.data?.allSemesters?.totalStudentsFailed}
+                                                                                {courses?.data?.allSemesters?.totalStudentsFailed || 0}
                                                                             </div>
                                                                         </div>
 
                                                                         <div className="grid grid-cols-2 items-center gap-4 text-lg">
                                                                             <div className="font-medium">Dropped/Retake</div>
                                                                             <div className="border rounded-lg p-3 text-right">
-                                                                                {courses?.data?.allSemesters?.totalStudentsDropped}
+                                                                                {courses?.data?.allSemesters?.totalStudentsDropped || 0}
                                                                             </div>
                                                                         </div>
 
                                                                         <div className="grid grid-cols-2 items-center gap-4 text-lg">
                                                                             <div className="font-medium">Dropped/Leave</div>
                                                                             <div className="border rounded-lg p-3 text-right">
-                                                                                {courses?.data?.allSemesters?.totalStudentsDiscontinued}
+                                                                                {courses?.data?.allSemesters?.totalStudentsDiscontinued || 0}
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -298,7 +298,7 @@ export const AttritionRateCoursestColumns: ColumnDef<IAPIOffered>[] = [
                                                                         <div className="grid grid-cols-2 items-center gap-4 text-lg">
                                                                             <div className="font-medium">Attrition Rate for {courseno || "Can't resolve course."}</div>
                                                                             <div className="border rounded-lg p-3 text-right font-semibold">
-                                                                                {courses?.data?.allSemesters?.attritionRate} %
+                                                                                {courses?.data?.allSemesters?.attritionRate || 0.00} %
                                                                             </div>
                                                                         </div>
                                                                     </div>
