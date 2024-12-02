@@ -6,7 +6,19 @@ import { StudentService } from 'src/student/student.service';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
+interface MapboxResponse {
+    features: Array<{
+        geometry: {
+            coordinates: [number, number]; // [longitude, latitude]
+        };
+    }>;
+}
 
+
+interface GeocodedLocation {
+    latitude: number;
+    longitude: number;
+}
 
 @Injectable()
 export class FormsService {
@@ -25,6 +37,38 @@ export class FormsService {
         })
 
         this.forms = google.forms({ version: 'v1', auth })
+    }
+
+    async getGoogleFormLink(): Promise<IPromiseForms> {
+        try {
+            const response = this.configService.get<string>('GOOGLE_FORM_LINK')
+            return { success: true, message: 'Google form link successfully fetched.', data: response }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Failed to fetch unknown respondents.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async getCoordinates(address: string): Promise<GeocodedLocation | null> {
+        try {
+            const encodedAddress = encodeURIComponent(address);
+            const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodedAddress}.json?access_token=${this.configService.get<string>('MAPBOX_ACCESS_TOKEN')}`;
+
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Geocoding failed with status: ${response.status}`);
+            }
+
+            const data: MapboxResponse = await response.json();
+
+            if (data.features && data.features.length > 0) {
+                const [longitude, latitude] = data.features[0].geometry.coordinates;
+                return { latitude, longitude };
+            }
+            return null;
+        } catch (error) {
+            console.error('Geocoding error:', error);
+            return null;
+        }
     }
 
     async getUnknownRespondents(): Promise<IPromiseForms> {
@@ -285,7 +329,7 @@ export class FormsService {
                         info: {
                             description: `Dear Graduate,
 
-Please complete this Graduate Tracer Survey (GTS) honestly by selecting the appropriate options. Your responses will help assess graduate employability and improve courses at universities in the Philippines. All answers will be kept confidential.
+Please complete this Graduate Tracer Survey (GTS) honestly by selecting the appropriate options. Your responses will help assess graduate employability and improve courses at universities in the Philippines. Please be aware that the information provided will be used for the purpose of improving educational programs and ensuring the confidentiality of your answers.
 
 Thank you for your time!`,
                         },
@@ -295,6 +339,33 @@ Thank you for your time!`,
             ];
 
             let currentIndex = 0;
+
+            // Add acknowledgment question at the beginning (First Page)
+            requests.push({
+                createItem: {
+                    item: {
+                        title: 'Acknowledgment',
+                        description: 'Please confirm that you have read and understood the information provided above.',
+                        questionItem: {
+                            question: {
+                                required: true,
+                                choiceQuestion: {
+                                    type: 'RADIO',
+                                    options: [
+                                        {
+                                            value: 'I have read and understood the information provided above.'
+                                        }
+                                    ],
+                                    shuffle: false
+                                }
+                            }
+                        }
+                    },
+                    location: {
+                        index: currentIndex++
+                    }
+                }
+            });
 
             // Add general information section and questions
             if (generalInformation && generalInformation.length > 0) {
@@ -313,6 +384,8 @@ Thank you for your time!`,
                 requests.push(...this.createQuestionRequests(generalInformation, currentIndex));
                 currentIndex += generalInformation.length;
             }
+
+
 
             // Add educational background section and questions
             // if (educationalBackground && educationalBackground.length > 0) {
