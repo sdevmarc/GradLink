@@ -30,6 +30,7 @@ import { ICurriculum, IRequestCourse, IShowCategories } from '@/interface/curric
 import { API_NEW_CURRICULUM } from '@/api/curriculum'
 import { useNavigate } from 'react-router-dom'
 import { AuthContext } from '@/hooks/AuthContext'
+import { API_USER_CHECK_DEFAULT_PASSWORD } from '@/api/user'
 
 export default function CreateCurriculum() {
     const navigate = useNavigate()
@@ -80,6 +81,19 @@ export default function CreateCurriculum() {
             navigate("/", { replace: true });
         }
     }, [isAuthenticated, navigate])
+
+    const { data: checkpassword, isFetched: checkpasswordFetched } = useQuery({
+        queryFn: () => API_USER_CHECK_DEFAULT_PASSWORD(),
+        queryKey: ['check-password']
+    })
+
+    useEffect(() => {
+        if (checkpasswordFetched) {
+            if (!checkpassword.success) {
+               navigate('/overview')
+            } 
+        }
+    }, [checkpassword])
 
     const { data: course, isLoading: courseLoading, isFetched: courseFetched } = useQuery({
         queryFn: () => API_COURSE_FINDALL(),
