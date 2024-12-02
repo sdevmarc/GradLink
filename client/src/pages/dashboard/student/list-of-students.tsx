@@ -6,6 +6,7 @@ import { DataTableStudentListOfStudent } from "./student-data-table-components/l
 import { AuthContext } from "@/hooks/AuthContext"
 import { useContext, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
+import { API_USER_CHECK_DEFAULT_PASSWORD } from "@/api/user"
 
 export default function ListOfStudents() {
     const { isAuthenticated } = useContext(AuthContext);
@@ -17,6 +18,19 @@ export default function ListOfStudents() {
             navigate("/", { replace: true });
         }
     }, [isAuthenticated, navigate])
+
+    const { data: checkpassword, isFetched: checkpasswordFetched } = useQuery({
+        queryFn: () => API_USER_CHECK_DEFAULT_PASSWORD(),
+        queryKey: ['check-password']
+    })
+
+    useEffect(() => {
+        if (checkpasswordFetched) {
+            if (!checkpassword.success) {
+               navigate('/overview')
+            } 
+        }
+    }, [checkpassword])
 
     const { data: students, isLoading: studentLoading, isFetched: studentFetched } = useQuery({
         queryFn: () => API_STUDENT_FINDALL(),
