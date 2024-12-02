@@ -5,25 +5,27 @@ import {
 } from "@tanstack/react-table"
 
 import { DataTableColumnHeader } from "@/components/data-table-components/data-table-column-header";
-import { BookOpen, CircleCheck, CircleDashed, CircleX, GraduationCap, Loader, Mail, Pencil, Send, TableOfContents, X } from "lucide-react";
+import { BookOpen, CircleCheck, CircleDashed, CircleX, GraduationCap, Loader, Mail, Pencil, Printer, Send, TableOfContents, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { IAPIStudents } from "@/interface/student.interface";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { SheetModal } from "@/components/sheet-modal";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertDialogConfirmation } from "@/components/alert-dialog";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { API_STUDENT_SEND_TRACER_TO_ONE, API_STUDENT_UPDATE_ALUMNI_EMAIL } from "@/api/alumni";
-import Loading from "@/components/loading";
 import { Input } from "@/components/ui/input";
+import { useReactToPrint } from 'react-to-print';
+import AlumniPrintableComponent from "../../alumni-printable-component";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 const formatAnswer = (answer: string | Record<string, any> | null | undefined): React.ReactNode => {
     if (typeof answer === 'object' && answer !== null) {
         return (
             <ul className="list-disc pl-4 mt-2">
                 {Object.entries(answer).map(([key, value], index) => (
-                    <li key={index} className="text-md">
+                    <li key={index} className="text-sm">
                         {key}: {typeof value === 'string' ? value : JSON.stringify(value)}
                     </li>
                 ))}
@@ -31,6 +33,11 @@ const formatAnswer = (answer: string | Record<string, any> | null | undefined): 
         );
     }
     return answer || 'None';
+};
+
+const formatQuestion = (question: string): string => {
+    // Remove pattern like "1. ", "12. ", etc.
+    return question.replace(/^\d+\.\s*/, '');
 };
 
 export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
@@ -214,6 +221,8 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
         id: "actions",
         cell: ({ row }) => {
             const queryClient = useQueryClient()
+            const printableRef = useRef<HTMLDivElement>(null);
+            const [dialogprint, setDialogPrint] = useState<boolean>(false)
             const [isOpen, setIsOpen] = useState<boolean>(false)
             const [dialogsubmit, setDialogSubmit] = useState<boolean>(false)
             const [dialogupdateemail, setDialogUpdateEmail] = useState<boolean>(false)
@@ -338,12 +347,35 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
 
             }
 
+            const handlePrint = useReactToPrint({
+                documentTitle: `${idNumber} - ${lastname}, ${firstname} ${middlename || ''}`,
+                contentRef: printableRef,
+                onAfterPrint: () => setDialogPrint(false),
+
+            });
+
             const isLoading = tracerLoading || updateEmailLoading
 
             return (
                 <>
-                    {isLoading && <Loading />}
+                    {/* {isLoading && <Loading />} */}
                     <div className="flex justify-end">
+                        <AlumniPrintableComponent
+                            ref={printableRef}
+                            lastname={lastname || ''}
+                            firstname={firstname || ''}
+                            middlename={middlename || ''}
+                            email={email || ''}
+                            idNumber={idNumber || ''}
+                            department={department || ''}
+                            programCode={programCode || ''}
+                            programName={programName || ''}
+                            totalOfUnitsEarned={totalOfUnitsEarned || 0}
+                            totalOfUnitsEnrolled={totalOfUnitsEnrolled || 0}
+                            enrolledCourses={enrolledCourses || []}
+                            generalInformation={generalInformation || { title: '', questions: [] }}
+                            employmentData={employmentData || { title: '', questions: [] }}
+                        />
                         <AlertDialogConfirmation
                             btnTitle='Continue'
                             className='w-full py-4'
@@ -434,25 +466,39 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
                                                                                 </span>
                                                                         }
                                                                     </CardTitle>
-                                                                    <div className="flex flex-col gap-2 items-center">
+                                                                    <div className="flex flex-col gap-2 items-end justify-center">
                                                                         <AlertDialogConfirmation
-                                                                            isDialog={dialogsubmit}
-                                                                            setDialog={(open) => setDialogSubmit(open)}
-                                                                            disabled={isLoading}
+                                                                            isDialog={dialogprint}
+                                                                            setDialog={(e) => setDialogPrint(e)}
                                                                             className="flex items-center gap-2"
                                                                             type={`default`}
-                                                                            variant={'default'}
-                                                                            btnIcon={<Send className="text-primary-foreground" size={18} />}
-                                                                            btnTitle="Send Tracer Study"
+                                                                            disabled={isLoading}
+                                                                            variant={'outline'}
+                                                                            btnIcon={<Printer className="text-primary" size={18} />}
+                                                                            btnTitle="Print Information"
                                                                             title="Are you sure?"
-                                                                            description={`${lastname}, ${firstname} ${middlename} will be receiving an email tracer study, do you still want to conintinue?`}
-                                                                            btnContinue={handleSendTracerStudy}
+                                                                            description={`This action will print the enrollments of ${lastname}, ${firstname} ${middlename}.`}
+                                                                            btnContinue={() => handlePrint()}
                                                                         />
-                                                                        <h1 className="text-muted-foreground text-sm font-normal">
-                                                                            Last Sent: {dateSent || null}
-                                                                        </h1>
+                                                                        <div className="flex flex-col gap-2">
+                                                                            <AlertDialogConfirmation
+                                                                                isDialog={dialogsubmit}
+                                                                                setDialog={(open) => setDialogSubmit(open)}
+                                                                                disabled={isLoading}
+                                                                                className="flex items-center gap-2"
+                                                                                type={`default`}
+                                                                                variant={'default'}
+                                                                                btnIcon={<Send className="text-primary-foreground" size={18} />}
+                                                                                btnTitle="Send Tracer Study"
+                                                                                title="Are you sure?"
+                                                                                description={`${lastname}, ${firstname} ${middlename} will be receiving an email tracer study, do you still want to conintinue?`}
+                                                                                btnContinue={handleSendTracerStudy}
+                                                                            />
+                                                                            <h1 className="text-muted-foreground text-sm font-normal">
+                                                                                Last Sent: {dateSent || null}
+                                                                            </h1>
+                                                                        </div>
                                                                     </div>
-
                                                                 </div>
 
                                                                 <CardDescription className="mt-2 flex items-center justify-between">
@@ -550,23 +596,43 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
                                                     </CardContent>
                                                 </Card>
                                                 {
-                                                    (generalInformation || employmentData) &&
+                                                    ((generalInformation?.questions?.length ?? 0) > 0 || (employmentData?.questions?.length ?? 0) > 0) &&
                                                     <>
                                                         <Card className="w-full mx-auto">
                                                             <CardHeader>
-                                                                <CardTitle className="text-xl font-bold flex flex-col">
+                                                                <CardTitle className="text-xl font-bold flex flex-col uppercase">
                                                                     Alumni Information
                                                                 </CardTitle>
                                                             </CardHeader>
                                                             <CardContent className="">
                                                                 <div className="w-full mx-auto">
                                                                     <CardHeader className="px-0 py-0">
-                                                                        <CardTitle className="text-xl">
+                                                                        <CardTitle className="text-xl font-normal">
                                                                             General Information
                                                                         </CardTitle>
                                                                     </CardHeader>
                                                                     <CardContent className="flex flex-wrap gap-4 px-0">
-                                                                        {
+                                                                        <Table>
+                                                                            <TableHeader>
+                                                                                <TableRow>
+                                                                                    <TableHead className="w-[100px]">ID</TableHead>
+                                                                                    <TableHead className="w-1/3">Question</TableHead>
+                                                                                    <TableHead>Answer</TableHead>
+                                                                                </TableRow>
+                                                                            </TableHeader>
+                                                                            <TableBody>
+                                                                                {
+                                                                                    generalInformation?.questions?.map((item, index) => (
+                                                                                        <TableRow key={index} className="print:break-inside-avoid">
+                                                                                            <TableCell className="font-medium">{index + 1}</TableCell>
+                                                                                            <TableCell>{formatQuestion(item.question)}</TableCell>
+                                                                                            <TableCell>{formatAnswer(item.answer)}</TableCell>
+                                                                                        </TableRow>
+                                                                                    ))
+                                                                                }
+                                                                            </TableBody>
+                                                                        </Table>
+                                                                        {/* {
                                                                             generalInformation?.questions?.map(item => (
                                                                                 <div className="flex flex-col basis-[calc(50%-0.5rem)]">
                                                                                     <span className="text-md font-normal">
@@ -577,17 +643,37 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
                                                                                     </span>
                                                                                 </div>
                                                                             ))
-                                                                        }
+                                                                        } */}
                                                                     </CardContent>
                                                                 </div>
                                                                 <div className="w-full mx-auto">
                                                                     <CardHeader className="px-0 py-0">
-                                                                        <CardTitle className="text-xl">
+                                                                        <CardTitle className="text-xl font-normal">
                                                                             Employment Data
                                                                         </CardTitle>
                                                                     </CardHeader>
                                                                     <CardContent className="flex flex-wrap gap-4 px-0">
-                                                                        {
+                                                                        <Table>
+                                                                            <TableHeader>
+                                                                                <TableRow>
+                                                                                    <TableHead className="w-[100px]">ID</TableHead>
+                                                                                    <TableHead className="w-1/3">Question</TableHead>
+                                                                                    <TableHead>Answer</TableHead>
+                                                                                </TableRow>
+                                                                            </TableHeader>
+                                                                            <TableBody>
+                                                                                {
+                                                                                    employmentData?.questions?.map((item, index) => (
+                                                                                        <TableRow key={index} className="print:break-inside-avoid">
+                                                                                            <TableCell className="font-medium">{index + 1}</TableCell>
+                                                                                            <TableCell>{formatQuestion(item.question)}</TableCell>
+                                                                                            <TableCell>{formatAnswer(item.answer)}</TableCell>
+                                                                                        </TableRow>
+                                                                                    ))
+                                                                                }
+                                                                            </TableBody>
+                                                                        </Table>
+                                                                        {/* {
                                                                             employmentData?.questions?.map(item => (
                                                                                 <div className="flex flex-col basis-[calc(50%-0.5rem)]">
                                                                                     <span className="text-md font-normal">
@@ -598,7 +684,7 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
                                                                                     </span>
                                                                                 </div>
                                                                             ))
-                                                                        }
+                                                                        } */}
                                                                     </CardContent>
                                                                 </div>
                                                             </CardContent>
