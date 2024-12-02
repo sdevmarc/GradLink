@@ -14,7 +14,7 @@ import { AlertDialogConfirmation } from "@/components/alert-dialog"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { API_FINDONE_SETTINGS, API_UPDATE_SETTINGS } from "@/api/settings"
 import Loading from "@/components/loading"
-import { API_USER_CHANGE_PASSWORD, API_USER_CHECK_PASSWORD, API_USER_GET_USER, API_USER_UPDATE_INFORMATION } from "@/api/user"
+import { API_USER_CHANGE_PASSWORD, API_USER_CHECK_DEFAULT_PASSWORD, API_USER_CHECK_PASSWORD, API_USER_GET_USER, API_USER_UPDATE_INFORMATION } from "@/api/user"
 import { AuthContext } from "@/hooks/AuthContext"
 import { useNavigate } from "react-router-dom"
 
@@ -53,6 +53,19 @@ export default function GeneralSettings() {
             navigate("/", { replace: true });
         }
     }, [isAuthenticated, navigate])
+
+    const { data: ischeckpassword, isFetched: ischeckpasswordFetched } = useQuery({
+        queryFn: () => API_USER_CHECK_DEFAULT_PASSWORD(),
+        queryKey: ['check-password']
+    })
+
+    useEffect(() => {
+        if (ischeckpasswordFetched) {
+            if (!ischeckpassword.success) {
+               navigate('/overview')
+            } 
+        }
+    }, [ischeckpassword])
 
     const { data: userdata, isLoading: userdataLoading, isFetched: userdataFetched } = useQuery({
         queryFn: () => API_USER_GET_USER(),
