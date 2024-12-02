@@ -1,43 +1,38 @@
-// AuthContext.tsx
-import { HOST } from '@/constants'
 import React, { createContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
+import { API_AUTHENTICATION_STATUS } from '@/api/settings';
 
 interface AuthContextType {
     isAuthenticated: boolean | null;
     setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean | null>>;
-    checkAuthStatus: () => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType>({
     isAuthenticated: null,
     setIsAuthenticated: () => { },
-    checkAuthStatus: async () => { },
 });
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
-    const checkAuthStatus = async () => {
-        try {
-            axios.defaults.withCredentials = true
-            const response = await axios.get(`${HOST}/status`, {
-                withCredentials: true,
-            });
-
-            setIsAuthenticated(response.data.isAuthenticated);
-        } catch (error) {
-            console.error(error);
-            setIsAuthenticated(false);
-        }
-    };
+    const { data: status, isFetched: statusFetched } = useQuery({
+        queryFn: () => API_AUTHENTICATION_STATUS(),
+        queryKey: ['auth-status'],
+        refetchInterval: 60000
+    })
 
     useEffect(() => {
-        checkAuthStatus();
-    }, []);
+        if (statusFetched) {
+            if (status) {
+                setIsAuthenticated(status)
+            } else {
+                setIsAuthenticated(false)
+            }
+        }
+    }, [status])
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, checkAuthStatus }}>
+        <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
             {children}
         </AuthContext.Provider>
     );
