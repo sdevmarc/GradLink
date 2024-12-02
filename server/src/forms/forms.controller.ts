@@ -8,19 +8,6 @@ import { IStudent } from 'src/student/student.interface';
 import { StudentService } from 'src/student/student.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 
-interface MapboxResponse {
-    features: Array<{
-        geometry: {
-            coordinates: [number, number]; // [longitude, latitude]
-        };
-    }>;
-}
-
-interface GeocodedLocation {
-    latitude: number;
-    longitude: number;
-}
-
 @Controller('forms')
 @UseGuards(AuthGuard)
 export class FormsController {
@@ -32,29 +19,9 @@ export class FormsController {
         private readonly constantsService: ConstantsService
     ) { }
 
-    private readonly MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoieW91cnBhcmVuZ2VkaXNvbiIsImEiOiJjbTMyem81MHoxOTZzMmxzNDNwNXB4YmM4In0.YjqdD5S9U-Cw9kASDpJGVA';
-
-    private async getCoordinates(address: string): Promise<GeocodedLocation | null> {
-        try {
-            const encodedAddress = encodeURIComponent(address);
-            const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodedAddress}.json?access_token=${this.MAPBOX_ACCESS_TOKEN}`;
-
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`Geocoding failed with status: ${response.status}`);
-            }
-
-            const data: MapboxResponse = await response.json();
-
-            if (data.features && data.features.length > 0) {
-                const [longitude, latitude] = data.features[0].geometry.coordinates;
-                return { latitude, longitude };
-            }
-            return null;
-        } catch (error) {
-            console.error('Geocoding error:', error);
-            return null;
-        }
+    @Get('google-link')
+    async getGoogleFormLink() {
+        return await this.formsService.getGoogleFormLink()
     }
 
     @Get('unknown-respondents')
@@ -78,12 +45,9 @@ export class FormsController {
                 const firstname = String(item.generalInformation.answers[1].answer);
                 const middlename = String(item.generalInformation.answers[2].answer);
 
-                // const isFirstJobRelatedToCourse = String(item.generalInformation.answers[19].answer);
-                // const howLongDiditTake = String(item.generalInformation.answers[20].answer);
-
                 const formemail = String(item.generalInformation.answers[8].answer);
                 const currentaddress = String(item.generalInformation.answers[7].answer);
-                const coordinates = await this.getCoordinates(currentaddress);
+                const coordinates = await this.formsService.getCoordinates(currentaddress);
 
                 const {
                     // createTime,
