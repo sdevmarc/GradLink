@@ -1,6 +1,6 @@
 import HeadSection, { BackHeadSection, SubHeadSectionDetails } from '@/components/head-section'
 import { Input } from '@/components/ui/input'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { API_COURSE_CREATE } from '@/api/courses'
 import { IAPICourse } from '@/interface/course.interface'
 import React, { useContext, useEffect, useState } from 'react'
@@ -9,6 +9,7 @@ import { AlertDialogConfirmation } from '@/components/alert-dialog'
 import Loading from '@/components/loading'
 import { useNavigate } from 'react-router-dom'
 import { AuthContext } from '@/hooks/AuthContext'
+import { API_USER_CHECK_DEFAULT_PASSWORD } from '@/api/user'
 
 export default function CreateCourse() {
     const { isAuthenticated } = useContext(AuthContext);
@@ -20,6 +21,19 @@ export default function CreateCourse() {
             navigate("/", { replace: true });
         }
     }, [isAuthenticated, navigate])
+
+    const { data: checkpassword, isFetched: checkpasswordFetched } = useQuery({
+        queryFn: () => API_USER_CHECK_DEFAULT_PASSWORD(),
+        queryKey: ['check-password']
+    })
+
+    useEffect(() => {
+        if (checkpasswordFetched) {
+            if (!checkpassword.success) {
+               navigate('/overview')
+            } 
+        }
+    }, [checkpassword])
 
     return (
         <>
