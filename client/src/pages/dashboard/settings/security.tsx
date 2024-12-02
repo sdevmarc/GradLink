@@ -10,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useContext, useEffect, useState } from "react"
 import { AlertDialogConfirmation } from "@/components/alert-dialog"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { API_USER_CREATE_USER, API_USER_GET_ALL_USERS, API_USER_GET_USER, API_USER_UPDATE_STATUS_USER, API_USER_UPDATE_USER } from "@/api/user"
+import { API_USER_CHECK_DEFAULT_PASSWORD, API_USER_CREATE_USER, API_USER_GET_ALL_USERS, API_USER_GET_USER, API_USER_UPDATE_STATUS_USER, API_USER_UPDATE_USER } from "@/api/user"
 import { IAPIUsers } from "@/interface/user.interface"
 import { Combobox } from "@/components/combobox"
 import Loading from "@/components/loading"
@@ -55,6 +55,19 @@ export default function Security() {
             navigate("/", { replace: true });
         }
     }, [isAuthenticated, navigate])
+
+    const { data: checkpassword, isFetched: checkpasswordFetched } = useQuery({
+        queryFn: () => API_USER_CHECK_DEFAULT_PASSWORD(),
+        queryKey: ['check-password']
+    })
+
+    useEffect(() => {
+        if (checkpasswordFetched) {
+            if (!checkpassword.success) {
+               navigate('/overview')
+            } 
+        }
+    }, [checkpassword])
 
     const { data: user, isLoading: userLoading, isFetched: userFetched } = useQuery({
         queryFn: () => API_USER_GET_USER(),
