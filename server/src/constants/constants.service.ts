@@ -10,6 +10,8 @@ export class ConstantsService {
     private readonly cloudinaryName: string
     private readonly cloudinaryKey: string
     private readonly cloudinarySecret: string
+    private readonly googleFormLink: string
+    private readonly mapboxSecret: string
 
     constructor(private configService: ConfigService) {
         this.form_id = this.configService.get<string>('FORM_ID')
@@ -19,9 +21,19 @@ export class ConstantsService {
         this.cloudinaryName = this.configService.get<string>('CLOUDINARY_NAME');
         this.cloudinaryKey = this.configService.get<string>('CLOUDINARY_API_KEY');
         this.cloudinarySecret = this.configService.get<string>('CLOUDINARY_API_SECRET');
+        this.googleFormLink = this.configService.get<string>('GOOGLE_FORM_LINK');
+        this.mapboxSecret = this.configService.get<string>('MAPBOX_ACCESS_TOKEN');
     }
 
     getFormId(): string {
+        return this.form_id
+    }
+
+    getGoogleFormLink(): string {
+        return this.form_id
+    }
+
+    getMapboxSecret(): string {
         return this.form_id
     }
 
