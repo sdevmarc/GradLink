@@ -13,6 +13,7 @@ import { API_COURSE_FINDALL } from '@/api/courses'
 import { Combobox } from '@/components/combobox'
 import { API_CREATE_COURSES_OFFERED } from '@/api/offered'
 import { AuthContext } from '@/hooks/AuthContext'
+import { API_USER_CHECK_DEFAULT_PASSWORD } from '@/api/user'
 
 interface AcademicYear {
     label: string;
@@ -58,6 +59,19 @@ export default function CreateCoursesOffered() {
             navigate("/", { replace: true });
         }
     }, [isAuthenticated, navigate])
+
+    const { data: checkpassword, isFetched: checkpasswordFetched } = useQuery({
+        queryFn: () => API_USER_CHECK_DEFAULT_PASSWORD(),
+        queryKey: ['check-password']
+    })
+
+    useEffect(() => {
+        if (checkpasswordFetched) {
+            if (!checkpassword.success) {
+               navigate('/overview')
+            } 
+        }
+    }, [checkpassword])
     
     const semester = [
         { label: 'First Semester', value: '1' },
