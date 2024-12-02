@@ -11,6 +11,7 @@ import { API_STUDENT_ENROLL_STUDENT, API_STUDENT_FINDALL_ENROLLEES_IN_COURSE } f
 import { DataTableEnrollStudent } from './enrollment-data-table-components/enroll-student/data-table-enroll-student'
 import { EnrollStudentColumns } from './enrollment-data-table-components/enroll-student/columns-enroll-student'
 import { AuthContext } from '@/hooks/AuthContext'
+import { API_USER_CHECK_DEFAULT_PASSWORD } from '@/api/user'
 
 export default function EnrollStudent() {
     const queryClient = useQueryClient()
@@ -36,6 +37,19 @@ export default function EnrollStudent() {
             navigate("/", { replace: true });
         }
     }, [isAuthenticated, navigate])
+
+    const { data: checkpassword, isFetched: checkpasswordFetched } = useQuery({
+        queryFn: () => API_USER_CHECK_DEFAULT_PASSWORD(),
+        queryKey: ['check-password']
+    })
+
+    useEffect(() => {
+        if (checkpasswordFetched) {
+            if (!checkpassword.success) {
+               navigate('/overview')
+            } 
+        }
+    }, [checkpassword])
 
     useEffect(() => {
         if (id) {
