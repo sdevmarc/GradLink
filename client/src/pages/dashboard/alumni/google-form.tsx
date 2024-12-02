@@ -1,17 +1,14 @@
 import HeadSection, { SubHeadSectionDetails } from "@/components/head-section"
-import { useQuery } from "@tanstack/react-query"
 import { Sidebar, SidebarNavs } from "@/components/sidebar"
 import MainTable from "@/components/main-table"
 import { ROUTES } from "@/constants"
-import { FormColumns } from "../form/data-table-form/columns-student-form"
-import { DataTableForm } from "../form/data-table-form/data-table-form"
-import { API_FORM_FINDALL_UNKNOWN } from "@/api/form"
+import { DataTableAlumniGoogleForm } from "./alumni-data-table-components/google-form/data-table-google-form"
 
 export default function GoogleForm() {
-    const { data: dataForm, isLoading: isformLoading, isFetched: formFetched } = useQuery({
-        queryFn: () => API_FORM_FINDALL_UNKNOWN(),
-        queryKey: ['forms']
-    })
+    // const { data: dataForm, isLoading: isformLoading, isFetched: formFetched } = useQuery({
+    //     queryFn: () => API_FORM_FINDALL_UNKNOWN(),
+    //     queryKey: ['forms']
+    // })
 
     return (
         <>
@@ -29,12 +26,14 @@ export default function GoogleForm() {
                         <Sidebar>
                             <SidebarNavs title="Alumni Information" link={ROUTES.ALUMNI} />
                             <SidebarNavs title="Tracer Map" link={ROUTES.TRACER_MAP} />
-                            {/* <SidebarNavs bg='bg-muted' title="Google Form" link={ROUTES.GOOGLE_FORM} /> */}
+                            <SidebarNavs bg='bg-muted' title="Google Form" link={ROUTES.GOOGLE_FORM} />
                         </Sidebar>
                         <MainTable>
-                            {isformLoading && <div>Loading...</div>}
-                            {isformLoading && <div>Loading...</div>}
-                            {formFetched && <DataTableForm columns={FormColumns} data={dataForm.data} />}
+
+                            <DataTableAlumniGoogleForm
+                                columns={[]}
+                                data={[]}
+                            />
                         </MainTable>
                     </main>
                 </div>
