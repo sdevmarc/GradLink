@@ -41,9 +41,49 @@ export class UsersController {
     }
 
     @UseGuards(AuthGuard)
+    @Get('check-default-password')
+    async checkUserDefaultPassword(
+        @Req() request: Request,
+        @Res() response: Response
+    ) {
+        const token = request.cookies['access_token']
+        if (!token) return response.json({ isAuthenticated: false })
+
+        try {
+            const payload = await this.jwtService.verify(token);
+            const userid = payload.sub
+
+            const asd = await this.usersService.checkDefaultPassword({ id: userid })
+            return response.json(asd)
+        } catch (error) {
+            return response.json({ isAuthenticated: false, error })
+        }
+    }
+
+    @UseGuards(AuthGuard)
     @Post('check-password')
     async checkPassword(@Body() { id, password }: { id: string, password: string }) {
         return this.usersService.checkPassword({ id, password })
+    }
+
+    @UseGuards(AuthGuard)
+    @Post('change-default-password')
+    async changeUserDefaultPassword(
+        @Body() { password }: { password: string },
+        @Req() request: Request,
+        @Res() response: Response
+    ) {
+        const token = request.cookies['access_token']
+        if (!token) return response.json({ isAuthenticated: false })
+
+        try {
+            const payload = await this.jwtService.verify(token);
+            const userid = payload.sub
+
+            return this.usersService.updatePassword({ id: userid, password })
+        } catch (error) {
+            return response.json({ isAuthenticated: false, error })
+        }
     }
 
     @UseGuards(AuthGuard)
@@ -130,7 +170,7 @@ export class UsersController {
 
             return isOtp;
         } catch (error) {
-            return { success: false, message: 'Error sending one-time-password' }
+            return response.json({ success: false, message: 'Error sending one-time-password' })
         }
 
     }
