@@ -159,7 +159,7 @@ export const ArchivedSemesterInAcademicYearColumns: ColumnDef<IAPIOffered>[] = [
 
             return (
                 <div className="flex justify-end">
-                    <Button onClick={handleViewDetails} variant={`outline`} size={`sm`} className="flex items-center gap-4">
+                    <Button onClick={handleViewDetails} variant={`outline`} size={`sm`} className="flex items-center gap-2">
                         <TableOfContents className="text-primary" size={18} /> View Attrition
                     </Button>
                     <SheetModal
