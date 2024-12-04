@@ -25,7 +25,7 @@ export default function Alumni() {
 
     const { data: checkpassword, isLoading: checkpasswordLoading, isFetched: checkpasswordFetched } = useQuery({
         queryFn: () => API_USER_CHECK_DEFAULT_PASSWORD(),
-        queryKey: ['check-password']
+        queryKey: ['checkpassword']
     })
 
     useEffect(() => {
