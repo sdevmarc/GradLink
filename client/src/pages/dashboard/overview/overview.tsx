@@ -47,7 +47,7 @@ export default function Overview() {
 
     const { data: checkpassword, isLoading: checkpasswordLoading, isFetched: checkpasswordFetched } = useQuery({
         queryFn: () => API_USER_CHECK_DEFAULT_PASSWORD(),
-        queryKey: ['check-password']
+        queryKey: ['checkpassword']
     })
 
     useEffect(() => {
@@ -117,8 +117,8 @@ export default function Overview() {
                 return
             } else {
                 setDialogChangePassword(false)
-                await queryClient.invalidateQueries({ queryKey: ['check-password'] })
-                await queryClient.refetchQueries({ queryKey: ['check-password'] })
+                await queryClient.invalidateQueries({ queryKey: ['checkpassword'] })
+                await queryClient.refetchQueries({ queryKey: ['checkpassword'] })
                 window.scrollTo({
                     top: 0,
                     behavior: 'smooth'
