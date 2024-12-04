@@ -62,7 +62,7 @@ export function PieChartRelatedJob({ data }: { data: IData[] }) {
         <Card className="flex flex-col shadow-none border-none">
             <CardHeader className="items-center pb-0">
                 <CardTitle>
-                    Course related to job.
+                    Course Relevance to Job
                 </CardTitle>
                 <CardDescription className="text-lg font-bold text-primary">{academicYear}</CardDescription>
             </CardHeader>
@@ -126,8 +126,8 @@ export function PieChartRelatedJob({ data }: { data: IData[] }) {
                 </ChartContainer>
             </CardContent>
             <CardFooter className="flex-col gap-2 text-sm">
-                <div className="leading-none text-muted-foreground text-center">
-                    Showing analytics from alumni responses if the course taken is related to current job.
+                <div className="leading-none text-muted-foreground text-center max-w-[30rem]">
+                    Showing analytics from alumni respondents if the course taken is related to current job.
                 </div>
             </CardFooter>
         </Card>
