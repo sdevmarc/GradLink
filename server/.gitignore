@@ -9,6 +9,7 @@
 /backup.sh
 /restore.sh
 /cronjob
+/vercel.json
 
 # Logs
 logs
