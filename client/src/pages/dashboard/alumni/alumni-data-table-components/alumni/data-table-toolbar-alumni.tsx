@@ -30,7 +30,6 @@ export function DataTableToolbarAlumni<TData>({
 }: DataTableToolbarProps<TData>) {
     const isFiltered = table.getState().columnFilters.length > 0
     const [formattedprogram, setFormattedProgram] = useState<ProgramOption[]>([]);
-    // const [filteredPrograms, setFilteredPrograms] = useState<ProgramOption[]>([]);
     const [filteredYearsGraduated, setFilteredYearsGraduated] = useState<{ label: string, value: string }[]>([])
 
     const { data: yearsGraduations, isFetched: yearsgraduatedFetched } = useQuery({
@@ -47,40 +46,12 @@ export function DataTableToolbarAlumni<TData>({
         if (!programLoading && programFetched) {
             const formatprogram = program.data.map((item: IAPIPrograms) => {
                 const { _id, code, department } = item
-                return {
-                    value: _id, label: code, department: department // Make sure your API returns this
-                }
+                return { value: _id, label: code, department: department }
             })
 
             setFormattedProgram(formatprogram)
-            // setFilteredPrograms(formatprogram)
         }
     }, [program])
-
-    // useEffect(() => {
-    //     const selectedDepartment = table.getColumn("department")?.getFilterValue() as string[];
-
-    //     if (selectedDepartment && selectedDepartment.length > 0) {
-    //         const filtered = formattedprogram.filter((prog: any) =>
-    //             selectedDepartment.includes(prog.department)
-    //         );
-    //         setFilteredPrograms(filtered);
-
-    //         // Clear program filter if selected program is not in filtered list
-    //         const currentProgramFilter = table.getColumn("program")?.getFilterValue() as string[];
-    //         if (currentProgramFilter && currentProgramFilter.length > 0) {
-    //             const validPrograms = filtered.map(p => p.value);
-    //             const newProgramFilter = currentProgramFilter.filter(p =>
-    //                 validPrograms.includes(p)
-    //             );
-    //             if (newProgramFilter.length !== currentProgramFilter.length) {
-    //                 table.getColumn("program")?.setFilterValue(newProgramFilter);
-    //             }
-    //         }
-    //     } else {
-    //         setFilteredPrograms(formattedprogram);
-    //     }
-    // }, [table.getColumn("department")?.getFilterValue()]);
 
     useEffect(() => {
         if (yearsgraduatedFetched) {
@@ -152,17 +123,6 @@ export function DataTableToolbarAlumni<TData>({
                     </div>
                 </div>
 
-                {
-                    isSync &&
-                    <div className="flex items-center gap-2">
-
-                        <LoaderCircle className={`text-muted-foreground animate-spin`} size={18} />
-                        <h1 className="text-muted-foreground text-sm">
-                            Syncing
-                        </h1>
-                    </div>
-                }
-
                 {isFiltered && (
                     <Button
                         variant="ghost"
@@ -174,6 +134,18 @@ export function DataTableToolbarAlumni<TData>({
                         <Cross2Icon className="ml-2 h-4 w-4" />
                     </Button>
                 )}
+
+                {
+                    isSync &&
+                    <div className="flex items-center justify-end gap-2">
+                        <LoaderCircle className={`text-muted-foreground animate-spin`} size={18} />
+                        <h1 className="text-muted-foreground text-sm">
+                            Syncing
+                        </h1>
+                    </div>
+                }
+
+             
             </div>
         </div>
     )
