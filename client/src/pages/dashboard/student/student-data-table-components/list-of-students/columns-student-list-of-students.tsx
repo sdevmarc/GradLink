@@ -42,7 +42,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
         id: "icon",
         cell: () => {
             return (
-                <div className="w-0">
+                <div className="w-0 px-1">
                     <CircleUserRound className="text-primary" />
                 </div>
             )
@@ -52,10 +52,10 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
     {
         accessorKey: "idNumber",
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="ID No." className="text-primary flex items-center justify-start" />
+            <DataTableColumnHeader column={column} title="ID No." className="text-primary flex items-center justify-start  transition-colors" />
         ),
         cell: ({ row }) => (
-            <div className="flex justify-start items-center capitalize gap-4 ">
+            <div className="flex justify-start items-center capitalize gap-4">
                 <Badge variant={`default`}>
                     {row.getValue("idNumber")}
                 </Badge>
@@ -65,7 +65,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
     {
         id: "fullname",
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Name and Email" className="text-primary flex justify-start items-center" />
+            <DataTableColumnHeader column={column} title="Name and Email" className="text-primary flex justify-start items-center " />
         ),
         cell: ({ row }) => {
             return (
@@ -457,7 +457,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                     type={`default`}
                                     variant={`destructive`}
                                     btnIcon={<UserPen className="text-white" size={18} />}
-                                    btnTitle={'Update Information'}
+                                    btnTitle={'Update Profile'}
                                     title="Are you sure?"
                                     description={`This will update the student, ${lastname}, ${firstname} ${middlename} information.`}
                                     btnContinue={() => {
@@ -467,7 +467,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                 />
                             }
 
-                            <Button onClick={handleViewDetails} variant={`outline`} size={`sm`} className="flex items-center gap-4">
+                            <Button onClick={handleViewDetails} variant={`outline`} size={`sm`} className="flex items-center gap-2">
                                 <TableOfContents className="text-primary" size={18} />   View Profile
                             </Button>
                             <SheetModal
@@ -823,12 +823,13 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                     </div>
                                                                 }
 
-                                                                {isDiscontinue && <DragDropImage
-                                                                    id={_id || ''}
-                                                                    isDiscontinue={(e) => setDiscontinue(e)}
-                                                                    isdiscontinueLoading={(e) => setDisconLoading(e)}
-                                                                    isDialogSubmit={(e) => setDialogDiscontinue(e)}
-                                                                />}
+                                                                {isDiscontinue &&
+                                                                    <DragDropImage
+                                                                        id={_id || ''}
+                                                                        isDiscontinue={(e) => setDiscontinue(e)}
+                                                                        isdiscontinueLoading={(e) => setDisconLoading(e)}
+                                                                        isDialogSubmit={(e) => setDialogDiscontinue(e)}
+                                                                    />}
                                                             </div>
                                                         </CardContent>
                                                     </Card>
@@ -854,11 +855,87 @@ import { Combobox } from "@/components/combobox"
 import { API_CURRICULUM_FINDALL_ACTIVE } from "@/api/curriculum"
 import { ICurriculum } from "@/interface/curriculum.interface"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
+
+interface ReasonState {
+    financialDifficulties: boolean;
+    personalFamily: boolean;
+    healthIssues: boolean;
+    workCommitments: boolean;
+    lackOfInterest: boolean;
+    relocation: boolean;
+    programDissatisfaction: boolean;
+    betterOpportunities: boolean;
+    timeConstraints: boolean;
+    careerGoals: boolean;
+    academicChallenges: boolean;
+    transfer: boolean;
+    visaIssues: boolean;
+    discrimination: boolean;
+    lackOfSupport: boolean;
+    programExpectations: boolean;
+    familyEmergency: boolean;
+    academicRigor: boolean;
+    mentalHealth: boolean;
+    specificGoals: boolean;
+    other: boolean;
+    otherText: string;
+}
+
+const reasonsList = [
+    { id: 'financialDifficulties', label: 'Financial Difficulties' },
+    { id: 'personalFamily', label: 'Personal or Family Reasons' },
+    { id: 'healthIssues', label: 'Health Issues' },
+    { id: 'workCommitments', label: 'Work or Career Commitments' },
+    { id: 'lackOfInterest', label: 'Lack of Interest in the Program' },
+    { id: 'relocation', label: 'Relocation or Moving' },
+    { id: 'programDissatisfaction', label: 'Dissatisfaction with Program' },
+    { id: 'betterOpportunities', label: 'Better Opportunities Elsewhere' },
+    { id: 'timeConstraints', label: 'Time Constraints' },
+    { id: 'careerGoals', label: 'Change in Career Goals' },
+    { id: 'academicChallenges', label: 'Academic Challenges' },
+    { id: 'transfer', label: 'Transfer to Another Institution' },
+    { id: 'visaIssues', label: 'Visa or Immigration Issues' },
+    { id: 'discrimination', label: 'Discrimination or Uncomfortable Environment' },
+    { id: 'lackOfSupport', label: 'Lack of Support' },
+    { id: 'programExpectations', label: 'Program Not Meeting Expectations' },
+    { id: 'familyEmergency', label: 'Family Emergency' },
+    { id: 'academicRigor', label: 'Not Ready for Academic Rigor' },
+    { id: 'mentalHealth', label: 'Poor Mental Health' },
+    { id: 'specificGoals', label: 'Completion of Specific Goals' },
+    { id: 'other', label: 'Others' }
+];
 
 const DragDropImage = ({ id, isDiscontinue, isdiscontinueLoading, isDialogSubmit }: { id: string, isDiscontinue: (e: boolean) => void, isdiscontinueLoading: (e: boolean) => void, isDialogSubmit: (e: boolean) => void }) => {
     const queryClient = useQueryClient()
     const [image, setImage] = useState<File | null>(null)
     const [dialogsubmit, setDialogSubmit] = useState<boolean>(false)
+    const [reasons, setReasons] = useState<ReasonState>({
+        financialDifficulties: false,
+        personalFamily: false,
+        healthIssues: false,
+        workCommitments: false,
+        lackOfInterest: false,
+        relocation: false,
+        programDissatisfaction: false,
+        betterOpportunities: false,
+        timeConstraints: false,
+        careerGoals: false,
+        academicChallenges: false,
+        transfer: false,
+        visaIssues: false,
+        discrimination: false,
+        lackOfSupport: false,
+        programExpectations: false,
+        familyEmergency: false,
+        academicRigor: false,
+        mentalHealth: false,
+        specificGoals: false,
+        other: false,
+        otherText: ''
+    });
 
     const { mutateAsync: discontinueStudent, isPending: discontinueStudentLoading } = useMutation({
         mutationFn: async (formData: FormData) => API_STUDENT_DISCONTINUE_STUDENT(formData),
@@ -924,15 +1001,11 @@ const DragDropImage = ({ id, isDiscontinue, isdiscontinueLoading, isDialogSubmit
     };
 
     return (
-        <div className=" flex flex-col items-center justify-center p-4 gap-4">
+        <div className="w-full flex flex-col items-center justify-center p-4 gap-4">
             <h1 className="text-2xl font-bold">Assessment Form</h1>
-            <Card className="w-full max-w-xl">
+            <Card className="w-full">
                 <CardContent className="pt-6">
-                    <div
-                        {...getRootProps()}
-                        className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${isDragActive ? "border-primary bg-primary/10" : "border-gray-300 hover:border-primary"
-                            }`}
-                    >
+                    <div {...getRootProps()} className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${isDragActive ? "border-primary bg-primary/10" : "border-gray-300 hover:border-primary"}`} >
                         <input {...getInputProps()} />
                         {image ? (
                             <div className="relative">
@@ -963,8 +1036,36 @@ const DragDropImage = ({ id, isDiscontinue, isdiscontinueLoading, isDialogSubmit
                     )}
                 </CardContent>
             </Card>
+            <div className="w-full flex flex-col gap-2 items-center justify-center">
+                <h1 className="text-2xl font-bold">Withdrawal Reasons</h1>
+                <Card className="w-full">
+                    <CardContent className="grid grid-cols-2 gap-4 pt-4">
+                        {reasonsList.map((reason) => (
+                            <div key={reason.id} className="flex items-center space-x-2">
+                                <Checkbox
+                                    id={reason.id}
+                                    checked={!!reasons[reason.id as keyof ReasonState]}
+                                    onCheckedChange={(checked) =>
+                                        setReasons(prev => ({ ...prev, [reason.id]: checked as boolean }))
+                                    }
+                                />
+                                <Label htmlFor={reason.id}>{reason.label}</Label>
+                            </div>
+                        ))}
+                        {reasons.other && (
+                            <div className="col-span-2">
+                                <Input
+                                    placeholder="Please specify other reason"
+                                    value={reasons.otherText}
+                                    onChange={(e) => setReasons(prev => ({ ...prev, otherText: e.target.value }))}
+                                    className="mt-2"
+                                />
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
+            </div>
             <div className="w-full flex flex-col gap-2">
-
                 <AlertDialogConfirmation
                     isDialog={dialogsubmit}
                     disabled={discontinueStudentLoading}
@@ -973,7 +1074,7 @@ const DragDropImage = ({ id, isDiscontinue, isdiscontinueLoading, isDialogSubmit
                     type={`default`}
                     variant={'default'}
                     btnIcon={<UserPen className="text-white" size={18} />}
-                    btnTitle={`${!isDiscontinue ? 'Mark as Discontinue' : 'Submit Assessment Form'}`}
+                    btnTitle={`${!isDiscontinue ? 'Mark as Discontinue' : 'Submit Assessment'}`}
                     title="Are you sure?"
                     description={`The student will be mark as a dicontinuing student, and its courses this semester will be mark as drop.`}
                     btnContinue={() => handleDiscontinueStudent()}
@@ -982,6 +1083,7 @@ const DragDropImage = ({ id, isDiscontinue, isdiscontinueLoading, isDialogSubmit
                     (e) => {
                         e.stopPropagation()
                         removeImage()
+                        isDiscontinue(false)
                     }
                 } variant={`outline`} size={`sm`} className="flex items-center gap-4" type="button">
                     <X className='text-primary' size={18} /> Cancel
