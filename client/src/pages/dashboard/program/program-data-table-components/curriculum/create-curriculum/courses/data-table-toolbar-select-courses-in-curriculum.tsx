@@ -13,23 +13,26 @@ interface DataTableToolbarProps<TData> {
 export function DataTableToolbarSelectCoursesInCurriculum<TData>({
     table,
 }: DataTableToolbarProps<TData>) {
-    const isFiltered = table.getState().columnFilters.length > 0
-    
+    const isFiltered = table.getState().columnFilters.length > 0 || !!table.getState().globalFilter;
+
     return (
         <div className="flex flex-wrap items-center justify-between">
             <div className="flex flex-1 flex-wrap items-center gap-2">
                 <Input
-                    placeholder="Search course number..."
-                    value={(table.getColumn("courseno")?.getFilterValue() as string) ?? ""}
+                    placeholder="Search courses..."
+                    value={(table.getState().globalFilter as string) ?? ""}
                     onChange={(event) => {
-                        table.getColumn("courseno")?.setFilterValue(event.target.value)
+                        table.setGlobalFilter(event.target.value);
                     }}
                     className="h-8 w-[20rem] lg:w-[25rem]"
                 />
                 {isFiltered && (
                     <Button
                         variant="ghost"
-                        onClick={() => table.resetColumnFilters()}
+                        onClick={() => {
+                            table.resetColumnFilters()
+                            table.setGlobalFilter('')
+                        }}
                         className="h-8 px-2 lg:px-3"
                     >
                         Reset
