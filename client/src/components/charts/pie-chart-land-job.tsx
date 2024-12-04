@@ -67,7 +67,7 @@ export function PieChartLandJob({ data }: { data: IData[] }) {
         <Card className="flex flex-col shadow-none border-none">
             <CardHeader className="items-center pb-0">
                 <CardTitle>
-                    Time of Alumni Landing Their First Job
+                    Post-Graduation Job Acquisition Timing for Alumni
                 </CardTitle>
                 <CardDescription className="text-lg font-bold text-primary">{academicYear}</CardDescription>
             </CardHeader>
@@ -88,7 +88,7 @@ export function PieChartLandJob({ data }: { data: IData[] }) {
                             nameKey="key"
                             innerRadius={60}
                             strokeWidth={5}
-                            // label
+                        // label
                         >
                             {chartData.map((entry, index) => (
                                 <Cell
@@ -131,8 +131,8 @@ export function PieChartLandJob({ data }: { data: IData[] }) {
                 </ChartContainer>
             </CardContent>
             <CardFooter className="flex-col gap-2 text-sm">
-                <div className="leading-none text-muted-foreground text-center">
-                    Showing analytics from alumni responses regarding the time it took them to land their first job.
+                <div className="leading-none text-muted-foreground text-center max-w-[30rem]">
+                    Showing analytics from alumni respondents regarding the time duration it took them to land their first job.
                 </div>
             </CardFooter>
         </Card>
