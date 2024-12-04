@@ -27,7 +27,7 @@ export function DataTableToolbarCreateProgram<TData>({
     fetchChecks,
     isreset
 }: DataTableToolbarProps<TData>) {
-    const isFiltered = table.getState().columnFilters.length > 0
+    const isFiltered = table.getState().columnFilters.length > 0 || !!table.getState().globalFilter;
     const [values, setValues] = useState<IAPIPrograms[]>([])
     const [programs, setprograms] = useState({
         code: '',
@@ -62,28 +62,28 @@ export function DataTableToolbarCreateProgram<TData>({
         const { code, descriptiveTitle, residency } = programs
         const upperCode = code.replace(/\s+/g, '').toUpperCase()
         if (upperCode === '' || descriptiveTitle === '' || residency === '') {
-            setAlertDialogState({ 
-                success: false, 
-                show: true, 
-                title: 'Uh, oh! Something went wrong.', 
-                description: 'Please fill-up the required fields.' 
+            setAlertDialogState({
+                success: false,
+                show: true,
+                title: 'Uh, oh! Something went wrong.',
+                description: 'Please fill-up the required fields.'
             })
             return
         }
         const programExists = values.some(program => program.code === upperCode)
-       
+
         if (programExists) {
-            setAlertDialogState({ 
-                success: false, 
-                show: true, 
-                title: 'Uh, oh! Something went wrong.', 
-                description: 'A program with this code or descriptive title already exists.' 
+            setAlertDialogState({
+                success: false,
+                show: true,
+                title: 'Uh, oh! Something went wrong.',
+                description: 'A program with this code or descriptive title already exists.'
             })
             return
         }
         setValues(prev => [...prev, { code: upperCode, descriptiveTitle, residency }])
         setprograms({ code: '', descriptiveTitle: '', residency: '' })
-        setDialogOpen(false) 
+        setDialogOpen(false)
     }
 
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -119,16 +119,19 @@ export function DataTableToolbarCreateProgram<TData>({
             <div className="flex flex-1 flex-wrap items-center gap-2">
                 <Input
                     placeholder="Search program..."
-                    value={(table.getColumn("code")?.getFilterValue() as string) ?? ""}
+                    value={(table.getState().globalFilter as string) ?? ""}
                     onChange={(event) => {
-                        table.getColumn("code")?.setFilterValue(event.target.value)
+                        table.setGlobalFilter(event.target.value);
                     }}
-                    className="h-8 w-[20rem] lg:w-[25rem] placeholder:text-muted"
+                    className="h-8 w-[20rem] lg:w-[25rem]"
                 />
                 {isFiltered && (
                     <Button
                         variant="ghost"
-                        onClick={() => table.resetColumnFilters()}
+                        onClick={() => {
+                            table.resetColumnFilters()
+                            table.setGlobalFilter('')
+                        }}
                         className="h-8 px-2 lg:px-3"
                     >
                         Reset
@@ -144,8 +147,8 @@ export function DataTableToolbarCreateProgram<TData>({
             </div>
             <div className="flex gap-2 items-center">
                 <DialogContainer
-                open={dialogOpen}
-                onOpenChange={setDialogOpen}
+                    open={dialogOpen}
+                    onOpenChange={setDialogOpen}
                     submit={handleAddProgram}
                     title="Add Program"
                     description="Please fill-out the required fields."
