@@ -14,6 +14,7 @@ import {
     getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
+    FilterFn
 } from "@tanstack/react-table"
 
 import {
@@ -24,28 +25,42 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { DataTableToolbarCreateProgram } from './data-table-toolbar-create-program'
-import { IAPIPrograms } from '@/interface/program.interface'
+import { DataTableToolbarAvailablePrograms } from '../available-programs/data-table-toolbar-available-programs'
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[],
-    fetchAddedPrograms: (e: IAPIPrograms[]) => void
-    isreset: boolean
 }
+
+const globalFilterFn: FilterFn<any> = (row, columnId, filterValue) => {
+    // Split the input into keywords
+    const keywords = filterValue.toLowerCase().split(' ').filter(Boolean);
+
+    // Collect the values from the columns you want to search
+    const rowValues = [
+        row.getValue('descriptiveTitle')?.toString().toLowerCase(),
+        row.getValue('code')?.toString().toLowerCase(),
+        row.getValue('residency')?.toString().toLowerCase(), // Example of an additional column
+        // Add other columns as needed
+    ];
+
+    // Check if every keyword is present in any of the row values
+    return keywords.every((keyword: string) =>
+        rowValues.some(value => value?.includes(keyword))
+    );
+};
 
 export function DataTableCreateProgram<TData, TValue>({
     columns,
     data,
-    fetchAddedPrograms,
-    isreset
 }: DataTableProps<TData, TValue>) {
+    const [globalFilter, setGlobalFilter] = React.useState('')
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
+    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
+        department: false
+    })
     const [rowSelection, setRowSelection] = React.useState({})
-    const [isrows, setRows] = React.useState<boolean>(false)
-    const [haschecks, setChecks] = React.useState<IAPIPrograms[]>([])
 
     const table = useReactTable({
         data,
@@ -59,38 +74,19 @@ export function DataTableCreateProgram<TData, TValue>({
         onColumnVisibilityChange: setColumnVisibility,
         onRowSelectionChange: setRowSelection,
         state: {
+            globalFilter,
             sorting,
             columnFilters,
             columnVisibility,
             rowSelection,
         },
+        onGlobalFilterChange: setGlobalFilter, // Add this line
+        globalFilterFn,
     })
-
-    React.useEffect(() => {
-        const selectedRows = table.getFilteredSelectedRowModel().rows
-        const added_programs = selectedRows.map(row => {
-            const original = row.original as IAPIPrograms
-            const { code, descriptiveTitle, residency } = original
-            return { code, descriptiveTitle, residency }
-        })
-
-        if (selectedRows.length > 0) {
-            setRows(true)
-        } else {
-            setRows(false)
-        }
-        setChecks(added_programs)
-
-    }, [rowSelection, table])
 
     return (
         <div className="w-full flex flex-col gap-4">
-            <DataTableToolbarCreateProgram
-                table={table} fetchAddedPrograms={(e) => fetchAddedPrograms(e)}
-                isrows={isrows}
-                fetchChecks={haschecks}
-                isreset={isreset}
-            />
+            <DataTableToolbarAvailablePrograms table={table} />
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
@@ -143,8 +139,9 @@ export function DataTableCreateProgram<TData, TValue>({
             </div>
             <div className="flex items-center justify-end space-x-2 py-4">
                 <div className="flex-1 text-sm text-muted-foreground">
-                    {table.getFilteredSelectedRowModel().rows.length} of{" "}
-                    {table.getFilteredRowModel().rows.length} row(s) selected.
+                    {/* {table.getFilteredSelectedRowModel().rows.length} of{" "}
+                    {table.getFilteredRowModel().rows.length} row(s) selected. */}
+                    {table.getRowModel().rows.length} row(s) total.
                 </div>
                 <div className="space-x-2">
                     <Button
