@@ -615,7 +615,7 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
                                                                         <Table>
                                                                             <TableHeader>
                                                                                 <TableRow>
-                                                                                    <TableHead className="w-[100px]">ID</TableHead>
+                                                                                    <TableHead className="w-[50px]">ID</TableHead>
                                                                                     <TableHead className="w-1/3">Question</TableHead>
                                                                                     <TableHead>Answer</TableHead>
                                                                                 </TableRow>
@@ -656,7 +656,7 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
                                                                         <Table>
                                                                             <TableHeader>
                                                                                 <TableRow>
-                                                                                    <TableHead className="w-[100px]">ID</TableHead>
+                                                                                    <TableHead className="w-[50px]">ID</TableHead>
                                                                                     <TableHead className="w-1/3">Question</TableHead>
                                                                                     <TableHead>Answer</TableHead>
                                                                                 </TableRow>
@@ -714,29 +714,29 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
                                                     </CardHeader>
                                                     <CardContent className="space-y-4">
                                                         <div className="flex flex-col">
-                                                            <table className="w-full ">
-                                                                <thead>
-                                                                    <tr className="border-b">
-                                                                        <th className="text-left font-normal pb-2">Course No.</th>
-                                                                        <th className="text-left font-medium pb-2">Descriptive Title</th>
-                                                                        <th className="text-left font-medium pb-2">Status</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
+                                                            <Table className="w-full ">
+                                                                <TableHeader>
+                                                                    <TableRow className="border-b">
+                                                                        <TableHead className="text-left font-normal pb-2">Course No.</TableHead>
+                                                                        <TableHead className="text-left font-medium pb-2">Descriptive Title</TableHead>
+                                                                        <TableHead className="text-left font-medium pb-2">Status</TableHead>
+                                                                    </TableRow>
+                                                                </TableHeader>
+                                                                <TableBody>
                                                                     {enrolledCourses?.map((item, i) => (
-                                                                        <tr key={i} className="border-b last:border-0">
-                                                                            <td className="py-2">
+                                                                        <TableRow key={i} className="border-b last:border-0">
+                                                                            <TableCell className="py-2">
                                                                                 <span className="capitalize text-sm font-normal flex items-center gap-2">
                                                                                     <GraduationCap size={18} className="h-5 w-5 text-muted-foreground" />
                                                                                     {item.courseno}
                                                                                 </span>
-                                                                            </td>
-                                                                            <td className="py-2">
+                                                                            </TableCell>
+                                                                            <TableCell className="py-2">
                                                                                 <span className="capitalize text-sm font-normal flex items-center gap-2">
                                                                                     {item.descriptiveTitle}
                                                                                 </span>
-                                                                            </td>
-                                                                            <td className="py-2 text-left text-medium">
+                                                                            </TableCell>
+                                                                            <TableCell className="py-2 text-left text-medium">
                                                                                 <span className="text-sm font-normal flex items-center gap-2 capitalize ">
                                                                                     {
                                                                                         item.status === 'ongoing' &&
@@ -774,11 +774,11 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
                                                                                         </div>
                                                                                     }
                                                                                 </span>
-                                                                            </td>
-                                                                        </tr>
+                                                                            </TableCell>
+                                                                        </TableRow>
                                                                     ))}
-                                                                </tbody>
-                                                            </table>
+                                                                </TableBody>
+                                                            </Table>
                                                         </div>
                                                     </CardContent>
                                                 </Card>
