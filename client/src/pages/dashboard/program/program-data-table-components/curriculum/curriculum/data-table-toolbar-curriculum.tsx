@@ -28,7 +28,7 @@ interface ProgramOption {
 export function DataTableToolbarCurriculum<TData>({
     table,
 }: DataTableToolbarProps<TData>) {
-    const isFiltered = table.getState().columnFilters.length > 0;
+    const isFiltered = table.getState().columnFilters.length > 0 || !!table.getState().globalFilter;
     const navigate = useNavigate()
     const [formattedprogram, setFormattedProgram] = useState<ProgramOption[]>([]);
     // const [filteredPrograms, setFilteredPrograms] = useState<ProgramOption[]>([]);
@@ -64,39 +64,14 @@ export function DataTableToolbarCurriculum<TData>({
         }
     }, [program])
 
-    // useEffect(() => {
-    //     const selectedDepartment = table.getColumn("department")?.getFilterValue() as string[];
-
-    //     if (selectedDepartment && selectedDepartment.length > 0) {
-    //         const filtered = formattedprogram.filter((prog: any) =>
-    //             selectedDepartment.includes(prog.department)
-    //         );
-    //         setFilteredPrograms(filtered);
-
-    //         // Clear program filter if selected program is not in filtered list
-    //         const currentProgramFilter = table.getColumn("programid")?.getFilterValue() as string[];
-    //         if (currentProgramFilter && currentProgramFilter.length > 0) {
-    //             const validPrograms = filtered.map(p => p.value);
-    //             const newProgramFilter = currentProgramFilter.filter(p =>
-    //                 validPrograms.includes(p)
-    //             );
-    //             if (newProgramFilter.length !== currentProgramFilter.length) {
-    //                 table.getColumn("programid")?.setFilterValue(newProgramFilter);
-    //             }
-    //         }
-    //     } else {
-    //         setFilteredPrograms(formattedprogram);
-    //     }
-    // }, [table.getColumn("department")?.getFilterValue()]);
-    
     return (
         <div className="flex flex-wrap items-center justify-between">
             <div className="flex flex-1 flex-wrap items-center gap-2">
                 <Input
-                    placeholder="Search name..."
-                    value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+                    placeholder="Search curriculums..."
+                    value={(table.getState().globalFilter as string) ?? ""}
                     onChange={(event) => {
-                        table.getColumn("name")?.setFilterValue(event.target.value);
+                        table.setGlobalFilter(event.target.value);
                     }}
                     className="h-8 w-[20rem] lg:w-[25rem]"
                 />
@@ -125,19 +100,16 @@ export function DataTableToolbarCurriculum<TData>({
                 {isFiltered && (
                     <Button
                         variant="ghost"
-                        onClick={() => table.resetColumnFilters()}
+                        onClick={() => {
+                            table.resetColumnFilters()
+                            table.setGlobalFilter('')
+                        }}
                         className="h-8 px-2 lg:px-3"
                     >
                         Reset
                         <Cross2Icon className="ml-2 h-4 w-4" />
                     </Button>
                 )}
-                {/* <CalendarDatePicker
-                    date={dateRange}
-                    onDateSelect={handleDateSelect}
-                    className="w-[250px] h-8"
-                    variant="outline"
-                /> */}
             </div>
             <div className="flex gap-2 items-center">
                 <AlertDialogConfirmation
@@ -150,14 +122,6 @@ export function DataTableToolbarCurriculum<TData>({
                     description={`You will be redirect to a page for creating a curriculum.`}
                     btnContinue={() => navigate(ROUTES.CREATE_CURRICULUM)}
                 />
-                {/* <AlertDialogConfirmation
-                    type={`default`}
-                    variant={'outline'}
-                    btnTitle="Export"
-                    title="Are you sure?"
-                    description={`This will export the current data you are viewing.`}
-                    btnContinue={() => navigate('/program')}
-                /> */}
             </div>
         </div>
     )
