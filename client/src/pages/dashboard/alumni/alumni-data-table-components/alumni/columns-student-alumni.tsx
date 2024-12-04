@@ -5,7 +5,7 @@ import {
 } from "@tanstack/react-table"
 
 import { DataTableColumnHeader } from "@/components/data-table-components/data-table-column-header";
-import { BookOpen, CircleCheck, CircleDashed, CircleX, GraduationCap, Loader, Mail, Pencil, Printer, Send, TableOfContents, X } from "lucide-react";
+import { BookOpen, CircleCheck, CircleDashed, CircleX, GraduationCap, Loader, Mail, Pencil, Printer, Send, TableOfContents, TrashIcon, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { IAPIStudents } from "@/interface/student.interface";
 import { useEffect, useRef, useState } from "react";
@@ -45,8 +45,8 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
         id: "icon",
         cell: () => {
             return (
-                <div className="w-0">
-                    <GraduationCap className="text-primary" />
+                <div className="w-0 px-1">
+                    <GraduationCap className="text-primary" size={18} />
                 </div>
             )
 
@@ -388,9 +388,14 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
                             variant={`default`}
                             btnContinue={() => setAlertDialogState(prev => ({ ...prev, show: false }))}
                         />
-                        <Button onClick={handleViewDetails} variant={`outline`} size={`sm`} className="flex items-center gap-4">
-                            <TableOfContents className="text-primary" size={18} />   View Profile
-                        </Button>
+                        <div className="flex items-center gap-2">
+                            <Button onClick={handleViewDetails} variant={`outline`} size={`sm`} className="flex items-center gap-2">
+                                <TrashIcon className="text-white" size={18} /> Move to Trash
+                            </Button>
+                            <Button onClick={handleViewDetails} variant={`outline`} size={`sm`} className="flex items-center gap-2">
+                                <TableOfContents className="text-primary" size={18} />   View Profile
+                            </Button>
+                        </div>
                         <SheetModal
                             className="w-[60%] overflow-auto"
                             isOpen={isOpen}
