@@ -26,7 +26,7 @@ export default function ArchivedSemestersInAcademicYear() {
 
     const { data: checkpassword, isFetched: checkpasswordFetched } = useQuery({
         queryFn: () => API_USER_CHECK_DEFAULT_PASSWORD(),
-        queryKey: ['check-password']
+        queryKey: ['checkpassword']
     })
 
     useEffect(() => {
