@@ -6,6 +6,7 @@ import * as React from "react"
 import {
     ColumnDef,
     ColumnFiltersState,
+    FilterFn,
     SortingState,
     VisibilityState,
     flexRender,
@@ -31,10 +32,29 @@ interface DataTableProps<TData, TValue> {
     data: TData[],
 }
 
+const globalFilterFn: FilterFn<any> = (row, columnId, filterValue) => {
+    // Split the input into keywords
+    const keywords = filterValue.toLowerCase().split(' ').filter(Boolean);
+
+    // Collect the values from the columns you want to search
+    const rowValues = [
+        row.getValue('program')?.toString().toLowerCase(),
+        row.getValue('name')?.toString().toLowerCase(),
+        row.getValue('department')?.toString().toLowerCase(),
+        // Add other columns as needed
+    ];
+
+    // Check if every keyword is present in any of the row values
+    return keywords.every((keyword: string) =>
+        rowValues.some(value => value?.includes(keyword))
+    );
+};
+
 export function DataTableCurriculum<TData, TValue>({
     columns,
     data,
 }: DataTableProps<TData, TValue>) {
+    const [globalFilter, setGlobalFilter] = React.useState('')
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
@@ -55,11 +75,14 @@ export function DataTableCurriculum<TData, TValue>({
         onColumnVisibilityChange: setColumnVisibility,
         onRowSelectionChange: setRowSelection,
         state: {
+            globalFilter,
             sorting,
             columnFilters,
             columnVisibility,
             rowSelection,
         },
+        onGlobalFilterChange: setGlobalFilter, // Add this line
+        globalFilterFn,
     })
 
     return (
@@ -91,7 +114,7 @@ export function DataTableCurriculum<TData, TValue>({
                                 <TableRow
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
-                                    // className="hover:bg-gray-100"
+                                // className="hover:bg-gray-100"
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
