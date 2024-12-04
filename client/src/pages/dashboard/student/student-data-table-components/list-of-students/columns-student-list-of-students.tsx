@@ -675,17 +675,17 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                         </CardHeader>
                                                         <CardContent className="space-y-4">
                                                             <div className="flex flex-col">
-                                                                <table className="w-full ">
-                                                                    <thead>
-                                                                        <tr className="border-b">
-                                                                            <th className="text-left font-normal pb-2">Course No.</th>
-                                                                            <th className="text-left font-medium pb-2">Descriptive Title</th>
-                                                                            <th className="text-left font-medium pb-2">Status</th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
+                                                                <Table className="w-full ">
+                                                                    <TableHeader>
+                                                                        <TableRow className="border-b">
+                                                                            <TableHead className="text-left font-normal pb-2">Course No.</TableHead>
+                                                                            <TableHead className="text-left font-medium pb-2">Descriptive Title</TableHead>
+                                                                            <TableHead className="text-left font-medium pb-2">Status</TableHead>
+                                                                        </TableRow>
+                                                                    </TableHeader>
+                                                                    <TableBody>
                                                                         {enrolledCourses?.map((item, i) => (
-                                                                            <tr key={i} className="border-b last:border-0">
+                                                                            <TableRow key={i} className="border-b last:border-0">
                                                                                 <td className="py-2">
                                                                                     <span className="capitalize text-sm font-normal flex items-center gap-2">
                                                                                         <GraduationCap size={18} className="h-5 w-5 text-muted-foreground" />
@@ -697,7 +697,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                                         {item.descriptiveTitle}
                                                                                     </span>
                                                                                 </td>
-                                                                                <td className="py-2 text-left text-medium">
+                                                                                <TableCell className="py-2 text-left text-medium">
                                                                                     <span className="text-sm font-normal flex items-center gap-2 capitalize ">
                                                                                         {
                                                                                             item.status === 'ongoing' &&
@@ -749,11 +749,11 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                                             </div>
                                                                                         }
                                                                                     </span>
-                                                                                </td>
-                                                                            </tr>
+                                                                                </TableCell>
+                                                                            </TableRow>
                                                                         ))}
-                                                                    </tbody>
-                                                                </table>
+                                                                    </TableBody>
+                                                                </Table>
                                                             </div>
                                                             <div className="flex flex-col gap-4">
                                                                 {
@@ -853,6 +853,7 @@ import { API_USER_GET_USER } from "@/api/user"
 import { Combobox } from "@/components/combobox"
 import { API_CURRICULUM_FINDALL_ACTIVE } from "@/api/curriculum"
 import { ICurriculum } from "@/interface/curriculum.interface"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 const DragDropImage = ({ id, isDiscontinue, isdiscontinueLoading, isDialogSubmit }: { id: string, isDiscontinue: (e: boolean) => void, isdiscontinueLoading: (e: boolean) => void, isDialogSubmit: (e: boolean) => void }) => {
     const queryClient = useQueryClient()
