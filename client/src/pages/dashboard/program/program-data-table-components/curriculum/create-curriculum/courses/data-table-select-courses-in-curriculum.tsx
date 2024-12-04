@@ -6,6 +6,7 @@ import * as React from "react"
 import {
     ColumnDef,
     ColumnFiltersState,
+    FilterFn,
     SortingState,
     VisibilityState,
     flexRender,
@@ -35,6 +36,25 @@ interface DataTableProps<TData, TValue> {
     onResetComplete: () => void
 }
 
+const globalFilterFn: FilterFn<any> = (row, columnId, filterValue) => {
+    // Split the input into keywords
+    const keywords = filterValue.toLowerCase().split(' ').filter(Boolean);
+
+    // Collect the values from the columns you want to search
+    const rowValues = [
+        row.getValue('descriptiveTitle')?.toString().toLowerCase(),
+        row.getValue('units')?.toString().toLowerCase(),
+        row.getValue('code')?.toString().toLowerCase(),
+        row.getValue('courseno')?.toString().toLowerCase(), // Example of an additional column
+        // Add other columns as needed
+    ];
+
+    // Check if every keyword is present in any of the row values
+    return keywords.every((keyword: string) =>
+        rowValues.some(value => value?.includes(keyword))
+    );
+};
+
 export function DataTableSelectCoursesInCurriculum<TData, TValue>({
     columns,
     data,
@@ -42,6 +62,7 @@ export function DataTableSelectCoursesInCurriculum<TData, TValue>({
     resetSelection,
     onResetComplete
 }: DataTableProps<TData, TValue>) {
+    const [globalFilter, setGlobalFilter] = React.useState('')
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -59,11 +80,14 @@ export function DataTableSelectCoursesInCurriculum<TData, TValue>({
         onColumnVisibilityChange: setColumnVisibility,
         onRowSelectionChange: setRowSelection,
         state: {
+            globalFilter,
             sorting,
             columnFilters,
             columnVisibility,
             rowSelection,
         },
+        onGlobalFilterChange: setGlobalFilter, // Add this line
+        globalFilterFn,
     })
 
     React.useEffect(() => {
