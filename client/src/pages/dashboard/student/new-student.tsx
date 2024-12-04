@@ -92,8 +92,8 @@ const CreateForm = () => {
     React.useEffect(() => {
         if (checkpasswordFetched) {
             if (!checkpassword.success) {
-               navigate('/overview')
-            } 
+                navigate('/overview')
+            }
         }
     }, [checkpassword])
 
@@ -191,7 +191,10 @@ const CreateForm = () => {
         const nospaceAwards = (awards ?? '').replace(/\s+/g, '')
         const nospaceExamPassed = (examPassed ?? '').replace(/\s+/g, '')
         const nospaceExamDate = (examDate ?? '').replace(/\s+/g, '')
-        const nospaceExamRating = (examRating ?? '').replace(/\s+/g, '')
+        let nospaceExamRating = (examRating ?? '').replace(/\s+/g, '');
+
+        // Remove non-numeric characters
+        nospaceExamRating = nospaceExamRating.replace(/[^0-9]/g, '');
 
         if (nospaceIdNumber === '' || lastname === '' || firstname === '' || nospaceEmail === '' || !program) {
             setDialogSubmit(false)
@@ -214,11 +217,11 @@ const CreateForm = () => {
             setDialogSubmit(false)
             await insertStudent({
                 idNumber: nospaceIdNumber,
-                lastname,
-                firstname,
-                middlename,
+                lastname: lastname?.toLowerCase(),
+                firstname: firstname?.toLowerCase(),
+                middlename: middlename?.toLowerCase(),
                 email: nospaceEmail,
-                program,
+                program: program?.toLowerCase(),
                 courses,
                 undergraduateInformation
             })
@@ -228,14 +231,19 @@ const CreateForm = () => {
         setDialogSubmit(false)
         await insertStudent({
             idNumber: nospaceIdNumber,
-            lastname,
-            firstname,
-            middlename,
+            lastname: lastname?.toLowerCase(),
+            firstname: firstname?.toLowerCase(),
+            middlename: middlename?.toLowerCase(),
             email: nospaceEmail,
-            program,
+            program: program?.toLowerCase(),
             courses,
             undergraduateInformation,
-            achievements
+            achievements: {
+                awards: awards?.toLowerCase(),
+                examDate: examDate?.toLowerCase(),
+                examPassed: examPassed?.toLowerCase(),
+                examRating: nospaceExamRating
+            }
         })
         return
     }
