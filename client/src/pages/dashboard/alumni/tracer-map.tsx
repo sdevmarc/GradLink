@@ -27,6 +27,7 @@ import { API_STUDENT_SEND_TRACER } from "@/api/alumni"
 import { API_FORM_MAPPED } from "@/api/form"
 import { API_USER_CHECK_DEFAULT_PASSWORD, API_USER_GET_USER } from "@/api/user"
 import { AuthContext } from "@/hooks/AuthContext"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 export default function TracerMap() {
     const queryClient = useQueryClient()
@@ -457,7 +458,7 @@ const formatAnswer = (answer: string | Record<string, any> | null | undefined): 
         return (
             <ul className="list-disc pl-4 mt-2">
                 {Object.entries(answer).map(([key, value], index) => (
-                    <li key={index} className="text-md">
+                    <li key={index} className="text-sm">
                         {key}: {typeof value === 'string' ? value : JSON.stringify(value)}
                     </li>
                 ))}
@@ -465,6 +466,11 @@ const formatAnswer = (answer: string | Record<string, any> | null | undefined): 
         );
     }
     return answer || 'None';
+};
+
+const formatQuestion = (question: string): string => {
+    // Remove pattern like "1. ", "12. ", etc.
+    return question.replace(/^\d+\.\s*/, '');
 };
 
 interface Marker {
@@ -502,12 +508,12 @@ const HoverCard = ({
                     <img src={AlumniCap} alt="Alumni" className="w-6 h-6" loading="lazy" />
                     <div className="w-full flex items-center justify-end">
                         <div className="w-full flex flex-col gap-1 ">
-                            <h3 className="font-medium text-sm">{markerData.name}</h3>
-                            <p className="text-xs text-gray-500">{markerData.idNumber}</p>
-                            <p className="text-xs font-semibold">
+                            <p className="text-xs text-primary-foreground">{markerData.idNumber}</p>
+                            <h3 className="font-medium text-sm text-primary-foreground">{markerData.name}</h3>
+                            <p className="text-xs font-semibold text-primary-foreground">
                                 2024 - 2025
                             </p>
-                            <p className="text-xs font-semibold">
+                            <p className="text-xs font-semibold text-primary-foreground">
                                 MIT
                             </p>
                         </div>
@@ -828,7 +834,27 @@ const Map = ({ coordinates, id }: { coordinates: { lng: number, lat: number }, i
                                                             </CardTitle>
                                                         </CardHeader>
                                                         <CardContent className="flex flex-wrap gap-4 px-0">
-                                                            {
+                                                            <Table>
+                                                                <TableHeader>
+                                                                    <TableRow>
+                                                                        <TableHead className="w-[50px]">ID</TableHead>
+                                                                        <TableHead className="w-1/3">Question</TableHead>
+                                                                        <TableHead>Answer</TableHead>
+                                                                    </TableRow>
+                                                                </TableHeader>
+                                                                <TableBody>
+                                                                    {
+                                                                        onealumni?.data?.generalInformation?.questions?.map((item: { question: string, answer: string | Record<string, any> }, index: number) => (
+                                                                            <TableRow key={index} className="print:break-inside-avoid">
+                                                                                <TableCell className="font-medium">{index + 1}</TableCell>
+                                                                                <TableCell>{formatQuestion(item.question)}</TableCell>
+                                                                                <TableCell>{formatAnswer(item.answer)}</TableCell>
+                                                                            </TableRow>
+                                                                        ))
+                                                                    }
+                                                                </TableBody>
+                                                            </Table>
+                                                            {/* {
                                                                 onealumni?.data?.generalInformation?.questions?.map((item: { question: string, answer: string | Record<string, any> }) => (
                                                                     <div className="flex flex-col basis-[calc(50%-0.5rem)]">
                                                                         <span className="text-md font-normal">
@@ -839,7 +865,7 @@ const Map = ({ coordinates, id }: { coordinates: { lng: number, lat: number }, i
                                                                         </span>
                                                                     </div>
                                                                 ))
-                                                            }
+                                                            } */}
                                                         </CardContent>
                                                     </div>
                                                     <div className="w-full mx-auto">
@@ -849,7 +875,27 @@ const Map = ({ coordinates, id }: { coordinates: { lng: number, lat: number }, i
                                                             </CardTitle>
                                                         </CardHeader>
                                                         <CardContent className="flex flex-wrap gap-4 px-0">
-                                                            {
+                                                            <Table>
+                                                                <TableHeader>
+                                                                    <TableRow>
+                                                                        <TableHead className="w-[50px]">ID</TableHead>
+                                                                        <TableHead className="w-1/3">Question</TableHead>
+                                                                        <TableHead>Answer</TableHead>
+                                                                    </TableRow>
+                                                                </TableHeader>
+                                                                <TableBody>
+                                                                    {
+                                                                        onealumni?.data?.employmentData?.questions?.map((item: { question: string, answer: string | Record<string, any> }, index: number) => (
+                                                                            <TableRow key={index} className="print:break-inside-avoid">
+                                                                                <TableCell className="font-medium">{index + 1}</TableCell>
+                                                                                <TableCell>{formatQuestion(item.question)}</TableCell>
+                                                                                <TableCell>{formatAnswer(item.answer)}</TableCell>
+                                                                            </TableRow>
+                                                                        ))
+                                                                    }
+                                                                </TableBody>
+                                                            </Table>
+                                                            {/* {
                                                                 onealumni?.data?.employmentData?.questions?.map((item: { question: string, answer: string | Record<string, any> }) => (
                                                                     <div className="flex flex-col basis-[calc(50%-0.5rem)]">
                                                                         <span className="text-md font-normal">
@@ -860,7 +906,7 @@ const Map = ({ coordinates, id }: { coordinates: { lng: number, lat: number }, i
                                                                         </span>
                                                                     </div>
                                                                 ))
-                                                            }
+                                                            } */}
                                                         </CardContent>
                                                     </div>
                                                 </CardContent>
@@ -890,29 +936,29 @@ const Map = ({ coordinates, id }: { coordinates: { lng: number, lat: number }, i
                                         </CardHeader>
                                         <CardContent className="space-y-4">
                                             <div className="flex flex-col">
-                                                <table className="w-full ">
-                                                    <thead>
-                                                        <tr className="border-b">
-                                                            <th className="text-left font-normal pb-2">Course No.</th>
-                                                            <th className="text-left font-medium pb-2">Descriptive Title</th>
-                                                            <th className="text-left font-medium pb-2">Status</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
+                                                <Table className="w-full ">
+                                                    <TableHeader>
+                                                        <TableRow className="border-b">
+                                                            <TableHead className="text-left font-normal pb-2">Course No.</TableHead>
+                                                            <TableHead className="text-left font-medium pb-2">Descriptive Title</TableHead>
+                                                            <TableHead className="text-left font-medium pb-2">Status</TableHead>
+                                                        </TableRow>
+                                                    </TableHeader>
+                                                    <TableBody>
                                                         {onealumni?.data?.enrolledCourses?.map((item: { courseno: string, descriptiveTitle: string, status: string }, i: number) => (
-                                                            <tr key={i} className="border-b last:border-0">
-                                                                <td className="py-2">
+                                                            <TableRow key={i} className="border-b last:border-0">
+                                                                <TableCell className="py-2">
                                                                     <span className="capitalize text-sm font-normal flex items-center gap-2">
                                                                         <GraduationCap size={18} className="h-5 w-5 text-muted-foreground" />
                                                                         {item.courseno}
                                                                     </span>
-                                                                </td>
-                                                                <td className="py-2">
+                                                                </TableCell>
+                                                                <TableCell className="py-2">
                                                                     <span className="capitalize text-sm font-normal flex items-center gap-2">
                                                                         {item.descriptiveTitle}
                                                                     </span>
-                                                                </td>
-                                                                <td className="py-2 text-left text-medium">
+                                                                </TableCell>
+                                                                <TableCell className="py-2 text-left text-medium">
                                                                     <span className="text-sm font-normal flex items-center gap-2 capitalize ">
                                                                         {
                                                                             item.status === 'ongoing' &&
@@ -950,11 +996,11 @@ const Map = ({ coordinates, id }: { coordinates: { lng: number, lat: number }, i
                                                                             </div>
                                                                         }
                                                                     </span>
-                                                                </td>
-                                                            </tr>
+                                                                </TableCell>
+                                                            </TableRow>
                                                         ))}
-                                                    </tbody>
-                                                </table>
+                                                    </TableBody>
+                                                </Table>
                                             </div>
                                         </CardContent>
                                     </Card>
