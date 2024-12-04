@@ -30,13 +30,15 @@ import { AuthContext } from "@/hooks/AuthContext"
 
 export default function TracerMap() {
     const queryClient = useQueryClient()
+    const [dialogsendtracer, setDialogSendTracer] = useState<boolean>(false)
     const [filteredPrograms, setFilteredPrograms] = useState<{ label: string, value: string }[]>([])
     const [filteredYearsGraduated, setFilteredYearsGraduated] = useState<{ label: string, value: string }[]>([])
     const [isSearch, setIsSearch] = useState<boolean>(false)
     const [search, setSearch] = useState<string>('')
     const [program, setProgram] = useState<string>('')
     const [yearGraduated, setYearGraduated] = useState<string>('')
-    const [dialogsubmit, setDialogSubmit] = useState<boolean>(false)
+    const [dialogfilterprogram, setDialogFilterProgram] = useState<string>('')
+    const [dialogfilteryeargraduated, setDialogFilterYearGraduated] = useState<string>('')
     const [isValid, setValid] = useState<boolean>(false)
     const [alertdialogstate, setAlertDialogState] = useState({
         show: false,
@@ -70,8 +72,8 @@ export default function TracerMap() {
     useEffect(() => {
         if (checkpasswordFetched) {
             if (!checkpassword.success) {
-               navigate('/overview')
-            } 
+                navigate('/overview')
+            }
         }
     }, [checkpassword])
 
@@ -107,10 +109,6 @@ export default function TracerMap() {
         }
     }
 
-    // const handleClickSearch = () => {
-    //     setIsSearch(true)
-    // }
-
     const handleSearchOpenChange = (open: boolean) => {
         setIsSearch(open)
     }
@@ -141,7 +139,7 @@ export default function TracerMap() {
         onSuccess: async (data) => {
             if (!data.success) {
                 setValid(false)
-                setDialogSubmit(false)
+                setDialogSendTracer(false)
                 setAlertDialogState({ success: false, show: true, title: "Uh, oh. Something went wrong!", description: data.message })
                 window.scrollTo({
                     top: 0,
@@ -155,34 +153,36 @@ export default function TracerMap() {
                     top: 0,
                     behavior: 'smooth'
                 })
+                setDialogFilterProgram('')
+                setDialogFilterYearGraduated('')
                 setValid(true)
-                setDialogSubmit(false)
+                setDialogSendTracer(false)
                 setAlertDialogState({ success: true, show: true, title: "Yay, success! 🎉", description: data.message })
                 return
             }
         },
         onError: (data) => {
             setValid(false)
-            setDialogSubmit(false)
+            setDialogSendTracer(false)
             setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: data.message })
             return
         }
     })
 
     const handleSendTracerStudy = async () => {
-        if (!program || !yearGraduated) {
+        if (!dialogfilterprogram || !dialogfilteryeargraduated) {
             setValid(false)
-            setDialogSubmit(false)
+            setDialogSendTracer(false)
             setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Please filter by program and year graduated.' })
             return
         }
 
-        await tracer({ academicYear: yearGraduated, program })
-        setDialogSubmit(false)
+        await tracer({ academicYear: dialogfilteryeargraduated, program: dialogfilterprogram })
+        setDialogSendTracer(false)
         return
     }
 
-    const isLoading = programsLoading || yearsgraduateLoading || formLoading || userdataLoading || checkpasswordLoading
+    const isLoading = programsLoading || yearsgraduateLoading || formLoading || userdataLoading || checkpasswordLoading || tracerLoading
 
     return (
         <>
@@ -237,24 +237,12 @@ export default function TracerMap() {
                         </Sidebar>
                         <MainTable>
                             <div className="w-full h-screen flex flex-col gap-4 pb-4 rounded-md">
-                                <div className="flex items-center justify-end gap-4">
-                                    {
-                                        isLoading &&
-                                        <div className="flex items-center gap-2">
-                                            <LoaderCircle className={`text-muted-foreground animate-spin`} size={18} />
-                                            <h1 className="text-muted-foreground text-sm">
-                                                Syncing
-                                            </h1>
-                                        </div>
-                                    }
-                                </div>
-
                                 <div className="flex items-center justify-between gap-4">
                                     <div className="flex items-center gap-2">
                                         <Input
                                             value={search}
                                             onChange={(e) => setSearch(e.target.value)}
-                                            placeholder="Search ID Number"
+                                            placeholder="Search Alumni"
                                             className="h-8 w-[17rem] lg:w-[20rem]"
                                             onKeyDown={handleKeyDown}
                                         />
@@ -279,12 +267,65 @@ export default function TracerMap() {
                                                 value={yearGraduated || ''}
                                             />
                                         </div>
-
-
                                     </div>
 
-                                    <div className="flex items-center gap-4">
+                                    <div className="flex flex-col items-end justify-center gap-4">
+                                        {
+                                            isLoading &&
+                                            <div className="flex items-center gap-2">
+                                                <LoaderCircle className={`text-muted-foreground animate-spin`} size={18} />
+                                                <h1 className="text-muted-foreground text-sm">
+                                                    Syncing
+                                                </h1>
+                                            </div>
+                                        }
                                         <AlertDialogConfirmation
+                                            isDialog={dialogsendtracer}
+                                            setDialog={(e) => setDialogSendTracer(e)}
+                                            type={`input`}
+                                            disabled={isLoading}
+                                            variant={'default'}
+                                            btnTitle="Send Batch"
+                                            title="Batch Send Tracer"
+                                            description={`This action will send tracer base on the filtered data.`}
+                                            content={
+                                                <div className="w-full flex flex-col gap-4">
+                                                    <div className="flex flex-col gap-2">
+                                                        <h1 className="text-sm font-medium">
+                                                            Choose Program
+                                                        </h1>
+                                                        <Combobox
+                                                            btnTitleclassName="gap-2"
+                                                            icon={<Filter className="text-primary" size={15} />}
+                                                            className='w-[200px]'
+                                                            lists={filteredPrograms || []}
+                                                            placeholder={`Program`}
+                                                            setValue={(item) => setDialogFilterProgram(item)}
+                                                            value={dialogfilterprogram || ''}
+                                                        />
+                                                    </div>
+                                                    <div className="flex flex-col gap-2">
+                                                        <h1 className="text-sm font-medium">
+                                                            Choose Year Graduated
+                                                        </h1>
+                                                        <Combobox
+                                                            btnTitleclassName="gap-2"
+                                                            icon={<Filter className="text-primary" size={15} />}
+                                                            className='w-[150px]'
+                                                            lists={filteredYearsGraduated || []}
+                                                            placeholder={`Year Graduated`}
+                                                            setValue={(item) => setDialogFilterYearGraduated(item)}
+                                                            value={dialogfilteryeargraduated || ''}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            }
+                                            btnContinue={handleSendTracerStudy}
+                                        />
+                                        <Button onClick={() => setDialogSendTracer(true)} variant={`outline`} size={`sm`} className="flex items-center gap-2">
+                                            <Send className="text-primary" size={18} />   Send tracer study
+                                        </Button>
+                                        {/* <AlertDialogConfirmation
                                             isDialog={dialogsubmit}
                                             setDialog={(open) => setDialogSubmit(open)}
                                             type={`default`}
@@ -294,8 +335,8 @@ export default function TracerMap() {
                                             btnTitle="Send Tracer Study"
                                             title="Are you sure?"
                                             description={`This will send a tracer study and email the alumni accordiing to the filtered program and year graduated.`}
-                                            btnContinue={handleSendTracerStudy}
-                                        />
+                                            btnContinue={() => setDialogSendTracer(true)}
+                                        /> */}
                                     </div>
                                 </div>
 
