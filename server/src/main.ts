@@ -11,4 +11,12 @@ async function bootstrap() {
   })
   await app.listen(3002);
 }
-bootstrap();
+// bootstrap();
+if (require.main === module) {
+  bootstrap();
+}
+
+export const handler = async (event, context) => {
+  const app = await NestFactory.create(AppModule);
+  return app.listen(3000, () => console.log('Server is running...'));
+}
