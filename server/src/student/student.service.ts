@@ -482,15 +482,42 @@ export class StudentService {
                 }
             ];
 
+            // Extract the Present Occupation answer
+            pipeline.push({
+                $addFields: {
+                    presentOccupation: {
+                        $arrayElemAt: [
+                            {
+                                $filter: {
+                                    input: '$employmentData.questions',
+                                    as: 'item',
+                                    cond: {
+                                        $eq: [
+                                            '$$item.question',
+                                            '16. Present Occupation (Ex. Grade School Teacher, Electric Engineer, Self-employed)'
+                                        ]
+                                    }
+                                }
+                            },
+                            0
+                        ]
+                    }
+                }
+            });
+
             // Add search filter if provided
             if (search) {
+                // Trim leading and trailing whitespace and normalize internal spaces
+                search = search.trim().replace(/\s+/g, ' ');
+
                 pipeline.push({
                     $match: {
                         $or: [
                             { idNumber: { $regex: search, $options: 'i' } },
                             { lastname: { $regex: search, $options: 'i' } },
                             { firstname: { $regex: search, $options: 'i' } },
-                            { middlename: { $regex: search, $options: 'i' } }
+                            { middlename: { $regex: search, $options: 'i' } },
+                            { 'presentOccupation.answer': { $regex: search, $options: 'i' } }
                         ]
                     }
                 });
@@ -1630,7 +1657,7 @@ export class StudentService {
                             }
                         }
                     }
-                },                
+                },
                 {
                     $project: {
                         _id: 1,
