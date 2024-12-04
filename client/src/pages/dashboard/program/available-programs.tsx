@@ -2,8 +2,8 @@ import HeadSection, { SubHeadSectionDetails } from '@/components/head-section'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DataTableAvailablePrograms } from './program-data-table-components/program/available-programs/data-table-available-programs'
 import { AvailableProgramsColumns } from './program-data-table-components/program/available-programs/columns-available-programs'
-import { DataTableAvailableCourses } from './program-data-table-components/courses/available-courses/data-table-available-courses'
-import { AvailableCoursesColumns } from './program-data-table-components/courses/available-courses/columns-available-courses'
+import { DataTableAvailableCourses } from './program-data-table-components/courses/data-table-available-courses'
+import { AvailableCoursesColumns } from './program-data-table-components/courses/columns-available-courses'
 import { DataTableCurriculum } from './program-data-table-components/curriculum/curriculum/data-table-curriculum'
 import { CurriculumColumns } from './program-data-table-components/curriculum/curriculum/columns-curriculum'
 import { useQuery } from '@tanstack/react-query'
@@ -28,7 +28,7 @@ export default function Program() {
 
     const { data: checkpassword, isFetched: checkpasswordFetched } = useQuery({
         queryFn: () => API_USER_CHECK_DEFAULT_PASSWORD(),
-        queryKey: ['check-password']
+        queryKey: ['checkpassword']
     })
 
     useEffect(() => {
