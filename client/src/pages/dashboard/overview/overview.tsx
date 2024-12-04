@@ -16,6 +16,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { API_USER_CHANGE_DEFAULT_PASSWORD, API_USER_CHECK_DEFAULT_PASSWORD } from "@/api/user";
 import { Button } from "@/components/ui/button";
+import { PieChartGraduated } from "@/components/charts/pie-chart-graduated";
+import { BarChartCommonReasons } from "@/components/charts/bar-chart-common-reasons";
 
 export default function Overview() {
     const queryClient = useQueryClient()
@@ -30,6 +32,7 @@ export default function Overview() {
     const { isAuthenticated } = useContext(AuthContext);
     const [showNewPassword, setShowNewPassword] = useState<boolean>(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false)
+    const [commonreason, setCommonReason] = useState<string>('')
     const [alertdialogstate, setAlertDialogState] = useState({
         show: false,
         title: '',
@@ -154,6 +157,30 @@ export default function Overview() {
         await changepassword({ password })
         return
     }
+
+    const common_reasons_options = [
+        { label: "Financial Difficulties", value: "Financial Difficulties" },
+        { label: "Personal or Family Reasons", value: "Personal or Family Reasons" },
+        { label: "Health Issues", value: "Health Issues" },
+        { label: "Work or Career Commitments", value: "Work or Career Commitments" },
+        { label: "Lack of Interest in the Program", value: "Lack of Interest in the Program" },
+        { label: "Relocation or Moving", value: "Relocation or Moving" },
+        { label: "Dissatisfaction with the Program", value: "Dissatisfaction with the Program" },
+        { label: "Better Opportunities Elsewhere", value: "Better Opportunities Elsewhere" },
+        { label: "Time Constraints", value: "Time Constraints" },
+        { label: "Change in Career Goals", value: "Change in Career Goals" },
+        { label: "Academic Challenges", value: "Academic Challenges" },
+        { label: "Transfer to Another Institution", value: "Transfer to Another Institution" },
+        { label: "Visa or Immigration Issues", value: "Visa or Immigration Issues" },
+        { label: "Discrimination or Uncomfortable Environment", value: "Discrimination or Uncomfortable Environment" },
+        { label: "Lack of Support from Faculty or Staff", value: "Lack of Support from Faculty or Staff" },
+        { label: "Program Not Meeting Expectations", value: "Program Not Meeting Expectations" },
+        { label: "Family Emergency", value: "Family Emergency" },
+        { label: "Not Ready for Academic Rigor", value: "Not Ready for Academic Rigor" },
+        { label: "Poor Mental Health", value: "Poor Mental Health" },
+        { label: "Completion of Specific Goals", value: "Completion of Specific Goals" },
+        { label: "Others", value: "Others" },
+    ]
 
     const isLoading = programsLoading || yearsgraduateLoading || tracerresponseLoading || checkpasswordLoading
 
@@ -307,9 +334,40 @@ export default function Overview() {
                             {
                                 (!tracerresponseLoading && tracerresponseFetched) &&
                                     (tracerresponse?.data?.timeToLandJob?.length > 0 || tracerresponse?.data?.courseRelatedJob?.length > 0) ?
-                                    <div className="flex items-center justify-evenly gap-2 flex-wrap">
-                                        <PieChartLandJob data={tracerresponse?.data?.timeToLandJob} />
-                                        <PieChartRelatedJob data={tracerresponse?.data?.courseRelatedJob} />
+                                    <div className="flex flex-col justify-center items-center gap-[10rem]">
+                                        <div className="w-full flex items-center justify-center gap-2 flex-wrap">
+                                            <PieChartLandJob data={tracerresponse?.data?.timeToLandJob} />
+                                            <PieChartGraduated data={tracerresponse?.data?.timeToLandJob} />
+                                            <PieChartRelatedJob data={tracerresponse?.data?.courseRelatedJob} />
+                                        </div>
+                                        <div className="w-full flex flex-col gap-4 items-start justify-start">
+                                            <div className="w-full flex items-center justify-between">
+                                                <div className="flex items-center gap-2">
+                                                    {
+                                                        isLoading &&
+                                                        <div className="flex items-center gap-2">
+                                                            <LoaderCircle className={`text-muted-foreground animate-spin`} size={18} />
+                                                            <h1 className="text-muted-foreground text-sm">
+                                                                Syncing
+                                                            </h1>
+                                                        </div>
+                                                    }
+                                                </div>
+
+                                                <div className="flex items-center justify-end gap-2">
+                                                    <Combobox
+                                                        btnTitleclassName="gap-2"
+                                                        icon={<Filter className="text-primary" size={15} />}
+                                                        className='w-[300px]'
+                                                        lists={common_reasons_options || []}
+                                                        placeholder={`Reasons`}
+                                                        setValue={(item) => setCommonReason(item)}
+                                                        value={commonreason || ''}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <BarChartCommonReasons />
+                                        </div>
                                     </div>
                                     : <div className="pt-[7rem] pb-[1rem] flex justify-center items-center">
                                         <h1 className="text-md font-medium">
