@@ -1,10 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { google, forms_v1 } from 'googleapis';
 import { ConfigService } from '@nestjs/config';
-import { FormStructure, GridQuestion, IForms, IFormValues, IModelForm, IPromiseForms, MappedResponse, MappedSection, Question } from './forms.interface';
+import { FormStructure, GridQuestion, IEvaluationForm, IForms, IFormValues, IPromiseForms, MappedResponse, MappedSection, Question } from './forms.interface';
 import { StudentService } from 'src/student/student.service';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
+import { IStudent } from 'src/student/student.interface';
+import { ICurriculum } from 'src/curriculum/curriculum.interface';
 
 interface MapboxResponse {
     features: Array<{
@@ -26,8 +28,11 @@ export class FormsService {
 
     constructor(
         private configService: ConfigService,
-        @InjectModel('Form') private readonly formModel: Model<IModelForm>
+        @InjectModel('Form') private readonly formModel: Model<IEvaluationForm>,
+        @InjectModel('Student') private readonly studentModel: Model<IStudent>,
+        @InjectModel('Curriculum') private readonly CurriculumModel: Model<ICurriculum>,
     ) {
+
         const auth = new google.auth.GoogleAuth({
             keyFile: this.configService.get<string>('GOOGLE_APPLICATION_CREDENTIALS'),
             scopes: [
@@ -39,12 +44,26 @@ export class FormsService {
         this.forms = google.forms({ version: 'v1', auth })
     }
 
+    async getAllTracers() {
+        try {
+            const response = await this.formModel.find({
+                $and: [
+                    { isActive: true },
+                    { isApproved: null }
+                ]
+            })
+            return { success: true, message: 'Users fetched successfully.', data: response }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Failed to fetch tracer respondents.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
     async getGoogleFormLink(): Promise<IPromiseForms> {
         try {
             const response = this.configService.get<string>('GOOGLE_FORM_LINK')
             return { success: true, message: 'Google form link successfully fetched.', data: response }
         } catch (error) {
-            throw new HttpException({ success: false, message: 'Failed to fetch unknown respondents.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+            throw new HttpException({ success: false, message: 'Failed to fetch google form link.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
@@ -742,6 +761,69 @@ Thank you for your time!`,
         } catch (error) {
             console.error('Error adding question:', error);
             throw error;
+        }
+    }
+
+    async evaluateIncomingTracer({ id, isApproved }: { id: string, isApproved?: boolean }) {
+        try {
+            const hasForm = await this.formModel.findById(id)
+
+            if (!hasForm) return { success: false, message: 'User does not exists.' }
+
+            if (!isApproved) {
+                await this.formModel.findByIdAndUpdate(
+                    id,
+                    {
+                        isActive: false,
+                        isApproved: false
+                    },
+                    { new: true }
+                )
+
+                return { success: false, message: 'User declined successfully.' }
+            }
+
+            await this.formModel.findByIdAndUpdate(
+                id,
+                {
+                    isApproved
+                },
+                { new: true }
+            )
+
+            const { generalInformation, employmentData } = hasForm
+
+            const lastname = String(generalInformation.questions[0].answer);
+            const firstname = String(generalInformation.questions[1].answer);
+            const middlename = String(generalInformation.questions[2].answer);
+
+            const formemail = String(generalInformation.questions[8].answer);
+            const currentaddress = String(generalInformation.questions[7].answer);
+            const coordinates = await this.getCoordinates(currentaddress);
+
+            const randomCurriculum = await this.CurriculumModel.find({ isActive: true }).sort({ _id: -1 })
+
+            await this.studentModel.create({
+                lastname,
+                firstname,
+                middlename,
+                email: formemail,
+                coordinates,
+                generalInformation,
+                employmentData,
+                status: 'alumni',
+                enrollments: [],
+                isenrolled: false,
+                program: randomCurriculum[0]._id
+            })
+
+            return { success: true, message: 'User evaluated successfully.' }
+
+        } catch (error) {
+            throw new HttpException(
+                { success: false, message: 'Failed to evaluate google form tracer.', error },
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
         }
     }
 
