@@ -69,7 +69,8 @@ export interface IAPIStudents {
     programCode?: string
     programName?: string
     department?: string
-    isenrolled?: string
+    isenrolled?: boolean
+    isresidencylapsed?: boolean
     undergraduateInformation?: IUndergraduateInformation
     achievements?: IAchievements
     generalInformation?: MappedSection
@@ -78,6 +79,38 @@ export interface IAPIStudents {
     dateSent?: string
     currentResidency?: string
     assessmentForm?: string
+    assessment?: IAssessment
+}
+
+interface IAssessment {
+    assessmentForm: string
+    reasons: IAssessmentReasons
+}
+
+
+export interface IAssessmentReasons {
+    financialDifficulties: boolean
+    personalFamily: boolean
+    healthIssues: boolean
+    workCommitments: boolean
+    lackOfInterest: boolean
+    relocation: boolean
+    programDissatisfaction: boolean
+    betterOpportunities: boolean
+    timeConstraints: boolean
+    careerGoals: boolean
+    academicChallenges: boolean
+    transfer: boolean
+    visaIssues: boolean
+    discrimination: boolean
+    lackOfSupport: boolean
+    programExpectations: boolean
+    familyEmergency: boolean
+    academicRigor: boolean
+    mentalHealth: boolean
+    specificGoals: boolean
+    other: boolean
+    otherText: string
 }
 
 export interface IEvaluation {
