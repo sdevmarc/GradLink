@@ -52,6 +52,7 @@ export interface IStudent {
     coordinates?: ICoordinates
     createdAt?: Date;
     reasons?: IAssessmentReasons
+    istrash?: boolean
 }
 
 interface IAssessment {
