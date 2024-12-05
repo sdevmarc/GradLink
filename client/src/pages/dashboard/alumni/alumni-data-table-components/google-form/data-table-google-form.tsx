@@ -29,13 +29,13 @@ import { DataTableToolbarAlumniGoogleForm } from './data-table-toolbar-google-fo
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[],
-    isSync?: boolean
+    isSync: boolean
 }
 
 export function DataTableAlumniGoogleForm<TData, TValue>({
     columns,
     data,
-    isSync = false
+    isSync
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
