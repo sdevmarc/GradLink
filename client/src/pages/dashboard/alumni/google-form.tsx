@@ -37,7 +37,7 @@ export default function GoogleForm() {
 
     const { data: dataForm, isLoading: isformLoading, isFetched: formFetched } = useQuery({
         queryFn: () => API_FORM_FINDALL_TRACER(),
-        queryKey: ['forms']
+        queryKey: ['formstracer']
     })
 
     const { data: formmapdata, isLoading: formmapLoading, isFetched: formmapFetched } = useQuery({
