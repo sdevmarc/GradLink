@@ -44,6 +44,15 @@ export class FormsService {
         this.forms = google.forms({ version: 'v1', auth })
     }
 
+    async findRejects(): Promise<IPromiseForms> {
+        try {
+            const response = await this.formModel.find({ isActive: false }).sort({ _id: -1 })
+            return { success: true, message: 'Reject respondents fetched successfully.', data: response }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Failed to fetch reject respondents.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
     async getAllTracers() {
         try {
             const response = await this.formModel.find({
@@ -730,7 +739,6 @@ Thank you for your time!`,
         }
     }
 
-
     async addDropdownQuestion(formId: string, questionTitle: string, options: string[]): Promise<void> {
         try {
             await this.forms.forms.batchUpdate({
@@ -827,4 +835,28 @@ Thank you for your time!`,
         }
     }
 
+    async restoreRejectRespondent({ id }: { id: string }) {
+        try {
+            const hasForm = await this.formModel.findById(id)
+
+            if (!hasForm) return { success: false, message: 'User does not exists.' }
+
+            await this.formModel.findByIdAndUpdate(
+                id,
+                {
+                    isActive: true,
+                    isApproved: null
+                },
+                { new: true }
+            )
+
+            return { success: true, message: 'Respondent successfullt restored.' }
+
+        } catch (error) {
+            throw new HttpException(
+                { success: false, message: 'Failed to evaluate google form tracer.', error },
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
 }
