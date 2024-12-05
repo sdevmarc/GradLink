@@ -28,6 +28,7 @@ import UpdateStudent from "./dashboard/student/update-student-information"
 import UpdateOfferedCourses from "./dashboard/enrollment/update-offered-courses"
 import NotFound from "./error/404-NotFound"
 import AlumniRejects from "./dashboard/alumni/rejects"
+import AlumniTrash from "./dashboard/alumni/trash"
 
 const Routes = createBrowserRouter([
     {
@@ -150,6 +151,14 @@ const Routes = createBrowserRouter([
                 element: (
                     <ProtectedRoute>
                         <Alumni />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: '/alumni/trash',
+                element: (
+                    <ProtectedRoute>
+                        <AlumniTrash />
                     </ProtectedRoute>
                 )
             },
