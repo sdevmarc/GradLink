@@ -11,6 +11,13 @@ export const API_STUDENT_FINDALL = async () => {
     return response.data
 }
 
+export const API_STUDENT_ALUMNI_TRASHED = async () => {
+    const response = await axios.get(`${HOST}/student/alumni-trashed`,
+        { withCredentials: true }
+    )
+    return response.data
+}
+
 export const API_STUDENT_FINDONE = async ({ id }: { id: string }) => {
     const response = await axios.get(`${HOST}/student/details/${id}`,
         { withCredentials: true }
@@ -126,6 +133,20 @@ export const API_STUDENT_UPDATE_STUDENT = async ({ id, lastname, middlename, fir
 export const API_STUDENT_UPDATE_STUDENT_SHIFT_STUDENT = async ({ id, idNumber, program }: { id: string, idNumber: string, program: string }) => {
     const response = await axios.post(`${HOST}/student/shift-student`, {
         id, idNumber, program
+    }, { withCredentials: true })
+    return response.data
+}
+
+export const API_STUDENT_MOVE_TO_TRASH_STUDENT = async ({ id }: { id: string }) => {
+    const response = await axios.post(`${HOST}/student/movetotrash-student`, {
+        id
+    }, { withCredentials: true })
+    return response.data
+}
+
+export const API_STUDENT_RESTORE_ALUMNI_FROM_TRASH = async ({ id }: { id: string }) => {
+    const response = await axios.post(`${HOST}/student/restorealumni-student`, {
+        id
     }, { withCredentials: true })
     return response.data
 }
