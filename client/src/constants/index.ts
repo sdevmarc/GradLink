@@ -28,6 +28,7 @@ export const ROUTES = {
     ALUMNI: '/alumni',
     TRACER_MAP: '/alumni/tracer',
     GOOGLE_FORM: '/alumni/google-form',
+    ALUMNI_REJECTS: '/alumni/google-form/rejects',
 
 
     //PROGRAM
