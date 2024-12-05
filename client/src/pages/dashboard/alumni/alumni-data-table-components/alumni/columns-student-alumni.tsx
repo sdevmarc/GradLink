@@ -60,7 +60,7 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
         cell: ({ row }) => (
             <div className="flex justify-start items-center capitalize gap-4 ">
                 <Badge variant={`default`}>
-                    {row.getValue("idNumber")}
+                    {row.getValue("idNumber") ? row.getValue("idNumber") : 'LEGACY'}
                 </Badge>
             </div>
         )
@@ -161,12 +161,15 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
             return (
                 <div className="flex items-center">
                     <span className="capitalize">
-                        {row.getValue("programCode")}
+                        {row.getValue("idNumber") ? row.getValue("programCode") : '---'}
                     </span>
                 </div>
             )
         },
         filterFn: (row, id, value) => {
+            const idNumber = row.getValue('idNumber');
+
+            if (!idNumber) return false;
             return value.includes(row.getValue(id))
         },
         enableSorting: false,
@@ -180,12 +183,15 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
             return (
                 <div className="flex items-center">
                     <span className="capitalize">
-                        {row.getValue("academicYear")}
+                        {row.getValue("idNumber") ? row.getValue("academicYear") : '---'}
                     </span>
                 </div>
             )
         },
         filterFn: (row, id, value) => {
+            const idNumber = row.getValue('idNumber');
+
+            if (!idNumber) return false;
             return value.includes(row.getValue(id))
         },
         enableSorting: false,
@@ -194,6 +200,9 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
         accessorKey: "program",
         enableColumnFilter: true,
         filterFn: (row, id, value) => {
+            const idNumber = row.getValue('idNumber');
+
+            if (!idNumber) return false;
             return value.includes(row.getValue(id))
         },
         enableHiding: true,
@@ -203,6 +212,9 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
         accessorKey: "department",
         enableColumnFilter: true,
         filterFn: (row, id, value) => {
+            const idNumber = row.getValue('idNumber');
+
+            if (!idNumber) return false;
             return value.includes(row.getValue(id))
         },
         enableHiding: true,
@@ -389,9 +401,20 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
                             btnContinue={() => setAlertDialogState(prev => ({ ...prev, show: false }))}
                         />
                         <div className="flex items-center gap-2">
-                            <Button onClick={handleViewDetails} variant={`outline`} size={`sm`} className="flex items-center gap-2">
-                                <TrashIcon className="text-white" size={18} /> Move to Trash
-                            </Button>
+
+                            <AlertDialogConfirmation
+                                isDialog={dialogprint}
+                                setDialog={(e) => setDialogPrint(e)}
+                                className="flex items-center gap-2"
+                                type={`default`}
+                                disabled={isLoading}
+                                variant={'destructive'}
+                                btnIcon={<TrashIcon className="text-white" size={18} />}
+                                btnTitle="Move to Trash"
+                                title="Are you sure?"
+                                description={` ${lastname}, ${firstname} ${middlename}'s information will be move to trash.`}
+                                btnContinue={() => handlePrint()}
+                            />
                             <Button onClick={handleViewDetails} variant={`outline`} size={`sm`} className="flex items-center gap-2">
                                 <TableOfContents className="text-primary" size={18} />   View Profile
                             </Button>
@@ -440,7 +463,7 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
                                                                                             size={`sm`}
                                                                                             className="flex items-center gap-2"
                                                                                         >
-                                                                                            <X className="text-primary" size={16} /> Cancel
+                                                                                            <X className="text-white" size={16} /> Cancel
                                                                                         </Button>
                                                                                     </div>
 
@@ -511,12 +534,15 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
                                                                         <Badge variant="default" className="mr-2">
                                                                             {idNumber || 'No valid ID Number'}
                                                                         </Badge>
-                                                                        <span className="text-muted-foreground uppercase">
-                                                                            {department === 'SEAIT' && "Eng'g, Dev't. Arts & Design, LIS & IT"}
-                                                                            {department === 'SHANS' && "Science and Mathematics"}
-                                                                            {department === 'STEH' && "Business and Accountancy"}
-                                                                            {department === 'SAB' && "Teacher Education and Humanities"}  | {programCode} | {programName}
-                                                                        </span>
+                                                                        {
+                                                                            idNumber &&
+                                                                            <span className="text-muted-foreground uppercase">
+                                                                                {department === 'SEAIT' && "Eng'g, Dev't. Arts & Design, LIS & IT"}
+                                                                                {department === 'SHANS' && "Science and Mathematics"}
+                                                                                {department === 'STEH' && "Business and Accountancy"}
+                                                                                {department === 'SAB' && "Teacher Education and Humanities"}  | {programCode} | {programName}
+                                                                            </span>
+                                                                        }
                                                                     </div>
                                                                 </CardDescription>
                                                             </div>
@@ -696,97 +722,101 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
                                                         </Card>
                                                     </>
                                                 }
-                                                <Card className="w-full mx-auto">
-                                                    <CardHeader>
-                                                        <div className="w-full flex flex-col items-start gap-2">
-                                                            <div className="w-full flex items-center justify-between">
-                                                                <h1 className="text-xl font-semibold">
-                                                                    {programName}
-                                                                </h1>
-                                                            </div>
-
-                                                            <div className="w-full flex items-center justify-between">
-                                                                <h1 className="text-lg font-medium flex items-center gap-2">
-                                                                    Courses:
-                                                                </h1>
-                                                                <div className="flex items-center">
-                                                                    <BookOpen className="h-5 w-5 mr-2 text-muted-foreground" />
-                                                                    <span>Credits: {totalOfUnitsEarned} / {totalOfUnitsEnrolled}</span>
+                                                {
+                                                    idNumber &&
+                                                    <Card className="w-full mx-auto">
+                                                        <CardHeader>
+                                                            <div className="w-full flex flex-col items-start gap-2">
+                                                                <div className="w-full flex items-center justify-between">
+                                                                    <h1 className="text-xl font-semibold">
+                                                                        {programName}
+                                                                    </h1>
                                                                 </div>
-                                                            </div>
 
-                                                        </div>
-                                                    </CardHeader>
-                                                    <CardContent className="space-y-4">
-                                                        <div className="flex flex-col">
-                                                            <Table className="w-full ">
-                                                                <TableHeader>
-                                                                    <TableRow className="border-b">
-                                                                        <TableHead className="text-left font-normal pb-2">Course No.</TableHead>
-                                                                        <TableHead className="text-left font-medium pb-2">Descriptive Title</TableHead>
-                                                                        <TableHead className="text-left font-medium pb-2">Status</TableHead>
-                                                                    </TableRow>
-                                                                </TableHeader>
-                                                                <TableBody>
-                                                                    {enrolledCourses?.map((item, i) => (
-                                                                        <TableRow key={i} className="border-b last:border-0">
-                                                                            <TableCell className="py-2">
-                                                                                <span className="capitalize text-sm font-normal flex items-center gap-2">
-                                                                                    <GraduationCap size={18} className="h-5 w-5 text-muted-foreground" />
-                                                                                    {item.courseno}
-                                                                                </span>
-                                                                            </TableCell>
-                                                                            <TableCell className="py-2">
-                                                                                <span className="capitalize text-sm font-normal flex items-center gap-2">
-                                                                                    {item.descriptiveTitle}
-                                                                                </span>
-                                                                            </TableCell>
-                                                                            <TableCell className="py-2 text-left text-medium">
-                                                                                <span className="text-sm font-normal flex items-center gap-2 capitalize ">
-                                                                                    {
-                                                                                        item.status === 'ongoing' &&
-                                                                                        <div className="flex items-center gap-2">
-                                                                                            <Loader className="text-primary" size={18} />
-                                                                                            Ongoing
-                                                                                        </div>
-                                                                                    }
-                                                                                    {
-                                                                                        item.status === 'pass' &&
-                                                                                        <div className="flex items-center gap-2">
-                                                                                            <CircleCheck className="text-primary" size={18} />
-                                                                                            PASSED
-                                                                                        </div>
-                                                                                    }
-                                                                                    {
-                                                                                        item.status === 'fail' &&
-                                                                                        <div className="flex items-center gap-2">
-                                                                                            <CircleX className="text-primary" size={18} />
-                                                                                            Failed
-                                                                                        </div>
-                                                                                    }
-                                                                                    {
-                                                                                        item.status === 'inc' &&
-                                                                                        <div className="flex items-center gap-2">
-                                                                                            <CircleX className="text-primary" size={18} />
-                                                                                            INCOMPLETE
-                                                                                        </div>
-                                                                                    }
-                                                                                    {
-                                                                                        item.status === 'not_taken' &&
-                                                                                        <div className="flex items-center gap-2">
-                                                                                            <CircleDashed className="text-primary" size={18} />
-                                                                                            Not taken yet
-                                                                                        </div>
-                                                                                    }
-                                                                                </span>
-                                                                            </TableCell>
+                                                                <div className="w-full flex items-center justify-between">
+                                                                    <h1 className="text-lg font-medium flex items-center gap-2">
+                                                                        Courses:
+                                                                    </h1>
+                                                                    <div className="flex items-center">
+                                                                        <BookOpen className="h-5 w-5 mr-2 text-muted-foreground" />
+                                                                        <span>Credits: {totalOfUnitsEarned} / {totalOfUnitsEnrolled}</span>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        </CardHeader>
+
+                                                        <CardContent className="space-y-4">
+                                                            <div className="flex flex-col">
+                                                                <Table className="w-full ">
+                                                                    <TableHeader>
+                                                                        <TableRow className="border-b">
+                                                                            <TableHead className="text-left font-normal pb-2">Course No.</TableHead>
+                                                                            <TableHead className="text-left font-medium pb-2">Descriptive Title</TableHead>
+                                                                            <TableHead className="text-left font-medium pb-2">Status</TableHead>
                                                                         </TableRow>
-                                                                    ))}
-                                                                </TableBody>
-                                                            </Table>
-                                                        </div>
-                                                    </CardContent>
-                                                </Card>
+                                                                    </TableHeader>
+                                                                    <TableBody>
+                                                                        {enrolledCourses?.map((item, i) => (
+                                                                            <TableRow key={i} className="border-b last:border-0">
+                                                                                <TableCell className="py-2">
+                                                                                    <span className="capitalize text-sm font-normal flex items-center gap-2">
+                                                                                        <GraduationCap size={18} className="h-5 w-5 text-muted-foreground" />
+                                                                                        {item.courseno}
+                                                                                    </span>
+                                                                                </TableCell>
+                                                                                <TableCell className="py-2">
+                                                                                    <span className="capitalize text-sm font-normal flex items-center gap-2">
+                                                                                        {item.descriptiveTitle}
+                                                                                    </span>
+                                                                                </TableCell>
+                                                                                <TableCell className="py-2 text-left text-medium">
+                                                                                    <span className="text-sm font-normal flex items-center gap-2 capitalize ">
+                                                                                        {
+                                                                                            item.status === 'ongoing' &&
+                                                                                            <div className="flex items-center gap-2">
+                                                                                                <Loader className="text-primary" size={18} />
+                                                                                                Ongoing
+                                                                                            </div>
+                                                                                        }
+                                                                                        {
+                                                                                            item.status === 'pass' &&
+                                                                                            <div className="flex items-center gap-2">
+                                                                                                <CircleCheck className="text-primary" size={18} />
+                                                                                                PASSED
+                                                                                            </div>
+                                                                                        }
+                                                                                        {
+                                                                                            item.status === 'fail' &&
+                                                                                            <div className="flex items-center gap-2">
+                                                                                                <CircleX className="text-primary" size={18} />
+                                                                                                Failed
+                                                                                            </div>
+                                                                                        }
+                                                                                        {
+                                                                                            item.status === 'inc' &&
+                                                                                            <div className="flex items-center gap-2">
+                                                                                                <CircleX className="text-primary" size={18} />
+                                                                                                INCOMPLETE
+                                                                                            </div>
+                                                                                        }
+                                                                                        {
+                                                                                            item.status === 'not_taken' &&
+                                                                                            <div className="flex items-center gap-2">
+                                                                                                <CircleDashed className="text-primary" size={18} />
+                                                                                                Not taken yet
+                                                                                            </div>
+                                                                                        }
+                                                                                    </span>
+                                                                                </TableCell>
+                                                                            </TableRow>
+                                                                        ))}
+                                                                    </TableBody>
+                                                                </Table>
+                                                            </div>
+                                                        </CardContent>
+                                                    </Card>
+                                                }
                                             </div>
                                         </main>
                                     </div>
