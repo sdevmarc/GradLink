@@ -219,6 +219,15 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
         enableHiding: true,
         enableSorting: false,
     },
+    {
+        accessorKey: "isresidencylapsed",
+        enableColumnFilter: true,
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id))
+        },
+        enableHiding: true,
+        enableSorting: false,
+    },
     // {
     //     accessorKey: 'search',
     //     header: 'Search',
@@ -262,8 +271,9 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                 achievements,
                 isenrolled,
                 currentResidency,
-                assessmentForm
+                assessment
             } = row.original
+
             const [values, setValues] = useState({
                 id: _id || '',
                 previewAssessment: '',
@@ -303,6 +313,63 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
             const handleOpenChange = (open: boolean) => {
                 setIsOpen(open)
             }
+
+            interface IAssessmentReasons {
+                academicChallenges: boolean;
+                financialDifficulties: boolean;
+                personalFamily: boolean;
+                healthIssues: boolean;
+                workCommitments: boolean;
+                lackOfInterest: boolean;
+                relocation: boolean;
+                programDissatisfaction: boolean;
+                betterOpportunities: boolean;
+                timeConstraints: boolean;
+                careerGoals: boolean;
+                transfer: boolean;
+                visaIssues: boolean;
+                discrimination: boolean;
+                lackOfSupport: boolean;
+                programExpectations: boolean;
+                familyEmergency: boolean;
+                mentalHealth: boolean;
+                specificGoals: boolean;
+                other: boolean;
+                otherText?: string;
+            }
+
+            const reasonsList = [
+                { key: 'academicChallenges', label: 'Academic Challenges' },
+                { key: 'financialDifficulties', label: 'Financial Difficulties' },
+                { key: 'personalFamily', label: 'Personal or Family Reasons' },
+                { key: 'healthIssues', label: 'Health Issues' },
+                { key: 'workCommitments', label: 'Work or Career Commitments' },
+                { key: 'lackOfInterest', label: 'Lack of Interest in the Program' },
+                { key: 'relocation', label: 'Relocation or Moving' },
+                { key: 'programDissatisfaction', label: 'Dissatisfaction with the Program' },
+                { key: 'betterOpportunities', label: 'Better Opportunities Elsewhere' },
+                { key: 'timeConstraints', label: 'Time Constraints' },
+                { key: 'careerGoals', label: 'Change in Career Goals' },
+                { key: 'transfer', label: 'Transfer to Another Institution' },
+                { key: 'visaIssues', label: 'Visa or Immigration Issues' },
+                { key: 'discrimination', label: 'Discrimination or Uncomfortable Environment' },
+                { key: 'lackOfSupport', label: 'Lack of Support from Faculty or Staff' },
+                { key: 'programExpectations', label: 'Program Not Meeting Expectations' },
+                { key: 'familyEmergency', label: 'Family Emergency' },
+                { key: 'mentalHealth', label: 'Poor Mental Health' },
+                { key: 'specificGoals', label: 'Completion of Specific Goals' },
+                // 'other' is handled separately
+            ];
+
+            const selectedReasons = [
+                ...reasonsList.filter(
+                    (reason) => assessment?.reasons[reason.key as keyof IAssessmentReasons]
+                ),
+                ...(assessment?.reasons.other && assessment?.reasons.otherText
+                    ? [{ key: 'other', label: assessment.reasons.otherText }]
+                    : []),
+            ];
+
 
             // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             //     const file = e.target.files?.[0] || null;
@@ -389,10 +456,13 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
             const handleDownload = async () => {
                 try {
                     // Fetch the image
-                    if (!assessmentForm) {
+                    if (!assessment?.assessmentForm) {
                         throw new Error('Assessment form URL is undefined');
                     }
-                    const response = await fetch(assessmentForm);
+                    if (typeof assessment?.assessmentForm !== 'string') {
+                        throw new Error('Assessment form URL is undefined or not a string');
+                    }
+                    const response = await fetch(assessment.assessmentForm);
                     const blob = await response.blob();
 
                     // Create a blob URL
@@ -686,17 +756,17 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                     <TableBody>
                                                                         {enrolledCourses?.map((item, i) => (
                                                                             <TableRow key={i} className="border-b last:border-0">
-                                                                                <td className="py-2">
+                                                                                <TableCell className="py-2">
                                                                                     <span className="capitalize text-sm font-normal flex items-center gap-2">
                                                                                         <GraduationCap size={18} className="h-5 w-5 text-muted-foreground" />
                                                                                         {item.courseno}
                                                                                     </span>
-                                                                                </td>
-                                                                                <td className="py-2">
+                                                                                </TableCell>
+                                                                                <TableCell className="py-2">
                                                                                     <span className="capitalize text-sm font-normal flex items-center gap-2">
                                                                                         {item.descriptiveTitle}
                                                                                     </span>
-                                                                                </td>
+                                                                                </TableCell>
                                                                                 <TableCell className="py-2 text-left text-medium">
                                                                                     <span className="text-sm font-normal flex items-center gap-2 capitalize ">
                                                                                         {
@@ -804,11 +874,11 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                             </CardHeader>
                                                                             <CardContent>
                                                                                 {
-                                                                                    assessmentForm ? <img src={assessmentForm} alt="Assessment form" className="w-full h-full object-cover" />
+                                                                                    assessment?.assessmentForm ? <img src={assessment?.assessmentForm} alt="Assessment form" className="w-full h-full object-cover" />
                                                                                         : 'No Assessment Form Available'
                                                                                 }
                                                                             </CardContent>
-                                                                            {assessmentForm && (
+                                                                            {assessment?.assessmentForm && (
                                                                                 <CardFooter>
                                                                                     <Button
                                                                                         onClick={handleDownload}
@@ -819,6 +889,51 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                                     </Button>
                                                                                 </CardFooter>
                                                                             )}
+                                                                        </Card>
+                                                                    </div>
+                                                                }
+                                                                {
+                                                                    (!isenrolled) &&
+                                                                    <div className="w-full flex items-center justify-center">
+                                                                        <Card className="w-full flex flex-col items-center gap-2">
+                                                                            <CardHeader>
+                                                                                <CardTitle className="text-2xl font-bold">
+                                                                                    Withdrawal Reasons
+                                                                                </CardTitle>
+                                                                            </CardHeader>
+                                                                            <CardContent className="w-full flex items-center justify-start">
+                                                                                <Table className="w-full">
+                                                                                    <TableHeader>
+                                                                                        <TableRow className="border-b">
+                                                                                            <TableHead className="text-left font-medium pb-2 w-12">No.</TableHead>
+                                                                                            <TableHead className="text-left font-medium pb-2">Reason(s)</TableHead>
+                                                                                        </TableRow>
+                                                                                    </TableHeader>
+                                                                                    <TableBody>
+                                                                                        {selectedReasons.length > 0 ? (
+                                                                                            selectedReasons.map((reason, i) => (
+                                                                                                <TableRow key={reason.key} className="border-b last:border-0">
+                                                                                                    <TableCell className="w-12">{i + 1}.</TableCell>
+                                                                                                    <TableCell>
+                                                                                                        {reason.key === 'other' ? (
+                                                                                                            <span className="capitalize">Others: {reason.label}</span>
+                                                                                                        ) : (
+                                                                                                            reason.label
+                                                                                                        )}
+                                                                                                    </TableCell>
+                                                                                                </TableRow>
+                                                                                            ))
+                                                                                        ) : (
+                                                                                            <TableRow>
+                                                                                                <TableCell colSpan={2} className="text-center">
+                                                                                                    No reasons provided.
+                                                                                                </TableCell>
+                                                                                            </TableRow>
+                                                                                        )}
+                                                                                    </TableBody>
+                                                                                </Table>
+                                                                            </CardContent>
+
                                                                         </Card>
                                                                     </div>
                                                                 }
@@ -991,12 +1106,12 @@ const DragDropImage = ({ id, isDiscontinue, isdiscontinueLoading, isDialogSubmit
     }
 
     const handleDiscontinueStudent = async () => {
-        // isDialogSubmit(false)
-        // setDialogSubmit(false)
         if (!image) return;
         const formData = new FormData();
         formData.append("id", id);
-        formData.append("assessmentForm", image); // Attach the file directly
+        formData.append("reasons", JSON.stringify(reasons));
+        formData.append("assessmentForm", image);
+
         await discontinueStudent(formData);
     };
 
