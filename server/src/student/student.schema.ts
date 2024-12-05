@@ -4,7 +4,7 @@ export const StudentSchema = new mongoose.Schema({
     idNumber: {
         type: String,
         unique: true,
-        required: true
+        // required: true
     },
     lastname: {
         type: String,
@@ -34,19 +34,23 @@ export const StudentSchema = new mongoose.Schema({
     undergraduateInformation: {
         college: {
             type: String,
-            required: true
+            required: true,
+            default: 'None'
         },
         school: {
             type: String,
-            required: true
+            required: true,
+            default: 'None'
         },
         programGraduated: {
             type: String,
-            required: true
+            required: true,
+            default: 'None'
         },
         yearGraduated: {
             type: String,
-            required: true
+            required: true,
+            default: 'None'
         }
     },
     achievements: {
