@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom"
 import { API_USER_CHECK_DEFAULT_PASSWORD } from "@/api/user"
 import { useQuery } from "@tanstack/react-query"
 import { AuthContext } from "@/hooks/AuthContext"
-import { API_FORM_FINDALL_TRACER } from "@/api/form"
+import { API_FORM_FINDALL_TRACER, API_FORM_MAPPED } from "@/api/form"
 import { AlumniGoogleFormColumns } from "./alumni-data-table-components/google-form/columns-google-form"
 
 export default function GoogleForm() {
@@ -40,6 +40,15 @@ export default function GoogleForm() {
         queryKey: ['forms']
     })
 
+    const { data: formmapdata, isLoading: formmapLoading, isFetched: formmapFetched } = useQuery({
+        queryFn: () => API_FORM_MAPPED(),
+        queryKey: ['form']
+    })
+
+    useEffect(() => {
+        if (formFetched) { console.log(formmapdata?.message) }
+    }, [formmapdata, formmapFetched])
+
     return (
         <>
             <div className="flex flex-col min-h-screen items-center">
@@ -63,6 +72,7 @@ export default function GoogleForm() {
                             {
                                 (!isformLoading && formFetched) &&
                                 <DataTableAlumniGoogleForm
+                                    isSync={formmapLoading}
                                     columns={AlumniGoogleFormColumns}
                                     data={dataForm?.data || []}
                                 />
