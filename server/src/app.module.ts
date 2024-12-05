@@ -5,9 +5,7 @@ import { UsersModule } from './users/users.module'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { StudentModule } from './student/student.module'
 // import { AuditlogService } from './auditlog/auditlog.service'
-import { OtpService } from './otp/otp.service'
 import { MongooseModule } from '@nestjs/mongoose'
-import { OtpModule } from './otp/otp.module'
 import { JwtModule } from '@nestjs/jwt'
 import { ProgramsModule } from './programs/programs.module'
 import { CoursesModule } from './courses/courses.module'
@@ -50,7 +48,6 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
         MongooseModule.forRoot(process.env.MONGODB_URI),
         UsersModule,
         StudentModule,
-        OtpModule,
         CoursesModule,
         FormsModule,
         MailModule,
@@ -62,6 +59,6 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
         CloudinaryModule,
     ],
     controllers: [AppController],
-    providers: [AppService, OtpService, ConstantsService],
+    providers: [AppService, ConstantsService],
 })
 export class AppModule { }
