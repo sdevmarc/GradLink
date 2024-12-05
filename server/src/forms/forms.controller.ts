@@ -1,6 +1,6 @@
 import { Body, Controller, Get, HttpException, HttpStatus, InternalServerErrorException, NotFoundException, Param, Post, UseGuards } from '@nestjs/common';
 import { FormsService } from './forms.service';
-import { FormStructure, IForms, IModelForm } from './forms.interface';
+import { FormStructure, IEvaluationForm, IForms, IModelForm } from './forms.interface';
 import { ConstantsService } from 'src/constants/constants.service';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -15,9 +15,14 @@ export class FormsController {
         private readonly formsService: FormsService,
         private readonly studentService: StudentService,
         @InjectModel('Student') private readonly studentModel: Model<IStudent>,
-        @InjectModel('Form') private readonly formModel: Model<IModelForm>,
+        @InjectModel('Form') private readonly formModel: Model<IEvaluationForm>,
         private readonly constantsService: ConstantsService
     ) { }
+
+    @Get()
+    async getTracerRespondents() {
+        return await this.formsService.getAllTracers()
+    }
 
     @Get('google-link')
     async getGoogleFormLink() {
@@ -70,11 +75,33 @@ export class FormsController {
                     })
                 }
 
-                // const is_idnumber_in_form = await this.formModel.findOne({ idNumber })
+                const isemail = await this.formModel.findOne({ email: formemail })
 
-                // if (is_idnumber_in_form) return { email: formemail, message: 'ID Number exists in form model.' }
-                // const notes = 'Unknown respondent'
-                // await this.formModel.create({ idNumber, date_sent: createTime, notes })
+                if (isemail) return { email: formemail, message: `Email ${formemail} already exists in form model.` }
+
+                const filteredgeneral = generalInformation.answers.map(item => {
+                    const { question, answer } = item
+                    return { question, answer }
+                })
+
+                const filteredemployment = employmentData.answers.map(item => {
+                    const { question, answer } = item
+                    return { question, answer }
+                })
+
+                const finalGeneral = {
+                    title: generalInformation?.title,
+                    description: generalInformation?.description,
+                    questions: filteredgeneral
+                }
+
+                const finalEmploymentData = {
+                    title: employmentData?.title,
+                    description: employmentData?.description,
+                    questions: filteredemployment
+                }
+
+                await this.formModel.create({ email: formemail, generalInformation: finalGeneral, employmentData: finalEmploymentData })
                 return { email: formemail, status: 'Email does not exists in the Gradlink.' }
 
             })
@@ -161,5 +188,12 @@ export class FormsController {
         @Body('options') options: string[]
     ): Promise<void> {
         return await this.formsService.addDropdownQuestion(formId, questionTitle, options);
+    }
+
+    @Post('evaluate-form-tracer')
+    async EvaluateFormTracer(
+        @Body() { id, isApproved }: { id: string, isApproved?: boolean }
+    ) {
+        return await this.formsService.evaluateIncomingTracer({ id, isApproved })
     }
 }
