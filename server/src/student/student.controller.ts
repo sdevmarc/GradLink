@@ -1,6 +1,6 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common'
 import { StudentService } from './student.service'
-import { IPromiseStudent, IRequestStudent, IStudent } from './student.interface'
+import { IAssessmentReasons, IPromiseStudent, IRequestStudent, IStudent } from './student.interface'
 import { FormsService } from 'src/forms/forms.service'
 import { ConstantsService } from 'src/constants/constants.service'
 import { AuditlogService } from 'src/auditlog/auditlog.service'
@@ -216,10 +216,10 @@ export class StudentController {
     @Post('discontinue-student')
     @UseInterceptors(FileInterceptor('assessmentForm'))
     async discontinueStudent(
-        @Body() { id }: { id: string },
+        @Body() { id, reasons }: { id: string, reasons: IAssessmentReasons },
         @UploadedFile() assessmentForm: Express.Multer.File
     ) {
-        return await this.studentService.discontinueStudent({ id, assessmentForm })
+        return await this.studentService.discontinueStudent({ id, assessmentForm, reasons })
     }
 
     @Post('send-tracer-to-alumni')
