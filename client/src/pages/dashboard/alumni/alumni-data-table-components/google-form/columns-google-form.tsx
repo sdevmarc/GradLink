@@ -92,6 +92,8 @@ export const AlumniGoogleFormColumns: ColumnDef<IAPIForms>[] = [
                     if (!data.success) {
                         setDialofApprove(false)
                         setDialogDecline(false)
+                        await queryClient.invalidateQueries({ queryKey: ['formstracer'] })
+                        await queryClient.refetchQueries({ queryKey: ['formstracer'] })
                         setAlertDialogState({ success: false, show: true, title: "Yay, success! 🎉", description: data.message })
                         window.scrollTo({
                             top: 0,
@@ -99,8 +101,8 @@ export const AlumniGoogleFormColumns: ColumnDef<IAPIForms>[] = [
                         })
                         return
                     } else {
-                        await queryClient.invalidateQueries({ queryKey: ['forms'] })
-                        await queryClient.refetchQueries({ queryKey: ['forms'] })
+                        await queryClient.invalidateQueries({ queryKey: ['formstracer'] })
+                        await queryClient.refetchQueries({ queryKey: ['formstracer'] })
                         window.scrollTo({
                             top: 0,
                             behavior: 'smooth'
@@ -135,7 +137,7 @@ export const AlumniGoogleFormColumns: ColumnDef<IAPIForms>[] = [
                 await evaluateForm({ id: _id, isApproved: false })
             }
 
-            const isLoading = evaluateFormPending 
+            const isLoading = evaluateFormPending
 
             return (
                 <>
