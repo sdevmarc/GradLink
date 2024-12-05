@@ -45,7 +45,8 @@ export function DataTableStudentListOfStudent<TData, TValue>({
         firstname: false,
         middlename: false,
         email: false,
-        status: false
+        status: false,
+        isresidencylapsed: false
     })
     const [rowSelection, setRowSelection] = React.useState({})
 
@@ -94,14 +95,13 @@ export function DataTableStudentListOfStudent<TData, TValue>({
                     <TableBody>
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => {
-                                const status = row.getValue('status');
-                                console.log(status)
+                                const isresidencylapsed = row.getValue('isresidencylapsed');
 
                                 return (
                                     <TableRow
                                         key={row.id}
                                         data-state={row.getIsSelected() && "selected"}
-                                        className={status === 'discontinued' ? 'bg-destructive' : ''}
+                                        className={isresidencylapsed ? 'bg-destructive' : ''}
                                     >
                                         {row.getVisibleCells().map((cell) => (
                                             <TableCell key={cell.id}>
