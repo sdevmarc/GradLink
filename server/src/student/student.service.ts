@@ -340,16 +340,27 @@ export class StudentService {
             ]);
 
             // Update each student's enrollment status
+            // const bulkOps = studentsToUpdate.map(student => ({
+            //     updateOne: {
+            //         filter: { _id: student._id },
+            //         update: {
+            //             $set: {
+            //                 isenrolled: false,
+            //                 'enrollments.$[elem].ispass': 'discontinue'
+            //             }
+            //         },
+            //         arrayFilters: [{ 'elem.ispass': 'ongoing' }]
+            //     }
+            // }));
+
             const bulkOps = studentsToUpdate.map(student => ({
                 updateOne: {
                     filter: { _id: student._id },
                     update: {
                         $set: {
-                            isenrolled: false,
-                            'enrollments.$[elem].ispass': 'discontinue'
+                            isresidencylapsed: true
                         }
-                    },
-                    arrayFilters: [{ 'elem.ispass': 'ongoing' }]
+                    }
                 }
             }));
 
@@ -1679,8 +1690,9 @@ export class StudentService {
                         totalOfUnitsEnrolled: 1,
                         totalOfUnitsEarned: 1,
                         enrolledCourses: 1,
-                        assessmentForm: 1,
+                        assessment: 1,
                         status: 1,
+                        isresidencylapsed: 1,
                         // startDateParts: 1,
                         // currentDateParts: 1,
                         // totalMonths: 1,
@@ -3119,10 +3131,12 @@ export class StudentService {
         }
     }
 
-    async discontinueStudent({ id, assessmentForm }: Partial<IStudent>) {
+    async discontinueStudent({ id, assessmentForm, reasons }: Partial<IStudent>) {
         try {
             // Upload the assessment form if provided
-            let secure_url;
+            const parsedReasons = typeof reasons === 'string' ? JSON.parse(reasons) : reasons;
+
+            let secure_url: string;
             if (assessmentForm) {
                 const uploadimage = await this.cloudinaryService.uploadFile(assessmentForm);
                 if (!uploadimage) return { success: false, message: 'Assessment form failed to upload.' };
@@ -3162,12 +3176,18 @@ export class StudentService {
             // Create update object based on whether assessmentForm is provided
             const updateObject: any = {
                 isenrolled: false,
+                isresidencylapsed: null,
                 'enrollments.$[elem].ispass': 'discontinue'
             };
 
             // Include assessmentForm in the update if it's provided
             if (assessmentForm) {
-                updateObject.assessmentForm = secure_url;
+                updateObject.assessment = {
+                    assessmentForm: secure_url,
+                    reasons: parsedReasons
+                }
+                // updateObject.assessment.assessmentForm = secure_url;
+                // updateObject.assessment.reasons = parsedReasons;
             }
 
             // Update the student document
