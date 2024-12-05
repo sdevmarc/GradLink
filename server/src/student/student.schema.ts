@@ -80,9 +80,43 @@ export const StudentSchema = new mongoose.Schema({
         required: true,
         default: false
     },
-    assessmentForm: {
-        type: String,
+    isresidencylapsed: {
+        type: Boolean,
         default: null
+    },
+    // assessmentForm: {
+    //     type: String,
+    //     default: null
+    // },
+    assessment: {
+        assessmentForm: {
+            type: String,
+            default: null
+        },
+        reasons: {
+            financialDifficulties: Boolean,
+            personalFamily: Boolean,
+            healthIssues: Boolean,
+            workCommitments: Boolean,
+            lackOfInterest: Boolean,
+            relocation: Boolean,
+            programDissatisfaction: Boolean,
+            betterOpportunities: Boolean,
+            timeConstraints: Boolean,
+            careerGoals: Boolean,
+            academicChallenges: Boolean,
+            transfer: Boolean,
+            visaIssues: Boolean,
+            discrimination: Boolean,
+            lackOfSupport: Boolean,
+            programExpectations: Boolean,
+            familyEmergency: Boolean,
+            academicRigor: Boolean,
+            mentalHealth: Boolean,
+            specificGoals: Boolean,
+            other: Boolean,
+            otherText: String
+        }
     },
     enrollments: [{
         course: {
