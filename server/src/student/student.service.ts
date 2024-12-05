@@ -43,6 +43,111 @@ export class StudentService {
         }
     }
 
+    async findTracerAnalyticsCommonReason({ reason }: { reason?: string }) {
+        try {
+            // Mapping of schema fields to labels
+            const reasonMapping = [
+                { field: "financialDifficulties", label: "Financial Difficulties" },
+                { field: "personalFamily", label: "Personal or Family Reasons" },
+                { field: "healthIssues", label: "Health Issues" },
+                { field: "workCommitments", label: "Work or Career Commitments" },
+                { field: "lackOfInterest", label: "Lack of Interest in the Program" },
+                { field: "relocation", label: "Relocation or Moving" },
+                { field: "programDissatisfaction", label: "Dissatisfaction with the Program" },
+                { field: "betterOpportunities", label: "Better Opportunities Elsewhere" },
+                { field: "timeConstraints", label: "Time Constraints" },
+                { field: "careerGoals", label: "Change in Career Goals" },
+                { field: "academicChallenges", label: "Academic Challenges" },
+                { field: "transfer", label: "Transfer to Another Institution" },
+                { field: "visaIssues", label: "Visa or Immigration Issues" },
+                { field: "discrimination", label: "Discrimination or Uncomfortable Environment" },
+                { field: "lackOfSupport", label: "Lack of Support from Faculty or Staff" },
+                { field: "programExpectations", label: "Program Not Meeting Expectations" },
+                { field: "familyEmergency", label: "Family Emergency" },
+                { field: "academicRigor", label: "Not Ready for Academic Rigor" },
+                { field: "mentalHealth", label: "Poor Mental Health" },
+                { field: "specificGoals", label: "Completion of Specific Goals" },
+                { field: "other", label: "Others" }
+            ];
+    
+            // Initialize variables for reason filtering
+            let reasonFilter = {};
+            let filteredReasonMapping = reasonMapping;
+    
+            // If reason is provided, find the corresponding field and adjust the mapping
+            if (reason) {
+                const reasonObj = reasonMapping.find(r => r.label.toLowerCase() === reason.toLowerCase());
+                if (!reasonObj) {
+                    return {
+                        success: false,
+                        message: 'Invalid reason provided.',
+                        data: []
+                    };
+                }
+                const fieldName = `assessment.reasons.${reasonObj.field}`;
+                reasonFilter = { [fieldName]: true };
+                filteredReasonMapping = [reasonObj]; // Only include the provided reason
+            }
+    
+            // Build the aggregation pipeline
+            const pipeline = [
+                {
+                    $match: {
+                        "assessment.reasons": { $exists: true },
+                        ...reasonFilter // Apply reason filter if provided
+                    }
+                },
+                {
+                    $project: {
+                        reasonsArray: {
+                            $filter: {
+                                input: filteredReasonMapping.map(r => ({
+                                    reason: r.label,
+                                    selected: `$assessment.reasons.${r.field}`
+                                })),
+                                as: "item",
+                                cond: { $eq: ["$$item.selected", true] }
+                            }
+                        }
+                    }
+                },
+                { $unwind: "$reasonsArray" },
+                {
+                    $group: {
+                        _id: "$reasonsArray.reason",
+                        count: { $sum: 1 }
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        reason: "$_id",
+                        count: 1
+                    }
+                },
+                { $sort: { reason: 1 } }
+            ];
+    
+            // Execute the aggregation pipeline
+            const results = await this.studentModel.aggregate(pipeline as mongoose.PipelineStage[]);
+    
+            return {
+                success: true,
+                message: 'Common reasons analyzed successfully.',
+                data: results
+            };
+        } catch (error) {
+            throw new HttpException(
+                {
+                    success: false,
+                    message: 'Failed to analyze common reasons.',
+                    error: error.message
+                },
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }    
+
     async findTracerAnalytics({ department, program, academicYear }: {
         department?: string,
         program?: string,
@@ -51,12 +156,13 @@ export class StudentService {
         try {
             // Base pipeline stages
             const baseStages = [
-                // Match initial conditions
+                // Match initial conditions and exclude documents without graduation_date
                 {
                     $match: {
                         $and: [
                             { status: 'alumni' },
-                            { isenrolled: false }
+                            { isenrolled: false },
+                            { graduation_date: { $exists: true, $ne: null } } // Exclude students without graduation_date
                         ]
                     }
                 },
@@ -80,19 +186,6 @@ export class StudentService {
                     }
                 },
                 { $unwind: '$programInfo' },
-                // Unwind employmentData questions
-                { $unwind: '$employmentData.questions' },
-                // Filter only the questions we want
-                {
-                    $match: {
-                        'employmentData.questions.question': {
-                            $in: [
-                                '20. Is your first job related to the course you took up in college?',
-                                '21. How long did it take you to land your first job?'
-                            ]
-                        }
-                    }
-                }
             ];
 
             let pipeline;
@@ -112,21 +205,20 @@ export class StudentService {
                             'programInfo.department': department
                         }
                     }] : []),
-                    // Project necessary fields
+                    // Project academicYear and other fields
                     {
                         $project: {
-                            key: '$employmentData.questions.answer',
-                            count: { $literal: 1 },
                             department: '$programInfo.department',
                             program: '$curriculumInfo.programid',
+                            graduation_date: 1,
+                            employmentData: 1,
                             academicYear: {
                                 $concat: [
                                     { $toString: { $year: '$graduation_date' } },
                                     ' - ',
                                     { $toString: { $add: [{ $year: '$graduation_date' }, 1] } }
                                 ]
-                            },
-                            question: '$employmentData.questions.question'
+                            }
                         }
                     },
                     // Filter by academic year if provided
@@ -135,65 +227,148 @@ export class StudentService {
                             academicYear: academicYear
                         }
                     }] : []),
-                    // Group by all fields
+                    // Use $facet to compute graduate stats and analytics data
                     {
-                        $group: {
-                            _id: {
-                                key: '$key',
-                                department: '$department',
-                                program: '$program',
-                                academicYear: '$academicYear',
-                                question: '$question'
-                            },
-                            count: { $sum: '$count' }
-                        }
-                    },
-                    // Prepare data for each question type
-                    {
-                        $group: {
-                            _id: '$_id.question',
-                            data: {
-                                $push: {
-                                    key: '$_id.key',
-                                    count: '$count',
-                                    department: '$_id.department',
-                                    program: '$_id.program',
-                                    academicYear: '$_id.academicYear'
+                        $facet: {
+                            graduateStats: [
+                                // Project the necessary fields
+                                {
+                                    $project: {
+                                        key: { $literal: 'Graduated' },
+                                        count: { $literal: 1 },
+                                        department: '$department',
+                                        program: '$program',
+                                        academicYear: '$academicYear'
+                                    }
+                                },
+                                // Group by key, department, program, academicYear
+                                {
+                                    $group: {
+                                        _id: {
+                                            key: '$key',
+                                            department: '$department',
+                                            program: '$program',
+                                            academicYear: '$academicYear'
+                                        },
+                                        count: { $sum: '$count' }
+                                    }
+                                },
+                                // Prepare data
+                                {
+                                    $group: {
+                                        _id: null,
+                                        data: {
+                                            $push: {
+                                                key: '$_id.key',
+                                                count: '$count',
+                                                department: '$_id.department',
+                                                program: '$_id.program',
+                                                academicYear: '$_id.academicYear'
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    $project: {
+                                        _id: 0,
+                                        data: '$data'
+                                    }
                                 }
-                            }
+                            ],
+                            analyticsData: [
+                                // Unwind employmentData.questions
+                                { $unwind: '$employmentData.questions' },
+                                // Filter only the questions we want
+                                {
+                                    $match: {
+                                        'employmentData.questions.question': {
+                                            $in: [
+                                                '20. Is your first job related to the course you took up in college?',
+                                                '21. How long did it take you to land your first job?'
+                                            ]
+                                        }
+                                    }
+                                },
+                                // Project necessary fields
+                                {
+                                    $project: {
+                                        key: '$employmentData.questions.answer',
+                                        count: { $literal: 1 },
+                                        department: '$department',
+                                        program: '$program',
+                                        academicYear: '$academicYear',
+                                        question: '$employmentData.questions.question'
+                                    }
+                                },
+                                // Group by all fields
+                                {
+                                    $group: {
+                                        _id: {
+                                            key: '$key',
+                                            department: '$department',
+                                            program: '$program',
+                                            academicYear: '$academicYear',
+                                            question: '$question'
+                                        },
+                                        count: { $sum: '$count' }
+                                    }
+                                },
+                                // Prepare data for each question type
+                                {
+                                    $group: {
+                                        _id: '$_id.question',
+                                        data: {
+                                            $push: {
+                                                key: '$_id.key',
+                                                count: '$count',
+                                                department: '$_id.department',
+                                                program: '$_id.program',
+                                                academicYear: '$_id.academicYear'
+                                            }
+                                        }
+                                    }
+                                },
+                                // Transform data into desired format
+                                {
+                                    $project: {
+                                        _id: 0,
+                                        questionType: {
+                                            $cond: {
+                                                if: { $regexMatch: { input: '$_id', regex: /20\. Is your first job related/ } },
+                                                then: 'courseRelatedJob',
+                                                else: 'timeToLandJob'
+                                            }
+                                        },
+                                        data: '$data'
+                                    }
+                                },
+                                // Combine results into a single document
+                                {
+                                    $group: {
+                                        _id: null,
+                                        analytics: {
+                                            $push: {
+                                                k: '$questionType',
+                                                v: '$data'
+                                            }
+                                        }
+                                    }
+                                },
+                                // Convert analytics array to an object
+                                {
+                                    $project: {
+                                        _id: 0,
+                                        analytics: { $arrayToObject: '$analytics' }
+                                    }
+                                }
+                            ]
                         }
                     },
-                    // Transform data into desired format
+                    // Combine graduateStats and analyticsData
                     {
                         $project: {
-                            _id: 0,
-                            questionType: {
-                                $cond: {
-                                    if: { $regexMatch: { input: '$_id', regex: /20\. Is your first job related/ } },
-                                    then: 'courseRelatedJob',
-                                    else: 'timeToLandJob'
-                                }
-                            },
-                            data: '$data'
-                        }
-                    },
-                    // Combine results into a single document
-                    {
-                        $group: {
-                            _id: null,
-                            analytics: {
-                                $push: {
-                                    k: '$questionType',
-                                    v: '$data'
-                                }
-                            }
-                        }
-                    },
-                    // Convert analytics array to an object
-                    {
-                        $project: {
-                            _id: 0,
-                            analytics: { $arrayToObject: '$analytics' }
+                            analytics: { $arrayElemAt: ['$analyticsData.analytics', 0] },
+                            graduateStats: { $arrayElemAt: ['$graduateStats.data', 0] }
                         }
                     }
                 ];
@@ -201,67 +376,164 @@ export class StudentService {
                 // Pipeline for overall analytics
                 pipeline = [
                     ...baseStages,
-                    // Project necessary fields
+                    // Project academicYear and other fields
                     {
                         $project: {
-                            key: '$employmentData.questions.answer',
-                            count: { $literal: 1 },
-                            question: '$employmentData.questions.question'
-                        }
-                    },
-                    // Group by key and question
-                    {
-                        $group: {
-                            _id: {
-                                key: '$key',
-                                question: '$question'
-                            },
-                            count: { $sum: '$count' }
-                        }
-                    },
-                    // Prepare data for each question type
-                    {
-                        $group: {
-                            _id: '$_id.question',
-                            data: {
-                                $push: {
-                                    key: '$_id.key',
-                                    count: '$count'
-                                }
+                            department: '$programInfo.department',
+                            program: '$curriculumInfo.programid',
+                            graduation_date: 1,
+                            employmentData: 1,
+                            academicYear: {
+                                $concat: [
+                                    { $toString: { $year: '$graduation_date' } },
+                                    ' - ',
+                                    { $toString: { $add: [{ $year: '$graduation_date' }, 1] } }
+                                ]
                             }
                         }
                     },
-                    // Transform data into desired format
+                    // Use $facet to compute graduate stats and analytics data
                     {
-                        $project: {
-                            _id: 0,
-                            questionType: {
-                                $cond: {
-                                    if: { $regexMatch: { input: '$_id', regex: /20\. Is your first job related/ } },
-                                    then: 'courseRelatedJob',
-                                    else: 'timeToLandJob'
+                        $facet: {
+                            graduateStats: [
+                                // Project the necessary fields
+                                {
+                                    $project: {
+                                        key: { $literal: 'Graduated' },
+                                        count: { $literal: 1 },
+                                        department: '$department',
+                                        program: '$program',
+                                        academicYear: '$academicYear'
+                                    }
+                                },
+                                // Group by key, department, program, academicYear
+                                {
+                                    $group: {
+                                        _id: {
+                                            key: '$key',
+                                            department: '$department',
+                                            program: '$program',
+                                            academicYear: '$academicYear'
+                                        },
+                                        count: { $sum: '$count' }
+                                    }
+                                },
+                                // Prepare data
+                                {
+                                    $group: {
+                                        _id: null,
+                                        data: {
+                                            $push: {
+                                                key: '$_id.key',
+                                                count: '$count',
+                                                department: '$_id.department',
+                                                program: '$_id.program',
+                                                academicYear: '$_id.academicYear'
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    $project: {
+                                        _id: 0,
+                                        data: '$data'
+                                    }
                                 }
-                            },
-                            data: '$data'
+                            ],
+                            analyticsData: [
+                                // Unwind employmentData.questions
+                                { $unwind: '$employmentData.questions' },
+                                // Filter only the questions we want
+                                {
+                                    $match: {
+                                        'employmentData.questions.question': {
+                                            $in: [
+                                                '20. Is your first job related to the course you took up in college?',
+                                                '21. How long did it take you to land your first job?'
+                                            ]
+                                        }
+                                    }
+                                },
+                                // Project necessary fields
+                                {
+                                    $project: {
+                                        key: '$employmentData.questions.answer',
+                                        count: { $literal: 1 },
+                                        department: '$department',
+                                        program: '$program',
+                                        academicYear: '$academicYear',
+                                        question: '$employmentData.questions.question'
+                                    }
+                                },
+                                // Group by all fields
+                                {
+                                    $group: {
+                                        _id: {
+                                            key: '$key',
+                                            department: '$department',
+                                            program: '$program',
+                                            academicYear: '$academicYear',
+                                            question: '$question'
+                                        },
+                                        count: { $sum: '$count' }
+                                    }
+                                },
+                                // Prepare data for each question type
+                                {
+                                    $group: {
+                                        _id: '$_id.question',
+                                        data: {
+                                            $push: {
+                                                key: '$_id.key',
+                                                count: '$count',
+                                                department: '$_id.department',
+                                                program: '$_id.program',
+                                                academicYear: '$academicYear'
+                                            }
+                                        }
+                                    }
+                                },
+                                // Transform data into desired format
+                                {
+                                    $project: {
+                                        _id: 0,
+                                        questionType: {
+                                            $cond: {
+                                                if: { $regexMatch: { input: '$_id', regex: /20\. Is your first job related/ } },
+                                                then: 'courseRelatedJob',
+                                                else: 'timeToLandJob'
+                                            }
+                                        },
+                                        data: '$data'
+                                    }
+                                },
+                                // Combine results into a single document
+                                {
+                                    $group: {
+                                        _id: null,
+                                        analytics: {
+                                            $push: {
+                                                k: '$questionType',
+                                                v: '$data'
+                                            }
+                                        }
+                                    }
+                                },
+                                // Convert analytics array to an object
+                                {
+                                    $project: {
+                                        _id: 0,
+                                        analytics: { $arrayToObject: '$analytics' }
+                                    }
+                                }
+                            ]
                         }
                     },
-                    // Combine results into a single document
-                    {
-                        $group: {
-                            _id: null,
-                            analytics: {
-                                $push: {
-                                    k: '$questionType',
-                                    v: '$data'
-                                }
-                            }
-                        }
-                    },
-                    // Convert analytics array to an object
+                    // Combine graduateStats and analyticsData
                     {
                         $project: {
-                            _id: 0,
-                            analytics: { $arrayToObject: '$analytics' }
+                            analytics: { $arrayElemAt: ['$analyticsData.analytics', 0] },
+                            graduateStats: { $arrayElemAt: ['$graduateStats.data', 0] }
                         }
                     }
                 ];
@@ -270,15 +542,18 @@ export class StudentService {
             const response = await this.studentModel.aggregate(pipeline);
 
             // Ensure the response is in the desired format
-            const analytics = response.length > 0 ? response[0].analytics : {
-                timeToLandJob: [],
-                courseRelatedJob: []
+            const result = response.length > 0 ? response[0] : {
+                analytics: {
+                    timeToLandJob: [],
+                    courseRelatedJob: []
+                },
+                graduateStats: []
             };
 
             return {
                 success: true,
                 message: 'Tracer study analyzed successfully.',
-                data: analytics
+                data: result
             };
 
         } catch (error) {
@@ -292,7 +567,6 @@ export class StudentService {
             );
         }
     }
-
 
     async findStudentsOverlapResidency(): Promise<IPromiseStudent> {
         try {
