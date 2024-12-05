@@ -9,3 +9,10 @@ export const API_ANALYTICS_EMPLOYMENT = async ({ department, program, academicYe
     }, { withCredentials: true })
     return response.data
 }
+
+export const API_ANALYTICS_COMMON_REASONS = async ({ reason }: { reason?: string }) => {
+    const response = await axios.post(`${HOST}/student/commonreasons-analytics`, {
+        reason
+    }, { withCredentials: true })
+    return response.data
+}
