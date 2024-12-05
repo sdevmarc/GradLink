@@ -14,30 +14,35 @@ import {
     ChartTooltipContent,
 } from "@/components/ui/chart"
 
-// Dummy data for common reasons
-const chartData = [
-    { reason: "Financial Difficulties", count: 1 },
-    { reason: "Personal or Family Reasons", count: 0 },
-    { reason: "Health Issues", count: 0 },
-    { reason: "Work or Career Commitments", count: 0 },
-    { reason: "Lack of Interest in the Program", count: 0 },
-    { reason: "Relocation or Moving", count: 0 },
-    { reason: "Dissatisfaction with the Program", count: 0 },
-    { reason: "Better Opportunities Elsewhere", count: 2 },
-    { reason: "Time Constraints", count: 3 },
-    { reason: "Change in Career Goals", count: 1 },
-    { reason: "Academic Challenges", count: 0 },
-    { reason: "Transfer to Another Institution", count: 0 },
-    { reason: "Visa or Immigration Issues", count: 0 },
-    { reason: "Discrimination or Uncomfortable Environment", count: 0 },
-    { reason: "Lack of Support from Faculty or Staff", count: 0 },
-    { reason: "Program Not Meeting Expectations", count: 2 },
-    { reason: "Family Emergency", count: 1 },
-    { reason: "Not Ready for Academic Rigor", count: 3 },
-    { reason: "Poor Mental Health", count: 4 },
-    { reason: "Completion of Specific Goals", count: 2 },
-    { reason: "Others", count: 0 },
-]
+interface IData {
+    count: number
+    reason: string
+}
+
+// // Dummy data for common reasons
+// const chartData = [
+//     { reason: "Financial Difficulties", count: 1 },
+//     { reason: "Personal or Family Reasons", count: 0 },
+//     { reason: "Health Issues", count: 0 },
+//     { reason: "Work or Career Commitments", count: 0 },
+//     { reason: "Lack of Interest in the Program", count: 0 },
+//     { reason: "Relocation or Moving", count: 0 },
+//     { reason: "Dissatisfaction with the Program", count: 0 },
+//     { reason: "Better Opportunities Elsewhere", count: 2 },
+//     { reason: "Time Constraints", count: 3 },
+//     { reason: "Change in Career Goals", count: 1 },
+//     { reason: "Academic Challenges", count: 0 },
+//     { reason: "Transfer to Another Institution", count: 0 },
+//     { reason: "Visa or Immigration Issues", count: 0 },
+//     { reason: "Discrimination or Uncomfortable Environment", count: 0 },
+//     { reason: "Lack of Support from Faculty or Staff", count: 0 },
+//     { reason: "Program Not Meeting Expectations", count: 2 },
+//     { reason: "Family Emergency", count: 1 },
+//     { reason: "Not Ready for Academic Rigor", count: 3 },
+//     { reason: "Poor Mental Health", count: 4 },
+//     { reason: "Completion of Specific Goals", count: 2 },
+//     { reason: "Others", count: 0 },
+// ]
 
 const chartConfig = {
     count: {
@@ -46,14 +51,14 @@ const chartConfig = {
     },
 } satisfies ChartConfig
 
-export function BarChartCommonReasons() {
+export function BarChartCommonReasons({ data }: { data: IData[] }) {
     return (
         <Card className="w-full border-none shadow-none">
             <CardContent className="h-[30rem]">
                 <ChartContainer config={chartConfig} className="w-full h-full">
                     <BarChart
                         accessibilityLayer
-                        data={chartData}
+                        data={data}
                         margin={{
                             top: 20,
                         }}
