@@ -6,7 +6,7 @@ import { useContext, useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { API_PROGRAM_FINDALL } from "@/api/program";
 import { API_STUDENT_YEARS_GRADUATED } from "@/api/student";
-import { API_ANALYTICS_EMPLOYMENT } from "@/api/analytics";
+import { API_ANALYTICS_COMMON_REASONS, API_ANALYTICS_EMPLOYMENT } from "@/api/analytics";
 import { PieChartLandJob } from "@/components/charts/pie-chart-land-job";
 import { PieChartRelatedJob } from "@/components/charts/pie-chart-related-job";
 import { useNavigate } from "react-router-dom";
@@ -83,6 +83,11 @@ export default function Overview() {
     const { data: tracerresponse, isLoading: tracerresponseLoading, isFetched: tracerresponseFetched } = useQuery({
         queryFn: () => API_ANALYTICS_EMPLOYMENT({ department, program, academicYear: yearGraduated }),
         queryKey: ['analytics', { department, program, academicYear: yearGraduated }]
+    })
+
+    const { data: coomonreasons, isLoading: coomonreasonsLoading, isFetched: coomonreasonsFetched } = useQuery({
+        queryFn: () => API_ANALYTICS_COMMON_REASONS({ reason: commonreason }),
+        queryKey: ['analytics', { reason: commonreason }]
     })
 
     useEffect(() => {
@@ -182,7 +187,7 @@ export default function Overview() {
         { label: "Others", value: "Others" },
     ]
 
-    const isLoading = programsLoading || yearsgraduateLoading || tracerresponseLoading || checkpasswordLoading
+    const isLoading = programsLoading || yearsgraduateLoading || tracerresponseLoading || checkpasswordLoading || coomonreasonsLoading
 
     return (
         <>
@@ -331,50 +336,61 @@ export default function Overview() {
                                 </div>
                             </div>
 
-                            {
-                                (!tracerresponseLoading && tracerresponseFetched) &&
-                                    (tracerresponse?.data?.timeToLandJob?.length > 0 || tracerresponse?.data?.courseRelatedJob?.length > 0) ?
-                                    <div className="flex flex-col justify-center items-center gap-[10rem]">
+                            <div className="flex flex-col justify-center items-center gap-[10rem]">
+                                {
+                                    (!tracerresponseLoading && tracerresponseFetched) &&
+                                        (tracerresponse?.data?.analytics?.timeToLandJob?.length > 0 || tracerresponse?.data?.analytics?.courseRelatedJob?.length > 0 || tracerresponse?.data?.graduateStats?.length > 0) ?
                                         <div className="w-full flex items-center justify-center gap-2 flex-wrap">
-                                            <PieChartLandJob data={tracerresponse?.data?.timeToLandJob} />
-                                            <PieChartGraduated data={tracerresponse?.data?.timeToLandJob} />
-                                            <PieChartRelatedJob data={tracerresponse?.data?.courseRelatedJob} />
+                                            <PieChartLandJob data={tracerresponse?.data?.analytics?.timeToLandJob} />
+                                            <PieChartGraduated data={tracerresponse?.data?.graduateStats} />
+                                            <PieChartRelatedJob data={tracerresponse?.data?.analytics?.courseRelatedJob} />
                                         </div>
-                                        <div className="w-full flex flex-col gap-4 items-start justify-start">
-                                            <div className="w-full flex items-center justify-between">
+                                        :
+                                        <div className="pt-[7rem] pb-[1rem] flex justify-center items-center">
+                                            <h1 className="text-md font-medium">
+                                                No data is available.
+                                            </h1>
+                                        </div>
+                                }
+                                <div className="w-full flex flex-col gap-4 items-start justify-start">
+                                    <div className="w-full flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            {
+                                                isLoading &&
                                                 <div className="flex items-center gap-2">
-                                                    {
-                                                        isLoading &&
-                                                        <div className="flex items-center gap-2">
-                                                            <LoaderCircle className={`text-muted-foreground animate-spin`} size={18} />
-                                                            <h1 className="text-muted-foreground text-sm">
-                                                                Syncing
-                                                            </h1>
-                                                        </div>
-                                                    }
+                                                    <LoaderCircle className={`text-muted-foreground animate-spin`} size={18} />
+                                                    <h1 className="text-muted-foreground text-sm">
+                                                        Syncing
+                                                    </h1>
                                                 </div>
+                                            }
+                                        </div>
 
-                                                <div className="flex items-center justify-end gap-2">
-                                                    <Combobox
-                                                        btnTitleclassName="gap-2"
-                                                        icon={<Filter className="text-primary" size={15} />}
-                                                        className='w-[300px]'
-                                                        lists={common_reasons_options || []}
-                                                        placeholder={`Reasons`}
-                                                        setValue={(item) => setCommonReason(item)}
-                                                        value={commonreason || ''}
-                                                    />
-                                                </div>
-                                            </div>
-                                            <BarChartCommonReasons />
+                                        <div className="flex items-center justify-end gap-2">
+                                            <Combobox
+                                                btnTitleclassName="gap-2"
+                                                icon={<Filter className="text-primary" size={15} />}
+                                                className='w-[300px]'
+                                                lists={common_reasons_options || []}
+                                                placeholder={`Reasons`}
+                                                setValue={(item) => setCommonReason(item)}
+                                                value={commonreason || ''}
+                                            />
                                         </div>
                                     </div>
-                                    : <div className="pt-[7rem] pb-[1rem] flex justify-center items-center">
-                                        <h1 className="text-md font-medium">
-                                            No data is available.
-                                        </h1>
-                                    </div>
-                            }
+                                    {
+                                        coomonreasonsFetched &&
+                                            coomonreasons?.data?.length > 0 ?
+                                            <BarChartCommonReasons data={coomonreasons?.data || []} />
+                                            :
+                                            <div className="w-full pt-[7rem] pb-[1rem] flex justify-center items-center">
+                                                <h1 className="text-md font-medium">
+                                                    No data is available.
+                                                </h1>
+                                            </div>
+                                    }
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </main>
