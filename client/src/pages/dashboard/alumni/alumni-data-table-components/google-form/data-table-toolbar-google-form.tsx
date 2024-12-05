@@ -84,10 +84,10 @@ export function DataTableToolbarAlumniGoogleForm<TData>({
                         type={`default`}
                         variant={'outline'}
                         btnIcon={<Trash2 className="text-primary" size={18} />}
-                        btnTitle="Trash"
+                        btnTitle="Rejects"
                         title="Are you sure?"
-                        description={`This action will redirect you to a page for trashed or declined respondents.`}
-                        btnContinue={() => navigate(ROUTES.NEW_STUDENT)}
+                        description={`This action will redirect you to a page for reject or declined respondents.`}
+                        btnContinue={() => navigate(ROUTES.ALUMNI_REJECTS)}
                     />
                 </div>
             </div>
