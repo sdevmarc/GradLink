@@ -3,13 +3,25 @@ import { Sidebar, SidebarNavs } from "@/components/sidebar"
 import MainTable from "@/components/main-table"
 import { ROUTES } from "@/constants"
 import { DataTableAlumniGoogleForm } from "./alumni-data-table-components/google-form/data-table-google-form"
-import { useEffect } from "react"
+import { useContext, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { API_USER_CHECK_DEFAULT_PASSWORD } from "@/api/user"
 import { useQuery } from "@tanstack/react-query"
+import { AuthContext } from "@/hooks/AuthContext"
+import { API_FORM_FINDALL_TRACER } from "@/api/form"
+import { AlumniGoogleFormColumns } from "./alumni-data-table-components/google-form/columns-google-form"
 
 export default function GoogleForm() {
+    const { isAuthenticated } = useContext(AuthContext);
     const navigate = useNavigate()
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            // Redirect to login page if not authenticated
+            navigate("/", { replace: true });
+        }
+    }, [isAuthenticated, navigate])
+
     const { data: checkpassword, isFetched: checkpasswordFetched } = useQuery({
         queryFn: () => API_USER_CHECK_DEFAULT_PASSWORD(),
         queryKey: ['checkpassword']
@@ -18,15 +30,15 @@ export default function GoogleForm() {
     useEffect(() => {
         if (checkpasswordFetched) {
             if (!checkpassword.success) {
-               navigate('/overview')
-            } 
+                navigate('/overview')
+            }
         }
     }, [checkpassword])
 
-    // const { data: dataForm, isLoading: isformLoading, isFetched: formFetched } = useQuery({
-    //     queryFn: () => API_FORM_FINDALL_UNKNOWN(),
-    //     queryKey: ['forms']
-    // })
+    const { data: dataForm, isLoading: isformLoading, isFetched: formFetched } = useQuery({
+        queryFn: () => API_FORM_FINDALL_TRACER(),
+        queryKey: ['forms']
+    })
 
     return (
         <>
@@ -47,11 +59,14 @@ export default function GoogleForm() {
                             <SidebarNavs bg='bg-muted' title="Tracer Respondents" link={ROUTES.GOOGLE_FORM} />
                         </Sidebar>
                         <MainTable>
-
-                            <DataTableAlumniGoogleForm
-                                columns={[]}
-                                data={[]}
-                            />
+                            {isformLoading && <div>Loading...</div>}
+                            {
+                                (!isformLoading && formFetched) &&
+                                <DataTableAlumniGoogleForm
+                                    columns={AlumniGoogleFormColumns}
+                                    data={dataForm?.data || []}
+                                />
+                            }
                         </MainTable>
                     </main>
                 </div>
