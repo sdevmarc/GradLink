@@ -607,7 +607,8 @@ export class StudentService {
                     graduation_date: 1,
                     undergraduateInformation: 1,
                     achievements: 1,
-                    coordinates: 1
+                    coordinates: 1,
+                    isAnsweredForm: { $toBool: "$coordinates" } // Updated line
                 }
             });
 
