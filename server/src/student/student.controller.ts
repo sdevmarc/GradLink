@@ -32,6 +32,16 @@ export class StudentController {
         return this.studentService.findOneStudent({ id })
     }
 
+    @Get('alumni')
+    async findAllAlumniGraduates() {
+        return await this.studentService.findAllAlumni()
+    }
+
+    @Get('alumni-trashed')
+    async findAllAlumniTrashed() {
+        return this.studentService.findAllAlumniTrashed()
+    }
+
     @Post('employment-analytics')
     async findStatisticsForEmployment(@Body() { department, program, academicYear }: { department?: string, program?: string, academicYear?: string }) {
         return this.studentService.findTracerAnalytics({ department, program, academicYear })
@@ -65,11 +75,6 @@ export class StudentController {
     @Post('filtered-alumni')
     async findAllFilteredAlumni(@Body() { search, program, yeargraduated }: { search: string, program: string, yeargraduated: string }) {
         return await this.studentService.findFilteredAlumni({ search, program, yeargraduated })
-    }
-
-    @Get('alumni')
-    async findAllAlumniGraduates() {
-        return await this.studentService.findAllAlumni()
     }
 
     @Get('student-overlap')
@@ -232,6 +237,20 @@ export class StudentController {
         @Body() { studentid }: { studentid: string }
     ) {
         return await this.studentService.activateExistingStudent(studentid)
+    }
+
+    @Post('movetotrash-student')
+    async moveToTrashStudent(
+        @Body() { id }: { id: string }
+    ) {
+        return await this.studentService.moveToTrash({ id })
+    }
+
+    @Post('restorealumni-student')
+    async restoreAlumniFromTrash(
+        @Body() { id }: { id: string }
+    ) {
+        return await this.studentService.restoreAlumniFromTrash({ id })
     }
 
     @Post('update-graduate')
