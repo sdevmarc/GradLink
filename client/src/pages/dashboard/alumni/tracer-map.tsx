@@ -732,90 +732,97 @@ const Map = ({ coordinates, id }: { coordinates: { lng: number, lat: number }, i
                                                             <Badge variant="default" className="mr-2">
                                                                 {onealumni?.data?.idNumber || 'No valid ID Number'}
                                                             </Badge>
-                                                            <span className="text-muted-foreground uppercase">
-                                                                {onealumni?.data?.department} | {onealumni?.data?.programCode} | {onealumni?.data?.programName}
-                                                            </span>
+                                                            {
+                                                                onealumni?.data?.idNumber &&
+                                                                <span className="text-muted-foreground uppercase">
+                                                                    {onealumni?.data?.department} | {onealumni?.data?.programCode} | {onealumni?.data?.programName}
+                                                                </span>
+                                                            }
+
                                                         </div>
                                                     </CardDescription>
                                                 </div>
                                             </div>
                                         </CardHeader>
-                                        <CardContent className="space-y-4">
-                                            <div className="w-full mx-auto">
-                                                <CardHeader className="px-0">
-                                                    <CardTitle className="text-xl">
-                                                        Bachelor's Degree Information
-                                                    </CardTitle>
-                                                </CardHeader>
-                                                <CardContent className="flex flex-wrap gap-4 px-0">
-                                                    <div className="flex flex-col basis-[calc(50%-0.5rem)]">
-                                                        <span className="text-md font-semibold">
-                                                            College/University
-                                                        </span>
-                                                        <span className="text-md font-normal">
-                                                            {onealumni?.data?.undergraduateInformation?.college || 'None'}
-                                                        </span>
-                                                    </div>
-                                                    <div className="flex flex-col basis-[calc(50%-0.5rem)]">
-                                                        <span className="text-md font-semibold">
-                                                            School
-                                                        </span>
-                                                        <span className="text-md font-normal">
-                                                            {onealumni?.data?.undergraduateInformation?.school || 'None'}
-                                                        </span>
-                                                    </div>
-                                                    <div className="flex flex-col basis-[calc(50%-0.5rem)]">
-                                                        <span className="text-md font-semibold">
-                                                            Program
-                                                        </span>
-                                                        <span className="text-md font-normal">
-                                                            {onealumni?.data?.undergraduateInformation?.programGraduated || 'None'}
-                                                        </span>
-                                                    </div>
-                                                    <div className="flex flex-col basis-[calc(50%-0.5rem)]">
-                                                        <span className="text-md font-semibold">
-                                                            Year Graduated
-                                                        </span>
-                                                        <span className="text-md font-normal">
-                                                            {onealumni?.data?.undergraduateInformation?.yearGraduated || 'None'}
-                                                        </span>
-                                                    </div>
-                                                    <div className="flex flex-col basis-[calc(50%-0.5rem)]">
-                                                        <span className="text-md font-semibold">
-                                                            Honors/Awards Received
-                                                        </span>
-                                                        <span className="text-md font-normal">
-                                                            {onealumni?.data?.achievements?.awards || 'None'}
-                                                        </span>
-                                                    </div>
-                                                    <div className="flex flex-col basis-[calc(50%-0.5rem)]">
-                                                        <span className="text-md font-semibold">
-                                                            Professional Exam Passed
-                                                        </span>
-                                                        <span className="text-md font-normal">
-                                                            {onealumni?.data?.achievements?.examPassed || 'None'}
-                                                        </span>
-                                                    </div>
-                                                    <div className="flex flex-col basis-[calc(50%-0.5rem)]">
-                                                        <span className="text-md font-semibold">
-                                                            Professional Exam Date
-                                                        </span>
-                                                        <span className="text-md font-normal">
-                                                            {onealumni?.data?.achievements?.examDate || 'None'}
-                                                        </span>
-                                                    </div>
-                                                    <div className="flex flex-col basis-[calc(50%-0.5rem)]">
-                                                        <span className="text-md font-semibold">
-                                                            Professional Exam Rating
-                                                        </span>
-                                                        <span className="text-md font-normal">
-                                                            {onealumni?.data?.achievements?.examRating ? `${onealumni?.data?.achievements?.examRating}%` : 'None'}
-                                                        </span>
-                                                    </div>
+                                        {
+                                            onealumni?.data?.idNumber &&
+                                            <CardContent className="space-y-4">
+                                                <div className="w-full mx-auto">
+                                                    <CardHeader className="px-0">
+                                                        <CardTitle className="text-xl">
+                                                            Bachelor's Degree Information
+                                                        </CardTitle>
+                                                    </CardHeader>
+                                                    <CardContent className="flex flex-wrap gap-4 px-0">
+                                                        <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                            <span className="text-md font-semibold">
+                                                                College/University
+                                                            </span>
+                                                            <span className="text-md font-normal">
+                                                                {onealumni?.data?.undergraduateInformation?.college || 'None'}
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                            <span className="text-md font-semibold">
+                                                                School
+                                                            </span>
+                                                            <span className="text-md font-normal">
+                                                                {onealumni?.data?.undergraduateInformation?.school || 'None'}
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                            <span className="text-md font-semibold">
+                                                                Program
+                                                            </span>
+                                                            <span className="text-md font-normal">
+                                                                {onealumni?.data?.undergraduateInformation?.programGraduated || 'None'}
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                            <span className="text-md font-semibold">
+                                                                Year Graduated
+                                                            </span>
+                                                            <span className="text-md font-normal">
+                                                                {onealumni?.data?.undergraduateInformation?.yearGraduated || 'None'}
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                            <span className="text-md font-semibold">
+                                                                Honors/Awards Received
+                                                            </span>
+                                                            <span className="text-md font-normal">
+                                                                {onealumni?.data?.achievements?.awards || 'None'}
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                            <span className="text-md font-semibold">
+                                                                Professional Exam Passed
+                                                            </span>
+                                                            <span className="text-md font-normal">
+                                                                {onealumni?.data?.achievements?.examPassed || 'None'}
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                            <span className="text-md font-semibold">
+                                                                Professional Exam Date
+                                                            </span>
+                                                            <span className="text-md font-normal">
+                                                                {onealumni?.data?.achievements?.examDate || 'None'}
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                            <span className="text-md font-semibold">
+                                                                Professional Exam Rating
+                                                            </span>
+                                                            <span className="text-md font-normal">
+                                                                {onealumni?.data?.achievements?.examRating ? `${onealumni?.data?.achievements?.examRating}%` : 'None'}
+                                                            </span>
+                                                        </div>
 
-                                                </CardContent>
-                                            </div>
-                                        </CardContent>
+                                                    </CardContent>
+                                                </div>
+                                            </CardContent>
+                                        }
                                     </Card>
                                     {
                                         (onealumni?.data?.generalInformation || onealumni?.data?.employmentData) &&
@@ -913,97 +920,100 @@ const Map = ({ coordinates, id }: { coordinates: { lng: number, lat: number }, i
                                             </Card>
                                         </>
                                     }
-                                    <Card className="w-full mx-auto">
-                                        <CardHeader>
-                                            <div className="w-full flex flex-col items-start gap-2">
-                                                <div className="w-full flex items-center justify-between">
-                                                    <h1 className="text-xl font-semibold">
-                                                        {onealumni?.data?.programName}
-                                                    </h1>
-                                                </div>
-
-                                                <div className="w-full flex items-center justify-between">
-                                                    <h1 className="text-lg font-medium flex items-center gap-2">
-                                                        Courses:
-                                                    </h1>
-                                                    <div className="flex items-center">
-                                                        <BookOpen className="h-5 w-5 mr-2 text-muted-foreground" />
-                                                        <span>Credits: {onealumni?.data?.totalOfUnitsEarned} / {onealumni?.data?.totalOfUnitsEnrolled}</span>
+                                    {
+                                        onealumni?.data?.idNumber &&
+                                        <Card className="w-full mx-auto">
+                                            <CardHeader>
+                                                <div className="w-full flex flex-col items-start gap-2">
+                                                    <div className="w-full flex items-center justify-between">
+                                                        <h1 className="text-xl font-semibold">
+                                                            {onealumni?.data?.programName}
+                                                        </h1>
                                                     </div>
-                                                </div>
 
-                                            </div>
-                                        </CardHeader>
-                                        <CardContent className="space-y-4">
-                                            <div className="flex flex-col">
-                                                <Table className="w-full ">
-                                                    <TableHeader>
-                                                        <TableRow className="border-b">
-                                                            <TableHead className="text-left font-normal pb-2">Course No.</TableHead>
-                                                            <TableHead className="text-left font-medium pb-2">Descriptive Title</TableHead>
-                                                            <TableHead className="text-left font-medium pb-2">Status</TableHead>
-                                                        </TableRow>
-                                                    </TableHeader>
-                                                    <TableBody>
-                                                        {onealumni?.data?.enrolledCourses?.map((item: { courseno: string, descriptiveTitle: string, status: string }, i: number) => (
-                                                            <TableRow key={i} className="border-b last:border-0">
-                                                                <TableCell className="py-2">
-                                                                    <span className="capitalize text-sm font-normal flex items-center gap-2">
-                                                                        <GraduationCap size={18} className="h-5 w-5 text-muted-foreground" />
-                                                                        {item.courseno}
-                                                                    </span>
-                                                                </TableCell>
-                                                                <TableCell className="py-2">
-                                                                    <span className="capitalize text-sm font-normal flex items-center gap-2">
-                                                                        {item.descriptiveTitle}
-                                                                    </span>
-                                                                </TableCell>
-                                                                <TableCell className="py-2 text-left text-medium">
-                                                                    <span className="text-sm font-normal flex items-center gap-2 capitalize ">
-                                                                        {
-                                                                            item.status === 'ongoing' &&
-                                                                            <div className="flex items-center gap-2">
-                                                                                <Loader className="text-primary" size={18} />
-                                                                                Ongoing
-                                                                            </div>
-                                                                        }
-                                                                        {
-                                                                            item.status === 'pass' &&
-                                                                            <div className="flex items-center gap-2">
-                                                                                <CircleCheck className="text-primary" size={18} />
-                                                                                PASSED
-                                                                            </div>
-                                                                        }
-                                                                        {
-                                                                            item.status === 'fail' &&
-                                                                            <div className="flex items-center gap-2">
-                                                                                <CircleX className="text-primary" size={18} />
-                                                                                Failed
-                                                                            </div>
-                                                                        }
-                                                                        {
-                                                                            item.status === 'inc' &&
-                                                                            <div className="flex items-center gap-2">
-                                                                                <CircleX className="text-primary" size={18} />
-                                                                                INCOMPLETE
-                                                                            </div>
-                                                                        }
-                                                                        {
-                                                                            item.status === 'not_taken' &&
-                                                                            <div className="flex items-center gap-2">
-                                                                                <CircleDashed className="text-primary" size={18} />
-                                                                                Not taken yet
-                                                                            </div>
-                                                                        }
-                                                                    </span>
-                                                                </TableCell>
+                                                    <div className="w-full flex items-center justify-between">
+                                                        <h1 className="text-lg font-medium flex items-center gap-2">
+                                                            Courses:
+                                                        </h1>
+                                                        <div className="flex items-center">
+                                                            <BookOpen className="h-5 w-5 mr-2 text-muted-foreground" />
+                                                            <span>Credits: {onealumni?.data?.totalOfUnitsEarned} / {onealumni?.data?.totalOfUnitsEnrolled}</span>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </CardHeader>
+                                            <CardContent className="space-y-4">
+                                                <div className="flex flex-col">
+                                                    <Table className="w-full ">
+                                                        <TableHeader>
+                                                            <TableRow className="border-b">
+                                                                <TableHead className="text-left font-normal pb-2">Course No.</TableHead>
+                                                                <TableHead className="text-left font-medium pb-2">Descriptive Title</TableHead>
+                                                                <TableHead className="text-left font-medium pb-2">Status</TableHead>
                                                             </TableRow>
-                                                        ))}
-                                                    </TableBody>
-                                                </Table>
-                                            </div>
-                                        </CardContent>
-                                    </Card>
+                                                        </TableHeader>
+                                                        <TableBody>
+                                                            {onealumni?.data?.enrolledCourses?.map((item: { courseno: string, descriptiveTitle: string, status: string }, i: number) => (
+                                                                <TableRow key={i} className="border-b last:border-0">
+                                                                    <TableCell className="py-2">
+                                                                        <span className="capitalize text-sm font-normal flex items-center gap-2">
+                                                                            <GraduationCap size={18} className="h-5 w-5 text-muted-foreground" />
+                                                                            {item.courseno}
+                                                                        </span>
+                                                                    </TableCell>
+                                                                    <TableCell className="py-2">
+                                                                        <span className="capitalize text-sm font-normal flex items-center gap-2">
+                                                                            {item.descriptiveTitle}
+                                                                        </span>
+                                                                    </TableCell>
+                                                                    <TableCell className="py-2 text-left text-medium">
+                                                                        <span className="text-sm font-normal flex items-center gap-2 capitalize ">
+                                                                            {
+                                                                                item.status === 'ongoing' &&
+                                                                                <div className="flex items-center gap-2">
+                                                                                    <Loader className="text-primary" size={18} />
+                                                                                    Ongoing
+                                                                                </div>
+                                                                            }
+                                                                            {
+                                                                                item.status === 'pass' &&
+                                                                                <div className="flex items-center gap-2">
+                                                                                    <CircleCheck className="text-primary" size={18} />
+                                                                                    PASSED
+                                                                                </div>
+                                                                            }
+                                                                            {
+                                                                                item.status === 'fail' &&
+                                                                                <div className="flex items-center gap-2">
+                                                                                    <CircleX className="text-primary" size={18} />
+                                                                                    Failed
+                                                                                </div>
+                                                                            }
+                                                                            {
+                                                                                item.status === 'inc' &&
+                                                                                <div className="flex items-center gap-2">
+                                                                                    <CircleX className="text-primary" size={18} />
+                                                                                    INCOMPLETE
+                                                                                </div>
+                                                                            }
+                                                                            {
+                                                                                item.status === 'not_taken' &&
+                                                                                <div className="flex items-center gap-2">
+                                                                                    <CircleDashed className="text-primary" size={18} />
+                                                                                    Not taken yet
+                                                                                </div>
+                                                                            }
+                                                                        </span>
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                            ))}
+                                                        </TableBody>
+                                                    </Table>
+                                                </div>
+                                            </CardContent>
+                                        </Card>
+                                    }
                                 </div>
                             </main>
                         </div>
