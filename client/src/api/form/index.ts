@@ -3,6 +3,13 @@ import axios from 'axios'
 
 axios.defaults.withCredentials = true;
 
+export const API_FORM_GET_REJECTS = async () => {
+    const response = await axios.get(`${HOST}/forms/rejects`,
+        { withCredentials: true }
+    )
+    return response.data
+}
+
 export const API_FORM_GET_GOOGLE_FORM_LINK = async () => {
     const response = await axios.get(`${HOST}/forms/google-link`,
         { withCredentials: true }
@@ -31,9 +38,17 @@ export const API_FORM_MAPPED = async () => {
     return response.data
 }
 
-export const API_FORM_EVALUATE_TRACER = async ({ id, isApproved }: {id: string, isApproved: boolean}) => {
+export const API_FORM_EVALUATE_TRACER = async ({ id, isApproved }: { id: string, isApproved: boolean }) => {
     const response = await axios.post(`${HOST}/forms/evaluate-form-tracer`,
         { id, isApproved },
+        { withCredentials: true }
+    )
+    return response.data
+}
+
+export const API_FORM_RESTORE_REJECT = async ({ id }: { id: string }) => {
+    const response = await axios.post(`${HOST}/forms/restore-reject`,
+        { id },
         { withCredentials: true }
     )
     return response.data
