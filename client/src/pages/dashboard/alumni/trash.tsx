@@ -1,15 +1,15 @@
-import HeadSection, { SubHeadSectionDetails } from "@/components/head-section"
+import HeadSection, { BackHeadSection, SubHeadSectionDetails } from "@/components/head-section"
 import { Sidebar, SidebarNavs } from "@/components/sidebar"
 import MainTable from "@/components/main-table"
 import { ROUTES } from "@/constants"
-import { DataTableAlumniGoogleForm } from "./alumni-data-table-components/google-form/data-table-google-form"
 import { useContext, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { API_USER_CHECK_DEFAULT_PASSWORD } from "@/api/user"
 import { useQuery } from "@tanstack/react-query"
 import { AuthContext } from "@/hooks/AuthContext"
-import { API_FORM_FINDALL_TRACER, API_FORM_MAPPED } from "@/api/form"
-import { AlumniGoogleFormColumns } from "./alumni-data-table-components/google-form/columns-google-form"
+import { DataTableAlumniTrash } from "./alumni-data-table-components/trash/data-table-trash"
+import { AlumniTrashColumns } from "./alumni-data-table-components/trash/columns-trash"
+import { API_STUDENT_ALUMNI_TRASHED } from "@/api/student"
 
 export default function AlumniTrash() {
     const { isAuthenticated } = useContext(AuthContext);
@@ -35,19 +35,10 @@ export default function AlumniTrash() {
         }
     }, [checkpassword])
 
-    const { data: dataForm, isLoading: isformLoading, isFetched: formFetched } = useQuery({
-        queryFn: () => API_FORM_FINDALL_TRACER(),
-        queryKey: ['forms']
+    const { data: alumnitrashed, isLoading: alumnitrashedLoading, isFetched: alumnitrashedFetched } = useQuery({
+        queryFn: () => API_STUDENT_ALUMNI_TRASHED(),
+        queryKey: ['alumnitrashed']
     })
-
-    const { data: formmapdata, isLoading: formmapLoading, isFetched: formmapFetched } = useQuery({
-        queryFn: () => API_FORM_MAPPED(),
-        queryKey: ['form']
-    })
-
-    useEffect(() => {
-        if (formFetched) { console.log(formmapdata?.message) }
-    }, [formmapdata, formmapFetched])
 
     return (
         <>
@@ -55,26 +46,27 @@ export default function AlumniTrash() {
                 <div className="w-full max-w-[90rem] flex flex-col">
                     <aside className="px-4 pb-4 pt-[8rem]">
                         <HeadSection>
+                            <BackHeadSection />
                             <SubHeadSectionDetails
-                                title="RESPONDENTS"
-                                description="View and manage google form respondents."
+                                title="TRASHED ALUMNI INFORMATION"
+                                description="View and manage alumni information."
                             />
                         </HeadSection>
                     </aside>
                     <main className="flex">
                         <Sidebar>
-                            <SidebarNavs title="Alumni Information" link={ROUTES.ALUMNI} />
+                            <SidebarNavs bg='bg-muted' title="Alumni Information" link={ROUTES.ALUMNI} />
                             <SidebarNavs title="Tracer Map" link={ROUTES.TRACER_MAP} />
-                            <SidebarNavs bg='bg-muted' title="Tracer Respondents" link={ROUTES.GOOGLE_FORM} />
+                            <SidebarNavs title="Tracer Respondents" link={ROUTES.GOOGLE_FORM} />
                         </Sidebar>
                         <MainTable>
-                            {isformLoading && <div>Loading...</div>}
+                            {alumnitrashedLoading && <div>Loading...</div>}
                             {
-                                (!isformLoading && formFetched) &&
-                                <DataTableAlumniGoogleForm
-                                    isSync={formmapLoading}
-                                    columns={AlumniGoogleFormColumns}
-                                    data={dataForm?.data || []}
+                                (!alumnitrashedLoading && alumnitrashedFetched) &&
+                                <DataTableAlumniTrash
+                                    isSync={alumnitrashedLoading}
+                                    columns={AlumniTrashColumns}
+                                    data={alumnitrashed?.data || []}
                                 />
                             }
                         </MainTable>
