@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { useReactToPrint } from 'react-to-print';
 import AlumniPrintableComponent from "../../alumni-printable-component";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { API_STUDENT_MOVE_TO_TRASH_STUDENT } from "@/api/student";
 
 const formatAnswer = (answer: string | Record<string, any> | null | undefined): React.ReactNode => {
     if (typeof answer === 'object' && answer !== null) {
@@ -235,6 +236,7 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
             const queryClient = useQueryClient()
             const printableRef = useRef<HTMLDivElement>(null);
             const [dialogprint, setDialogPrint] = useState<boolean>(false)
+            const [dialogmovetotrash, setDialogMoveToTrash] = useState<boolean>(false)
             const [isOpen, setIsOpen] = useState<boolean>(false)
             const [dialogsubmit, setDialogSubmit] = useState<boolean>(false)
             const [dialogupdateemail, setDialogUpdateEmail] = useState<boolean>(false)
@@ -359,6 +361,38 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
 
             }
 
+            const { mutateAsync: movetotrash, isPending: movetotrashPending } = useMutation({
+                mutationFn: API_STUDENT_MOVE_TO_TRASH_STUDENT,
+                onSuccess: async (data) => {
+                    if (!data.success) {
+                        setDialogSubmit(false)
+                        setDialogMoveToTrash(false)
+                        setAlertDialogState({ success: false, show: true, title: "Uh, oh. Something went wrong!", description: data.message })
+                        window.scrollTo({
+                            top: 0,
+                            behavior: 'smooth'
+                        })
+                        return
+                    } else {
+                        await queryClient.invalidateQueries({ queryKey: ['students'] })
+                        await queryClient.refetchQueries({ queryKey: ['students'] })
+                        window.scrollTo({
+                            top: 0,
+                            behavior: 'smooth'
+                        })
+                        setDialogMoveToTrash(false)
+                        setAlertDialogState({ success: true, show: true, title: "Yay, success! 🎉", description: data.message })
+                        setDialogSubmit(false)
+                        return
+                    }
+                },
+                onError: (data) => {
+                    setDialogMoveToTrash(false)
+                    setDialogSubmit(false)
+                    setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: data.message })
+                }
+            })
+
             const handlePrint = useReactToPrint({
                 documentTitle: `${idNumber} - ${lastname}, ${firstname} ${middlename || ''}`,
                 contentRef: printableRef,
@@ -366,7 +400,13 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
 
             });
 
-            const isLoading = tracerLoading || updateEmailLoading
+            const handleMoveToTrash = async () => {
+                if (_id) {
+                    await movetotrash({ id: _id });
+                }
+            }
+
+            const isLoading = tracerLoading || updateEmailLoading || movetotrashPending
 
             return (
                 <>
@@ -401,10 +441,9 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
                             btnContinue={() => setAlertDialogState(prev => ({ ...prev, show: false }))}
                         />
                         <div className="flex items-center gap-2">
-
                             <AlertDialogConfirmation
-                                isDialog={dialogprint}
-                                setDialog={(e) => setDialogPrint(e)}
+                                isDialog={dialogmovetotrash}
+                                setDialog={(e) => setDialogMoveToTrash(e)}
                                 className="flex items-center gap-2"
                                 type={`default`}
                                 disabled={isLoading}
@@ -413,7 +452,7 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
                                 btnTitle="Move to Trash"
                                 title="Are you sure?"
                                 description={` ${lastname}, ${firstname} ${middlename}'s information will be move to trash.`}
-                                btnContinue={() => handlePrint()}
+                                btnContinue={handleMoveToTrash}
                             />
                             <Button onClick={handleViewDetails} variant={`outline`} size={`sm`} className="flex items-center gap-2">
                                 <TableOfContents className="text-primary" size={18} />   View Profile
