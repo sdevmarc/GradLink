@@ -31,6 +31,10 @@ export const StudentSchema = new mongoose.Schema({
         latitude: Number,
         longitude: Number
     },
+    istrash: {
+        type: Boolean,
+        default: false
+    },
     undergraduateInformation: {
         college: {
             type: String,
