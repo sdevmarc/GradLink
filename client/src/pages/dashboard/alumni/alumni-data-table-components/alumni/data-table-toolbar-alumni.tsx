@@ -11,7 +11,10 @@ import { API_PROGRAM_FINDALL } from "@/api/program"
 import { API_STUDENT_YEARS_GRADUATED } from "@/api/student"
 import { DataTableFacetedFilter } from "@/components/data-table-components/data-table-faceted-filter"
 import { IAPIPrograms } from "@/interface/program.interface"
-import { LoaderCircle } from "lucide-react"
+import { LoaderCircle, Trash2 } from "lucide-react"
+import { AlertDialogConfirmation } from "@/components/alert-dialog"
+import { useNavigate } from "react-router-dom"
+import { ROUTES } from "@/constants"
 
 interface DataTableToolbarProps<TData> {
     table: Table<TData>
@@ -28,6 +31,7 @@ export function DataTableToolbarAlumni<TData>({
     table,
     isSync
 }: DataTableToolbarProps<TData>) {
+    const navigate = useNavigate()
     const isFiltered = table.getState().columnFilters.length > 0
     const [formattedprogram, setFormattedProgram] = useState<ProgramOption[]>([]);
     const [filteredYearsGraduated, setFilteredYearsGraduated] = useState<{ label: string, value: string }[]>([])
@@ -135,17 +139,27 @@ export function DataTableToolbarAlumni<TData>({
                     </Button>
                 )}
 
-                {
-                    isSync &&
-                    <div className="flex items-center justify-end gap-2">
-                        <LoaderCircle className={`text-muted-foreground animate-spin`} size={18} />
-                        <h1 className="text-muted-foreground text-sm">
-                            Syncing
-                        </h1>
-                    </div>
-                }
-
-             
+                <div className="flex items-center justify-end gap-2">
+                    {
+                        isSync &&
+                        <div className="flex items-center gap-2">
+                            <LoaderCircle className={`text-muted-foreground animate-spin`} size={18} />
+                            <h1 className="text-muted-foreground text-sm">
+                                Syncing
+                            </h1>
+                        </div>
+                    }
+                    <AlertDialogConfirmation
+                        className="flex items-center gap-2"
+                        type={`default`}
+                        variant={'outline'}
+                        btnIcon={<Trash2 className="text-primary" size={18} />}
+                        btnTitle="Trash"
+                        title="Are you sure?"
+                        description={`This action will redirect you to a page for trashed alumni information.`}
+                        btnContinue={() => navigate(ROUTES.ALUMNI_TRASH)}
+                    />
+                </div>
             </div>
         </div>
     )
