@@ -23,6 +23,26 @@ export class StudentService {
         private readonly cloudinaryService: CloudinaryService
     ) { }
 
+    async findAllAlumniTrashed(): Promise<IPromiseStudent> {
+        try {
+            const response = await this.studentModel.aggregate([
+                {
+                    $match: {
+                        $and: [
+                            { status: 'alumni' },
+                            { istrash: true }
+                        ]
+                    }
+                }
+            ]).sort({ _id: -1 })
+
+            return { success: true, message: 'Trashed alumni fetched successfully.', data: response }
+
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Failed to fetch trashed alumni.', error: error.message }, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     async findTracerAnalytics({ department, program, academicYear }: {
         department?: string,
         program?: string,
@@ -2094,7 +2114,10 @@ export class StudentService {
             const response = await this.studentModel.aggregate([
                 {
                     $match: {
-                        status: { $in: ['alumni'] }
+                        $and: [
+                            { status: { $in: ['alumni'] } },
+                            { istrash: false }
+                        ]
                     }
                 },
                 // Initial lookups
@@ -3411,6 +3434,32 @@ export class StudentService {
             return { success: true, message: 'Alumni Graduate updated successfully.', email }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Failed to update student graduate', error }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async moveToTrash({ id }: IStudent): Promise<IPromiseStudent> {
+        try {
+            await this.studentModel.findByIdAndUpdate(
+                id,
+                { istrash: true },
+                { new: true }
+            )
+            return { success: true, message: 'Moved to trash successfully' }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Failed to move to trash.' }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async restoreAlumniFromTrash({ id }: IStudent): Promise<IPromiseStudent> {
+        try {
+            await this.studentModel.findByIdAndUpdate(
+                id,
+                { istrash: false },
+                { new: true }
+            )
+            return { success: true, message: 'Alumni information restored successfully' }
+        } catch (error) {
+            throw new HttpException({ success: false, message: 'Failed to move to trash.' }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 }
