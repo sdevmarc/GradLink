@@ -152,7 +152,7 @@ export const CurriculumColumns: ColumnDef<ICurriculum>[] = [
                                                                     </span>
                                                                 </CardTitle>
                                                                 <div className="flex flex-col items-center">
-                                                                    <h1 className="text-muted font-semibold text-sm">Date Created</h1>
+                                                                    <h1 className="text-muted-foreground font-medium text-sm">Date Created</h1>
                                                                     <span className="text-primary text-md font-semibold">
                                                                         {createdAt}
                                                                     </span>
