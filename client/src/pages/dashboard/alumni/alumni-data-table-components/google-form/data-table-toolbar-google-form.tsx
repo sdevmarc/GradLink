@@ -5,8 +5,7 @@ import { Table } from "@tanstack/react-table"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { DataTableFacetedFilter } from "@/components/data-table-components/data-table-faceted-filter"
-import { Copy, LoaderCircle, Trash2 } from "lucide-react"
+import { Copy, Trash2 } from "lucide-react"
 import { useQuery } from "@tanstack/react-query"
 import { API_FORM_GET_GOOGLE_FORM_LINK } from "@/api/form"
 import { toast } from "sonner" // Add this import at the top
@@ -21,17 +20,9 @@ interface DataTableToolbarProps<TData> {
 
 export function DataTableToolbarAlumniGoogleForm<TData>({
     table,
-    isSync
 }: DataTableToolbarProps<TData>) {
     const navigate = useNavigate()
     const isFiltered = table.getState().columnFilters.length > 0
-
-    const department_options = [
-        { value: 'SEAIT', label: "Eng'g, Dev't. Arts & Design, Library Science & IT" },
-        { value: 'SHANS', label: "Science and Mathematics" },
-        { value: 'SAB', label: "Business and Accountancy" },
-        { value: 'STEH', label: "Teacher Education and Humanities" }
-    ]
 
     const { data: googleform, isFetched: googleformFetched } = useQuery({
         queryFn: () => API_FORM_GET_GOOGLE_FORM_LINK(),
@@ -49,35 +40,17 @@ export function DataTableToolbarAlumniGoogleForm<TData>({
             <div className="flex flex-1 flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
                     <Input
-                        placeholder="Search ID Number"
-                        value={(table.getColumn("idNumber")?.getFilterValue() as string) ?? ""}
+                        placeholder="Search tracer"
+                        value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
                         onChange={(event) => {
-                            table.getColumn("idNumber")?.setFilterValue(event.target.value)
+                            table.getColumn("email")?.setFilterValue(event.target.value)
                         }}
                         className="h-8 w-[17rem] lg:w-[20rem]"
                     />
 
-                    <div className="flex items-center gap-2">
-                        {table.getColumn("department") && (
-                            <DataTableFacetedFilter
-                                column={table.getColumn("department")}
-                                title="Department"
-                                options={department_options}
-                            />
-                        )}
-                    </div>
+
                 </div>
 
-                {
-                    isSync &&
-                    <div className="flex items-center gap-2">
-
-                        <LoaderCircle className={`text-muted-foreground animate-spin`} size={18} />
-                        <h1 className="text-muted-foreground text-sm">
-                            Syncing
-                        </h1>
-                    </div>
-                }
 
                 {isFiltered && (
                     <Button
@@ -102,7 +75,7 @@ export function DataTableToolbarAlumniGoogleForm<TData>({
                                 size={`sm`}
                                 className="flex items-center gap-2"
                             >
-                              <Copy className="text-primary" size={18} />  Copy Google Form Link
+                                <Copy className="text-primary" size={18} />  Copy Google Form Link
                             </Button>
                         </div>
                     }
