@@ -98,11 +98,15 @@ export default function TracerMap() {
         queryKey: ['years']
     })
 
-    const { data: filteredAlumni } = useQuery({
+    const { data: filteredAlumni, isFetched: filteredAlumniFetched } = useQuery({
         queryFn: () => API_STUDENT_FINDALL_FILTERED_ALUMNI({ search, program, yeargraduated: yearGraduated }),
         queryKey: ['alumni', { search, program, yearGraduated }],
         enabled: isSearch, // Only run when search is triggered
     });
+
+    useEffect(() => {
+        if (filteredAlumniFetched) { console.log(filteredAlumni?.data) }
+    }, [filteredAlumni])
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>): void => {
         if (e.key === 'Enter') {
@@ -423,20 +427,25 @@ const SearchCard = ({ data, setCoordinates, setId, isclose }: { data: any[], set
                                     </div>
                                 </div>
                                 <div className="flex items-center justify-end gap-2">
-                                    <Button
-                                        onClick={() => {
-                                            handleSearchedChange({
-                                                // Fix: Swap the coordinates to correct order
-                                                lng: item?.coordinates?.longitude || 0, // Changed from latitude
-                                                lat: item?.coordinates?.latitude || 0,  // Changed from longitude
-                                                id: item?._id || ''
-                                            })
-                                        }}
-                                        variant="outline"
-                                        size="sm"
-                                    >
-                                        View in Map
-                                    </Button>
+                                    {
+                                        item?.isAnsweredForm ?
+                                        <Button
+                                            onClick={() => {
+                                                handleSearchedChange({
+                                                    // Fix: Swap the coordinates to correct order
+                                                    lng: item?.coordinates?.longitude || 0, // Changed from latitude
+                                                    lat: item?.coordinates?.latitude || 0,  // Changed from longitude
+                                                    id: item?._id || ''
+                                                })
+                                            }}
+                                            variant="outline"
+                                            size="sm"
+                                        >
+                                            View in Map
+                                        </Button>
+                                        : 'No tracer study available.'
+                                    }
+
                                     {/* <Button variant={`default`} size={`sm`}>
                                         View Profile
                                     </Button> */}
