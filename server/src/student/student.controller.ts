@@ -47,6 +47,11 @@ export class StudentController {
         return this.studentService.findTracerAnalytics({ department, program, academicYear })
     }
 
+    @Post('commonreasons-analytics')
+    async findCommonReasonsAnalytics(@Body() { reason }: { reason: string }) {
+        return this.studentService.findTracerAnalyticsCommonReason({ reason })
+    }
+
     @Get('alumni-tracer/:findOne')
     async findAlumniFromTracer(@Param('findOne') id: string) {
         return this.studentService.findOneAlumniFromTracerMap({ id })
