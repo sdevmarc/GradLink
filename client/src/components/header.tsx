@@ -237,6 +237,7 @@ const HeaderDashboard = () => {
                                     case ROUTES.ALUMNI:
                                     case ROUTES.TRACER_MAP:
                                     case ROUTES.ALUMNI_REJECTS:
+                                    case ROUTES.ALUMNI_TRASH:
                                     case `/student/details/${sid}`:
                                     case `/student/evaluation/${sid}`:
                                         return (
