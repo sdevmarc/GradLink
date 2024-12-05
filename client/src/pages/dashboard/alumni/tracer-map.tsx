@@ -98,15 +98,11 @@ export default function TracerMap() {
         queryKey: ['years']
     })
 
-    const { data: filteredAlumni, isFetched: filteredAlumniFetched } = useQuery({
+    const { data: filteredAlumni } = useQuery({
         queryFn: () => API_STUDENT_FINDALL_FILTERED_ALUMNI({ search, program, yeargraduated: yearGraduated }),
         queryKey: ['alumni', { search, program, yearGraduated }],
         enabled: isSearch, // Only run when search is triggered
     });
-
-    useEffect(() => {
-        if (filteredAlumniFetched) { console.log(filteredAlumni?.data) }
-    }, [filteredAlumni])
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>): void => {
         if (e.key === 'Enter') {
