@@ -236,6 +236,7 @@ const HeaderDashboard = () => {
                                     case ROUTES.ENROLLMENT_ARCHIVED_ACADEMIC_YEAR_OFFERED_COURSES:
                                     case ROUTES.ALUMNI:
                                     case ROUTES.TRACER_MAP:
+                                    case ROUTES.ALUMNI_REJECTS:
                                     case `/student/details/${sid}`:
                                     case `/student/evaluation/${sid}`:
                                         return (
