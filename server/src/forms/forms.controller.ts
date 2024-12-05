@@ -24,6 +24,11 @@ export class FormsController {
         return await this.formsService.getAllTracers()
     }
 
+    @Get('rejects')
+    async getRejectRespondents() {
+        return await this.formsService.findRejects()
+    }
+
     @Get('google-link')
     async getGoogleFormLink() {
         return await this.formsService.getGoogleFormLink()
@@ -195,5 +200,12 @@ export class FormsController {
         @Body() { id, isApproved }: { id: string, isApproved?: boolean }
     ) {
         return await this.formsService.evaluateIncomingTracer({ id, isApproved })
+    }
+
+    @Post('restore-reject')
+    async RestoreReject(
+        @Body() { id }: { id: string}
+    ) {
+        return await this.formsService.restoreRejectRespondent({ id })
     }
 }
