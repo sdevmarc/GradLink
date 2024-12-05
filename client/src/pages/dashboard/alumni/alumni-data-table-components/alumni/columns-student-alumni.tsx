@@ -546,85 +546,87 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
                                                                     </div>
                                                                 </CardDescription>
                                                             </div>
-                                                            {/* <Button>Apply Now</Button> */}
                                                         </div>
                                                     </CardHeader>
-                                                    <CardContent className="space-y-4">
-                                                        <div className="w-full mx-auto">
-                                                            <CardHeader className="px-0">
-                                                                <CardTitle className="text-xl">
-                                                                    Bachelor's Degree Information
-                                                                </CardTitle>
-                                                            </CardHeader>
-                                                            <CardContent className="flex flex-wrap gap-4 px-0">
-                                                                <div className="flex flex-col basis-[calc(50%-0.5rem)]">
-                                                                    <span className="text-md font-semibold">
-                                                                        College/University
-                                                                    </span>
-                                                                    <span className="text-md font-normal">
-                                                                        {undergraduateInformation?.college || 'None'}
-                                                                    </span>
-                                                                </div>
-                                                                <div className="flex flex-col basis-[calc(50%-0.5rem)]">
-                                                                    <span className="text-md font-semibold">
-                                                                        School
-                                                                    </span>
-                                                                    <span className="text-md font-normal">
-                                                                        {undergraduateInformation?.school || 'None'}
-                                                                    </span>
-                                                                </div>
-                                                                <div className="flex flex-col basis-[calc(50%-0.5rem)]">
-                                                                    <span className="text-md font-semibold">
-                                                                        Program
-                                                                    </span>
-                                                                    <span className="text-md font-normal">
-                                                                        {undergraduateInformation?.programGraduated || 'None'}
-                                                                    </span>
-                                                                </div>
-                                                                <div className="flex flex-col basis-[calc(50%-0.5rem)]">
-                                                                    <span className="text-md font-semibold">
-                                                                        Year Graduated
-                                                                    </span>
-                                                                    <span className="text-md font-normal">
-                                                                        {undergraduateInformation?.yearGraduated || 'None'}
-                                                                    </span>
-                                                                </div>
-                                                                <div className="flex flex-col basis-[calc(50%-0.5rem)]">
-                                                                    <span className="text-md font-semibold">
-                                                                        Honors/Awards Received
-                                                                    </span>
-                                                                    <span className="text-md font-normal">
-                                                                        {achievements?.awards || 'None'}
-                                                                    </span>
-                                                                </div>
-                                                                <div className="flex flex-col basis-[calc(50%-0.5rem)]">
-                                                                    <span className="text-md font-semibold">
-                                                                        Professional Exam Passed
-                                                                    </span>
-                                                                    <span className="text-md font-normal">
-                                                                        {achievements?.examPassed || 'None'}
-                                                                    </span>
-                                                                </div>
-                                                                <div className="flex flex-col basis-[calc(50%-0.5rem)]">
-                                                                    <span className="text-md font-semibold">
-                                                                        Professional Exam Date
-                                                                    </span>
-                                                                    <span className="text-md font-normal">
-                                                                        {achievements?.examDate || 'None'}
-                                                                    </span>
-                                                                </div>
-                                                                <div className="flex flex-col basis-[calc(50%-0.5rem)]">
-                                                                    <span className="text-md font-semibold">
-                                                                        Professional Exam Rating
-                                                                    </span>
-                                                                    <span className="text-md font-normal">
-                                                                        {achievements?.examRating ? `${achievements?.examRating}%` : 'None'}
-                                                                    </span>
-                                                                </div>
+                                                    {
+                                                        idNumber &&
+                                                        <CardContent className="space-y-4">
+                                                            <div className="w-full mx-auto">
+                                                                <CardHeader className="px-0">
+                                                                    <CardTitle className="text-xl">
+                                                                        Bachelor's Degree Information
+                                                                    </CardTitle>
+                                                                </CardHeader>
+                                                                <CardContent className="flex flex-wrap gap-4 px-0">
+                                                                    <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                                        <span className="text-md font-semibold">
+                                                                            College/University
+                                                                        </span>
+                                                                        <span className="text-md font-normal">
+                                                                            {undergraduateInformation?.college || 'None'}
+                                                                        </span>
+                                                                    </div>
+                                                                    <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                                        <span className="text-md font-semibold">
+                                                                            School
+                                                                        </span>
+                                                                        <span className="text-md font-normal">
+                                                                            {undergraduateInformation?.school || 'None'}
+                                                                        </span>
+                                                                    </div>
+                                                                    <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                                        <span className="text-md font-semibold">
+                                                                            Program
+                                                                        </span>
+                                                                        <span className="text-md font-normal">
+                                                                            {undergraduateInformation?.programGraduated || 'None'}
+                                                                        </span>
+                                                                    </div>
+                                                                    <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                                        <span className="text-md font-semibold">
+                                                                            Year Graduated
+                                                                        </span>
+                                                                        <span className="text-md font-normal">
+                                                                            {undergraduateInformation?.yearGraduated || 'None'}
+                                                                        </span>
+                                                                    </div>
+                                                                    <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                                        <span className="text-md font-semibold">
+                                                                            Honors/Awards Received
+                                                                        </span>
+                                                                        <span className="text-md font-normal">
+                                                                            {achievements?.awards || 'None'}
+                                                                        </span>
+                                                                    </div>
+                                                                    <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                                        <span className="text-md font-semibold">
+                                                                            Professional Exam Passed
+                                                                        </span>
+                                                                        <span className="text-md font-normal">
+                                                                            {achievements?.examPassed || 'None'}
+                                                                        </span>
+                                                                    </div>
+                                                                    <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                                        <span className="text-md font-semibold">
+                                                                            Professional Exam Date
+                                                                        </span>
+                                                                        <span className="text-md font-normal">
+                                                                            {achievements?.examDate || 'None'}
+                                                                        </span>
+                                                                    </div>
+                                                                    <div className="flex flex-col basis-[calc(50%-0.5rem)]">
+                                                                        <span className="text-md font-semibold">
+                                                                            Professional Exam Rating
+                                                                        </span>
+                                                                        <span className="text-md font-normal">
+                                                                            {achievements?.examRating ? `${achievements?.examRating}%` : 'None'}
+                                                                        </span>
+                                                                    </div>
 
-                                                            </CardContent>
-                                                        </div>
-                                                    </CardContent>
+                                                                </CardContent>
+                                                            </div>
+                                                        </CardContent>
+                                                    }
                                                 </Card>
                                                 {
                                                     ((generalInformation?.questions?.length ?? 0) > 0 || (employmentData?.questions?.length ?? 0) > 0) &&
