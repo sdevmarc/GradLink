@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      # Here we specify build-time args
+      args:
+        VITE_API_MAP_DEV: "pk.eyJ1IjoieW91cnBhcmVuZ2VkaXNvbiIsImEiOiJjbTMyem81MHoxOTZzMmxzNDNwNXB4YmM4In0.YjqdD5S9U-Cw9kASDpJGVA"
+        VITE_API_HOST: "http://localhost:3002"
+    image: gradlink-client-image
+    container_name: gradlink-client-container
+    ports:
+      - "80:80"
+    restart: always
