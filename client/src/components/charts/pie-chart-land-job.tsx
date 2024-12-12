@@ -37,7 +37,7 @@ const chartConfig: ChartConfig = {
     'More than 4 years': { label: 'More than 4 years', color: 'hsl(var(--chart-7))' },
 } satisfies ChartConfig;
 
-export function PieChartLandJob({ data }: { data: IData[] }) {
+export function PieChartLandJob({ data, isClickCell }: { data: IData[], isClickCell: (e: boolean) => void }) {
     // Map the data to the format required by the chart
     const chartData = React.useMemo(() => {
         if (data && data.length > 0) {
@@ -90,10 +90,13 @@ export function PieChartLandJob({ data }: { data: IData[] }) {
                             strokeWidth={5}
                         // label
                         >
+
                             {chartData.map((entry, index) => (
                                 <Cell
+                                    className="hover:cursor-pointer"
                                     key={`cell-${index}`}
                                     fill={chartConfig[entry.key]?.color || '#000000'}
+                                    onClick={() => isClickCell(true)}
                                 />
                             ))}
                             <Label
