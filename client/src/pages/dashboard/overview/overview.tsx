@@ -18,9 +18,13 @@ import { API_USER_CHANGE_DEFAULT_PASSWORD, API_USER_CHECK_DEFAULT_PASSWORD } fro
 import { Button } from "@/components/ui/button";
 import { PieChartGraduated } from "@/components/charts/pie-chart-graduated";
 import { BarChartCommonReasons } from "@/components/charts/bar-chart-common-reasons";
+import { SheetModal } from "@/components/sheet-modal";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 export default function Overview() {
     const queryClient = useQueryClient()
+    const [isClickCell, setClickCell] = useState<boolean>(false)
     const [dialogchangepassword, setDialogChangePassword] = useState<boolean>(false)
     const [program, setProgram] = useState<string>('')
     const [yearGraduated, setYearGraduated] = useState<string>('')
@@ -203,6 +207,88 @@ export default function Overview() {
                 variant={`default`}
                 btnContinue={() => setAlertDialogState(prev => ({ ...prev, show: false }))}
             />
+            <SheetModal
+                className="w-[60%] overflow-auto"
+                isOpen={isClickCell}
+                onOpenChange={(e: boolean) => setClickCell(e)}
+                title="Respondent"
+                description="View details of one of the respondents."
+                content={
+                    <div className="flex flex-col min-h-screen items-center">
+                        <div className="w-full max-w-[90rem] flex flex-col">
+                            <main className="flex justify-center items-center py-4">
+                                <div className="min-h-screen w-full max-w-[70rem] flex flex-col gap-4">
+                                    <>
+                                        <Card className="w-full mx-auto">
+                                            <CardHeader>
+                                                <CardTitle className="text-xl font-bold flex flex-col uppercase">
+                                                    Alumni Information
+                                                </CardTitle>
+                                            </CardHeader>
+                                            <CardContent className="">
+                                                <Table>
+                                                    <TableHeader>
+                                                        <TableRow>
+                                                            <TableHead className="w-[100px]">ID</TableHead>
+                                                            <TableHead className="w-1/3">Name</TableHead>
+                                                            <TableHead className="w-1/3">Program</TableHead>
+                                                            <TableHead className="w-1/3">Year Graduated</TableHead>
+                                                        </TableRow>
+                                                    </TableHeader>
+                                                    <TableBody>
+                                                        <TableRow className="print:break-inside-avoid">
+                                                            <TableCell className="font-medium">
+                                                                43339254
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                REYES, LIZA SORIANO
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                ME
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                2024 - 2025
+                                                            </TableCell>
+                                                        </TableRow>
+                                                        <TableRow className="print:break-inside-avoid">
+                                                            <TableCell className="font-medium">
+                                                                69562545
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                SAN JOSE, JULIA MENDOZA
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                ME
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                2024 - 2025
+                                                            </TableCell>
+                                                        </TableRow>
+                                                        <TableRow className="print:break-inside-avoid">
+                                                            <TableCell className="font-medium">
+                                                                59545069
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                CRUZ, LINA CHUA
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                ME
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                2024 - 2025
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    </TableBody>
+                                                </Table>
+                                            </CardContent>
+                                        </Card>
+                                    </>
+                                </div>
+                            </main>
+                        </div>
+                    </div>
+                }
+            />
             <AlertDialogConfirmation
                 isDialog={dialogchangepassword}
                 setDialog={(e) => setDialogChangePassword(e)}
@@ -341,9 +427,9 @@ export default function Overview() {
                                     (!tracerresponseLoading && tracerresponseFetched) &&
                                         (tracerresponse?.data?.analytics?.timeToLandJob?.length > 0 || tracerresponse?.data?.analytics?.courseRelatedJob?.length > 0 || tracerresponse?.data?.graduateStats?.length > 0) ?
                                         <div className="w-full flex items-center justify-center gap-2 flex-wrap">
-                                            <PieChartLandJob data={tracerresponse?.data?.analytics?.timeToLandJob} />
-                                            <PieChartGraduated data={tracerresponse?.data?.graduateStats} />
-                                            <PieChartRelatedJob data={tracerresponse?.data?.analytics?.courseRelatedJob} />
+                                            <PieChartLandJob isClickCell={(e: boolean) => setClickCell(e)} data={tracerresponse?.data?.analytics?.timeToLandJob} />
+                                            <PieChartGraduated isClickCell={(e: boolean) => setClickCell(e)} data={tracerresponse?.data?.graduateStats} />
+                                            <PieChartRelatedJob isClickCell={(e: boolean) => setClickCell(e)} data={tracerresponse?.data?.analytics?.courseRelatedJob} />
                                         </div>
                                         :
                                         <div className="pt-[7rem] pb-[1rem] flex justify-center items-center">
