@@ -40,7 +40,7 @@ const chartConfig: ChartConfig = dummyData.reduce((config, item, index) => {
     return config;
 }, {} as ChartConfig);
 
-export function PieChartGraduated({ data }: { data: IData[] }) {
+export function PieChartGraduated({ data, isClickCell }: { data: IData[], isClickCell: (e: boolean) => void }) {
     // Map the data to the format required by the chart
     const chartData = React.useMemo(() => {
         if (dummyData && dummyData.length > 0) {
@@ -95,8 +95,10 @@ export function PieChartGraduated({ data }: { data: IData[] }) {
                         >
                             {chartData.map((entry, index) => (
                                 <Cell
+                                    className="hover:cursor-pointer"
                                     key={`cell-${index}`}
                                     fill={chartConfig[entry.key]?.color || '#000000'}
+                                    // onClick={() => isClickCell(true)}
                                 />
                             ))}
                             <Label
