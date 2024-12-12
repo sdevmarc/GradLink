@@ -357,9 +357,10 @@ export class FormsService {
                         info: {
                             description: `Dear Graduate,
 
-Please complete this Graduate Tracer Survey (GTS) honestly by selecting the appropriate options. Your responses will help assess graduate employability and improve courses at universities in the Philippines. Please be aware that the information provided will be used for the purpose of improving educational programs and ensuring the confidentiality of your answers.
-
-Thank you for your time!`,
+Please complete this Graduate Tracer Survey (GTS) honestly by selecting the appropriate options. Your responses will help assess graduate employability and improve courses at universities in the Philippines. Please be aware that the information provided will be used for the purpose of improving educational programs and ensuring the confidentiality of your answers
+                            
+                            
+"I consent to allow my personal data to be collected/processed for the above specific and legitimate purpose; I understand that my personal information will be processed ni a manner that ensures appropriate privacy and security safeguards; I hereby affirm my right to be informed. object to processing, access and rectify, suspend and withdraw my personal information and be indemnified in case of dmages pursuan to the provisions of RA. No. 10173 (Data Privacy Act of 2012) and its implementing Rules and Regulations"`,
                         },
                         updateMask: 'description',
                     },
