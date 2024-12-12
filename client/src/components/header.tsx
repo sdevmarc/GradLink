@@ -1,7 +1,7 @@
-import { NavLink, Outlet, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { NavLink, Outlet, useLocation, useParams } from 'react-router-dom'
 import { UserAvatar } from '@/components/user-avatar'
 import './index.css'
-import { CircleUser, House, Slash } from "lucide-react"
+import { CircleUser, Slash } from "lucide-react"
 import GradlinkLogoBlack from '@/assets/gradlink-logo-black.svg'
 import GradlinkLogoWhite from '@/assets/gradlink-logo-white.svg'
 
@@ -13,14 +13,8 @@ import {
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { ROUTES } from '@/constants'
-import { Input } from './ui/input'
 import { useEffect, useState } from 'react'
-import { Combobox } from './combobox'
 import { useQuery } from '@tanstack/react-query'
-import { API_PROGRAM_FINDALL } from '@/api/program'
-import { IAPIPrograms } from '@/interface/program.interface'
-import { CalendarDatePicker } from './calendar-date-picker'
-import { LeftSheetModal } from './left-sheet-modal'
 import { API_USER_GET_USER } from '@/api/user'
 import { Skeleton } from './ui/skeleton'
 import { useTheme } from '@/hooks/useTheme'
@@ -733,105 +727,6 @@ const HeaderDashboard = () => {
                     </div>
                 </div>
             </header>
-        </>
-    )
-}
-
-
-export const HeaderTracer = () => {
-    const navigate = useNavigate()
-    const [filterprogram, setFilterProgram] = useState<string>('')
-    const [formattedprogram, setFormattedProgram] = useState([])
-    const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({
-        from: new Date(new Date().getFullYear(), 0, 1),
-        to: new Date()
-    })
-    const [isOpen, setIsOpen] = useState<boolean>(false)
-
-    const { data: userdata, isLoading: userdataLoading } = useQuery({
-        queryFn: () => API_USER_GET_USER(),
-        queryKey: ['users']
-    })
-
-    const handleViewDetails = () => {
-        setIsOpen(true)
-    }
-
-    const handleOpenChange = (open: boolean) => {
-        setIsOpen(open)
-    }
-    const handleDateSelect = ({ from, to }: { from: Date; to: Date }) => {
-        setDateRange({ from, to })
-        // Filter table data based on selected date range
-        // table.getColumn("date")?.setFilterValue([from, to])
-    }
-
-    const { data: program, isLoading: programLoading, isFetched: programFetched } = useQuery({
-        queryFn: () => API_PROGRAM_FINDALL(),
-        queryKey: ['programs']
-    })
-
-    useEffect(() => {
-        if (!programLoading && programFetched) {
-            const formatprogram = program.data.map((item: IAPIPrograms) => {
-                const { _id, code } = item
-                return { value: _id, label: code }
-            })
-
-            setFormattedProgram(formatprogram)
-        }
-    }, [program])
-
-    return (
-        <>
-            <div className="z-[1] fixed top-0 left-0 w-full h-[4rem] flex justify-center items-center">
-                <header className="w-full max-w-[90rem] h-full flex justify-between items-center px-4">
-                    <form className="flex items-center gap-2">
-                        <div onClick={() => navigate(ROUTES.OVERVIEW)} className="px-2 py-2 bg-background rounded-lg cursor-pointer hover:bg-muted duration-200">
-                            <House color='#000000' size={20} />
-                        </div>
-                        <Input placeholder='Search keywords...' className='w-[25rem] bg-background' required />
-                        <div className="w-[25%]">
-                            <Combobox
-                                className='w-[170px]'
-                                lists={formattedprogram || []}
-                                placeholder={`Filter Program`}
-                                setValue={(item) => {
-                                    handleViewDetails()
-                                    setFilterProgram(item)
-                                }}
-                                value={filterprogram || ''}
-                            />
-                        </div>
-                        <div className="w-[25%]">
-                            <CalendarDatePicker
-                                date={dateRange}
-                                onDateSelect={handleDateSelect}
-                                className="w-[200px] h-8 hover:bg-white"
-                                variant={`outline`}
-                            />
-                        </div>
-                        <LeftSheetModal
-                            className="w-[30%]"
-                            isOpen={isOpen}
-                            onOpenChange={handleOpenChange}
-                            title="Student Details"
-                            description="View details of the selected student."
-                            content={''}
-                        />
-
-                    </form>
-                    <div className="flex items-center gap-4 bg-primary-foreground px-4 py-1 rounded-md">
-                        <h1 className='text-text font-normal rounded-full text-[.8rem]'>
-                            {
-                                userdataLoading ? <Skeleton className="h-[1rem] w-[10rem]" />
-                                    : `Welcome, ${userdata?.data?.name || 'Guest'}`
-                            }
-                        </h1>
-                        <UserAvatar />
-                    </div>
-                </header>
-            </div>
         </>
     )
 }
