@@ -361,14 +361,18 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                 // 'other' is handled separately
             ];
 
-            const selectedReasons = [
-                ...reasonsList.filter(
-                    (reason) => assessment?.reasons[reason.key as keyof IAssessmentReasons]
-                ),
-                ...(assessment?.reasons.other && assessment?.reasons.otherText
-                    ? [{ key: 'other', label: assessment.reasons.otherText }]
-                    : []),
-            ];
+            const hasAssessmentReasons = assessment && assessment.reasons;
+
+            const selectedReasons = hasAssessmentReasons
+                ? [
+                    ...reasonsList.filter(
+                        (reason) => assessment?.reasons[reason.key as keyof IAssessmentReasons]
+                    ),
+                    ...(assessment?.reasons.other && assessment?.reasons.otherText
+                        ? [{ key: 'other', label: assessment.reasons.otherText }]
+                        : []),
+                ]
+                : [];
 
 
             // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -910,7 +914,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                                                                                         </TableRow>
                                                                                     </TableHeader>
                                                                                     <TableBody>
-                                                                                        {selectedReasons.length > 0 ? (
+                                                                                        {(selectedReasons.length > 0 && assessment?.reasons) ? (
                                                                                             selectedReasons.map((reason, i) => (
                                                                                                 <TableRow key={reason.key} className="border-b last:border-0">
                                                                                                     <TableCell className="w-12">{i + 1}.</TableCell>
