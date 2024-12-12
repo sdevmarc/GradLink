@@ -69,11 +69,11 @@ export class StudentService {
                 { field: "specificGoals", label: "Completion of Specific Goals" },
                 { field: "other", label: "Others" }
             ];
-    
+
             // Initialize variables for reason filtering
             let reasonFilter = {};
             let filteredReasonMapping = reasonMapping;
-    
+
             // If reason is provided, find the corresponding field and adjust the mapping
             if (reason) {
                 const reasonObj = reasonMapping.find(r => r.label.toLowerCase() === reason.toLowerCase());
@@ -88,7 +88,7 @@ export class StudentService {
                 reasonFilter = { [fieldName]: true };
                 filteredReasonMapping = [reasonObj]; // Only include the provided reason
             }
-    
+
             // Build the aggregation pipeline
             const pipeline = [
                 {
@@ -127,10 +127,10 @@ export class StudentService {
                 },
                 { $sort: { reason: 1 } }
             ];
-    
+
             // Execute the aggregation pipeline
             const results = await this.studentModel.aggregate(pipeline as mongoose.PipelineStage[]);
-    
+
             return {
                 success: true,
                 message: 'Common reasons analyzed successfully.',
@@ -146,7 +146,7 @@ export class StudentService {
                 HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
-    }    
+    }
 
     async findTracerAnalytics({ department, program, academicYear }: {
         department?: string,
@@ -3561,7 +3561,7 @@ export class StudentService {
                     $set: {
                         enrollments: updatedEnrollments,
                         isenrolled: true,
-                        assessmentForm: null
+                        assessment: {}
                     }
                 },
                 { new: true }
