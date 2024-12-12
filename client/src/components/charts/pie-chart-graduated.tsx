@@ -40,7 +40,7 @@ const chartConfig: ChartConfig = dummyData.reduce((config, item, index) => {
     return config;
 }, {} as ChartConfig);
 
-export function PieChartGraduated({ data, isClickCell }: { data: IData[], isClickCell: (e: boolean) => void }) {
+export function PieChartGraduated({ data }: { data: IData[], isClickCell?: (e: boolean) => void }) {
     // Map the data to the format required by the chart
     const chartData = React.useMemo(() => {
         if (dummyData && dummyData.length > 0) {
