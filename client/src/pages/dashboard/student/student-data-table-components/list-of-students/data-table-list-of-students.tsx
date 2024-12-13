@@ -96,14 +96,14 @@ export function DataTableStudentListOfStudent<TData, TValue>({
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => {
                                 const isresidencylapsed = row.getValue('isresidencylapsed');
-                                const status = row.getValue('status');
+                                // const status = row.getValue('status');
 
 
                                 return (
                                     <TableRow
                                         key={row.id}
                                         data-state={row.getIsSelected() && "selected"}
-                                        className={status === 'discontinued' ? 'bg-destructive' : ''}
+                                        className={isresidencylapsed ? 'bg-destructive' : ''}
                                     >
                                         {row.getVisibleCells().map((cell) => (
                                             <TableCell key={cell.id}>
