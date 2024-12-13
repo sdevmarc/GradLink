@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  nestjs:
+    build:
+      context: .
+    image: gradlink-nestjs-image:1.0.0
+    container_name: gradlink-nestjs-container
+    ports:
+      - "3002:3002"
+    env_file:
+      - .env
+    depends_on:
+      - mongodb
+    volumes:
+      - mongo-data:/data/db
+    # volumes:
+    #   - .:/app
+    command: npm run start:prod
+    restart: always
+
+  mongodb:
+    image: mongo:5
+    container_name: gradlink-mongodb-container
+    ports:
+      - "27017:27017"
+    command: ["mongod", "--auth"]
+    volumes:
+      - mongo-data:/data/db
+    restart: always
+
+volumes:
+  mongo-data:
