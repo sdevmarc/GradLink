@@ -11,5 +11,5 @@ services:
     image: gradlink-client-image
     container_name: gradlink-client-container
     ports:
-      - "80:80"
+      - "3001:80"
     restart: always
