@@ -4,7 +4,6 @@ import LoginPage from "./home/login"
 import { HeaderLayout, HomeHeaderLayout, SettingsLayout } from "@/components/header"
 import Overview from "./dashboard/overview/overview"
 import CreateCourse from "./dashboard/program/create-course"
-import Form from "./dashboard/form/form"
 import CreateProgram from "./dashboard/program/create-program"
 import CreateCurriculum from "./dashboard/program/create-curriculum"
 import Enrollment from "./dashboard/enrollment/courses-offered"
@@ -220,17 +219,6 @@ const Routes = createBrowserRouter([
                     </ProtectedRoute>
                 )
             },
-
-            //Form
-            {
-                path: '/form',
-                element: (
-                    <ProtectedRoute>
-                        <Form />
-                    </ProtectedRoute>
-                )
-            },
-
 
         ]
     },
