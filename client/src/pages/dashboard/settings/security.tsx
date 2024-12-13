@@ -64,8 +64,8 @@ export default function Security() {
     useEffect(() => {
         if (checkpasswordFetched) {
             if (!checkpassword.success) {
-               navigate('/overview')
-            } 
+                navigate('/overview')
+            }
         }
     }, [checkpassword])
 
@@ -225,6 +225,17 @@ export default function Security() {
             setUpdateUser(false)
             setUserBeingUpdated(null)
             setAlertDialogState({ success: false, show: true, title: 'Uh, oh! Something went wrong.', description: 'Please fill-up the required fields.' })
+            return
+        }
+
+        const emailInUse = users.some(u => u.email && u.email.toLowerCase() === loweremail && u._id !== userid)
+        if (emailInUse) {
+            setAlertDialogState({
+                success: false,
+                show: true,
+                title: 'Email already taken!',
+                description: 'The email address is already associated with another user. Please choose a different one.'
+            })
             return
         }
 
@@ -395,8 +406,8 @@ export default function Security() {
                                                                                 value={updatevalue.department || user.department || ''}
                                                                             />
                                                                             : (
-                                                                                (user?.department) === 'SEAIT' && 'EDADLSIT' ||  (user?.department) === 'SAB' && 'BA' ||  (user?.department) === 'SHANS' && 'SM' ||  (user?.department) === 'STEH' && 'TEH'
-                                                                                 || (user.role === 'root' ? null : (user.role === 'admin' ? null : 'None')))
+                                                                                (user?.department) === 'SEAIT' && 'EDADLSIT' || (user?.department) === 'SAB' && 'BA' || (user?.department) === 'SHANS' && 'SM' || (user?.department) === 'STEH' && 'TEH'
+                                                                                || (user.role === 'root' ? null : (user.role === 'admin' ? null : 'None')))
                                                                     }
                                                                 </TableCell>
                                                                 <TableCell>
