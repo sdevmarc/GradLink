@@ -37,7 +37,10 @@ export const CoursesOfferedInEnrollmentColumns: ColumnDef<IAPIOffered>[] = [
                 </Badge>
             </div>
         ),
-        enableHiding: false
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id));
+        },
+        enableColumnFilter: true
     },
     {
         accessorKey: "courseno",
@@ -47,7 +50,10 @@ export const CoursesOfferedInEnrollmentColumns: ColumnDef<IAPIOffered>[] = [
         cell: ({ row }) => (
             <div className="w-[100px] capitalize">{row.getValue("courseno")}</div>
         ),
-        enableHiding: false
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id));
+        },
+        enableColumnFilter: true
     },
     {
         accessorKey: "descriptiveTitle",
@@ -62,7 +68,11 @@ export const CoursesOfferedInEnrollmentColumns: ColumnDef<IAPIOffered>[] = [
                     </span>
                 </div>
             );
-        }
+        },
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id));
+        },
+        enableColumnFilter: true
     },
     {
         accessorKey: "units",
