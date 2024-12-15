@@ -6,7 +6,7 @@ import { useContext, useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { API_PROGRAM_FINDALL } from "@/api/program";
 import { API_STUDENT_YEARS_GRADUATED } from "@/api/student";
-import { API_ANALYTICS_COMMON_REASONS, API_ANALYTICS_EMPLOYMENT } from "@/api/analytics";
+import { API_ANALYTICS_COMMON_REASONS, API_ANALYTICS_EMPLOYMENT, API_OVERVIEW_COURSE_RELATED, API_OVERVIEW_LAND_JOB } from "@/api/analytics";
 import { PieChartLandJob } from "@/components/charts/pie-chart-land-job";
 import { PieChartRelatedJob } from "@/components/charts/pie-chart-related-job";
 import { useNavigate } from "react-router-dom";
@@ -19,12 +19,14 @@ import { Button } from "@/components/ui/button";
 import { PieChartGraduated } from "@/components/charts/pie-chart-graduated";
 import { BarChartCommonReasons } from "@/components/charts/bar-chart-common-reasons";
 import { SheetModal } from "@/components/sheet-modal";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { DataTableOverview } from "./data-table-overview/data-table-overview";
+import { OverviewCourseColumns } from "./data-table-overview/columns-student-overview-land-job";
+import { OverviewLandJobColumns } from "./data-table-overview/columns-student-overview-course";
 
 export default function Overview() {
     const queryClient = useQueryClient()
-    const [isClickCell, setClickCell] = useState<boolean>(false)
+    const [isClickCellCourseRelated, setClickCellCourseRelated] = useState<boolean>(false)
+    const [isClickCellJobAcquisition, setClickCellJobAcquisition] = useState<boolean>(false)
     const [dialogchangepassword, setDialogChangePassword] = useState<boolean>(false)
     const [program, setProgram] = useState<string>('')
     const [yearGraduated, setYearGraduated] = useState<string>('')
@@ -115,6 +117,17 @@ export default function Overview() {
         }
     }, [yearsGraduations])
 
+    const { data: courseclickcell, isLoading: courseclickcellLoading, isFetched: courseclickcellFetched } = useQuery({
+        queryFn: () => API_OVERVIEW_COURSE_RELATED(),
+        queryKey: ['overviewcourserelated'],
+        enabled: isClickCellCourseRelated
+    })
+
+    const { data: landjobcliclcell, isLoading: landjobcliclcellLoading, isFetched: landjobcliclcellFetched } = useQuery({
+        queryFn: () => API_OVERVIEW_LAND_JOB(),
+        queryKey: ['overviewlandjob'],
+        enabled: isClickCellJobAcquisition
+    })
 
     const { mutateAsync: changepassword, isPending: changepasswordPending } = useMutation({
         mutationFn: API_USER_CHANGE_DEFAULT_PASSWORD,
@@ -191,7 +204,7 @@ export default function Overview() {
         { label: "Others", value: "Others" },
     ]
 
-    const isLoading = programsLoading || yearsgraduateLoading || tracerresponseLoading || checkpasswordLoading || coomonreasonsLoading
+    const isLoading = programsLoading || yearsgraduateLoading || tracerresponseLoading || checkpasswordLoading || coomonreasonsLoading || courseclickcellLoading || landjobcliclcellLoading
 
     return (
         <>
@@ -207,10 +220,13 @@ export default function Overview() {
                 variant={`default`}
                 btnContinue={() => setAlertDialogState(prev => ({ ...prev, show: false }))}
             />
-            <SheetModal
+           
+            {
+                courseclickcellFetched &&
+                <SheetModal
                 className="w-[60%] overflow-auto"
-                isOpen={isClickCell}
-                onOpenChange={(e: boolean) => setClickCell(e)}
+                isOpen={isClickCellCourseRelated}
+                onOpenChange={(e: boolean) => setClickCellCourseRelated(e)}
                 title="Respondent"
                 description="View details of one of the respondents."
                 content={
@@ -218,77 +234,36 @@ export default function Overview() {
                         <div className="w-full max-w-[90rem] flex flex-col">
                             <main className="flex justify-center items-center py-4">
                                 <div className="min-h-screen w-full max-w-[70rem] flex flex-col gap-4">
-                                    <>
-                                        <Card className="w-full mx-auto">
-                                            <CardHeader>
-                                                <CardTitle className="text-xl font-bold flex flex-col uppercase">
-                                                    Alumni Information
-                                                </CardTitle>
-                                            </CardHeader>
-                                            <CardContent className="">
-                                                <Table>
-                                                    <TableHeader>
-                                                        <TableRow>
-                                                            <TableHead className="w-[100px]">ID</TableHead>
-                                                            <TableHead className="w-1/3">Name</TableHead>
-                                                            <TableHead className="w-1/3">Program</TableHead>
-                                                            <TableHead className="w-1/3">Year Graduated</TableHead>
-                                                        </TableRow>
-                                                    </TableHeader>
-                                                    <TableBody>
-                                                        <TableRow className="print:break-inside-avoid">
-                                                            <TableCell className="font-medium">
-                                                                43339254
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                REYES, LIZA SORIANO
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                ME
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                2024 - 2025
-                                                            </TableCell>
-                                                        </TableRow>
-                                                        <TableRow className="print:break-inside-avoid">
-                                                            <TableCell className="font-medium">
-                                                                69562545
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                SAN JOSE, JULIA MENDOZA
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                ME
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                2024 - 2025
-                                                            </TableCell>
-                                                        </TableRow>
-                                                        <TableRow className="print:break-inside-avoid">
-                                                            <TableCell className="font-medium">
-                                                                59545069
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                CRUZ, LINA CHUA
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                ME
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                2024 - 2025
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    </TableBody>
-                                                </Table>
-                                            </CardContent>
-                                        </Card>
-                                    </>
+                                   <DataTableOverview data={courseclickcell?.data || []} columns={OverviewCourseColumns} />
                                 </div>
                             </main>
                         </div>
                     </div>
                 }
             />
+            }
+            {
+                landjobcliclcellFetched &&
+                <SheetModal
+                className="w-[60%] overflow-auto"
+                isOpen={isClickCellJobAcquisition}
+                onOpenChange={(e: boolean) => setClickCellJobAcquisition(e)}
+                title="Respondent"
+                description="View details of one of the respondents."
+                content={
+                    <div className="flex flex-col min-h-screen items-center">
+                        <div className="w-full max-w-[90rem] flex flex-col">
+                            <main className="flex justify-center items-center py-4">
+                                <div className="min-h-screen w-full max-w-[70rem] flex flex-col gap-4">
+                                   <DataTableOverview data={landjobcliclcell.data || []} columns={OverviewLandJobColumns} />
+                                </div>
+                            </main>
+                        </div>
+                    </div>
+                }
+            />
+            }
+           
             <AlertDialogConfirmation
                 isDialog={dialogchangepassword}
                 setDialog={(e) => setDialogChangePassword(e)}
@@ -425,11 +400,11 @@ export default function Overview() {
                             <div className="flex flex-col justify-center items-center gap-[10rem]">
                                 {
                                     (!tracerresponseLoading && tracerresponseFetched) &&
-                                        (tracerresponse?.data?.analytics?.timeToLandJob?.length > 0 || tracerresponse?.data?.analytics?.courseRelatedJob?.length > 0 || tracerresponse?.data?.graduateStats?.length > 0) ?
+                                        ((tracerresponse?.data?.analytics?.timeToLandJob?.length > 0) || (tracerresponse?.data?.analytics?.courseRelatedJob?.length > 0) || (tracerresponse?.data?.graduateStats?.length > 0)) ?
                                         <div className="w-full flex items-center justify-center gap-2 flex-wrap">
-                                            <PieChartLandJob isClickCell={(e: boolean) => setClickCell(e)} data={tracerresponse?.data?.analytics?.timeToLandJob} />
-                                            <PieChartGraduated isClickCell={(e: boolean) => setClickCell(e)} data={tracerresponse?.data?.graduateStats} />
-                                            <PieChartRelatedJob isClickCell={(e: boolean) => setClickCell(e)} data={tracerresponse?.data?.analytics?.courseRelatedJob} />
+                                            <PieChartLandJob isClickCell={(e: boolean) => setClickCellJobAcquisition(e)} data={tracerresponse?.data?.analytics?.timeToLandJob} />
+                                            <PieChartGraduated data={tracerresponse?.data?.graduateStats} />
+                                            <PieChartRelatedJob isClickCell={(e: boolean) => setClickCellCourseRelated(e)} data={tracerresponse?.data?.analytics?.courseRelatedJob} />
                                         </div>
                                         :
                                         <div className="pt-[7rem] pb-[1rem] flex justify-center items-center">
