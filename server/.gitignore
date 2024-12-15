@@ -5,7 +5,6 @@
 /gradlink-433507-07f3fdf543d6.json
 /build
 *.tar
-*.sh
 # /dockerfile
 # /docker-compose.yml
 # /backup.sh
