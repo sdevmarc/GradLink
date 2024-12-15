@@ -32,7 +32,7 @@ export function DataTableToolbarAlumni<TData>({
     isSync
 }: DataTableToolbarProps<TData>) {
     const navigate = useNavigate()
-    const isFiltered = table.getState().columnFilters.length > 0
+    const isFiltered = table.getState().columnFilters.length > 0 || !!table.getState().globalFilter;
     const [formattedprogram, setFormattedProgram] = useState<ProgramOption[]>([]);
     const [filteredYearsGraduated, setFilteredYearsGraduated] = useState<{ label: string, value: string }[]>([])
 
@@ -87,14 +87,13 @@ export function DataTableToolbarAlumni<TData>({
             <div className="flex flex-1 flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
                     <Input
-                        placeholder="Search ID Number"
-                        value={(table.getColumn("idNumber")?.getFilterValue() as string) ?? ""}
+                        placeholder="Search alumni..."
+                        value={(table.getState().globalFilter as string) ?? ""}
                         onChange={(event) => {
-                            table.getColumn("idNumber")?.setFilterValue(event.target.value)
+                            table.setGlobalFilter(event.target.value);
                         }}
-                        className="h-8 w-[17rem] lg:w-[20rem]"
+                        className="h-8 w-[20rem] lg:w-[25rem]"
                     />
-
                     <div className="flex items-center gap-2">
                         {table.getColumn("department") && (
                             <DataTableFacetedFilter
@@ -130,7 +129,10 @@ export function DataTableToolbarAlumni<TData>({
                 {isFiltered && (
                     <Button
                         variant="ghost"
-                        onClick={() => table.resetColumnFilters()}
+                        onClick={() => {
+                            table.resetColumnFilters()
+                            table.setGlobalFilter('')
+                        }}
                         className="h-8 px-2 lg:px-3"
                         size={`sm`}
                     >

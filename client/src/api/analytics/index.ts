@@ -16,3 +16,13 @@ export const API_ANALYTICS_COMMON_REASONS = async ({ reason }: { reason?: string
     }, { withCredentials: true })
     return response.data
 }
+
+export const API_OVERVIEW_COURSE_RELATED = async () => {
+    const response = await axios.get(`${HOST}/student/alumni-click-course-related`, { withCredentials: true })
+    return response.data
+}
+
+export const API_OVERVIEW_LAND_JOB = async () => {
+    const response = await axios.get(`${HOST}/student/alumni-click-land-job`, { withCredentials: true })
+    return response.data
+}

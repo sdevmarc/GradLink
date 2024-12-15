@@ -6,7 +6,6 @@ import * as React from "react"
 import {
     ColumnDef,
     ColumnFiltersState,
-    FilterFn,
     SortingState,
     VisibilityState,
     flexRender,
@@ -25,57 +24,19 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { DataTableToolbarAlumni } from './data-table-toolbar-alumni'
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
-    data: TData[],
-    isSync: boolean
+    data: TData[]
 }
 
-const globalFilterFn: FilterFn<any> = (row, columnId, filterValue) => {
-    // Split the input into keywords
-    const keywords = filterValue.toLowerCase().split(' ').filter(Boolean);
-
-    // Collect the values from the columns you want to search
-    const rowValues = [
-        row.getValue('idNumber')?.toString().toLowerCase(),
-        row.getValue('lastname')?.toString().toLowerCase(),
-        row.getValue('firstname')?.toString().toLowerCase(),
-        row.getValue('middlename')?.toString().toLowerCase(),
-        row.getValue('email')?.toString().toLowerCase(),
-        row.getValue('academicYear')?.toString().toLowerCase(),
-        row.getValue('program')?.toString().toLowerCase(),
-        row.getValue('department')?.toString().toLowerCase(),
-        row.getValue('currentJobLevel')?.toString().toLowerCase(),
-        // Add other columns as needed
-    ];
-
-    // Check if every keyword is present in any of the row values
-    return keywords.every((keyword: string) =>
-        rowValues.some(value => value?.includes(keyword))
-    );
-};
-
-export function DataTableStudentAlumni<TData, TValue>({
+export function DataTableOverview<TData, TValue>({
     columns,
-    data,
-    isSync
+    data
 }: DataTableProps<TData, TValue>) {
-    const [globalFilter, setGlobalFilter] = React.useState('')
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
-        program: false,
-        totalOfUnitsEnrolled: false,
-        totalOfUnitsEarned: false,
-        email: false,
-        lastname: false,
-        firstname: false,
-        middlename: false,
-        department: false,
-        currentJobLevel: false
-    })
+    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState({})
 
     const table = useReactTable({
@@ -90,19 +51,15 @@ export function DataTableStudentAlumni<TData, TValue>({
         onColumnVisibilityChange: setColumnVisibility,
         onRowSelectionChange: setRowSelection,
         state: {
-            globalFilter,
             sorting,
             columnFilters,
             columnVisibility,
             rowSelection,
         },
-        onGlobalFilterChange: setGlobalFilter, // Add this line
-        globalFilterFn,
     })
 
     return (
         <div className="w-full flex flex-col gap-4">
-            <DataTableToolbarAlumni isSync={isSync} table={table} />
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>

@@ -1,6 +1,6 @@
 const { VITE_API_HOST, VITE_API_MAP_DEV } = import.meta.env
 
-export const HOST = VITE_API_HOST
+export const HOST = VITE_API_HOST || 'http://localhost:3002'
 export const MAPKEY = VITE_API_MAP_DEV
 
 export const ROUTES = {

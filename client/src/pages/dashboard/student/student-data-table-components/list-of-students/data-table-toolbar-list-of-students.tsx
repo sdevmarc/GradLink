@@ -29,7 +29,7 @@ interface ProgramOption {
 export function DataTableToolbarListOfStudent<TData>({
     table
 }: DataTableToolbarProps<TData>) {
-    const isFiltered = table.getState().columnFilters.length > 0;
+    const isFiltered = table.getState().columnFilters.length > 0 || !!table.getState().globalFilter;
     const navigate = useNavigate()
     // const [formattedprogram, setFormattedProgram] = useState<ProgramOption[]>([]);
     // const [filteredPrograms, setFilteredPrograms] = useState<ProgramOption[]>([]);
@@ -168,12 +168,12 @@ export function DataTableToolbarListOfStudent<TData>({
         <div className="flex flex-wrap items-center justify-between">
             <div className="flex flex-1 flex-wrap items-center gap-2">
                 <Input
-                    placeholder="Search ID Number..."
-                    value={(table.getColumn("idNumber")?.getFilterValue() as string) ?? ""}
+                    placeholder="Search student..."
+                    value={(table.getState().globalFilter as string) ?? ""}
                     onChange={(event) => {
-                        table.getColumn("idNumber")?.setFilterValue(event.target.value);
+                        table.setGlobalFilter(event.target.value);
                     }}
-                    className="h-8 w-[250px] lg:w-[300px]"
+                    className="h-8 w-[20rem] lg:w-[25rem]"
                 />
                 {/* <Input
                     placeholder="Search ID Number or Lastname..."
@@ -207,19 +207,13 @@ export function DataTableToolbarListOfStudent<TData>({
                         options={status_options}
                     />
                 )}
-                {/* <CalendarDatePicker
-                    date={dateRange || {
-                        from: new Date(new Date().getFullYear(), 0, 1),
-                        to: new Date()
-                    }}
-                    onDateSelect={handleDateSelect}
-                    className="w-[200px] h-8"
-                    variant={`outline`}
-                /> */}
                 {isFiltered && !hasUserDepartment && (
                     <Button
                         variant="ghost"
-                        onClick={() => table.resetColumnFilters()}
+                        onClick={() => {
+                            table.resetColumnFilters()
+                            table.setGlobalFilter('')
+                        }}
                         className="h-8 px-2 lg:px-3"
                         size={`sm`}
                     >

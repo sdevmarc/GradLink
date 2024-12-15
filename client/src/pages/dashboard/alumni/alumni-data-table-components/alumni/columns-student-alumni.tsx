@@ -64,7 +64,11 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
                     {row.getValue("idNumber") ? row.getValue("idNumber") : 'LEGACY'}
                 </Badge>
             </div>
-        )
+        ),
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id));
+        },
+        enableColumnFilter: true
     },
     {
         id: "fullname",
@@ -83,8 +87,10 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
                 </div>
             )
         },
-        enableColumnFilter: true,
-        filterFn: "includesString"
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id));
+        },
+        enableColumnFilter: true
     },
     {
         accessorKey: "lastname",
@@ -100,8 +106,10 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
                 </div>
             )
         },
-        enableColumnFilter: true,
-        filterFn: "includesString"
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id));
+        },
+        enableColumnFilter: true
     },
     {
         accessorKey: "firstname",
@@ -117,8 +125,10 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
                 </div>
             )
         },
-        enableColumnFilter: true,
-        filterFn: "includesString"
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id));
+        },
+        enableColumnFilter: true
     },
     {
         accessorKey: "middlename",
@@ -135,7 +145,11 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
                     </span>
                 </div>
             )
-        }
+        },
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id));
+        },
+        enableColumnFilter: true
     },
     {
         accessorKey: "email",
@@ -151,7 +165,10 @@ export const StudentAlumniColumns: ColumnDef<IAPIStudents>[] = [
                 </div>
             )
         },
-        enableSorting: false,
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id));
+        },
+        enableColumnFilter: true
     },
     {
         accessorKey: "programCode",

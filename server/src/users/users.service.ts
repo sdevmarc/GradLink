@@ -114,8 +114,8 @@ export class UsersService {
 
     async updateUser({ id, name, email, role, department }: IUsers): Promise<IPromiseUser> {
         try {
-            const isemail = await this.UserModel.findOne({ email })
-            if (isemail) return { success: false, message: 'Email already exists.' }
+            // const isemail = await this.UserModel.findOne({ email })
+            // if (isemail) return { success: false, message: 'Email already exists.' }
 
             await this.UserModel.findByIdAndUpdate(
                 id,

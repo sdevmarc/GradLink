@@ -29,9 +29,8 @@ interface ProgramOption {
 export function DataTableToolbarCoursesOfferedInEnrollment<TData>({
     table,
 }: DataTableToolbarProps<TData>) {
-    const isFiltered = table.getState().columnFilters.length > 0
+    const isFiltered = table.getState().columnFilters.length > 0 || !!table.getState().globalFilter;
     const navigate = useNavigate()
-    // const [formattedprogram, setFormattedProgram] = useState<ProgramOption[]>([]);
     const [filteredPrograms, setFilteredPrograms] = useState<ProgramOption[]>([]);
 
     const department_options = [
@@ -66,53 +65,17 @@ export function DataTableToolbarCoursesOfferedInEnrollment<TData>({
         }
     }, [program])
 
-    // useEffect(() => {
-    //     const selectedDepartment = table.getColumn("department")?.getFilterValue() as string[];
-
-    //     if (selectedDepartment && selectedDepartment.length > 0) {
-    //         const filtered = formattedprogram.filter((prog: any) =>
-    //             selectedDepartment.includes(prog.department)
-    //         );
-    //         setFilteredPrograms(filtered);
-
-    //         // Clear program filter if selected program is not in filtered list
-    //         const currentProgramFilter = table.getColumn("program")?.getFilterValue() as string[];
-    //         if (currentProgramFilter && currentProgramFilter.length > 0) {
-    //             const validPrograms = filtered.map(p => p.value);
-    //             const newProgramFilter = currentProgramFilter.filter(p =>
-    //                 validPrograms.includes(p)
-    //             );
-    //             if (newProgramFilter.length !== currentProgramFilter.length) {
-    //                 table.getColumn("program")?.setFilterValue(newProgramFilter);
-    //             }
-    //         }
-    //     } else {
-    //         setFilteredPrograms(formattedprogram);
-    //     }
-    // }, [table.getColumn("department")?.getFilterValue()]);
-
     return (
         <div className="flex flex-wrap items-center justify-between">
             <div className="flex flex-1 flex-wrap items-center gap-2">
                 <Input
                     placeholder="Search course..."
-                    value={(table.getColumn("courseno")?.getFilterValue() as string) ?? ""}
+                    value={(table.getState().globalFilter as string) ?? ""}
                     onChange={(event) => {
-                        table.getColumn("courseno")?.setFilterValue(event.target.value);
+                        table.setGlobalFilter(event.target.value);
                     }}
-                    className="h-8 w-[17rem] lg:w-[20rem]"
+                    className="h-8 w-[20rem] lg:w-[25rem]"
                 />
-                {isFiltered && (
-                    <Button
-                        variant="ghost"
-                        onClick={() => table.resetColumnFilters()}
-                        className="h-8 px-2 lg:px-3"
-                        size={`sm`}
-                    >
-                        Reset
-                        <Cross2Icon className="ml-2 h-4 w-4" />
-                    </Button>
-                )}
                 {table.getColumn("department") && (
                     <DataTableFacetedFilter
                         column={table.getColumn("department")}
@@ -126,6 +89,20 @@ export function DataTableToolbarCoursesOfferedInEnrollment<TData>({
                         title="Program"
                         options={filteredPrograms}
                     />
+                )}
+                {isFiltered && (
+                    <Button
+                        variant="ghost"
+                        onClick={() => {
+                            table.resetColumnFilters()
+                            table.setGlobalFilter('')
+                        }}
+                        className="h-8 px-2 lg:px-3"
+                        size={`sm`}
+                    >
+                        Reset
+                        <Cross2Icon className="ml-2 h-4 w-4" />
+                    </Button>
                 )}
             </div>
             {
