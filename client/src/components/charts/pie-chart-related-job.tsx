@@ -32,7 +32,7 @@ const chartConfig: ChartConfig = {
     'No': { label: 'No', color: 'hsl(var(--chart-2))' },
 } satisfies ChartConfig;
 
-export function PieChartRelatedJob({ data }: { data: IData[], isClickCell?: (e: boolean) => void }) {
+export function PieChartRelatedJob({ data, isClickCell }: { data: IData[], isClickCell: (e: boolean) => void }) {
     // Map the data to the format required by the chart
     const chartData = React.useMemo(() => {
         if (data && data.length > 0) {
@@ -90,7 +90,7 @@ export function PieChartRelatedJob({ data }: { data: IData[], isClickCell?: (e: 
                                     className="hover:cursor-pointer"
                                     key={`cell-${index}`}
                                     fill={chartConfig[entry.key]?.color || '#000000'}
-                                // onClick={() => isClickCell(true)}
+                                onClick={() => isClickCell(true)}
                                 />
                             ))}
                             <Label
