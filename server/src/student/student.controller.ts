@@ -42,6 +42,16 @@ export class StudentController {
         return this.studentService.findAllAlumniTrashed()
     }
 
+    @Get('alumni-click-land-job')
+    async findAllAlumniLandJob() {
+        return this.studentService.findAllAlumniPostGradLandJob()
+    }
+
+    @Get('alumni-click-course-related')
+    async findAllAlumniCourserelated() {
+        return this.studentService.findAllAlumniPostGradCourseRelatedToJob()
+    }
+
     @Post('employment-analytics')
     async findStatisticsForEmployment(@Body() { department, program, academicYear }: { department?: string, program?: string, academicYear?: string }) {
         return this.studentService.findTracerAnalytics({ department, program, academicYear })
