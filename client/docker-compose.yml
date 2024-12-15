@@ -3,13 +3,11 @@ services:
   client:
     build:
       context: .
-      dockerfile: Dockerfile
-      # Here we specify build-time args
-      args:
-        VITE_API_MAP_DEV: "pk.eyJ1IjoieW91cnBhcmVuZ2VkaXNvbiIsImEiOiJjbTMyem81MHoxOTZzMmxzNDNwNXB4YmM4In0.YjqdD5S9U-Cw9kASDpJGVA"
-        VITE_API_HOST: "http://localhost:3002"
-    image: gradlink-client-image
+    image: gradlink-client-image:1.0.0
     container_name: gradlink-client-container
+    # Map port 8080 on the host to 80 in the container
     ports:
-      - "3001:80"
+      - "80:80"
+    env_file: 
+      - .env  # Path to your .env file
     restart: always
