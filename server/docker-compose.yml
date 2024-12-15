@@ -20,11 +20,14 @@ services:
     restart: always
 
   mongodb:
-    image: mongo:5
+    # image: mongo:5
+    image: docker.io/library/mongo:5
     container_name: gradlink-mongodb-container
     ports:
       - "27017:27017"
     command: ["mongod", "--auth"]
+    env_file:
+      - .env
     volumes:
       - mongo-data:/data/db
     restart: always
