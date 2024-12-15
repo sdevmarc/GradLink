@@ -60,7 +60,11 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                     {row.getValue("idNumber")}
                 </Badge>
             </div>
-        )
+        ),
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id));
+        },
+        enableColumnFilter: true
     },
     {
         id: "fullname",
@@ -78,9 +82,7 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                     </span>
                 </div>
             )
-        },
-        enableColumnFilter: true,
-        filterFn: "includesString"
+        }
     },
     {
         accessorKey: "lastname",
@@ -96,8 +98,10 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                 </div>
             )
         },
-        enableColumnFilter: true,
-        filterFn: "includesString"
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id));
+        },
+        enableColumnFilter: true
     },
     {
         accessorKey: "firstname",
@@ -113,8 +117,10 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                 </div>
             )
         },
-        enableColumnFilter: true,
-        filterFn: "includesString"
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id));
+        },
+        enableColumnFilter: true
     },
     {
         accessorKey: "middlename",
@@ -131,7 +137,11 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                     </span>
                 </div>
             )
-        }
+        },
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id));
+        },
+        enableColumnFilter: true
     },
     {
         accessorKey: "email",
@@ -147,7 +157,10 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                 </div>
             )
         },
-        enableSorting: false,
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id));
+        },
+        enableColumnFilter: true
     },
     {
         accessorKey: "programCode",
@@ -184,6 +197,10 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
                 </div>
             )
         },
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id));
+        },
+        enableColumnFilter: true
     },
     {
         accessorKey: "program",
@@ -228,15 +245,6 @@ export const StudentListOfStudentsColumns: ColumnDef<IAPIStudents>[] = [
         enableHiding: true,
         enableSorting: false,
     },
-    // {
-    //     accessorKey: 'search',
-    //     header: 'Search',
-    //     filterFn: (row, columnId, filterValue) => {
-    //         const id = row.getValue('id');
-    //         const lastName = row.getValue('lastName');
-    //         return (id as string).includes(filterValue) || lastName.toLowerCase().includes(filterValue.toLowerCase());
-    //     },
-    // },
     {
         id: "actions",
         cell: ({ row }) => {
