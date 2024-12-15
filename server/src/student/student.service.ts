@@ -23,6 +23,124 @@ export class StudentService {
         private readonly cloudinaryService: CloudinaryService
     ) { }
 
+    async findAllAlumniPostGradCourseRelatedToJob(): Promise<IPromiseStudent> {
+        try {
+            const response = await this.studentModel.aggregate([
+                {
+                    $match: {
+                        status: 'alumni'
+                    }
+                },
+                { $unwind: '$employmentData.questions' },
+                {
+                    $match: {
+                        'employmentData.questions.question': '20. Is your first job related to the course you took up in college?'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'curriculums', // Make sure this matches your Curriculum collection name
+                        localField: 'program',
+                        foreignField: '_id',
+                        as: 'programInfo'
+                    }
+                },
+                { $unwind: '$programInfo' },
+                {
+                    $lookup: {
+                        from: 'programs', // Make sure this matches your Program collection name
+                        localField: 'programInfo.programid',
+                        foreignField: '_id',
+                        as: 'programDetails'
+                    }
+                },
+                { $unwind: '$programDetails' },
+                {
+                    // Exclude those who have YearGraduated as "None"
+                    $match: {
+                        'undergraduateInformation.yearGraduated': { $ne: 'None' }
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        idNumber: 1,
+                        email: 1,
+                        name: { $concat: ['$firstname', ' ', '$lastname'] },
+                        program: '$programDetails.descriptiveTitle',
+                        YearGraduated: '$undergraduateInformation.yearGraduated'
+                    }
+                }
+            ]).sort({ _id: -1 });
+
+            return { success: true, message: 'Alumni fetched successfully.', data: response };
+        } catch (error) {
+            throw new HttpException(
+                { success: false, message: 'Failed to fetch alumni.', error: error.message },
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    async findAllAlumniPostGradLandJob(): Promise<IPromiseStudent> {
+        try {
+            const response = await this.studentModel.aggregate([
+                {
+                    $match: {
+                        status: 'alumni'
+                    }
+                },
+                { $unwind: '$employmentData.questions' },
+                {
+                    $match: {
+                        'employmentData.questions.question': '21. How long did it take you to land your first job?'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'curriculums', // Make sure this matches your Curriculum collection name
+                        localField: 'program',
+                        foreignField: '_id',
+                        as: 'programInfo'
+                    }
+                },
+                { $unwind: '$programInfo' },
+                {
+                    $lookup: {
+                        from: 'programs', // Make sure this matches your Program collection name
+                        localField: 'programInfo.programid',
+                        foreignField: '_id',
+                        as: 'programDetails'
+                    }
+                },
+                { $unwind: '$programDetails' },
+                {
+                    // Exclude those who have YearGraduated as "None"
+                    $match: {
+                        'undergraduateInformation.yearGraduated': { $ne: 'None' }
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        idNumber: 1,
+                        email: 1,
+                        name: { $concat: ['$firstname', ' ', '$lastname'] },
+                        program: '$programDetails.descriptiveTitle',
+                        YearGraduated: '$undergraduateInformation.yearGraduated'
+                    }
+                }
+            ]).sort({ _id: -1 });
+
+            return { success: true, message: 'Alumni fetched successfully.', data: response };
+        } catch (error) {
+            throw new HttpException(
+                { success: false, message: 'Failed to fetch alumni.', error: error.message },
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
     async findAllAlumniTrashed(): Promise<IPromiseStudent> {
         try {
             const response = await this.studentModel.aggregate([
