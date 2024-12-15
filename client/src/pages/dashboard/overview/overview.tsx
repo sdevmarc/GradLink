@@ -207,7 +207,7 @@ export default function Overview() {
                 variant={`default`}
                 btnContinue={() => setAlertDialogState(prev => ({ ...prev, show: false }))}
             />
-            {/* <SheetModal
+            <SheetModal
                 className="w-[60%] overflow-auto"
                 isOpen={isClickCell}
                 onOpenChange={(e: boolean) => setClickCell(e)}
@@ -288,7 +288,7 @@ export default function Overview() {
                         </div>
                     </div>
                 }
-            /> */}
+            />
             <AlertDialogConfirmation
                 isDialog={dialogchangepassword}
                 setDialog={(e) => setDialogChangePassword(e)}
@@ -427,9 +427,9 @@ export default function Overview() {
                                     (!tracerresponseLoading && tracerresponseFetched) &&
                                         (tracerresponse?.data?.analytics?.timeToLandJob?.length > 0 || tracerresponse?.data?.analytics?.courseRelatedJob?.length > 0 || tracerresponse?.data?.graduateStats?.length > 0) ?
                                         <div className="w-full flex items-center justify-center gap-2 flex-wrap">
-                                            <PieChartLandJob data={tracerresponse?.data?.analytics?.timeToLandJob} />
-                                            <PieChartGraduated data={tracerresponse?.data?.graduateStats} />
-                                            <PieChartRelatedJob data={tracerresponse?.data?.analytics?.courseRelatedJob} />
+                                            <PieChartLandJob isClickCell={(e: boolean) => setClickCell(e)} data={tracerresponse?.data?.analytics?.timeToLandJob} />
+                                            <PieChartGraduated isClickCell={(e: boolean) => setClickCell(e)} data={tracerresponse?.data?.graduateStats} />
+                                            <PieChartRelatedJob isClickCell={(e: boolean) => setClickCell(e)} data={tracerresponse?.data?.analytics?.courseRelatedJob} />
                                         </div>
                                         :
                                         <div className="pt-[7rem] pb-[1rem] flex justify-center items-center">
