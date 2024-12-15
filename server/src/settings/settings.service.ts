@@ -47,34 +47,4 @@ export class SettingsService {
             );
         }
     }
-
-    async restoreDatabase(): Promise<IPromiseSettings> {
-        try {
-            // Define the command to run the restore.sh script
-            const command = 'docker exec -it server-nestjs-1 sh restore.sh';
-
-            // Execute the command using execAsync (promisified version of exec)
-            const { stdout, stderr } = await execAsync(command);
-
-            console.log(stdout)
-
-            return { success: true, message: 'Database restored successfully!' }
-
-            //   // Log standard output and errors (if any)
-            //   if (stdout) {
-            //     this.logger.log(`Restore Output: ${stdout}`);
-            //   }
-
-            //   if (stderr) {
-            //     this.logger.warn(`Restore Errors/Warnings: ${stderr}`);
-            //   }
-
-            //   this.logger.log('Database restore completed successfully');
-        } catch (error) {
-            throw new HttpException(
-                { success: false, message: 'Failed to restore database.', error },
-                HttpStatus.INTERNAL_SERVER_ERROR
-            );
-        }
-    }
 }
