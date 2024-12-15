@@ -1,23 +1,15 @@
-FROM node:18-alpine AS build
+FROM docker.io/nginx:alpine
 
-WORKDIR /app
-
-ARG VITE_API_MAP_DEV
-ARG VITE_API_HOST
-
-ENV VITE_API_MAP_DEV=$VITE_API_MAP_DEV
-ENV VITE_API_HOST=$VITE_API_HOST
-
-COPY package*.json ./
-RUN npm install
-
-COPY . .
-RUN npm run build
-
-FROM nginx:alpine
+# Clean the default Nginx HTML directory
 RUN rm -rf /usr/share/nginx/html/*
-COPY --from=build /app/dist /usr/share/nginx/html
+
+# Copy the pre-built dist folder into the Nginx directory
+COPY dist /usr/share/nginx/html
+
+# Copy .env if required for runtime (e.g., dynamic configuration)
+COPY .env /usr/share/nginx/html/.env
 
 EXPOSE 80
 
+# Start Nginx
 CMD ["nginx", "-g", "daemon off;"]
