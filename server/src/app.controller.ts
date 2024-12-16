@@ -19,6 +19,8 @@ export class AppController {
     async getStatus(@Req() request: Request) {
         const token = request.cookies['access_token'];
 
+        console.log('The token: ', token)
+
         if (!token) {
             return { isAuthenticated: false };
         }
