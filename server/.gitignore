@@ -12,6 +12,10 @@
 # /cronjob
 # /vercel.json
 *.xml
+serverless-state.json
+cloudformation-template-update-stack.json
+*.zip
+meta.json
 
 # Logs
 logs
