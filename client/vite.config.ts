@@ -13,17 +13,9 @@ export default defineConfig({
         },
     },
     build: {
-        outDir: "dist", // Optional: Output directory
-        sourcemap: true, // Always generate sourcemaps for debugging
-        rollupOptions: {
-            output: {
-                sourcemap: true, // Explicitly set sourcemaps in Rollup config
-            },
-        },
-        commonjsOptions: {
-            sourceMap: true, // Ensure sourcemaps are built for CJS dependencies
-        },
-    },
+        sourcemap: process.env.NODE_ENV !== "production", // Enable sourcemaps only in development
+      },
+      
     resolve: {
         alias: {
             "@": path.resolve(__dirname, "./src"),
