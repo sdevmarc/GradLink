@@ -11,6 +11,7 @@
 # /restore.sh
 # /cronjob
 /vercel.json
+*.xml
 
 # Logs
 logs
