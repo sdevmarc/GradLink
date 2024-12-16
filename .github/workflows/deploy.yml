@@ -8,54 +8,40 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
-      # Step 1: Checkout Code
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Step 2: Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
 
-      # Step 3: Login to Azure
       - name: Login to Azure
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # Step 4: Install Dependencies
-      - name: Install Dependencies
+      # Build locally only for validation (optional)
+      # This ensures dist/ is present. 
+      - name: Install and Build Locally
         working-directory: server
-        run: npm install
+        run: |
+          npm install
+          npm run build
 
-      # Step 5: Build the Application
-      - name: Build Application
-        working-directory: server
-        run: npm run build
-
-      # Step 6: Prepare Deployment Package
+      # Prepare minimal deployment package
       - name: Prepare Deployment Package
         working-directory: server
         run: |
           mkdir -p ../deploy-package
-          cp -R dist node_modules package.json package-lock.json ../deploy-package
+          cp -R dist package.json package-lock.json ../deploy-package
 
-      # Step 7: Set Custom Startup Command
-      - name: Set Custom Startup Command
-        run: |
-          az webapp config set \
-          --resource-group gradlink-group \
-          --name gradlink-server \
-          --startup-file "node dist/main"
-
-      # Step 8: Deploy to Azure Web App
+      # Deploy the minimal package
+      # Without node_modules, Azure will run npm install automatically due to SCM_DO_BUILD_DURING_DEPLOYMENT
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'gradlink-server'
-          slot-name: production
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./server
+          package: deploy-package
