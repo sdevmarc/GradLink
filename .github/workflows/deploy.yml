@@ -23,14 +23,21 @@ jobs:
       # Install dependencies
       - name: Install Dependencies
         working-directory: server
-        run: |
-          npm install
+        run: npm install
 
       # Build the application
       - name: Build Application
         working-directory: server
+        run: npm run build
+
+      # Archive the build output into a zip file
+      - name: Archive Build Output
+        working-directory: server
         run: |
-          npm run build
+          mkdir -p ../deploy-package
+          cp -R dist node_modules package.json ../deploy-package
+          cd ../deploy-package
+          zip -r ../deploy-package.zip .
 
       # Deploy to Azure Web App
       - name: Deploy to Azure Web App
@@ -39,4 +46,4 @@ jobs:
           app-name: 'gradlink-server'
           slot-name: production
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./server
+          package: deploy-package.zip
