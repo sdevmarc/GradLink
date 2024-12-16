@@ -3,34 +3,42 @@ name: Deploy to Azure Web App
 on:
   push:
     branches:
-      - main  # Trigger the workflow when the main branch is updated
+      - main
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the repository
+      # Step 1: Checkout Code
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Setup Node.js
+      # Step 2: Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
 
-      # Install dependencies
+      # Step 3: Install Dependencies
       - name: Install Dependencies
         working-directory: server
         run: npm install
 
-      # Build the application
+      # Step 4: Build the Application
       - name: Build Application
         working-directory: server
         run: npm run build
 
-      # Deploy to Azure Web App
+      # Step 5: Set Custom Startup Command
+      - name: Set Custom Startup Command
+        run: |
+          az webapp config set \
+          --resource-group gradlink-group \
+          --name gradlink-server \
+          --startup-file "node dist/main"
+
+      # Step 6: Deploy to Azure Web App
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
