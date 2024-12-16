@@ -3,10 +3,18 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "tailwindcss";
 
+// Custom plugin to normalize import case
+function normalizeImports() {
+    return {
+      name: "vite:normalize-imports",
+      resolveId(source) {
+        return source.toLowerCase(); // Normalize to lowercase
+      },
+    };
+  }
+
 export default defineConfig({
-    plugins: [
-        react()
-    ],
+    plugins: [react(), normalizeImports()],
     css: {
         postcss: {
             plugins: [tailwindcss()],
