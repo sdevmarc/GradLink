@@ -84,7 +84,7 @@ export class MailService {
 </html>
             `;
 
-            const responses = await Promise.all(email.map(async (recipient) =>
+            await Promise.all(email.map(async (recipient) =>
                 await this.mailService.sendMail({
                     to: recipient,
                     subject: `Can I take a minute of your time? 😞`,
@@ -92,7 +92,7 @@ export class MailService {
                 })
             ));
 
-            return { success: true, message: 'Email sent successfully!', data: responses }
+            return { success: true, message: 'Email sent successfully!' }
         } catch (error) {
             throw new HttpException({ success: false, message: 'Email failed to send.', error }, HttpStatus.INTERNAL_SERVER_ERROR)
         }
