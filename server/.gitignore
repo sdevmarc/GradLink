@@ -10,7 +10,7 @@
 # /backup.sh
 # /restore.sh
 # /cronjob
-/vercel.json
+# /vercel.json
 *.xml
 
 # Logs
