@@ -29,16 +29,13 @@ jobs:
       - name: Build Application
         working-directory: server
         run: npm run build
-
-      # Archive the build output into a zip file
-      - name: Prepare Deployment Package
-        working-directory: server
+        
+      - name: Set Custom Startup Command
         run: |
-          mkdir -p ../deploy-package
-          cp -R dist node_modules package.json package-lock.json ../deploy-package
-          cd ../deploy-package
-          zip -r $GITHUB_WORKSPACE/deploy-package.zip .
- 
+          az webapp config set \
+          --resource-group gradlink-group \
+          --name gradlink-server \
+          --startup-file "node dist/main"
 
       # Deploy to Azure Web App
       - name: Deploy to Azure Web App
@@ -47,4 +44,7 @@ jobs:
           app-name: 'gradlink-server'
           slot-name: production
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: deploy-package.zip
+          package: server
+
+      
+  
