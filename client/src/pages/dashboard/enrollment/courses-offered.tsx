@@ -4,7 +4,7 @@ import { CoursesOfferedInEnrollmentColumns } from "./enrollment-data-table-compo
 import { useQuery } from "@tanstack/react-query"
 import { API_FINDALL_COURSES_OFFERED } from "@/api/offered"
 import MainTable from "@/components/main-table"
-import { Sidebar, SidebarNavs } from "@/components/Sidebar"
+import { Sidebar, SidebarNavs } from "@/components/sidebar"
 import { ROUTES } from "@/constants"
 import { AuthContext } from "@/hooks/AuthContext"
 import { useContext, useEffect } from "react"
