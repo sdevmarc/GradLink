@@ -36,7 +36,14 @@ jobs:
         working-directory: server
         run: npm run build
 
-      # Step 6: Set Custom Startup Command
+      # Step 6: Prepare Deployment Package
+      - name: Prepare Deployment Package
+        working-directory: server
+        run: |
+          mkdir -p ../deploy-package
+          cp -R dist node_modules package.json package-lock.json ../deploy-package
+
+      # Step 7: Set Custom Startup Command
       - name: Set Custom Startup Command
         run: |
           az webapp config set \
@@ -44,10 +51,10 @@ jobs:
           --name gradlink-server \
           --startup-file "node dist/main"
 
-      # Step 7: Deploy to Azure Web App
+      # Step 8: Deploy to Azure Web App
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'gradlink-server'
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: server
+          package: deploy-package
