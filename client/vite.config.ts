@@ -11,11 +11,11 @@ export default defineConfig({
       plugins: [tailwindcss()],
     },
   },
-  build: {
-    outDir: 'dist', // Default output directory
-    // sourcemap: true, // Ensure sourcemaps are generated
-    sourcemap: process.env.NODE_ENV !== 'production', // Disable sourcemaps in production
-  },
+  // build: {
+  //   outDir: 'dist', // Default output directory
+  //   sourcemap: true, // Ensure sourcemaps are generated
+  //   // sourcemap: process.env.NODE_ENV !== 'production', // Disable sourcemaps in production
+  // },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
