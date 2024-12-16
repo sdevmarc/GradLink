@@ -56,7 +56,8 @@ export default function Overview() {
 
     const { data: checkpassword, isLoading: checkpasswordLoading, isFetched: checkpasswordFetched } = useQuery({
         queryFn: () => API_USER_CHECK_DEFAULT_PASSWORD(),
-        queryKey: ['checkpassword']
+        queryKey: ['checkpassword'],
+        enabled: isAuthenticated === true
     })
 
     useEffect(() => {
@@ -71,12 +72,14 @@ export default function Overview() {
 
     const { data: programs, isLoading: programsLoading, isFetched: programsFetched } = useQuery({
         queryFn: () => API_PROGRAM_FINDALL(),
-        queryKey: ['programs']
+        queryKey: ['programs'],
+        enabled: isAuthenticated === true
     })
 
     const { data: yearsGraduations, isLoading: yearsgraduateLoading, isFetched: yearsgraduatedFetched } = useQuery({
         queryFn: () => API_STUDENT_YEARS_GRADUATED(),
-        queryKey: ['years']
+        queryKey: ['years'],
+        enabled: isAuthenticated === true
     })
 
     const department_options = [
@@ -88,12 +91,14 @@ export default function Overview() {
 
     const { data: tracerresponse, isLoading: tracerresponseLoading, isFetched: tracerresponseFetched } = useQuery({
         queryFn: () => API_ANALYTICS_EMPLOYMENT({ department, program, academicYear: yearGraduated }),
-        queryKey: ['analytics', { department, program, academicYear: yearGraduated }]
+        queryKey: ['analytics', { department, program, academicYear: yearGraduated }],
+        enabled: isAuthenticated === true
     })
 
     const { data: coomonreasons, isLoading: coomonreasonsLoading, isFetched: coomonreasonsFetched } = useQuery({
         queryFn: () => API_ANALYTICS_COMMON_REASONS({ reason: commonreason }),
-        queryKey: ['analytics', { reason: commonreason }]
+        queryKey: ['analytics', { reason: commonreason }],
+        enabled: isAuthenticated === true
     })
 
     useEffect(() => {
@@ -120,13 +125,13 @@ export default function Overview() {
     const { data: courseclickcell, isLoading: courseclickcellLoading, isFetched: courseclickcellFetched } = useQuery({
         queryFn: () => API_OVERVIEW_COURSE_RELATED(),
         queryKey: ['overviewcourserelated'],
-        enabled: isClickCellCourseRelated
+        enabled: isAuthenticated === true && isClickCellCourseRelated
     })
 
     const { data: landjobcliclcell, isLoading: landjobcliclcellLoading, isFetched: landjobcliclcellFetched } = useQuery({
         queryFn: () => API_OVERVIEW_LAND_JOB(),
         queryKey: ['overviewlandjob'],
-        enabled: isClickCellJobAcquisition
+        enabled: isAuthenticated === true && isClickCellJobAcquisition
     })
 
     const { mutateAsync: changepassword, isPending: changepasswordPending } = useMutation({
