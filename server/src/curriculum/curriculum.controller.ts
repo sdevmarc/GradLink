@@ -7,7 +7,7 @@ import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
 
 @Controller('curriculum')
-@UseGuards(AuthGuard)
+// @UseGuards(AuthGuard)
 export class CurriculumController {
     constructor(
         private readonly CurriculumService: CurriculumService,

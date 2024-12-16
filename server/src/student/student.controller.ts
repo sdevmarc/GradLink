@@ -11,7 +11,7 @@ import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
 
 @Controller('student')
-@UseGuards(AuthGuard)
+// @UseGuards(AuthGuard)
 export class StudentController {
     constructor(
         private readonly studentService: StudentService,

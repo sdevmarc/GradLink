@@ -4,7 +4,7 @@ import { IOffered } from './offered.interface';
 import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('offered')
-@UseGuards(AuthGuard)
+// @UseGuards(AuthGuard)
 export class OfferedController {
     constructor(
         private readonly offeredService: OfferedService

@@ -15,13 +15,13 @@ export class UsersController {
         private readonly mailService: MailService
     ) { }
 
-    @UseGuards(AuthGuard)
+    // @UseGuards(AuthGuard)
     @Get()
     async FindAllUsers() {
         return this.usersService.findAll()
     }
 
-    @UseGuards(AuthGuard)
+    // @UseGuards(AuthGuard)
     @Get('get-user')
     async findOneUser(@Req() request: Request) {
         const token = request.cookies['access_token'];
@@ -40,7 +40,7 @@ export class UsersController {
         }
     }
 
-    @UseGuards(AuthGuard)
+    // @UseGuards(AuthGuard)
     @Get('check-default-password')
     async checkUserDefaultPassword(
         @Req() request: Request,
@@ -60,13 +60,13 @@ export class UsersController {
         }
     }
 
-    @UseGuards(AuthGuard)
+    // @UseGuards(AuthGuard)
     @Post('check-password')
     async checkPassword(@Body() { id, password }: { id: string, password: string }) {
         return this.usersService.checkPassword({ id, password })
     }
 
-    @UseGuards(AuthGuard)
+    // @UseGuards(AuthGuard)
     @Post('change-default-password')
     async changeUserDefaultPassword(
         @Body() { password }: { password: string },
@@ -86,38 +86,38 @@ export class UsersController {
         }
     }
 
-    @UseGuards(AuthGuard)
+    // @UseGuards(AuthGuard)
     @Post('change-password')
     async changePassword(@Body() { id, password }: { id: string, password: string }) {
         return this.usersService.updatePassword({ id, password })
     }
 
-    // @UseGuards(AuthGuard)
+    @UseGuards(AuthGuard)
     @Post('change-forgot-password')
     async changeForgotPassword(@Body() { email, password }: { email: string, password: string }) {
         return this.usersService.updateForgotPassword({ email, password })
     }
 
     @Post('create')
-    @UseGuards(AuthGuard)
+    // @UseGuards(AuthGuard)
     async createUser(@Body() { name, email, role }: IUsers) {
         return await this.usersService.InsertUser({ name, email, role })
     }
 
     @Post('update')
-    @UseGuards(AuthGuard)
+    // @UseGuards(AuthGuard)
     async updateUser(@Body() { id, name, email, role, department }: IUsers) {
         return await this.usersService.updateUser({ id, name, email, role, department })
     }
 
     @Post('update-information')
-    @UseGuards(AuthGuard)
+    // @UseGuards(AuthGuard)
     async updateInformationUser(@Body() { id, name, email }: IUsers) {
         return await this.usersService.updateInformationUser({ id, name, email })
     }
 
     @Post('update-status')
-    @UseGuards(AuthGuard)
+    // @UseGuards(AuthGuard)
     async updateToInactiveUser(@Body() { id, isactive }: IUsers) {
         return await this.usersService.updateUserStatus({ id, isactive })
     }
@@ -203,7 +203,7 @@ export class UsersController {
         }
     }
 
-    @UseGuards(AuthGuard)
+    // @UseGuards(AuthGuard)
     @Post('logout')
     async logout(@Res() response: Response) {
         response.cookie('access_token', '', {

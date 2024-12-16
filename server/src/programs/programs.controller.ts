@@ -8,7 +8,7 @@ import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
 
 @Controller('programs')
-@UseGuards(AuthGuard)
+// @UseGuards(AuthGuard)
 export class ProgramsController {
     constructor(
         private readonly programService: ProgramsService,
