@@ -133,7 +133,7 @@ export class UsersController {
             // Set the access_token as an HTTP-only cookie
             response.cookie('access_token', islogin.access_token, {
                 httpOnly: true, // Prevents client-side JavaScript from accessing the cookie
-                secure: false,   // Ensures the cookie is sent over HTTPS
+                secure: true,   // Ensures the cookie is sent over HTTPS
                 sameSite: 'lax', // CSRF protection
                 maxAge: 86400000, // Cookie expiration time in milliseconds (e.g., 1 day)
             });
@@ -159,7 +159,7 @@ export class UsersController {
                 // Set the access_token as an HTTP-only cookie
                 response.cookie('otp', isOtp.data, {
                     httpOnly: true, // Prevents client-side JavaScript from accessing the cookie
-                    secure: false,   // Ensures the cookie is sent over HTTPS
+                    secure: true,   // Ensures the cookie is sent over HTTPS
                     sameSite: 'lax', // CSRF protection
                     maxAge: 300000, // Cookie expiration time in milliseconds (e.g., 5 Minutes)
                 });
@@ -190,7 +190,7 @@ export class UsersController {
             if (isOtp) {
                 response.cookie('otp', '', {
                     httpOnly: true,
-                    secure: false,
+                    secure: true,
                     sameSite: 'lax',
                     expires: new Date(0), // Expire the cookie immediately
                 })
@@ -206,10 +206,9 @@ export class UsersController {
     @UseGuards(AuthGuard)
     @Post('logout')
     async logout(@Res() response: Response) {
-
         response.cookie('access_token', '', {
             httpOnly: true,
-            secure: false,
+            secure: true,
             sameSite: 'lax',
             expires: new Date(0), // Expire the cookie immediately
         });
