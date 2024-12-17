@@ -135,7 +135,7 @@ export class UsersController {
                 domain: 'mlp-server.onrender.com', // Remove protocol (https://)
                 sameSite: 'none',
                 httpOnly: true, // Prevents client-side JavaScript from accessing the cookie
-                secure: true,   // Ensures the cookie is sent over HTTPS
+                secure: false,   // Ensures the cookie is sent over HTTPS
                 maxAge: 86400000, // Cookie expiration time in milliseconds (e.g., 1 day)
             });
 
@@ -162,7 +162,7 @@ export class UsersController {
                     domain: 'mlp-server.onrender.com', // Remove protocol (https://)
                     sameSite: 'none',
                     httpOnly: true, // Prevents client-side JavaScript from accessing the cookie
-                    secure: true,   // Ensures the cookie is sent over HTTPS
+                    secure: false,   // Ensures the cookie is sent over HTTPS
                     maxAge: 300000, // Cookie expiration time in milliseconds (e.g., 5 Minutes)
                 });
 
@@ -194,7 +194,7 @@ export class UsersController {
                     domain: 'mlp-server.onrender.com', // Remove protocol (https://)
                     sameSite: 'none',
                     httpOnly: true,
-                    secure: true,
+                    secure: false,
                     expires: new Date(0), // Expire the cookie immediately
                 })
 
@@ -210,10 +210,8 @@ export class UsersController {
     @Post('logout')
     async logout(@Res() response: Response) {
         response.cookie('access_token', '', {
-            domain: 'mlp-server.onrender.com', // Remove protocol (https://)
-            sameSite: 'none',
             httpOnly: true,
-            secure: true,
+            secure: false,
             expires: new Date(0), // Expire the cookie immediately
         });
 
