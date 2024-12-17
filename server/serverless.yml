@@ -1,0 +1,70 @@
+org: sdevmarc
+service: gradlink-server
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+  environment:
+    GOOGLE_APPLICATION_CREDENTIALS: ${env:GOOGLE_APPLICATION_CREDENTIALS}
+    HOST: ${env:HOST}
+    PORT: ${env:PORT}
+    FORM_ID: ${env:FORM_ID}
+    GOOGLE_FORM_LINK: ${env:GOOGLE_FORM_LINK}
+    MAPBOX_ACCESS_TOKEN: ${env:MAPBOX_ACCESS_TOKEN}
+    JWT_SECRET: ${env:JWT_SECRET}
+    MONGODB_URI: ${env:MONGODB_URI}
+    EMAIL_HOST: ${env:EMAIL_HOST}
+    EMAIL_PORT: ${env:EMAIL_PORT}
+    EMAIL_USERNAME: ${env:EMAIL_USERNAME}
+    EMAIL_PASSWORD: ${env:EMAIL_PASSWORD}
+    CLOUDINARY_NAME: ${env:CLOUDINARY_NAME}
+    CLOUDINARY_API_KEY: ${env:CLOUDINARY_API_KEY}
+    CLOUDINARY_API_SECRET: ${env:CLOUDINARY_API_SECRET}
+  apiGateway:
+    binaryMediaTypes:
+      - multipart/form-data
+      - application/octet-stream
+
+package:
+  include:
+    - dist/**
+    - handler.js
+    - package.json
+    - node_modules/**
+    - .env
+    - cronjob
+    - .prettierrc
+    - restore.sh
+    - backup.sh
+    - gradlink.json
+  exclude:
+    - .dockerignore
+    - docker-compose.yml
+    - Dockerfile
+    - gradlink-server-image.tar
+    - publish-profile.xml
+    - vercel.json
+    - tests/**
+    - docs/**
+    - .git/**
+    - layer/**
+
+functions:
+  app:
+    handler: dist/serverless.handler
+    events:
+      - http:
+          method: ANY
+          path: /
+          cors: 
+            origin: 'https://gradlink-client.vercel.app'
+            credentials: true # Enable credentials
+      - http:
+          method: ANY
+          path: '{proxy+}'
+          cors:
+            origin: 'https://gradlink-client.vercel.app'
+            credentials: true # Enable credentials
+    timeout: 30
