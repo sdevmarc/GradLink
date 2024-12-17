@@ -9,7 +9,7 @@ import { StudentService } from 'src/student/student.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('forms')
-// @UseGuards(AuthGuard)
+@UseGuards(AuthGuard)
 export class FormsController {
     constructor(
         private readonly formsService: FormsService,
