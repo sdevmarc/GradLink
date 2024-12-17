@@ -132,9 +132,10 @@ export class UsersController {
         if (islogin.success) {
             // Set the access_token as an HTTP-only cookie
             response.cookie('access_token', islogin.access_token, {
+                domain: 'https://mlp-server.onrender.com',
+                sameSite: 'none',
                 httpOnly: true, // Prevents client-side JavaScript from accessing the cookie
                 secure: true,   // Ensures the cookie is sent over HTTPS
-                sameSite: 'strict', // CSRF protection
                 maxAge: 86400000, // Cookie expiration time in milliseconds (e.g., 1 day)
             });
 
@@ -158,9 +159,10 @@ export class UsersController {
             if (isOtp.success) {
                 // Set the access_token as an HTTP-only cookie
                 response.cookie('otp', isOtp.data, {
+                    domain: 'https://mlp-server.onrender.com',
+                    sameSite: 'none',
                     httpOnly: true, // Prevents client-side JavaScript from accessing the cookie
                     secure: true,   // Ensures the cookie is sent over HTTPS
-                    sameSite: 'strict', // CSRF protection
                     maxAge: 300000, // Cookie expiration time in milliseconds (e.g., 5 Minutes)
                 });
 
@@ -189,9 +191,10 @@ export class UsersController {
 
             if (isOtp) {
                 response.cookie('otp', '', {
+                    domain: 'https://mlp-server.onrender.com',
+                    sameSite: 'none',
                     httpOnly: true,
                     secure: true,
-                    sameSite: 'strict',
                     expires: new Date(0), // Expire the cookie immediately
                 })
 
@@ -207,9 +210,10 @@ export class UsersController {
     @Post('logout')
     async logout(@Res() response: Response) {
         response.cookie('access_token', '', {
+            domain: 'https://mlp-server.onrender.com',
+            sameSite: 'none',
             httpOnly: true,
             secure: true,
-            sameSite: 'strict',
             expires: new Date(0), // Expire the cookie immediately
         });
 
