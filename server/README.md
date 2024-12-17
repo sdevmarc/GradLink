@@ -1,94 +1,73 @@
-# GradLink Deployment Guide
+<p align="center">
+  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
+</p>
 
-This guide will walk you through the steps to deploy the GradLink application using Docker.
+[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
+[circleci-url]: https://circleci.com/gh/nestjs/nest
 
----
+  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
+    <p align="center">
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
+<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
+<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
+<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
+<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
+<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
+  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
+    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
+  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
+</p>
+  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
+  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Prerequisites
-Before deploying GradLink, ensure you have the following installed on your system:
+## Description
 
-1. **Docker Desktop**
-   - Download and install Docker Desktop from the [official website](https://www.docker.com/products/docker-desktop/).
+[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
----
-
-## Deployment Steps
-
-### 1. Load Docker Images
-The GradLink application consists of the following Docker images:
-- `gradlink-server.tar`
-- `gradlink-client.tar`
-- `gradlink-node.tar`
-- `gradlink-nginx.tar`
-- `gradlink-mongodb.tar`
-
-To load these images into Docker, use the `docker load` command:
+## Installation
 
 ```bash
-# Load the server image
-docker load < gradlink-server.tar
-
-# Load the client image
-docker load < gradlink-client.tar
-
-# Load the node image
-docker load < gradlink-node.tar
-
-# Load the nginx image
-docker load < gradlink-nginx.tar
-
-# Load the MongoDB image
-docker load < gradlink-mongodb.tar
+$ npm install
 ```
 
-Ensure that all the images are successfully loaded.
+## Running the app
 
----
+```bash
+# development
+$ npm run start
 
-### 2. Start the Application
-Once the Docker images are loaded, start the GradLink application using `docker-compose`:
+# watch mode
+$ npm run start:dev
 
-1. Place the `docker-compose.yml` file in the root directory.
+# production mode
+$ npm run start:prod
+```
 
-2. Run the following command in the directory containing `docker-compose.yml`:
+## Test
 
-   ```bash
-   docker-compose up -d
-   ```
+```bash
+# unit tests
+$ npm run test
 
-   This command will:
-   - Start the GradLink client, server, MongoDB, and other necessary services.
-   - Automatically run the containers in detached mode (`-d`).
+# e2e tests
+$ npm run test:e2e
 
----
+# test coverage
+$ npm run test:cov
+```
 
-### 3. Access the Application
-Once the containers are running, you can access the GradLink application in your browser:
+## Support
 
-1. Determine your machine's IP address.
-   - On Windows or macOS with Docker Desktop, you can usually access the application at `http://localhost`.
-   - On a remote server, use the server's public IP address.
+Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
 
-2. Open your browser and navigate to:
-   ```
-   http://<YOUR_IP_ADDRESS>
-   ```
-   The application runs on port `80`.
+## Stay in touch
 
-For example:
-- If you are running locally: `http://localhost`
-- If the IP address of your server is `192.168.1.100`: `http://192.168.1.100`
+- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
+- Website - [https://nestjs.com](https://nestjs.com/)
+- Twitter - [@nestframework](https://twitter.com/nestframework)
 
----
+## License
 
-## Notes
-- Ensure that the `.env` file is correctly configured before running `docker-compose up -d`. This file contains necessary environment variables for the application.
-- If you encounter any issues, verify that Docker is running and the images are correctly loaded.
-- To stop the application, use:
-  ```bash
-  docker-compose down
-  ```
-
----
-
-Your GradLink application is now deployed and ready to use!
+Nest is [MIT licensed](LICENSE).
