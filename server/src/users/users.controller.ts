@@ -132,7 +132,7 @@ export class UsersController {
         if (islogin.success) {
             // Set the access_token as an HTTP-only cookie
             response.cookie('access_token', islogin.access_token, {
-                domain: 'https://mlp-server.onrender.com',
+                domain: 'mlp-server.onrender.com', // Remove protocol (https://)
                 sameSite: 'none',
                 httpOnly: true, // Prevents client-side JavaScript from accessing the cookie
                 secure: true,   // Ensures the cookie is sent over HTTPS
@@ -159,7 +159,7 @@ export class UsersController {
             if (isOtp.success) {
                 // Set the access_token as an HTTP-only cookie
                 response.cookie('otp', isOtp.data, {
-                    domain: 'https://mlp-server.onrender.com',
+                    domain: 'mlp-server.onrender.com', // Remove protocol (https://)
                     sameSite: 'none',
                     httpOnly: true, // Prevents client-side JavaScript from accessing the cookie
                     secure: true,   // Ensures the cookie is sent over HTTPS
@@ -191,7 +191,7 @@ export class UsersController {
 
             if (isOtp) {
                 response.cookie('otp', '', {
-                    domain: 'https://mlp-server.onrender.com',
+                    domain: 'mlp-server.onrender.com', // Remove protocol (https://)
                     sameSite: 'none',
                     httpOnly: true,
                     secure: true,
@@ -210,7 +210,7 @@ export class UsersController {
     @Post('logout')
     async logout(@Res() response: Response) {
         response.cookie('access_token', '', {
-            domain: 'https://mlp-server.onrender.com',
+            domain: 'mlp-server.onrender.com', // Remove protocol (https://)
             sameSite: 'none',
             httpOnly: true,
             secure: true,
