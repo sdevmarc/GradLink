@@ -3,3 +3,5 @@ node_modules
 *.log
 .dockerignore
 .DS_Store
+*.tar
+vercel.json
