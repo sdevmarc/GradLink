@@ -25,7 +25,7 @@ services:
     container_name: gradlink-mongodb-container
     ports:
       - "27017:27017"
-    command: ["mongod", "--auth"]
+    command: ["mongod"]
     env_file:
       - .env
     volumes:
