@@ -10,6 +10,9 @@ Before deploying GradLink, ensure you have the following installed on your syste
 1. **Docker Desktop**
    - Download and install Docker Desktop from the [official website](https://www.docker.com/products/docker-desktop/).
 
+2. **GradLink Deployment Folder**
+   - If you don't have the "GradLink Deployment" zipped folder, you may download it from here "".
+
 ---
 
 ## Deployment Steps
